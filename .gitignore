@@ -1,0 +1,59 @@
+# ---- 数据与镜像（大文件，永不进库）----
+ISBI2016_ISIC_*/
+labels-vk/
+*.img
+*.zip
+*.tar
+
+# ---- 第三方资料 / 嵌套参考仓库 ----
+Pynq资料（含实验指导书等）/
+dma-fir-accelerator-pynq-z2/
+PYNQ-HelloWorld/
+PYNQ_tutorials/
+finn/
+role_a_handoff/
+role_a_final/
+
+# ---- golden / 权重等二进制数据（本地保存）----
+*.bin
+
+# ---- Vivado 产物 ----
+.Xil/
+*.jou
+*.str
+*.wdb
+*.runs/
+*.cache/
+*.hw/
+*.gen/
+*.sim/
+*.ip_user_files/
+
+# ---- Python / 临时 ----
+__pycache__/
+*.pyc
+.venv/
+*.bak
+Thumbs.db
+.DS_Store
+~$*
+
+# ---- 本轮新增：构建/仿真产物与生成 IP repo ----
+out/
+ip_repo/
+NA/
+
+# Local-only references, images and preserved tool caches.
+/local/
+/%SystemDrive%/
+/pynq_z2_v3.1.1/
+
+# Credentials are supplied locally, never committed.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Frozen team handoff archives under delivery/ are intentionally versioned.
+!/delivery/**/*.tar.gz

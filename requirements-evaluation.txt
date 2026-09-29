@@ -1,0 +1,5 @@
+# Host reference preparation only; do not install Torch on the PYNQ board.
+# uv run --index https://download.pytorch.org/whl/cpu --with-requirements requirements-evaluation.txt python scripts/prepare_evaluation.py ...
+numpy==2.5.2
+Pillow==12.3.0
+torch==2.14.0+cpu

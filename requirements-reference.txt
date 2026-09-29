@@ -1,0 +1,4 @@
+# Known matching Windows wheel for A's frozen JPEG -> input_full.bin path.
+# The existing Conda Pillow 12.0.0 / JPEG 9 build yields 6783 +/-1 differences.
+numpy>=1.21
+Pillow==12.3.0

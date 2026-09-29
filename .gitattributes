@@ -1,0 +1,19 @@
+# Git Bash scripts must remain executable after a Windows checkout.
+*.sh text eol=lf
+*.py text eol=lf
+*.sv text eol=lf
+*.tcl text eol=lf
+*.c text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.tar.gz binary
+*.xsa binary
+*.png binary
+*.pdf binary
+*.docx binary
+.gitattributes text eol=lf
+.gitignore text eol=lf
+# Preserve measured evidence bytes, including original report whitespace.
+delivery/c_v3/hardware/*.rpt -text -whitespace
+delivery/c_v3/hardware/*.json -text -whitespace
+delivery/c_v3/validation/*.json -text -whitespace
