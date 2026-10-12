@@ -1,0 +1,20 @@
+# Generated local state (includes the saved access token and uploaded images)
+data/
+**/.access_token
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+*.log
+.pytest_cache/
+.DS_Store
+Thumbs.db
+desktop.ini
+# Local packages/backups, not source or the small samples/*.bin fixture
+*.zip
+*.tar.gz
+backup*/
+PLD_Web_backup*/

@@ -1,0 +1,150 @@
+{
+  "frame_id": 1,
+  "model_spec_sha256": "fe137ca5b128fc1983fabad9bee39b3208cda4256e0d04c4e27cef5c07666aef",
+  "shape": [
+    1,
+    1,
+    256,
+    256
+  ],
+  "dtype": "int8",
+  "layout": "NCHW",
+  "threshold_probability": 0.45,
+  "threshold_logit": -0.20067069546215124,
+  "threshold_q": -1,
+  "head_output_scale": 0.1995087721216397,
+  "comparison": ">=",
+  "model_name": "soup_v5_a050",
+  "model_manifest_sha256": "e47eb18b94369451b36790971f4e0db62b2d128f424937e00f2768e866a30936",
+  "valid_rect": [
+    0,
+    32,
+    256,
+    192
+  ],
+  "input_metadata": {
+    "original_width": 1022,
+    "original_height": 767,
+    "resized_width": 256,
+    "resized_height": 192,
+    "left": 0,
+    "top": 32,
+    "model_spec_sha256": "fe137ca5b128fc1983fabad9bee39b3208cda4256e0d04c4e27cef5c07666aef",
+    "input_sha256": "d39729fc9308aec492711bf0a3f57ff60489b22282ad92a8e93a708e08773349",
+    "image_sha256": "e3092bd47d1955c117a18acb1e236222cae99acfbd393d0c7f07b4e6b8978857",
+    "valid_pixels": 49152,
+    "valid_rect": [
+      0,
+      32,
+      256,
+      192
+    ],
+    "pillow": "9.0.1",
+    "jpeg": "8.0"
+  },
+  "output_sha256": "1842db37a28ca1cf2108ded4a6c2b451ace44d500afae2c41955e95b43c36e49",
+  "status": "success",
+  "source_name": "ISIC_0000003.jpg",
+  "jpeg_decode_seconds": 0.14766983399931632,
+  "preprocess_seconds": 0.05215596899870434,
+  "inference_seconds": 0.7381573290003871,
+  "online_b_seconds": 0.7903132979990914,
+  "timing_scope": "decoded RGB to raw head; excludes file IO, JPEG decode and C processing/display",
+  "bit_sha256": "0df9c718172d2d496f28a93719a2858d3a9b366ea9145d58bf0a3788687f0baf",
+  "hwh_sha256": "7adfbe2d757dd09f5dab77562b2fb4db2ef86435db2fb60bf3ca85a02281da13",
+  "abi_version": 65538,
+  "fused_maps": true,
+  "fused_decoder": true,
+  "quantization_backend": "rgb8_lut",
+  "copy_backend": {
+    "kind": "native",
+    "library_sha256": "271a7f19547259a5fdf3a7a5a573c5a7feede9bad974b6bb49a77d1e2c2a868d",
+    "abi": 1,
+    "build": {
+      "source_sha256": "dd6902e9ff09e481727c8c533b95d8e4cb9bc977a230fe84805472ab1770e835",
+      "wrapper_sha256": "372d26ff0656003f751f69a726f7628244273f671c13dea9292ada7f128a9097",
+      "flags": [
+        "-O3",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-shared",
+        "-fPIC",
+        "-mcpu=cortex-a9",
+        "-mfpu=neon",
+        "-mfloat-abi=hard"
+      ],
+      "machine": "armv7l",
+      "compiler": "gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0",
+      "library_sha256": "271a7f19547259a5fdf3a7a5a573c5a7feede9bad974b6bb49a77d1e2c2a868d"
+    }
+  },
+  "control_backend": {
+    "kind": "native_packet",
+    "abi": 1,
+    "library_sha256": "3d531e3498951dd3fef40846faffa5ad5ae467d65e1979d46e185e49447d99b9",
+    "build": {
+      "source_hashes": {
+        "board/native/tensor_control.c": "d9fb9576c1c1360e1d3081031796b5b291332a269bbaf8a58fd468b05f273f35",
+        "board/native_control.py": "b24705b9aee775388494b5b1d6da144aa9cefe7f0c3e51d939501b737368eed6",
+        "scripts/verify_native_control.py": "107d0c17a8816c5176d1449f965d4f8b7a3ad42b84abebdbff53bdaac4694d8d"
+      },
+      "flags": [
+        "-O3",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-shared",
+        "-fPIC",
+        "-mcpu=cortex-a9",
+        "-mfpu=neon",
+        "-mfloat-abi=hard"
+      ],
+      "machine": "armv7l",
+      "compiler": "gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0",
+      "library_sha256": "3d531e3498951dd3fef40846faffa5ad5ae467d65e1979d46e185e49447d99b9",
+      "test_library_sha256": "c3fd5ce3d17bf539767036bc1e98cbf1b3db28c77420968ca00dc42ee76204f4"
+    }
+  },
+  "resize_backend": {
+    "library_sha256": "2b82219a36bc0aa6d3c33a189dc62f7db3a34233cfe2e25a0aab7b6597d970aa",
+    "source_sha256": "beb126e3b119559a2778c4ef45e7607f5689c7716576bb7655120a9e2b1a2a8f",
+    "wrapper_sha256": "e5c5b9a7597a3f688c2e8e09d23713f8776cf60b4b3e3d39cc7506ff9655ffad",
+    "kind": "pillow_rows_neon",
+    "pillow": "9.0.1",
+    "row_wrapper_sha256": "bc54a87343ec5aa893db04bfafa670dd7dd40d5fb6d407db178c07cc708c77ca",
+    "build": {
+      "source_hashes": {
+        "board/native/rgb_resize.c": "beb126e3b119559a2778c4ef45e7607f5689c7716576bb7655120a9e2b1a2a8f",
+        "board/native_resize.py": "b292ef472a7fe473f03200446af380f6f82f8eb044734357d787b26cd78f058f",
+        "reference/native_resize.py": "e5c5b9a7597a3f688c2e8e09d23713f8776cf60b4b3e3d39cc7506ff9655ffad",
+        "reference/pillow_resize.py": "bc54a87343ec5aa893db04bfafa670dd7dd40d5fb6d407db178c07cc708c77ca",
+        "scripts/check_native_resize.py": "0f57f3608e668890260da7cb9f0bafd59c88ee08eb2a6b806b293582c1ab4935",
+        "scripts/build_native_resize.py": "8606d4fa911939d404f2d399c79f1b73fb82e990a68567c210a1d6b415ac1ab2"
+      },
+      "flags": [
+        "-O3",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-shared",
+        "-fPIC",
+        "-mcpu=cortex-a9",
+        "-mfpu=neon",
+        "-mfloat-abi=hard"
+      ],
+      "pillow": "9.0.1",
+      "pillow_core_sha256": "7246c6aac511aa192ddd6b2ee12ea6199d125ab3c8097828c24825f77aeca9ea",
+      "compiler": "gcc (Ubuntu 11.2.0-19ubuntu1) 11.2.0",
+      "machine": "armv7l",
+      "library_sha256": "2b82219a36bc0aa6d3c33a189dc62f7db3a34233cfe2e25a0aab7b6597d970aa"
+    }
+  },
+  "tx_sync_backend": {
+    "kind": "xrt_tx_prefix_64",
+    "source_sha256": "16fcdae657afeb14fe0f194f046a740f17d0484dff030dd73d28edd3ecb3c54d"
+  }
+}

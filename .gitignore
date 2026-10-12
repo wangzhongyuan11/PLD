@@ -57,3 +57,6 @@ NA/
 
 # Frozen team handoff archives under delivery/ are intentionally versioned.
 !/delivery/**/*.tar.gz
+
+# C display app: small real board-test head sample required by its regression tests.
+!display_web/samples/frame_000001.bin

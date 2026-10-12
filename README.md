@@ -9,6 +9,7 @@
 | 工作 | 入口 |
 |---|---|
 | C上板使用 | [冻结交付包及三步运行](delivery/c_v3/README.md)、[B→C合同](docs/C_HANDOFF.md) |
+| 网页与HDMI显示端（C源码） | [display_web 使用说明](display_web/README.md)、[板端部署与自启](display_web/docs/DEPLOYMENT.md) |
 | 理解实现 | [整体数据流与模块职责](docs/IMPLEMENTATION.md)、[PL寄存器合同](docs/design/ACCELERATOR_REGISTERS.md) |
 | 核对真实结果 | [板测汇总](delivery/c_v3/validation/summary.json)、[详细验证记录](docs/FINAL_MODEL_STATUS.md) |
 | 修改与协作 | [团队开发说明](CONTRIBUTING.md)、[计划与剩余目标](docs/PLAN.md) |
@@ -29,6 +30,7 @@ docs/                 当前计划、实现说明和C合同
   history/            按版本保留的历史审查与阶段证据
   requirements/       原始题目与分工文件
 delivery/             随Git共享的冻结运行包、模型、XSA及板测证据
+display_web/          C的网页操作、轮廓后处理与HDMI显示应用源码，板上部署为PLD_Web目录
 local/                仅本机保留的第三方资料、镜像、缓存，不上传
 out/、ip_repo/        可再生成的产物和实验日志，不上传
 ```
