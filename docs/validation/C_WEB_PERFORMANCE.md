@@ -95,3 +95,9 @@
 用修复版隔离包的最终 bit/hwh、模型 golden 量化输入及 `board/profile_cnn.py`，先预热一帧，再重复五帧并逐帧比较最终 head；五帧均通过。PLGraph 中位 **0.716059 秒**，五帧样本 P95 0.730053 秒（仅作定位，不能与1000帧稳定性 P95 混用）。每帧固定 **175 条命令**；命令事件的墙钟合计中位 **0.589375 秒**，其中 DMA 等待字段合计 0.409550 秒，`compute_cycles` 固定 32,096,576 周期，在125 MHz下为0.256773秒。DMA等待与硬件计算、命令墙钟互相嵌套，三者不可相加；PLGraph和事件墙钟差约0.127秒，包含张量拼接、tile准备等事件外PS工作。
 
 按五帧层耗时中位，`decoder_blocks_2_0`约0.097秒，`decoder_blocks_1_0`约0.066秒，`decoder_blocks_2_2`与`encoders_0_2`各约0.065秒，前四层合计约0.292秒。mode5/mode6 的 RUN 命令分别占约0.188/0.132秒，相关输入 LOAD 分别约0.075/0.043秒，是下一次按命令/层短测的优先区。cProfile 将 `native_control.execute()`计入约0.377秒内部时间，但该函数包含 DMA/核心有界等待和缓存同步，**不能**把它解释成0.377秒纯Python开销。当前125 MHz正式时序WNS仅+0.013ns，任何RTL或时钟改动都须重新布线及同源bit/hwh/xsa、逐层/整网数值和故障恢复验证。机器证据为`out/board_sync_20261012/fastq_profile_v2_20261013.json`、同名`.profile.txt`及`fastq_profile_v2_audit_20261013.json`；剖析运行期间正式服务暂停，结束后恢复并返回HTTP 200。
+
+### 原生缩放 v2 短测与去留（2026-10-14）
+
+针对大图水平缩放，隔离实现了可切换的 Q22 权重精确拆分/NEON `vmlal_u16` 候选，默认仍为原 v1。主机标量路径通过 117 个检查；板端 ARM/NEON 构建通过 237 个检查，含独立 INT64 参考、Pillow 9.0.1 逐字节比较、奇数行/并发/越界及恶意列权重回绕拒绝。候选包使用与正式版相同的最终 bit/hwh，打包门检查 WNS +0.013 ns、WHS +0.049 ns、WPWS +2.75 ns 及 XSA 配对通过；本次性能短测只运行 CPU 缩放，没有启动另一套 FPGA 推理。
+
+在正式网页服务暂停期间，板上对原始 `ISIC_0014688.jpg`（6648×4398→256×169）先解码一次，再交错运行 v1/v2 各 12 次；每次输出均与 Pillow 9.0.1 逐字节相同。v1 中位 **0.497907 秒**，v2 中位 **0.507348 秒**，v2 慢约 **1.9%**。因此否决 v2，不切换正式服务，也不把它送入 dev638/1000 帧长测。服务随后恢复 `active` 且 HTTP 返回 200。板端隔离目录为 `/home/xilinx/jupyter_notebooks/pld/resize_v2_candidate_20261014/`；原图与本地逐字节 SHA256 相同；本地留有 `out/board_sync_20261012/bench_resize_v2_board_20261014.json`、`resize_v2_build_manifest_20261014.json`、`resize_v2_source_patch_20261014.patch` 和 `resize_v2_design_20261014.md`，以及 `out/final_model/resize_v2_candidate_20261014.tar.gz`。未采用的源码改动已撤回，正式 B 与 C 运行包不变。在线 B P95≤1 秒仍未关闭。
