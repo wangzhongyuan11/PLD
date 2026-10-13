@@ -19,6 +19,7 @@ import time
 import uuid
 import warnings
 import zipfile
+from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -39,10 +40,12 @@ MAX_FILE = 8 * 1024 * 1024
 MAX_PIXELS = 12_000_000
 Image.MAX_IMAGE_PIXELS = MAX_PIXELS
 VIEWS = ("original", "mask", "contour", "outlined", "cutout", "comparison")
-# Lossless PNG setting selected by the host benchmark in tests/benchmark_output.py:
-# level 3 was about twice as fast as Pillow's default level 6 with little size
-# change. ZIP members are stored because every payload is already a PNG/JSON.
-PNG_COMPRESS_LEVEL = 3
+# Lossless PNG settings selected by the host benchmark in tests/benchmark_output.py:
+# level 1 writes the six views faster at the cost of slightly larger encoded
+# bytes; decoded pixels are unchanged. Each job uses at most two bounded save
+# workers, and every file is closed before ZIP/report/history are created.
+PNG_COMPRESS_LEVEL = 1
+PNG_SAVE_WORKERS = 2
 ZIP_COMPRESSION = zipfile.ZIP_STORED
 
 
@@ -339,12 +342,28 @@ class Console:
             arrays["comparison"] = np.concatenate((fit_rgb(left, 640, 480), fit_rgb(result["outlined"], 640, 480)), axis=1)
             stages["view_composition"] = time.perf_counter() - stage
             views.append("comparison")
-            for key, a in arrays.items():
-                stage = time.perf_counter()
-                Image.fromarray(a.astype(np.uint8)*255 if a.dtype == bool else a).save(
-                    folder / (key+".png"), compress_level=PNG_COMPRESS_LEVEL)
-                png_timings[key] = time.perf_counter() - stage
-            stages["png_save"] = png_timings
+
+            def save_png_group(group):
+                for key, array in group:
+                    started = time.perf_counter()
+                    image = Image.fromarray(array.astype(np.uint8)*255 if array.dtype == bool else array)
+                    image.save(folder / (key+".png"), compress_level=PNG_COMPRESS_LEVEL)
+                    png_timings[key] = time.perf_counter() - started
+
+            # Split this one batch into exactly one deterministic group per worker:
+            # at most two PNG encoders run concurrently, there is no pending queue
+            # beyond the six views, and each view is converted and written once.
+            # Leaving the executor context joins both workers, so ZIP/report and
+            # the successful history entry are only created after every file is
+            # closed. Any save error propagates and fails the whole job instead.
+            items = [(key, arrays[key]) for key in views]
+            with ThreadPoolExecutor(max_workers=PNG_SAVE_WORKERS,
+                                    thread_name_prefix="pld-png") as pool:
+                futures = [pool.submit(save_png_group, items[index::PNG_SAVE_WORKERS])
+                           for index in range(PNG_SAVE_WORKERS)]
+                for future in futures:
+                    future.result()
+            stages["png_save"] = {key: png_timings[key] for key in views}
             stats = result["statistics"]
             if b is not None:
                 stats["area_percent"] = b.stats["area_percent"]
@@ -359,6 +378,7 @@ class Console:
             stats["processing_scope"] = "旧口径：任务线程启动到全部 PNG 写出；不含上传/浏览器、report/ZIP/历史提交；推理模式包含停止HDMI、校验和B子进程"
             stats["data_source"] = "历史板测掩膜，无原始 JPG；未重新推理" if mode == "demo" else "用户图片及掩膜；未执行模型推理" if mode == "mask" else "本次板端 FPGA 推理"
             stats["output_png_compress_level"] = PNG_COMPRESS_LEVEL
+            stats["output_png_workers"] = PNG_SAVE_WORKERS
             stats["output_zip_compression"] = "stored"
             # Package the costly PNG payload first. This lets report.json state
             # exactly which stages were already complete when it was serialized;

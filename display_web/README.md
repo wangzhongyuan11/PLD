@@ -82,6 +82,8 @@ python tests/benchmark_output.py --runs 5 --output-json benchmark_host.json
 
 网页“量化结果”区显示上述服务端任务总时，并同时给出 CPU 轮廓耗时和 B 耗时；浏览器上传副本预处理和结果渲染不在这个服务端总时内。
 
+六个视图 PNG 由每个任务专属的最多 2 个有界工作线程写出，使用无损 `compress_level=1`：解码像素、视图集合、文件名和 ZIP 成员/顺序不变，只接受更大的 PNG 编码字节（板上约 +8%）换取更快写盘。两个线程全部结束并关闭文件后才创建结果包和成功历史；任一保存失败则整个任务报错，不产生结果包或成功历史。主机回归和隔离板端六次真实 HTTP 推理已通过；正式服务切换与长期内存验证状态见 [C_WEB_PERFORMANCE](../docs/validation/C_WEB_PERFORMANCE.md)。
+
 2026-10-12 只读核对发现板端手动 `start_board.sh` 默认运行包曾指向不存在的 `pld/c_v3_team`，而实际 systemd 服务使用 `final_mode6_fastq_20260929_v3`。本仓库脚本保留后者，后续同步时不要用板端旧脚本覆盖。
 
 ### 可选常驻 B worker

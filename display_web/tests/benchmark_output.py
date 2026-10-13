@@ -83,7 +83,7 @@ def main():
         parser.error("use at least 3 runs for a stable median")
     source = args.source.resolve()
     sys.path.insert(0, str(source))
-    from server import Console
+    import server
 
     all_results = []
     with tempfile.TemporaryDirectory() as data_name:
@@ -95,7 +95,7 @@ def main():
                     "mask": base64.b64encode(mask_raw).decode(), "thickness": 2}
             runs = []
             for index in range(args.runs):
-                app = Console(data_name, token="benchmark")
+                app = server.Console(data_name, token="benchmark")
                 app.board = False
                 gc.collect()
                 started = time.perf_counter()
@@ -117,14 +117,23 @@ def main():
                     size_text, index + 1, elapsed, job["statistics"]["processing_seconds"],
                     files.get("results.zip", 0) / 1024), flush=True)
             external = [run["external_wall_seconds"] for run in runs]
+            png_stage = [sum(run["stage_seconds"]["png_save"].values()) for run in runs]
+            png_bytes = [sum(size for name, size in run["files"].items()
+                             if name.endswith(".png")) for run in runs]
+            zip_bytes = [run["files"].get("results.zip", 0) for run in runs]
             result = {"size": list(size), "runs": runs,
                       "median_external_wall_seconds": statistics.median(external),
                       "min_external_wall_seconds": min(external),
-                      "max_external_wall_seconds": max(external)}
+                      "max_external_wall_seconds": max(external),
+                      "median_png_save_seconds": statistics.median(png_stage),
+                      "median_png_bytes": statistics.median(png_bytes),
+                      "median_zip_bytes": statistics.median(zip_bytes)}
             all_results.append(result)
 
     payload = {"source": str(source), "python": sys.version, "platform": platform.platform(),
                "cpu_count": os.cpu_count(), "pillow": PIL.__version__,
+               "png_compress_level": server.PNG_COMPRESS_LEVEL,
+               "png_save_workers": server.PNG_SAVE_WORKERS,
                "numpy": np.__version__, "runs_per_size": args.runs,
                "results": all_results}
     args.output_json.parent.mkdir(parents=True, exist_ok=True)

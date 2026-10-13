@@ -14,7 +14,8 @@ import numpy as np
 from PIL import Image
 from contour import extract_contour
 from pld_hdmi import fit_rgb
-from server import Console, make_server, decode_upload, persistent_token
+from server import (Console, make_server, decode_upload, persistent_token,
+                    PNG_COMPRESS_LEVEL, PNG_SAVE_WORKERS, VIEWS)
 
 
 def encoded(a):
@@ -175,8 +176,70 @@ class WebTests(unittest.TestCase):
         self.assertEqual(j["statistics"]["request_to_job_complete_seconds"],stages["request_to_job_complete"])
         for value in stages["png_save"].values():
             self.assertGreaterEqual(value,0)
-        self.assertEqual(j["statistics"]["output_png_compress_level"],3)
+        self.assertEqual(j["statistics"]["output_png_compress_level"],PNG_COMPRESS_LEVEL)
+        self.assertEqual(j["statistics"]["output_png_workers"],PNG_SAVE_WORKERS)
         self.assertEqual(j["statistics"]["output_zip_compression"],"stored")
+
+    def test_png_saves_overlap_on_two_bounded_worker_threads(self):
+        rgb = (np.arange(48 * 64 * 3, dtype=np.uint32).reshape((48, 64, 3)) % 199).astype(np.uint8)
+        mask = np.zeros((48, 64), np.uint8); mask[10:40, 12:52] = 255
+        image_payload = encoded(rgb); mask_payload = encoded(mask)
+        saves = []
+        # Every real save must rendezvous with a second saver. A regression to
+        # serial saving breaks the barrier after the bounded timeout, failing
+        # the job quickly instead of hanging the suite.
+        barrier = threading.Barrier(PNG_SAVE_WORKERS, timeout=3)
+        original_save = Image.Image.save
+
+        def coordinated_save(self, fp, *args, **kwargs):
+            saves.append((threading.get_ident(), Path(fp).name))
+            barrier.wait()
+            return original_save(self, fp, *args, **kwargs)
+
+        with patch.object(Image.Image, "save", coordinated_save):
+            j = self.wait(self.app.submit({"mode":"mask","image":image_payload,
+                                           "mask":mask_payload,"thickness":2})["id"])
+        self.assertEqual(j["state"],"done")
+        self.assertEqual(j["views"],list(VIEWS))
+        names = [name for _, name in saves]
+        self.assertEqual(sorted(names),sorted(name+".png" for name in VIEWS))
+        self.assertEqual(len(names),len(set(names)))
+        thread_ids = {thread_id for thread_id, _ in saves}
+        self.assertEqual(len(thread_ids),PNG_SAVE_WORKERS)
+        self.assertNotIn(threading.get_ident(),thread_ids)
+        folder = Path(self.temp.name)/j["id"]
+        np.testing.assert_array_equal(np.asarray(Image.open(folder/"original.png")),rgb)
+        np.testing.assert_array_equal(np.asarray(Image.open(folder/"mask.png")),mask)
+        with zipfile.ZipFile(folder/"results.zip") as z:
+            self.assertEqual(z.namelist(),[name+".png" for name in VIEWS]+["report.json"])
+
+    def test_png_save_failure_fails_job_without_package_or_history(self):
+        rgb = np.full((32,40,3),90,np.uint8)
+        mask = np.zeros((32,40),np.uint8); mask[8:24,10:30] = 255
+        image_payload = encoded(rgb); mask_payload = encoded(mask)
+        workers = []
+        original_save = Image.Image.save
+
+        def failing_save(self, fp, *args, **kwargs):
+            workers.append(threading.current_thread())
+            if Path(fp).name == "outlined.png":
+                raise OSError("simulated PNG encoder failure")
+            return original_save(self, fp, *args, **kwargs)
+
+        with patch.object(Image.Image, "save", failing_save):
+            j = self.wait(self.app.submit({"mode":"mask","image":image_payload,
+                                           "mask":mask_payload})["id"])
+        self.assertEqual(j["state"],"error")
+        self.assertIn("simulated PNG encoder failure",j["error"])
+        folder = Path(self.temp.name)/j["id"]
+        self.assertFalse((folder/"results.zip").exists())
+        self.assertFalse((folder/"report.json").exists())
+        self.assertFalse((folder/"job.json").exists())
+        self.assertEqual([item["id"] for item in self.app.history()["items"]],[])
+        # The bounded savers must all have exited before the job reports error.
+        for worker in set(workers):
+            worker.join(timeout=2)
+            self.assertFalse(worker.is_alive())
 
     def test_mismatch_and_invalid_mask(self):
         rgb=np.zeros((3,3,3),np.uint8)
