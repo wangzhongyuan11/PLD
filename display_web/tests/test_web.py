@@ -12,6 +12,8 @@ from pathlib import Path
 from unittest.mock import patch, Mock
 import numpy as np
 from PIL import Image
+from contour import extract_contour
+from pld_hdmi import fit_rgb
 from server import Console, make_server, decode_upload, persistent_token
 
 
@@ -128,6 +130,54 @@ class WebTests(unittest.TestCase):
         self.assertEqual(j["statistics"]["foreground_pixels"],400)
         self.assertFalse(j["statistics"].get("b_seconds"))
 
+    def test_output_pixels_zip_members_and_stage_timings(self):
+        rgb = (np.arange(40 * 60 * 3, dtype=np.uint32).reshape((40, 60, 3)) % 251).astype(np.uint8)
+        mask = np.zeros((40, 60), np.uint8); mask[9:31, 17:43] = 255
+        expected_contour = extract_contour(mask != 0, thickness=2)
+        j = self.wait(self.app.submit({"mode":"mask","image":encoded(rgb),
+                                        "mask":encoded(mask),"thickness":2})["id"])
+        self.assertEqual(j["state"],"done")
+        self.assertEqual(j["views"],["original","mask","contour","outlined","cutout","comparison"])
+        folder = Path(self.temp.name)/j["id"]
+        decoded = {name: np.asarray(Image.open(folder/(name+".png")))
+                   for name in j["views"]}
+        np.testing.assert_array_equal(decoded["original"], rgb)
+        np.testing.assert_array_equal(decoded["mask"], mask)
+        np.testing.assert_array_equal(decoded["contour"], expected_contour.astype(np.uint8)*255)
+        expected_outlined = rgb.copy(); expected_outlined[expected_contour] = (255, 220, 0)
+        np.testing.assert_array_equal(decoded["outlined"], expected_outlined)
+        expected_cutout = rgb.copy(); expected_cutout[mask == 0] = 0
+        np.testing.assert_array_equal(decoded["cutout"], expected_cutout)
+        expected_comparison = np.concatenate((fit_rgb(rgb,640,480), fit_rgb(expected_outlined,640,480)),axis=1)
+        np.testing.assert_array_equal(decoded["comparison"], expected_comparison)
+
+        expected_members = [name+".png" for name in j["views"]] + ["report.json"]
+        with zipfile.ZipFile(folder/"results.zip") as z:
+            self.assertEqual(z.namelist(), expected_members)
+            self.assertTrue(all(info.compress_type == zipfile.ZIP_STORED for info in z.infolist()))
+            self.assertEqual(z.read("report.json"), (folder/"report.json").read_bytes())
+        report = json.loads((folder/"report.json").read_text(encoding="utf-8"))
+        self.assertIn("png_save", report["stage_seconds"])
+        self.assertIn("zip_payload", report["stage_seconds"])
+        self.assertNotIn("report_write", report["stage_seconds"])
+        self.assertNotIn("zip_package", report["stage_seconds"])
+        self.assertNotIn("job_total", report["stage_seconds"])
+        self.assertIn("stage_timing_scope", report)
+        self.assertNotIn("final_stage_seconds", report)
+        stages = j["statistics"]["final_stage_seconds"]
+        self.assertEqual(set(stages["png_save"]), set(j["views"]))
+        self.assertGreater(j["statistics"]["processing_seconds"],0)
+        for name in ("report_write","zip_report_append","zip_package","job_total","request_to_job_complete"):
+            self.assertIn(name,stages)
+        self.assertGreaterEqual(stages["job_total"],j["statistics"]["processing_seconds"])
+        self.assertGreaterEqual(stages["request_to_job_complete"],stages["job_total"])
+        self.assertEqual(j["statistics"]["job_total_seconds"],stages["job_total"])
+        self.assertEqual(j["statistics"]["request_to_job_complete_seconds"],stages["request_to_job_complete"])
+        for value in stages["png_save"].values():
+            self.assertGreaterEqual(value,0)
+        self.assertEqual(j["statistics"]["output_png_compress_level"],3)
+        self.assertEqual(j["statistics"]["output_zip_compression"],"stored")
+
     def test_mismatch_and_invalid_mask(self):
         rgb=np.zeros((3,3,3),np.uint8)
         for mask in (np.zeros((2,2),np.uint8),np.full((3,3),2,np.uint8)):
@@ -181,6 +231,15 @@ class WebTests(unittest.TestCase):
             j=self.wait(self.app.submit({"mode":"infer","image":base64.b64encode(raw.getvalue()).decode()})["id"])
         self.assertEqual(events,["stop_hdmi","inference"])
         self.assertEqual(j["state"],"error");self.assertIsNotNone(self.app.fault)
+        stages=j["stage_seconds"]
+        for name in ("stop_hdmi","input_write","runtime_verify","inference_launch",
+                     "inference_wait","inference_subprocess"):
+            self.assertIn(name,stages)
+        folder=Path(self.temp.name)/j["id"]
+        self.assertTrue((folder/"input.jpg").is_file())
+        self.assertFalse(list(folder.glob("*.png")))
+        self.assertFalse((folder/"report.json").exists())
+        self.assertFalse((folder/"results.zip").exists())
 
     def test_unhealthy_hdmi_prevents_restart(self):
         p=Mock();p.poll.return_value=1;p.returncode=1
