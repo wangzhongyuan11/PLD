@@ -4,7 +4,7 @@
 
 在 PYNQ-Z2 上将 ISIC Task 1 皮肤镜图像经 PS 输入、DDR/DMA 搬运、PL INT8 TinyUNet 推理，交给后处理与 HDMI/UI 展示；旧基线使用2016数据，最终模型使用2016/2017训练与开发口径。目标与验收条件见 `docs/PLAN.md`；题目依据与分工分析见 `docs/PROJECT_SCOPE.md`。
 
-**2026-09-29最终模型状态**：用户指定 `role_a_final` 为A最终交付（`soup_v5_a050`，不采用A21 QAT），授权B实现、加速、真实板测和交付；C后续按B接口集成。默认已切换最终模型，`reference/final_manifest.json` 锚定124文件，旧manifest及部署保留。ABI 1.2最终采用版已完成dev638全部638图原始JPEG的PL head逐图一致、1000帧/1483.827秒、三类故障恢复和部署审查；核心1.422 FPS，在线B P95 1.265720秒，项目自定≤1秒目标仍未通过。最新事实见 `docs/FINAL_MODEL_STATUS.md`，初始审查见 `docs/history/ROLE_A_FINAL_REVIEW.md`。dev638为开发集，不称独立测试集。用户已停止本项目GLM执行，由当前代理直接实施；无需等待C对接。
+**最终模型状态**：用户指定 `role_a_final` 为A最终交付（`soup_v5_a050`，不采用A21 QAT），授权B实现、加速、真实板测和交付。默认已切换最终模型，`reference/final_manifest.json` 锚定124文件，旧manifest及部署保留。ABI 1.2最终采用版已完成dev638全部638图原始JPEG的PL head逐图一致、1000帧/1483.827秒、三类故障恢复和部署审查；核心1.422 FPS，在线B P95 1.265720秒，项目自定≤1秒目标仍未通过。最新事实见 `docs/FINAL_MODEL_STATUS.md`，初始审查见 `docs/history/ROLE_A_FINAL_REVIEW.md`。dev638为开发集，不称独立测试集。2026-10-13用户重新选择本项目现有 Codex CLI + GLM 流程：GPT负责规划与独立审查，GLM通过固定项目会话实施；恢复会话前按上方 Optional GLM project execution 检查状态，不新开会话。
 
 以用户最新分工为准，`docs/requirements/work_split.docx` 中原属 C 的 PS 交互工作已转给 B：
 
@@ -116,6 +116,6 @@ PL流水与结果预取优化已完成第三次构建和三帧逐层/故障恢�
 
 最终采用版为`out/final_model/mode6_tile32_fastq_v3.tar.gz`，板端隔离目录`/home/xilinx/jupyter_notebooks/pld/final_mode6_fastq_20260929_v3/`；部署包161文件hash、bit/hwh/XSA及125MHz布线时序核验通过（WNS+0.013ns、WHS+0.049ns、WPWS+2.75ns，7108 LUT/67 BRAM36等效/53 DSP）。运行显式选项`--native-copy`、`--native-control`、`--native-resize`、`--tx-range-sync`、`--fuse-maps`、`--fuse-decoder`、`--fast-quantize`。`out/final_model/fastq_stability1000_audit.json`独立核对1000/1000 head和指标、638唯一图、三类故障恢复，核心中位0.700375秒/P95 0.726514秒，在线B中位0.758002秒/P95 1.265720秒。后续优化若改变源码/部署须按版本重验；短测不能继承该1000帧证据。125MHz 13ps setup裕量很窄，任何RTL/时钟变更都须重新布线。C后处理/HDMI仍未联调。用户要求减少重复测量：优先做能决定候选去留的短测，再只对最终采用版做必要验收。
 
-C的网页/HDMI应用源码已于2026-10-12合并入`display_web/`（C于2026-10-02整理的最终版，板上部署路径仍为`/home/xilinx/jupyter_notebooks/PLD_Web`）。它以子进程调用最终运行包`board/infer_images.py`，`pld_result.py`锚定spec `fe137c…`、manifest `e47eb18b…`（即`reference/final_manifest.json`）、head scale 0.1995087721216397与q≥−1；样例`display_web/samples/frame_000001.bin`为ISIC_0000003真实板测head，bit哈希与冻结部署清单一致。入库前25项Python测试与JS访问码测试通过；这是主机源码验收，板上网页/HDMI端到端联调仍未完成。该应用推理与显示内部串行互斥；运行B板测脚本前先停止`pld-web.service`。
+C的网页/HDMI应用源码已于2026-10-12合并入`display_web/`（板上正式服务路径`/home/xilinx/jupyter_notebooks/PLD_Web`）。它默认以子进程调用最终运行包`board/infer_images.py`，`pld_result.py`锚定spec `fe137c…`、manifest `e47eb18b…`（即`reference/final_manifest.json`）、head scale 0.1995087721216397与q≥−1；样例`display_web/samples/frame_000001.bin`为ISIC_0000003真实板测head。2026-10-13正式服务真实HTTP小/大图重复基线、head/六视图像素核对通过；隔离候选的可选常驻B worker已验证四帧同PID、后三帧零冷启动、HDMI软件切换后再推理、正常退出和父进程SIGKILL后的worker清理。候选**尚未切换正式服务**，长时性能、C双线程PNG、B在线P95≤1秒、PL后处理和物理HDMI目视仍待验。版本、口径和证据见`docs/validation/C_WEB_PERFORMANCE.md`。运行B板测脚本前先停止`pld-web.service`，不得让网页与板测同时拥有DMA。
 
 团队共享入口为 `README.md`、`docs/IMPLEMENTATION.md`、`delivery/c_v3/README.md`和`display_web/README.md`。原始题目/分工在`docs/requirements/`，设计细节在`docs/design/`，方法在`docs/validation/`，旧阶段证据在`docs/history/`。用户授权将约10MB冻结交付材料作为`delivery/`例外随Git共享；展开模型、数据集、系统镜像和实验产物仍不进Git。闲置第三方仓库、镜像及缓存已移到被忽略的`local/`，没有删除。初次GitHub发布使用干净快照，旧提交完整保留在本地归档分支；不得推送该旧分支或使用`--all/--mirror`带出误收缓存。
