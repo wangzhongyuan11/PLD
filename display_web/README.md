@@ -82,14 +82,14 @@ python tests/benchmark_output.py --runs 5 --output-json benchmark_host.json
 
 网页“量化结果”区显示上述服务端任务总时，并同时给出 CPU 轮廓耗时和 B 耗时；浏览器上传副本预处理和结果渲染不在这个服务端总时内。
 
-六个视图 PNG 由每个任务专属的最多 2 个有界工作线程写出，使用无损 `compress_level=1`：解码像素、视图集合、文件名和 ZIP 成员/顺序不变，只接受更大的 PNG 编码字节（板上约 +8%）换取更快写盘。两个线程全部结束并关闭文件后才创建结果包和成功历史；任一保存失败则整个任务报错，不产生结果包或成功历史。主机回归和隔离板端六次真实 HTTP 推理已通过；正式服务切换与长期内存验证状态见 [C_WEB_PERFORMANCE](../docs/validation/C_WEB_PERFORMANCE.md)。
+六个视图 PNG 由每个任务专属的最多 2 个有界工作线程写出，使用无损 `compress_level=1`：解码像素、视图集合、文件名和 ZIP 成员/顺序不变，只接受更大的 PNG 编码字节（板上约 +8%）换取更快写盘。两个线程全部结束并关闭文件后才创建结果包和成功历史；任一保存失败则整个任务报错，不产生结果包或成功历史。主机回归、隔离板端 24 帧及正式服务真实 HTTP 推理均已通过；耗时和验收边界见 [C_WEB_PERFORMANCE](../docs/validation/C_WEB_PERFORMANCE.md)。
 
 2026-10-12 只读核对发现板端手动 `start_board.sh` 默认运行包曾指向不存在的 `pld/c_v3_team`，而实际 systemd 服务使用 `final_mode6_fastq_20260929_v3`。本仓库脚本保留后者，后续同步时不要用板端旧脚本覆盖。
 
 ### 可选常驻 B worker
 
-B 推理默认仍为每个任务启动一个 `infer_images.py` 子进程，不改变现有服务。可在板端显式追加
-`server.py --persistent-b-worker` 试用候选模式；该模式要求部署包 `deployment_manifest.json` 已包含
+B 推理的源码默认仍为每个任务启动一个 `infer_images.py` 子进程；2026-10-14 板上正式服务已显式追加
+`server.py --persistent-b-worker`。该模式要求部署包 `deployment_manifest.json` 已包含
 `board/infer_worker.py`（可用 `python scripts/package_cnn_board.py --list-board-files` 核对）。worker 只在
 首次请求前预导入 PYNQ，不提前实例化 Overlay、不下载 bitstream，也不跨任务缓存 TileAccelerator/DMA；
 每个请求仍调用一次 `infer_images.main(argv)` 并由该次调用创建和关闭加速器。
@@ -98,8 +98,7 @@ B 推理默认仍为每个任务启动一个 `infer_images.py` 子进程，不�
 开始计时，不包含本次启动。`persistent_worker_total` 覆盖监督器本次调用全流程，除前两者外还包含
 manifest 复查、请求构造/写管道和回复检查等少量剩余时间，不能把三个数字当成互不重叠的独立阶段求和
 后解释为总耗时。worker 启动、回复、超时、退出或部署 manifest 漂移都会关闭该进程；推理请求期间的
-失败按硬件状态未知处理并设置服务 fault，阻止后续硬件操作直到服务重启。该候选目前只有主机假
-worker/协议回归，尚未在 PYNQ-Z2 部署或测量实际收益。
+失败按硬件状态未知处理并设置服务 fault，阻止后续硬件操作直到服务重启。正式服务已在 PYNQ-Z2 上通过真实 JPEG→FPGA→六视图与 HDMI 软件切换；物理显示器尚未连接。
 
 Linux 上 `PR_SET_PDEATHSIG` 跟随创建 worker 的父线程；若由处理单个 HTTP 任务的短生命周期线程创建，
 任务线程结束就会杀死健康 worker。因此本版本由一个与 persistent supervisor 同生命周期的长生命周期
@@ -116,4 +115,4 @@ launcher 线程创建 worker，任务线程只发送请求。Linux 安装 parent
 
 上传本目录的源码及文档即可；无需上传桌面旧压缩包。`.gitignore` 已排除运行生成的 `data/`、访问码、缓存、虚拟环境、日志与本地环境文件。GitHub 网页手动上传不执行忽略规则，因此也应只选择本整理目录，不混入板端 data 文件夹。
 
-若合并到同学的 PLD 仓库，建议放在独立子目录 `display_web/`，部署到板子时仍使用上面约定的 `PLD_Web` 路径。本次整理没有创建远程仓库、提交或上传 GitHub，也未更改开发板上的文件。
+本仓库保留源码在 `display_web/`。板上正式服务通过版本化 systemd drop-in 指向独立候选源码与 B 运行包，继续使用原 `PLD_Web/data/`；旧 unit 与冻结运行包保留。实际回退与重新切换已验证，具体命令见 [部署文档](docs/DEPLOYMENT.md)。
