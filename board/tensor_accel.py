@@ -15,6 +15,13 @@ class AcceleratorFault(RuntimeError):
         super().__init__(f"{reason}; recovered={recovered}; state={state}")
 
 
+def _record_stage(timing, name, started, close=False):
+    elapsed=time.perf_counter()-started
+    if not math.isfinite(elapsed) or elapsed<0:
+        raise RuntimeError("non-finite accelerator timing measurement")
+    timing["close_stages" if close else "init_stages"][name]=elapsed
+
+
 def expected_fclk_mhz(hwh):
     values=ET.parse(hwh).getroot().findall('.//PARAMETER[@NAME="PCW_ACT_FPGA0_PERIPHERAL_FREQMHZ"]')
     if len(values)!=1:
@@ -66,6 +73,10 @@ def shape(mode,h,w,ci,co=0,kernel=1,split=0):
 
 class TileAccelerator:
     def __init__(self,bit,timeout=2.0,native_copy=None,tx_range_sync=False,native_control=None):
+        init_started=time.perf_counter()
+        self.timing={"timing_clock":"time.perf_counter wall seconds",
+                     "scope":"TileAccelerator cold initialization and device close; init/close stages do not overlap",
+                     "init_stages":{},"close_stages":{},"elapsed":{}}
         if not math.isfinite(timeout) or timeout<=0:
             raise ValueError("timeout must be finite and positive")
         self.native_copy=None
@@ -73,29 +84,41 @@ class TileAccelerator:
         self.native_control=None
         self.control_info={"kind":"python"}
         if native_control is not None:
+            started=time.perf_counter()
             from native_control import NativeControl
             self.native_control=NativeControl(native_control)
             self.control_info=self.native_control.info
+            _record_stage(self.timing,"native_control_init",started)
         self.tx_sync_direction=None
         self.tx_sync_info={"kind":"pynq_full"}
         if tx_range_sync:
+            started=time.perf_counter()
             import pyxrt
             import hashlib
             self.tx_sync_direction=pyxrt.xclBOSyncDirection.XCL_BO_SYNC_BO_TO_DEVICE
             self.tx_sync_info={"kind":"xrt_tx_prefix_64", "source_sha256":hashlib.sha256(
                 Path(__file__).with_name("cache_sync.py").read_bytes()).hexdigest()}
+            _record_stage(self.timing,"xrt_import_and_tx_sync_init",started)
         if native_copy is not None:
+            started=time.perf_counter()
             from native_copy import NativeCopy
             self.native_copy=NativeCopy(native_copy,verify_build=True)
             self.copy_info=self.native_copy.info
+            _record_stage(self.timing,"native_copy_init",started)
+        started=time.perf_counter()
         from pynq import Overlay,MMIO,allocate
+        _record_stage(self.timing,"pynq_import",started)
+        started=time.perf_counter()
         self.expected_clock_mhz=expected_fclk_mhz(Path(bit).with_suffix('.hwh'))
+        _record_stage(self.timing,"hwh_clock_parse",started)
         self.timeout=timeout
         self.job=0; self.frame=0; self.config=None; self.events=[]
         self.tx=None; self.rx=None; self.closed=False
         self._tx_view=None; self._rx_view=None
         self.mmio_type=MMIO
+        started=time.perf_counter()
         self.overlay=Overlay(str(bit),download=False)
+        _record_stage(self.timing,"overlay_metadata_parse",started)
         info=self.overlay.ip_dict.get("axis_tensor_accel_0",{})
         dma_info=self.overlay.ip_dict.get("axi_dma",{})
         if info.get("phys_addr")!=0x43c00000 or info.get("addr_range")!=4096 or \
@@ -105,22 +128,28 @@ class TileAccelerator:
         for key in ("c_m_axi_mm2s_data_width","c_m_axi_s2mm_data_width","c_m_axis_mm2s_tdata_width"):
             if int(p[key])!=64:
                 raise ValueError("overlay requires 64-bit DMA datapaths")
+        started=time.perf_counter()
         self.overlay.download()
+        _record_stage(self.timing,"bitstream_download",started)
         self._attach()
         try:
             # SimpleDMA flushes before device access and invalidates RX after
             # completion. Cacheable mappings make the PS gather/copy practical.
+            started=time.perf_counter()
             self.tx=allocate(shape=(131072,),dtype=np.uint8,cacheable=True)
             self.rx=allocate(shape=(65536+64,),dtype=np.uint8,cacheable=True)
             # Ordinary ndarray views avoid PynqBuffer metadata reconstruction
             # on every slice/ufunc. DMA still owns the original buffers.
             self._tx_view=np.asarray(self.tx)
             self._rx_view=np.asarray(self.rx)
+            _record_stage(self.timing,"dma_buffer_allocation",started)
         except BaseException:
             self.close()
             raise
+        self.timing["elapsed"]["tile_accelerator_init"]=time.perf_counter()-init_started
 
-    def _attach(self):
+    def _attach(self,record_init=True):
+        started=time.perf_counter() if record_init else None
         from pynq import Clocks
         self.clock_mhz=float(Clocks.fclk0_mhz)
         if abs(self.clock_mhz-self.expected_clock_mhz)>0.1:
@@ -132,9 +161,14 @@ class TileAccelerator:
         if self.core.read(0)!=0x504c4431 or self.abi_version not in (0x00010000,0x00010001,0x00010002):
             raise ValueError("core ID/ABI mismatch")
         self.dma=SimpleDMA(self.mmio_type(dma_info["phys_addr"],dma_info["addr_range"]),dma_info["parameters"],self.timeout)
-        self.recover()
+        if started is not None:
+            _record_stage(self.timing,"attach_setup",started)
+        self.recover(record_init=record_init)
         if self.native_control is not None:
+            started=time.perf_counter() if record_init else None
             self.native_control.bind(self.core,self.dma)
+            if started is not None:
+                _record_stage(self.timing,"native_control_bind",started)
 
     def snapshot(self):
         return {"core":{name:int(self.core.read(addr)) for name,addr in (
@@ -142,9 +176,10 @@ class TileAccelerator:
             ("frame",0x3c),("job",0x40),("expected_in",0x48),("expected_out",0x4c),
             ("received",0x50),("sent",0x54))},"dma":self.dma.snapshot()}
 
-    def recover(self):
+    def recover(self,record_init=False):
         # Stop DDR access first. The CNN BD has no external stream FIFO; core
         # RESET flushes both byte adapters, engines, and all data-valid tags.
+        started=time.perf_counter() if record_init else None
         self.dma.reset()
         self.core.write(8,2)
         deadline=time.monotonic()+self.timeout
@@ -152,6 +187,8 @@ class TileAccelerator:
             if time.monotonic()>=deadline:
                 raise TimeoutError("core reset timeout")
         self.dma.start()
+        if started is not None:
+            _record_stage(self.timing,"initial_recovery",started)
 
     def _guard(self,operation):
         try:
@@ -166,7 +203,7 @@ class TileAccelerator:
                 state["reset_error"]=str(reset_error)
                 try:
                     self.overlay.download()
-                    self._attach()
+                    self._attach(record_init=False)
                     recovered=True
                 except BaseException as reload_error:
                     state["reload_error"]=str(reload_error)
@@ -332,16 +369,32 @@ class TileAccelerator:
     def close(self):
         if self.closed:
             return
+        close_started=time.perf_counter()
         try:
-            self.dma.reset()
-            self.core.write(8,2)
-        except BaseException:
-            # Reconfiguration must succeed before active DDR can be released.
-            self.overlay.download()
-        for buffer in (self.rx,self.tx):
-            if buffer is not None:
-                buffer.freebuffer()
-        self.rx=None; self.tx=None; self._rx_view=None; self._tx_view=None; self.closed=True
+            started=time.perf_counter()
+            try:
+                self.dma.reset()
+                self.core.write(8,2)
+            except BaseException:
+                # Reconfiguration must succeed before active DDR can be released.
+                _record_stage(self.timing,"close_dma_and_core_reset",started,close=True)
+                started=time.perf_counter()
+                try:
+                    self.overlay.download()
+                finally:
+                    _record_stage(self.timing,"close_error_overlay_download",started,close=True)
+            else:
+                _record_stage(self.timing,"close_dma_and_core_reset",started,close=True)
+            started=time.perf_counter()
+            try:
+                for buffer in (self.rx,self.tx):
+                    if buffer is not None:
+                        buffer.freebuffer()
+            finally:
+                _record_stage(self.timing,"close_dma_buffer_free",started,close=True)
+            self.rx=None; self.tx=None; self._rx_view=None; self._tx_view=None; self.closed=True
+        finally:
+            self.timing["elapsed"]["device_close_total"]=time.perf_counter()-close_started
 
     def __enter__(self): return self
     def __exit__(self,*args): self.close()
