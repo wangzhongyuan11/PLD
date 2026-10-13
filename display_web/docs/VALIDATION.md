@@ -49,10 +49,10 @@
 
 ## 可选常驻 B worker 隔离板测（2026-10-13）
 
-- 初版连续小/小/大三张真实 JPEG 的 head 和六视图虽全等，但每帧 worker 均退出、启动耗时约 9.6 秒，未通过常驻验收。修复版使用长生命周期 launcher 线程，候选部署在 `PLD_Web_worker_candidate_v2_20261013` 和 `final_fastq_worker_candidate_v2_20261013`，正式服务未切换。
+- 初版连续小/小/大三张真实 JPEG 的 head 和六视图虽全等，但每帧 worker 均退出、启动耗时约 9.6 秒，未通过常驻验收。修复版使用长生命周期 launcher 线程，候选部署在 `PLD_Web_worker_candidate_v2_20261013` 和 `final_fastq_worker_candidate_v2_20261013`；该轮验收时正式服务尚未切换。
 - 修复版小/小/大/HDMI显示停止/小共四帧均得到历史相同的原始 head 和六张视图解码像素；四次 worker PID 同为 5468，后三次 `persistent_worker_startup == 0`，回复时 worker 均存活。请求到 ZIP 完成依次 19.003、8.614、20.367、10.842 秒。HDMI 软件就绪 37.736 秒，停止后下一帧正确；物理画面未目视。
 - 候选服务正常退出无残留 worker。另一次单图后强制 SIGKILL 候选网页进程，原 worker PID 6399 随后消失；正式 `pld-web.service` 恢复并返回 HTTP 200。强杀发生在推理完成后，没有验证 DMA 正在运行时的硬件恢复。
-- 机器证据分别为 `out/board_sync_20261012/worker_candidate_board_audit_v2_20261013.json` 与 `out/board_sync_20261012/worker_parent_kill_audit_v2_20261013.json`；输出性能基线、版本哈希和统计口径见 [C_WEB_PERFORMANCE](../../docs/validation/C_WEB_PERFORMANCE.md)。仍需正式服务同图交错重复、长时内存和错误路径验收后才能采用。
+- 机器证据分别为 `out/board_sync_20261012/worker_candidate_board_audit_v2_20261013.json` 与 `out/board_sync_20261012/worker_parent_kill_audit_v2_20261013.json`；输出性能基线、版本哈希和统计口径见 [C_WEB_PERFORMANCE](../../docs/validation/C_WEB_PERFORMANCE.md)。此时仍需正式服务同图交错重复、长时内存和错误路径验收。
 
 ## 六视图 PNG 有界双线程与 level 1（2026-10-14）
 
@@ -61,4 +61,5 @@
 - 回归新增两项真实并发路径测试：一是用 `Image.Image.save` 补丁加双方 barrier 证明六次保存确实分布在两个非请求线程上重叠执行、每个视图只保存一次、解码像素与 ZIP 顺序不变（若退化为串行保存，barrier 3 秒超时会使任务失败而非挂起）；二是强制某一视图保存抛错，验证任务 error、无 `results.zip`/`report.json`/`job.json`、不进入历史，且两个保存线程在任务报错前都已退出。`python -m unittest discover -s tests -v` 通过 43 项；`node tests/test_browser_access.cjs`、目标文件 `py_compile`、`git diff --check` 均通过。
 - 固定输入主机基准（Pillow 12.0.0/22 逻辑 CPU，每档 3 次，JSON `out/display_web/png_parallel_level1_host_benchmark_20261014.json`）：1022x767 external 中位 0.169052 s、`png_save` 合计中位 0.12131 s、PNG 共 2,609,829 B、ZIP 2,612,026 B；2125x1411 为 0.500089 s、0.381104 s、8,528,969 B、8,531,166 B。此前 level 3+串行候选每档 5 次的外部中位为 0.30187/0.88966 s，仅作同机方向参考（次数不同），不是板端收益。
 - GPT 提供的板上 CPU-only 微测（`out/board_sync_20261012/png_level_sweep_20261013.json`，详见 [C_WEB_PERFORMANCE](../../docs/validation/C_WEB_PERFORMANCE.md)）：同大图六 PNG level 3 串行中位 11.699 s；双线程 level 3 6.279 s/6,723,245 B，level 1 4.419 s/7,275,827 B（+8.2%），level 0 虽 2.658 s 但 34,844,376 B 故不采用；各档解码像素一致。本轮据此选择双线程 + level 1，接受约 8% 的 PNG/ZIP 体积增长换取写出速度。
-- 隔离候选 `PLD_Web_png_worker_candidate_v3_20261014` 用小/大/大/小/小/大六次真实 HTTP JPEG→FPGA→C 验证：head 与六视图像素均与历史全等，worker PID 19206 不变、后五帧零冷启动。热小图请求到 ZIP 中位 7.208 秒、大图 14.291 秒；前版常驻候选为 8.727/20.669 秒。板上逐包核对 ZIP 顺序、CRC 和压缩参数；六帧 RSS 69.0～76.8 MiB 仅属短序列证据。另经四帧推理/HDMI 软件切换验收，停止后继续推理正确；板卡未接显示器。机器记录见 `out/board_sync_20261012/png_worker_candidate_audit_v3_20261014.json` 和 `png_worker_hdmi_audit_v3_20261014.json`。正式服务仍未切换；B 在线 P95、长期内存和物理 HDMI 验收仍待完成。
+- 隔离候选 `PLD_Web_png_worker_candidate_v3_20261014` 用小/大/大/小/小/大六次真实 HTTP JPEG→FPGA→C 验证：head 与六视图像素均与历史全等，worker PID 19206 不变、后五帧零冷启动。热小图请求到 ZIP 中位 7.208 秒、大图 14.291 秒；前版常驻候选为 8.727/20.669 秒。板上逐包核对 ZIP 顺序、CRC 和压缩参数；六帧 RSS 69.0～76.8 MiB 仅属短序列证据。另经四帧推理/HDMI 软件切换验收，停止后继续推理正确；板卡未接显示器。机器记录见 `out/board_sync_20261012/png_worker_candidate_audit_v3_20261014.json` 和 `png_worker_hdmi_audit_v3_20261014.json`。该隔离测试时正式服务尚未切换。
+- 后续24帧交错小/大图审计全部正确、同一PID且RSS未持续增长。正式服务经版本化drop-in切换后，四张图head/六视图/ZIP与HDMI软件切换复验通过；实际rollback到旧服务、再次apply后真实图仍正确，原访问码未变、历史从0增至5条。机器证据见 `out/board_sync_20261012/png_worker_stress_v3_20261014.json`、`formal_web_v3_audit_20261014.json`、`formal_web_reapply_v3_20261014.json`。B在线P95≤1秒、PL后处理、物理HDMI目视和无限期内存稳定性仍未验收。
