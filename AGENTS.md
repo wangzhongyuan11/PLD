@@ -4,7 +4,7 @@
 
 在 PYNQ-Z2 上将 ISIC Task 1 皮肤镜图像经 PS 输入、DDR/DMA 搬运、PL INT8 TinyUNet 推理，交给后处理与 HDMI/UI 展示；旧基线使用2016数据，最终模型使用2016/2017训练与开发口径。目标与验收条件见 `docs/PLAN.md`；题目依据与分工分析见 `docs/PROJECT_SCOPE.md`。
 
-**最终模型状态**：用户指定 `role_a_final` 为A最终交付（`soup_v5_a050`，不采用A21 QAT），授权B实现、加速、真实板测和交付。默认已切换最终模型，`reference/final_manifest.json` 锚定124文件，旧manifest及部署保留。ABI 1.2最终采用版已完成dev638全部638图原始JPEG的PL head逐图一致、1000帧/1483.827秒、三类故障恢复和部署审查；核心1.422 FPS，在线B P95 1.265720秒，项目自定≤1秒目标仍未通过。最新事实见 `docs/FINAL_MODEL_STATUS.md`，初始审查见 `docs/history/ROLE_A_FINAL_REVIEW.md`。dev638为开发集，不称独立测试集。2026-10-13用户重新选择本项目现有 Codex CLI + GLM 流程：GPT负责规划与独立审查，GLM通过固定项目会话实施；恢复会话前按上方 Optional GLM project execution 检查状态，不新开会话。
+**最终模型状态**：用户指定 `role_a_final` 为A最终交付（`soup_v5_a050`，不采用A21 QAT），授权B实现、加速、真实板测和交付。默认已切换最终模型，`reference/final_manifest.json` 锚定124文件，旧manifest及部署保留。ABI 1.2最终采用版已完成dev638全部638图原始JPEG的PL head逐图一致、1000帧/1483.827秒、三类故障恢复和部署审查；核心1.422 FPS，在线B P95 1.265720秒，旧项目自定≤1秒目标仍未通过。**2026-10-14新目标**：优先改造B的数据流与PS/DMA/PL，已解码RGB到独立head及二值掩膜持续≥4 FPS；网页单图从上传到保留六张全分辨率PNG的ZIP可下载≤5秒。当前位流与数据流均未达标，证据及验收口径见`docs/validation/PERFORMANCE_4FPS_5S.md`。最新模型事实见 `docs/FINAL_MODEL_STATUS.md`，初始审查见 `docs/history/ROLE_A_FINAL_REVIEW.md`。dev638为开发集，不称独立测试集。2026-10-13用户重新选择本项目现有 Codex CLI + GLM 流程：GPT负责规划与独立审查，GLM通过固定项目会话实施；恢复会话前按上方 Optional GLM project execution 检查状态，不新开会话。
 
 以用户最新分工为准，`docs/requirements/work_split.docx` 中原属 C 的 PS 交互工作已转给 B：
 
