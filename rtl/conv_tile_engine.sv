@@ -38,7 +38,7 @@ module conv_tile_engine (
   input logic [12:0] aux_output_addr,
   input logic [7:0] aux_output_data
 );
-  typedef enum logic [3:0] {IDLE, CFG_PLANE, CFG_SIZE, CFG_CHECK, ISSUE, WAIT_MAC, QUANT, DRAIN, NEXT_PIXEL} state_t;
+  typedef enum logic [3:0] {IDLE, CFG_PLANE, CFG_SIZE, CFG_CHECK, ISSUE, WAIT_MAC, NEXT_PIXEL, Q_WAIT} state_t;
   state_t state;
   logic [15:0] iw, oh, ow, x, y;
   logic [15:0] in_plane, out_plane;
@@ -49,7 +49,7 @@ module conv_tile_engine (
   logic [14:0] read_input_addr;
   logic [10:0] read_weight_addr, weight_base, weights_per_group;
   logic [12:0] out_pixel, out_group_base, write_output_addr;
-  logic [3:0] lanes, quant_sent, quant_received;
+  logic [3:0] lanes;
   logic read_valid, read_first, read_last;
   logic [3:0] read_lane_mask;
   logic [31:0] input_words, mac_input;
@@ -57,6 +57,15 @@ module conv_tile_engine (
   logic [31:0] mac_input_q;
   logic [255:0] mac_weights_q,mac_bias_q;
   logic mac_valid_q,mac_first_q,mac_last_q;
+  // Background Q24 drain: address/channel tags are latched when each MAC
+  // result is accepted, so requant writes stay exact while the state machine
+  // already issues the next pixel's dot product. Exactly one pixel drains at
+  // a time; the next result only leaves the MAC after the previous drain
+  // finished, so no extra memory or second requant unit is needed.
+  logic q_busy;
+  logic [3:0] q_sent, q_received, q_lanes;
+  logic [12:0] q_addr;
+  logic [6:0] q_channel;
   logic [31:0] bias [64];
   logic [31:0] multiplier [64];
   logic mac_ready, mac_valid, mac_overflow;
@@ -91,10 +100,10 @@ module conv_tile_engine (
   assign shared_input_re = state==ISSUE || (aux_input_re && !busy);
   assign shared_input_addr = state==ISSUE ?
     (fused && deep_group ? deep_read_addr[14:0] : read_input_addr) : aux_input_addr;
-  assign conv_output_we = quant_valid && (state==QUANT || state==DRAIN);
+  assign conv_output_we = quant_valid;
   assign shared_output_we = conv_output_we || (aux_output_we && !busy);
-  assign shared_output_bank = conv_output_we ? quant_received[2:0] : aux_output_bank;
-  assign shared_output_addr = conv_output_we ? write_output_addr : aux_output_addr;
+  assign shared_output_bank = conv_output_we ? q_received[2:0] : aux_output_bank;
+  assign shared_output_addr = conv_output_we ? q_addr : aux_output_addr;
   assign shared_output_data = conv_output_we ? quant_value : aux_output_data;
 
   for (genvar b=0; b<4; b++) begin : input_banks
@@ -151,10 +160,11 @@ module conv_tile_engine (
       end
     end
     quant_multiplier = 0;
-    if (quant_sent < lanes) quant_multiplier = multiplier[out_channel+quant_sent];
+    if (q_busy && q_sent < q_lanes) quant_multiplier = multiplier[q_channel+q_sent[2:0]];
   end
-  // Break the BRAM/lane-mask -> DSP multiplier path. The issue loop never
-  // starts a second dot product until the first MAC/requant result is drained.
+  // Break the BRAM/lane-mask -> DSP multiplier path. The issue loop may start
+  // the next pixel's dot product while requant drains, but a second RESULT is
+  // only accepted (m_ready) after that drain completes.
   always_ff @(posedge aclk) begin
     if (!aresetn) mac_valid_q<=0;
     else begin
@@ -168,11 +178,29 @@ module conv_tile_engine (
   conv_mac_array mac (
     .aclk, .aresetn, .s_input(mac_input_q), .s_weights(mac_weights_q), .s_bias(mac_bias_q),
     .s_first(mac_first_q), .s_last(mac_last_q), .s_valid(mac_valid_q), .s_ready(mac_ready),
-    .m_acc(mac_acc), .m_overflow(mac_overflow), .m_valid(mac_valid), .m_ready(state==WAIT_MAC)
+    .m_acc(mac_acc), .m_overflow(mac_overflow), .m_valid(mac_valid),
+    .m_ready(state==WAIT_MAC && !q_busy)
   );
+  // One accepted result per drain: latched tags drive the write port below,
+  // independent of the pixel registers that ISSUE may already be advancing.
+  always_ff @(posedge aclk) begin
+    if (!aresetn) begin
+      q_busy <= 0; q_sent <= 0; q_received <= 0; q_lanes <= 0;
+    end else if (!q_busy) begin
+      if (state==WAIT_MAC && mac_valid && !mac_overflow) begin
+        held_acc <= mac_acc;
+        q_busy <= 1; q_sent <= 0; q_received <= 0;
+        q_lanes <= lanes; q_addr <= write_output_addr; q_channel <= out_channel;
+      end
+    end else begin
+      if (quant_ready && q_sent < q_lanes) q_sent <= q_sent + 1'b1;
+      if (quant_valid) q_received <= q_received + 1'b1;
+      if (quant_valid && q_received == q_lanes-1) q_busy <= 0;
+    end
+  end
   requant_q24 requant (
-    .aclk, .aresetn, .s_acc(held_acc[quant_sent[2:0]*32+:32]),
-    .s_multiplier(quant_multiplier), .s_valid(state==QUANT && quant_sent<lanes),
+    .aclk, .aresetn, .s_acc(held_acc[q_sent[2:0]*32+:32]),
+    .s_multiplier(quant_multiplier), .s_valid(q_busy && q_sent<q_lanes),
     .s_ready(quant_ready), .m_value(quant_value), .m_valid(quant_valid), .m_ready(1'b1)
   );
 
@@ -282,22 +310,16 @@ module conv_tile_engine (
             end
           end
         end
-        WAIT_MAC: if (mac_valid) begin
+        // A result only leaves the MAC when the background drain is idle, so
+        // overflow still fails the run before any of this pixel's writes and
+        // every previously accepted pixel has fully written its output RAM.
+        WAIT_MAC: if (mac_valid && !q_busy) begin
           if (mac_overflow) begin error<=2; done<=1; state<=IDLE; end
-          else begin
-            held_acc<=mac_acc; quant_sent<=0; quant_received<=0; state<=QUANT;
-          end
+          else state<=NEXT_PIXEL;
         end
-        QUANT, DRAIN: begin
-          if (state==QUANT && quant_ready) begin
-            quant_sent<=quant_sent+1'b1;
-            if (quant_sent==lanes-1) state<=DRAIN;
-          end
-          if (quant_valid) begin
-            quant_received<=quant_received+1'b1;
-            if (quant_received==lanes-1) state<=NEXT_PIXEL;
-          end
-        end
+        // The final pixel drains in the background; done waits for the last
+        // write so readback can never race an in-flight requant result.
+        Q_WAIT: if (!q_busy) begin done<=1; state<=IDLE; end
         NEXT_PIXEL: begin
           ci_group<=0; channel_offset<=0; row_offset<=0; kx<=0; ky<=0;
           // Every new pixel restarts in skip group 0; deep_row/deep_col and
@@ -305,7 +327,7 @@ module conv_tile_engine (
           deep_group<=0;
           read_weight_addr<=weight_base;
           if (x==ow-1 && y==oh-1) begin
-            if (out_channel+8>=co) begin done<=1; state<=IDLE; end
+            if (out_channel+8>=co) begin state<=Q_WAIT; end
             else begin
               out_channel<=out_channel+8; out_group_base<=out_group_base+out_plane;
               lanes <= co-out_channel-8>=8 ? 8 : co-out_channel-8;
