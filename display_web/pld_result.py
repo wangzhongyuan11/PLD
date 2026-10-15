@@ -154,7 +154,7 @@ class SegmentationResult:
         return np.asarray(canvas).copy()
 
 
-def load_result(result_path, image_path=None):
+def load_result(result_path, image_path=None, *, decoded_rgb=None):
     """Read frame_XXXXXX.json + .bin; verify source file identity if supplied."""
     path = Path(result_path)
     if path.suffix.lower() not in (".json", ".bin"):
@@ -165,11 +165,13 @@ def load_result(result_path, image_path=None):
     if len(raw) != 65536:
         raise ValueError("B head file must contain exactly 65536 bytes")
     rgb = None
+    if decoded_rgb is not None and image_path is None:
+        raise ValueError("Cached RGB requires its original source file")
     if image_path is not None:
         source = Path(image_path)
         if hashlib.sha256(source.read_bytes()).hexdigest() != metadata["input_metadata"]["image_sha256"]:
             raise ValueError("Original image SHA256 mismatch; select the JPEG used for this result")
-        rgb = read_rgb(source)
+        rgb = read_rgb(source) if decoded_rgb is None else require_rgb(decoded_rgb)
     return SegmentationResult(np.frombuffer(raw, dtype=np.int8).reshape(1, 1, 256, 256), metadata, rgb)
 
 

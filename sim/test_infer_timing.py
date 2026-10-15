@@ -298,6 +298,7 @@ class MainProfileTests(unittest.TestCase):
 
             def __init__(self, bit, **kwargs):
                 calls["device"] += 1
+                self.closed = False
                 self.timing = {
                     "init_stages": {"pynq_import": 0.01},
                     "close_stages": {},
@@ -305,6 +306,7 @@ class MainProfileTests(unittest.TestCase):
                 }
 
             def close(self):
+                self.closed = True
                 self.timing["close_stages"]["close_dma_buffer_free"] = 0.001
                 self.timing["elapsed"]["device_close_total"] = 0.002
 

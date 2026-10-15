@@ -10,6 +10,10 @@ from time import perf_counter
 
 import numpy as np
 from PIL import Image, ImageDraw
+try:
+    import cv2
+except ImportError:
+    cv2 = None
 from pld_hdmi import binary_mask, require_rgb, read_rgb, fit_rgb
 from pld_result import load_result
 
@@ -21,6 +25,13 @@ def extract_contour(mask, connectivity=8, thickness=1):
         raise ValueError("connectivity must be 4 or 8")
     if type(thickness) is not int or not 1 <= thickness <= 32:
         raise ValueError("thickness must be an integer in [1,32]")
+    if cv2 is not None:
+        kernel = np.ones((3, 3), dtype=np.uint8)
+        if connectivity == 4:
+            kernel[0, 0] = kernel[0, 2] = kernel[2, 0] = kernel[2, 2] = 0
+        inner = cv2.erode(m.astype(np.uint8), kernel, iterations=thickness,
+                          borderType=cv2.BORDER_CONSTANT, borderValue=0)
+        return m & (inner == 0)
     inner = m.copy()
     offsets = [(-1, 0), (1, 0), (0, -1), (0, 1)]
     if connectivity == 8:
@@ -56,10 +67,14 @@ def process(mask, image=None, connectivity=8, thickness=2):
     binary_mask(m, rgb.shape[:2])
     outlined = rgb.copy()
     outlined[edge] = (255, 220, 0)
-    cutout = rgb.copy()
-    cutout[~m] = 0
-    stats = {"foreground_pixels": int(m.sum()), "image_pixels": int(m.size),
-             "area_percent": float(100*m.sum()/m.size), "boundary_pixels": int(edge.sum()),
+    if cv2 is not None:
+        cutout = cv2.bitwise_and(rgb, rgb, mask=m.astype(np.uint8))
+    else:
+        cutout = rgb.copy()
+        cutout[~m] = 0
+    count = int(np.count_nonzero(m))
+    stats = {"foreground_pixels": count, "image_pixels": int(m.size),
+             "area_percent": float(100*count/m.size), "boundary_pixels": int(np.count_nonzero(edge)),
              "connectivity": connectivity, "inward_thickness_pixels": thickness,
              "original_rgb_supplied": image is not None,
              "cpu_postprocess_seconds": perf_counter()-started,

@@ -114,3 +114,14 @@
 | 全部 | 1000 | 0.758 s | **1.266 s** | **80** |
 
 当前项目网页上传上限为 300 万像素，表中的超时集中在离线批量入口的大图，不能因此声称网页任务已实现实时帧率。最慢的 `ISIC_0014688` 为 6648×4398，在线 B 1.453 秒，其中前处理 0.663 秒、PLGraph 0.790 秒；其 JPEG 解码另需 2.987 秒。125 MHz 版本每帧 `compute_cycles=32,096,576`，即 0.256773 秒；即使不现实地从每帧在线耗时**直接扣除全部计算周期**，总体 P95 仍为 **1.008948 秒**，仍有 66 帧超过 1 秒。真实运行中计算与 DMA 等待有重叠，所以这是对“只加速卷积”的乐观上界，不是预计收益。下一候选短测应至少交错覆盖 `ISIC_0014688`、`ISIC_0014784`、`ISIC_0014833` 和一张 300 万～1000 万像素图，先证明相同 JPEG 的量化输入逐字节一致并量到大图的实质收益；最终仍按 dev638、1000 帧及故障恢复验收。复算脚本和机器结果保存在忽略目录 `out/board_sync_20261012/analyze_b_tail_20261014.py`、`b_tail_stratification_20261014.json`。
+### 本轮仅本地同步（2026-10-15）
+
+本轮未连接板卡。将当前未跟踪导入目录 `PLD_2026-10-14_修改汇总/01_最新源码_预览v2` 中的最新网页/B 执行代码合入本仓库活跃源码。汇总根 `FILE_SHA256.json` 所列 68 个文件先做只读 SHA256 校验，全部存在且匹配；随后只把源码/测试对齐到 `display_web/` 与 `board/`，未复制增量安装器、板端整体 `deployment_manifest.json` 或乱码历史说明。本地 `start_board.sh` 继续指向已验证的 `final_mode6_fastq_20260929_v3`，未采用包内旧的 `c_v3_team` 默认路径。
+
+本地活跃源码现在包含：任务先发布最长边 800 像素预览，完整导出包和 ZIP/HDMI 继续门控到完整结果；`InferenceSession` 在常驻 worker 内复用冻结模型与 `TileAccelerator`，显式 `release` 前不把 DMA 交给 HDMI，缓存 worker 退出会进入 fault 而不是静默重启；PNG 默认可用 `fast_sub`（Sub 滤波 + zlib RLE level 1）并以 Pillow level 1 作为回退；`RuntimeVerifier` 在 Linux 属性未变时复用哈希结果，属性变化触发全量 SHA256，清单 identity 变化立即拒绝并要求重启。本轮只做本地实现同步，未执行任何板端部署、HTTP 实测、FPGA 加载或 HDMI 验证。
+
+主机验证覆盖预览门控、上传解码、会话复用、PNG 逐像素等价和错误路径；JavaScript 语法/状态机测试通过。`scripts/deploy_pld_web_candidate.py` 中的旧目录路径和 pins 只描述 2026-10-14 已验收快照；同一路径后续打过补丁不能继承那些字节哈希和板测证据，也不能用该脚本校验本次已前进的活跃源码。后续若决定上板，必须先制作新的隔离候选、重验哈希与行为，再更新部署 pin。
+
+用户提供 `PLD_2026-10-14_修改汇总/04_测试报告/用户提供/PLD_timing_2ce70135.json`，记录 `preview-first-v2` 在 `ISIC_0000062.jpg` 上的一次真实运行：浏览器 `click_to_preview=3.6594s`、`until_done=6.0495s`，服务端 `request_to_job_complete=5.75984244s`，`b_seconds=0.822514965s`，且报告了模型/硬件复用。该文件证明用户已运行过 v2；本轮未访问板卡，不能核实当前目录/服务内容。单次报告不构成网页≤5秒或 B≥4FPS 验收。
+
+硬件对应关系：汇总 runtime 清单中 `overlay/dma_top.bit` SHA256 `0df9c718172d2d496f28a93719a2858d3a9b366ea9145d58bf0a3788687f0baf`、`overlay/dma_top.hwh` SHA256 `7adfbe2d757dd09f5dab77562b2fb4db2ef86435db2fb60bf3ca85a02281da13`，与 `delivery/c_v3/runtime.tar.gz` 完全一致。该冻结 build manifest 的 `sources` 对比本地仅 `rtl/conv_tile_engine.sv` 不同；该差异是本地 HEAD `3de993e` 的 MAC/Q24 重叠实验，不能称为已部署或已验时序。`board/native/rgb_resize.c`、`reference/native_resize.py`、`reference/pillow_resize.py` 与冻结包只有 CR/LF 字节差异，去除 CR 后代码一致，本轮不修改。

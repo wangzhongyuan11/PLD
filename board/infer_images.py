@@ -134,12 +134,96 @@ def _emit_timing_event(event, profile, **fields):
                                         separators=(",", ":")), flush=True)
 
 
-def main(argv=None):
+class InferenceSession:
+    """Single-owner cache. Only the serial worker may keep this between jobs.
+
+    Full runtime hashes are still checked by the web supervisor per request.
+    No cache is reused across a changed manifest or failed inference.
+    """
+    def __init__(self):
+        self.model = None
+        self.model_key = None
+        self.hardware_key = None
+        self.stack = None
+        self.device = self.resizer = None
+        self.failed = False
+        self.active = False
+        self.last_reuse = {}
+
+    def release_hardware(self):
+        if self.active:
+            raise RuntimeError("cannot release hardware during inference")
+        stack, self.stack = self.stack, None
+        self.device = self.resizer = None
+        self.hardware_key = None
+        if stack is not None:
+            try:
+                stack.close()
+            except BaseException:
+                self.failed = True
+                self.model = None
+                self.model_key = None
+                raise
+
+    def close(self):
+        try:
+            self.release_hardware()
+        finally:
+            self.model = None
+            self.model_key = None
+
+    @contextmanager
+    def resources(self, args, startup):
+        if self.failed or self.active:
+            raise RuntimeError("inference session failed or already active")
+        model_key = str(args.model.resolve())
+        hardware_key = (str(args.bit.resolve()), args.native_copy,
+                        args.native_control, args.tx_range_sync,
+                        args.native_resize, args.parallel_resize)
+        model_reused = self.model is not None and self.model_key == model_key
+        hardware_reused = self.device is not None and self.hardware_key == hardware_key
+        try:
+            if not model_reused:
+                self.release_hardware()
+                hardware_reused = False
+                with startup.stage("model_init_and_manifest_validation"):
+                    self.model = Model(args.model)
+                self.model_key = model_key
+            if not hardware_reused:
+                self.release_hardware()
+                self.stack = ExitStack()
+                with startup.stage("resize_backend_init"):
+                    if args.native_resize:
+                        from native_resize import NativeResize
+                        self.resizer = self.stack.enter_context(NativeResize(args.native_resize))
+                    else:
+                        self.resizer = self.stack.enter_context(ParallelBilinear()) if args.parallel_resize else None
+                self.device = self.stack.enter_context(TileAccelerator(
+                    args.bit, native_copy=args.native_copy,
+                    native_control=args.native_control, tx_range_sync=args.tx_range_sync))
+                self.hardware_key = hardware_key
+            else:
+                # Do not report cold initialization times again on a warm request.
+                self.device.timing = {"init_stages": {}, "close_stages": {}, "elapsed": {}}
+            self.last_reuse = {"model_reused": model_reused, "hardware_reused": hardware_reused}
+            self.active = True
+            try:
+                yield self.model, self.resizer, self.device
+            finally:
+                self.active = False
+        except BaseException:
+            self.failed = True
+            self.close()
+            raise
+
+
+def main(argv=None, session=None):
     main_entry = time.perf_counter()
     startup = StageTimer()
     with startup.stage("argument_parse"):
         parser = argparse.ArgumentParser(description=__doc__)
         parser.add_argument("images", type=Path, nargs="+")
+        parser.add_argument("--warmup-only", action="store_true", help="initialize session without reading images or creating outputs")
         parser.add_argument("--bit", type=Path, required=True)
         parser.add_argument("--model", type=Path, default=DEFAULT_MODEL_ROOT)
         parser.add_argument("--output", type=Path, required=True)
@@ -157,20 +241,15 @@ def main(argv=None):
     # A result directory is an immutable run, so old outputs cannot be confused
     # with a partially completed retry. Hardware failures propagate nonzero.
     with startup.stage("output_directory_create"):
-        args.output.mkdir(parents=True, exist_ok=False)
-    # Model.__init__ loads the frozen handoff and validates its complete manifest;
-    # reference/tinyunet.py remains outside this instrumentation change.
-    with startup.stage("model_init_and_manifest_validation"):
-        model = Model(args.model)
-    with ExitStack() as stack:
-        with startup.stage("resize_backend_init"):
-            if args.native_resize:
-                from native_resize import NativeResize
-                resizer = stack.enter_context(NativeResize(args.native_resize))
-            else:
-                resizer = stack.enter_context(ParallelBilinear()) if args.parallel_resize else None
-        device = stack.enter_context(TileAccelerator(args.bit, native_copy=args.native_copy,
-                        native_control=args.native_control, tx_range_sync=args.tx_range_sync))
+        if not args.warmup_only:
+            args.output.mkdir(parents=True, exist_ok=False)
+    # A CLI invocation retains the original close-at-end behavior. Only the
+    # worker passes a session and owns its explicit release before HDMI.
+    with ExitStack() as ownership:
+        if session is None:
+            session = InferenceSession()
+            ownership.callback(session.close)
+        model, resizer, device = ownership.enter_context(session.resources(args, startup))
         with startup.stage("pl_graph_setup"):
             graph = PLGraph(model, device, fuse_maps=args.fuse_maps, fuse_decoder=args.fuse_decoder)
         ready = time.perf_counter()
@@ -181,7 +260,7 @@ def main(argv=None):
             startup.record_elapsed("best_effort_process_entry_to_ready",
                                    PROCESS_ENTRY_AGE + (ready - MODULE_ENTRY))
         _emit_timing_event("startup_ready", timing_profile(startup, device.timing))
-        for frame, source in enumerate(args.images, 1):
+        for frame, source in enumerate([] if args.warmup_only else args.images, 1):
             frame_timer = StageTimer()
             frame_started = frame_timer.created
             device.events = []
@@ -227,6 +306,7 @@ def main(argv=None):
                                        time.perf_counter() - frame_started)
             with frame_timer.stage("timing_profile_assembly"):
                 result["b_timing"] = timing_profile(startup, device.timing, frame_timer)
+                result["session_reuse"] = dict(session.last_reuse)
             with frame_timer.stage("json_report_write"):
                 stem.with_suffix(".json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
             frame_timer.record_elapsed("decode_through_json_write",
@@ -234,7 +314,8 @@ def main(argv=None):
             print(f"INFERENCE_PASS frame={frame} source={source.name} bytes={head.nbytes} online_B={result['online_b_seconds']:.6f}s", flush=True)
             _emit_timing_event("frame_complete", timing_profile(startup, device.timing, frame_timer),
                                frame=frame, source_name=source.name)
-    _emit_timing_event("device_closed", timing_profile(startup, device.timing))
+    _emit_timing_event("device_closed" if device.closed else "device_retained",
+                       timing_profile(startup, device.timing), **session.last_reuse)
 
 
 if __name__ == "__main__":

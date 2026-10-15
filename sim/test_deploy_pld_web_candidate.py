@@ -158,15 +158,20 @@ class SwitchFixture:
         self.python.parent.mkdir(parents=True)
         self.python.write_text("#!stub\n", encoding="utf-8")
 
+        candidate_c_hashes = {}
         for relative in deploy.CANDIDATE_C_SHA256:
             source = ROOT / "display_web" / relative
             target = self.candidate_c / relative
             target.parent.mkdir(parents=True, exist_ok=True)
-            # Copy the actual local bytes: GPT verified the board-isolated
-            # candidate is byte-identical to this working tree for all core
-            # files, including style.css with its single CRLF. Never normalize
-            # here, or the fixture would no longer represent the deployment.
+            # These are local source bytes used as a synthetic candidate. The
+            # production v3 pins remain frozen; this fixture maps its pins to
+            # the bytes it actually copied so drift tests still exercise the
+            # checker rather than an unrelated source-version mismatch.
             shutil.copyfile(source, target)
+            candidate_c_hashes[relative] = hashlib.sha256(target.read_bytes()).hexdigest()
+        self.candidate_c_patch = mock.patch.object(
+            deploy, "CANDIDATE_C_SHA256", candidate_c_hashes)
+        self.candidate_c_patch.start()
 
         manifest_files = {}
         contents = {"overlay/dma_top.bit": b"bit-bytes", "overlay/dma_top.hwh": b"hwh-bytes",
@@ -256,6 +261,7 @@ class SwitchFixture:
         self.server.server_close()
         self.thread.join(timeout=5)
         self.environment_patch.stop()
+        self.candidate_c_patch.stop()
         self.manifest_patch.stop()
         shutil.rmtree(self.root, ignore_errors=True)
 

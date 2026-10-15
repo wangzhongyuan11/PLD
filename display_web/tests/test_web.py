@@ -12,6 +12,7 @@ from pathlib import Path
 from unittest.mock import patch, Mock
 import numpy as np
 from PIL import Image
+import server
 from contour import extract_contour
 from pld_hdmi import fit_rgb
 from server import (Console, make_server, decode_upload, persistent_token,
@@ -24,6 +25,47 @@ def encoded(a):
 
 
 class WebTests(unittest.TestCase):
+    def test_reuse_releases_hardware_before_hdmi_launch(self):
+        j=self.wait(self.app.submit({'mode':'demo'})['id'])
+        self.app.board=True
+        order=[]
+        self.app.b_worker=Mock()
+        self.app.b_worker.release_hardware.side_effect=lambda log:order.append('release')
+        process=Mock();process.poll.return_value=None
+        def launch(*args,**kwargs):order.append('hdmi');return process
+        with patch('server.subprocess.Popen',side_effect=launch):
+            self.app.start_hdmi(j['id'],'mask')
+        self.assertEqual(order,['release','hdmi'])
+        self.app.hdmi=None
+
+    def test_reuse_release_failure_blocks_hdmi(self):
+        j=self.wait(self.app.submit({'mode':'demo'})['id'])
+        self.app.board=True;self.app.b_worker=Mock()
+        self.app.b_worker.release_hardware.side_effect=RuntimeError('release failed')
+        with patch('server.subprocess.Popen') as launch:
+            with self.assertRaises(RuntimeError):self.app.start_hdmi(j['id'],'mask')
+            launch.assert_not_called()
+        self.assertIsNotNone(self.app.fault)
+
+
+    def test_running_timing_and_parallel_png(self):
+        rgb=np.full((32,32,3),100,np.uint8)
+        mask=np.zeros((32,32),np.uint8);mask[8:24,8:24]=255
+        j=self.wait(self.app.submit({'mode':'mask','image':encoded(rgb),'mask':encoded(mask)})['id'])
+        self.assertEqual(j['state'],'done')
+        stats=j['statistics']; t=stats['final_stage_seconds']
+        self.assertGreaterEqual(t['png_batch_wall'],max(t['png_save'].values()))
+        self.assertGreaterEqual(t['job_total'],t['png_batch_wall'])
+        self.assertGreaterEqual(t['request_to_job_complete'],t['job_total'])
+        self.assertEqual(stats['output_png_workers'],2)
+        self.assertEqual(stats['output_zip_compression'],'stored')
+        restored=Console(self.temp.name,token='test',boot_id=self.app.boot_id)
+        self.assertEqual(restored.job(j['id'])['statistics']['final_stage_seconds'],t)
+        with zipfile.ZipFile(Path(self.temp.name)/j['id']/'results.zip') as z:
+            self.assertEqual(z.testzip(),None)
+            self.assertIn('png_batch_wall',json.loads(z.read('report.json'))['stage_seconds'])
+
+
     def test_history_survives_service_restart_but_not_reboot(self):
         self.app.boot_id = 'boot-a'
         j = self.wait(self.app.submit({'mode':'demo'})['id'])
@@ -131,116 +173,6 @@ class WebTests(unittest.TestCase):
         self.assertEqual(j["statistics"]["foreground_pixels"],400)
         self.assertFalse(j["statistics"].get("b_seconds"))
 
-    def test_output_pixels_zip_members_and_stage_timings(self):
-        rgb = (np.arange(40 * 60 * 3, dtype=np.uint32).reshape((40, 60, 3)) % 251).astype(np.uint8)
-        mask = np.zeros((40, 60), np.uint8); mask[9:31, 17:43] = 255
-        expected_contour = extract_contour(mask != 0, thickness=2)
-        j = self.wait(self.app.submit({"mode":"mask","image":encoded(rgb),
-                                        "mask":encoded(mask),"thickness":2})["id"])
-        self.assertEqual(j["state"],"done")
-        self.assertEqual(j["views"],["original","mask","contour","outlined","cutout","comparison"])
-        folder = Path(self.temp.name)/j["id"]
-        decoded = {name: np.asarray(Image.open(folder/(name+".png")))
-                   for name in j["views"]}
-        np.testing.assert_array_equal(decoded["original"], rgb)
-        np.testing.assert_array_equal(decoded["mask"], mask)
-        np.testing.assert_array_equal(decoded["contour"], expected_contour.astype(np.uint8)*255)
-        expected_outlined = rgb.copy(); expected_outlined[expected_contour] = (255, 220, 0)
-        np.testing.assert_array_equal(decoded["outlined"], expected_outlined)
-        expected_cutout = rgb.copy(); expected_cutout[mask == 0] = 0
-        np.testing.assert_array_equal(decoded["cutout"], expected_cutout)
-        expected_comparison = np.concatenate((fit_rgb(rgb,640,480), fit_rgb(expected_outlined,640,480)),axis=1)
-        np.testing.assert_array_equal(decoded["comparison"], expected_comparison)
-
-        expected_members = [name+".png" for name in j["views"]] + ["report.json"]
-        with zipfile.ZipFile(folder/"results.zip") as z:
-            self.assertEqual(z.namelist(), expected_members)
-            self.assertTrue(all(info.compress_type == zipfile.ZIP_STORED for info in z.infolist()))
-            self.assertEqual(z.read("report.json"), (folder/"report.json").read_bytes())
-        report = json.loads((folder/"report.json").read_text(encoding="utf-8"))
-        self.assertIn("png_save", report["stage_seconds"])
-        self.assertIn("zip_payload", report["stage_seconds"])
-        self.assertNotIn("report_write", report["stage_seconds"])
-        self.assertNotIn("zip_package", report["stage_seconds"])
-        self.assertNotIn("job_total", report["stage_seconds"])
-        self.assertIn("stage_timing_scope", report)
-        self.assertNotIn("final_stage_seconds", report)
-        stages = j["statistics"]["final_stage_seconds"]
-        self.assertEqual(set(stages["png_save"]), set(j["views"]))
-        self.assertGreater(j["statistics"]["processing_seconds"],0)
-        for name in ("report_write","zip_report_append","zip_package","job_total","request_to_job_complete"):
-            self.assertIn(name,stages)
-        self.assertGreaterEqual(stages["job_total"],j["statistics"]["processing_seconds"])
-        self.assertGreaterEqual(stages["request_to_job_complete"],stages["job_total"])
-        self.assertEqual(j["statistics"]["job_total_seconds"],stages["job_total"])
-        self.assertEqual(j["statistics"]["request_to_job_complete_seconds"],stages["request_to_job_complete"])
-        for value in stages["png_save"].values():
-            self.assertGreaterEqual(value,0)
-        self.assertEqual(j["statistics"]["output_png_compress_level"],PNG_COMPRESS_LEVEL)
-        self.assertEqual(j["statistics"]["output_png_workers"],PNG_SAVE_WORKERS)
-        self.assertEqual(j["statistics"]["output_zip_compression"],"stored")
-
-    def test_png_saves_overlap_on_two_bounded_worker_threads(self):
-        rgb = (np.arange(48 * 64 * 3, dtype=np.uint32).reshape((48, 64, 3)) % 199).astype(np.uint8)
-        mask = np.zeros((48, 64), np.uint8); mask[10:40, 12:52] = 255
-        image_payload = encoded(rgb); mask_payload = encoded(mask)
-        saves = []
-        # Every real save must rendezvous with a second saver. A regression to
-        # serial saving breaks the barrier after the bounded timeout, failing
-        # the job quickly instead of hanging the suite.
-        barrier = threading.Barrier(PNG_SAVE_WORKERS, timeout=3)
-        original_save = Image.Image.save
-
-        def coordinated_save(self, fp, *args, **kwargs):
-            saves.append((threading.get_ident(), Path(fp).name))
-            barrier.wait()
-            return original_save(self, fp, *args, **kwargs)
-
-        with patch.object(Image.Image, "save", coordinated_save):
-            j = self.wait(self.app.submit({"mode":"mask","image":image_payload,
-                                           "mask":mask_payload,"thickness":2})["id"])
-        self.assertEqual(j["state"],"done")
-        self.assertEqual(j["views"],list(VIEWS))
-        names = [name for _, name in saves]
-        self.assertEqual(sorted(names),sorted(name+".png" for name in VIEWS))
-        self.assertEqual(len(names),len(set(names)))
-        thread_ids = {thread_id for thread_id, _ in saves}
-        self.assertEqual(len(thread_ids),PNG_SAVE_WORKERS)
-        self.assertNotIn(threading.get_ident(),thread_ids)
-        folder = Path(self.temp.name)/j["id"]
-        np.testing.assert_array_equal(np.asarray(Image.open(folder/"original.png")),rgb)
-        np.testing.assert_array_equal(np.asarray(Image.open(folder/"mask.png")),mask)
-        with zipfile.ZipFile(folder/"results.zip") as z:
-            self.assertEqual(z.namelist(),[name+".png" for name in VIEWS]+["report.json"])
-
-    def test_png_save_failure_fails_job_without_package_or_history(self):
-        rgb = np.full((32,40,3),90,np.uint8)
-        mask = np.zeros((32,40),np.uint8); mask[8:24,10:30] = 255
-        image_payload = encoded(rgb); mask_payload = encoded(mask)
-        workers = []
-        original_save = Image.Image.save
-
-        def failing_save(self, fp, *args, **kwargs):
-            workers.append(threading.current_thread())
-            if Path(fp).name == "outlined.png":
-                raise OSError("simulated PNG encoder failure")
-            return original_save(self, fp, *args, **kwargs)
-
-        with patch.object(Image.Image, "save", failing_save):
-            j = self.wait(self.app.submit({"mode":"mask","image":image_payload,
-                                           "mask":mask_payload})["id"])
-        self.assertEqual(j["state"],"error")
-        self.assertIn("simulated PNG encoder failure",j["error"])
-        folder = Path(self.temp.name)/j["id"]
-        self.assertFalse((folder/"results.zip").exists())
-        self.assertFalse((folder/"report.json").exists())
-        self.assertFalse((folder/"job.json").exists())
-        self.assertEqual([item["id"] for item in self.app.history()["items"]],[])
-        # The bounded savers must all have exited before the job reports error.
-        for worker in set(workers):
-            worker.join(timeout=2)
-            self.assertFalse(worker.is_alive())
-
     def test_mismatch_and_invalid_mask(self):
         rgb=np.zeros((3,3,3),np.uint8)
         for mask in (np.zeros((2,2),np.uint8),np.full((3,3),2,np.uint8)):
@@ -290,7 +222,7 @@ class WebTests(unittest.TestCase):
         events=[]
         fake=Mock();fake.wait.return_value=1
         def spawn(*args,**kwargs): events.append("inference");return fake
-        with patch.object(self.app,"stop_hdmi",side_effect=lambda:events.append("stop_hdmi")), patch("server.verify_runtime"), patch("server.inference_command",return_value=["fake"]), patch("server.subprocess.Popen",side_effect=spawn):
+        with patch.object(self.app,"stop_hdmi",side_effect=lambda:events.append("stop_hdmi")), patch.object(self.app,"verify_deployment",return_value="full_sha256"), patch("server.inference_command",return_value=["fake"]), patch("server.subprocess.Popen",side_effect=spawn):
             j=self.wait(self.app.submit({"mode":"infer","image":base64.b64encode(raw.getvalue()).decode()})["id"])
         self.assertEqual(events,["stop_hdmi","inference"])
         self.assertEqual(j["state"],"error");self.assertIsNotNone(self.app.fault)
@@ -309,6 +241,120 @@ class WebTests(unittest.TestCase):
         self.app.hdmi=p
         with self.assertRaises(RuntimeError): self.app.stop_hdmi()
         self.assertIsNotNone(self.app.fault)
+
+
+    def test_output_pixels_zip_members_and_stage_timings(self):
+        rgb = (np.arange(40 * 60 * 3, dtype=np.uint32).reshape((40, 60, 3)) % 251).astype(np.uint8)
+        mask = np.zeros((40, 60), np.uint8); mask[9:31, 17:43] = 255
+        expected_contour = extract_contour(mask != 0, thickness=2)
+        j = self.wait(self.app.submit({"mode":"mask","image":encoded(rgb),
+                                        "mask":encoded(mask),"thickness":2})["id"])
+        self.assertEqual(j["state"],"done")
+        self.assertEqual(j["views"],["original","mask","contour","outlined","cutout","comparison"])
+        folder = Path(self.temp.name)/j["id"]
+        decoded = {name: np.asarray(Image.open(folder/(name+".png"))) for name in j["views"]}
+        np.testing.assert_array_equal(decoded["original"], rgb)
+        np.testing.assert_array_equal(decoded["mask"], mask)
+        np.testing.assert_array_equal(decoded["contour"], expected_contour.astype(np.uint8)*255)
+        expected_outlined = rgb.copy(); expected_outlined[expected_contour] = (255, 220, 0)
+        np.testing.assert_array_equal(decoded["outlined"], expected_outlined)
+        expected_cutout = rgb.copy(); expected_cutout[mask == 0] = 0
+        np.testing.assert_array_equal(decoded["cutout"], expected_cutout)
+        expected_comparison = np.concatenate((fit_rgb(rgb,640,480), fit_rgb(expected_outlined,640,480)),axis=1)
+        np.testing.assert_array_equal(decoded["comparison"], expected_comparison)
+
+        expected_members = [name+".png" for name in j["views"]] + ["report.json"]
+        with zipfile.ZipFile(folder/"results.zip") as z:
+            self.assertEqual(z.namelist(), expected_members)
+            self.assertTrue(all(info.compress_type == zipfile.ZIP_STORED for info in z.infolist()))
+            self.assertEqual(z.read("report.json"), (folder/"report.json").read_bytes())
+        report = json.loads((folder/"report.json").read_text(encoding="utf-8"))
+        self.assertIn("png_save", report["stage_seconds"])
+        self.assertIn("zip_payload", report["stage_seconds"])
+        self.assertNotIn("report_write", report["stage_seconds"])
+        self.assertNotIn("zip_package", report["stage_seconds"])
+        self.assertNotIn("job_total", report["stage_seconds"])
+        self.assertIn("stage_timing_scope", report)
+        self.assertNotIn("final_stage_seconds", report)
+        stages = j["statistics"]["final_stage_seconds"]
+        self.assertEqual(set(stages["png_save"]), set(j["views"]))
+        self.assertGreater(j["statistics"]["processing_seconds"],0)
+        for name in ("report_write","zip_report_append","zip_package","job_total","request_to_job_complete"):
+            self.assertIn(name,stages)
+        self.assertGreaterEqual(stages["job_total"],j["statistics"]["processing_seconds"])
+        self.assertGreaterEqual(stages["request_to_job_complete"],stages["job_total"])
+        self.assertEqual(j["statistics"]["job_total_seconds"],stages["job_total"])
+        self.assertEqual(j["statistics"]["request_to_job_complete_seconds"],stages["request_to_job_complete"])
+        for value in stages["png_save"].values():
+            self.assertGreaterEqual(value,0)
+        self.assertEqual(j["statistics"]["output_png_compress_level"],PNG_COMPRESS_LEVEL)
+        self.assertEqual(j["statistics"]["output_png_workers"],PNG_SAVE_WORKERS)
+        self.assertEqual(j["statistics"]["output_zip_compression"],"stored")
+
+    def test_png_saves_overlap_on_two_bounded_worker_threads(self):
+        rgb = (np.arange(48 * 64 * 3, dtype=np.uint32).reshape((48, 64, 3)) % 199).astype(np.uint8)
+        mask = np.zeros((48, 64), np.uint8); mask[10:40, 12:52] = 255
+        image_payload = encoded(rgb); mask_payload = encoded(mask)
+        saves = []
+        # Full-size exports run in the bounded pool and every one must rendezvous
+        # with a second saver; serial saving breaks the barrier after its bounded
+        # timeout instead of hanging. Preview thumbnails stay serial by contract.
+        barrier = threading.Barrier(PNG_SAVE_WORKERS, timeout=3)
+        original_save = server.save_lossless_png
+
+        def coordinated_save(array, path):
+            name = Path(path).name
+            if name.startswith("preview_"):
+                return original_save(array, path)
+            saves.append((threading.get_ident(), name))
+            barrier.wait()
+            return original_save(array, path)
+
+        with patch("server.save_lossless_png", side_effect=coordinated_save):
+            j = self.wait(self.app.submit({"mode":"mask","image":image_payload,
+                                           "mask":mask_payload,"thickness":2})["id"])
+        self.assertEqual(j["state"],"done")
+        self.assertEqual(j["views"],list(VIEWS))
+        names = [name for _, name in saves]
+        self.assertEqual(sorted(names),sorted(name+".png" for name in VIEWS))
+        self.assertEqual(len(names),len(set(names)))
+        thread_ids = {thread_id for thread_id, _ in saves}
+        self.assertEqual(len(thread_ids),PNG_SAVE_WORKERS)
+        self.assertNotIn(threading.get_ident(),thread_ids)
+        folder = Path(self.temp.name)/j["id"]
+        np.testing.assert_array_equal(np.asarray(Image.open(folder/"original.png")),rgb)
+        np.testing.assert_array_equal(np.asarray(Image.open(folder/"mask.png")),mask)
+        with zipfile.ZipFile(folder/"results.zip") as z:
+            self.assertEqual(z.namelist(),[name+".png" for name in VIEWS]+["report.json"])
+
+    def test_png_save_failure_fails_job_without_package_or_history(self):
+        rgb = np.full((32,40,3),90,np.uint8)
+        mask = np.zeros((32,40),np.uint8); mask[8:24,10:30] = 255
+        image_payload = encoded(rgb); mask_payload = encoded(mask)
+        workers = []
+        original_save = server.save_lossless_png
+
+        def failing_save(array, path):
+            name = Path(path).name
+            if not name.startswith("preview_"):
+                workers.append(threading.current_thread())
+            if name == "outlined.png":
+                raise OSError("simulated PNG encoder failure")
+            return original_save(array, path)
+
+        with patch("server.save_lossless_png", side_effect=failing_save):
+            j = self.wait(self.app.submit({"mode":"mask","image":image_payload,
+                                           "mask":mask_payload})["id"])
+        self.assertEqual(j["state"],"error")
+        self.assertIn("simulated PNG encoder failure",j["error"])
+        folder = Path(self.temp.name)/j["id"]
+        self.assertFalse((folder/"results.zip").exists())
+        self.assertFalse((folder/"report.json").exists())
+        self.assertFalse((folder/"job.json").exists())
+        self.assertEqual([item["id"] for item in self.app.history()["items"]],[])
+        for worker in set(workers):
+            worker.join(timeout=2)
+            self.assertFalse(worker.is_alive())
 
 
 if __name__=="__main__":unittest.main()

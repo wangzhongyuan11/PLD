@@ -1,8 +1,8 @@
 """Persistent B preloader with a bounded, line-oriented request protocol.
 
 The worker imports PYNQ once but does not instantiate an Overlay or own DMA.
-Every request calls infer_images.main(argv), which still constructs and closes
-TileAccelerator for that job. Inference stdout/stderr goes to that job's log;
+Requests reuse one model/device session. A release request must complete before
+HDMI takes ownership; errors invalidate the session. Inference stdout/stderr goes to that job's log;
 only supervisor protocol lines use the parent pipe.
 """
 import argparse
@@ -13,6 +13,7 @@ import json
 import os
 from pathlib import Path
 import re
+import signal
 import sys
 import traceback
 
@@ -99,6 +100,9 @@ def read_request(stream):
     if not isinstance(value, dict):
         raise ValueError("request payload must be an object")
     request_id = value.get("request_id")
+    action = value.get("action", "infer")
+    if action not in ("infer", "release"):
+        raise ValueError("invalid worker action")
     argv = value.get("argv")
     log_path = value.get("log_path")
     if not isinstance(request_id, str) or not REQUEST_ID.fullmatch(request_id):
@@ -112,13 +116,16 @@ def read_request(stream):
     return value
 
 
-def serve_request(inference_main, request):
+def serve_request(inference_main, request, session):
     log_path = Path(request["log_path"])
     log_path.parent.mkdir(parents=True, exist_ok=True)
     try:
         with log_path.open("w", encoding="utf-8") as job_log:
             with contextlib.redirect_stdout(job_log), contextlib.redirect_stderr(job_log):
-                inference_main(list(request["argv"]))
+                if request.get("action", "infer") == "release":
+                    session.release_hardware()
+                else:
+                    inference_main(list(request["argv"]), session=session)
     except BaseException:
         # The per-job ExitStack may have completed, but the worker cannot prove
         # hardware state after an exception. Fail closed and let C require a
@@ -128,10 +135,15 @@ def serve_request(inference_main, request):
                 traceback.print_exc(file=job_log)
         except OSError:
             pass
+        try:
+            session.close()
+        except BaseException:
+            pass
         emit("FATAL", request_id=request["request_id"], stage="request",
              error="inference exception; device state not claimed")
         return 1
-    emit("RESULT", request_id=request["request_id"], status="success", returncode=0)
+    emit("RESULT", request_id=request["request_id"], status="success", returncode=0,
+         device_released=session.device is None, **session.last_reuse)
     return 0
 
 
@@ -157,18 +169,28 @@ def main(argv=None):
         emit("FATAL", stage="startup", error=f"{type(exc).__name__}: {exc}")
         return 1
 
-    emit("READY", manifest_sha256=manifest_sha256)
-    while True:
-        try:
-            request = read_request(sys.stdin)
-        except (OSError, ValueError, json.JSONDecodeError) as exc:
-            emit("FATAL", stage="protocol", error=f"{type(exc).__name__}: {exc}")
-            return 1
-        if request is None:
-            return 0
-        status = serve_request(infer_images.main, request)
-        if status != 0:
-            return status
+    session = infer_images.InferenceSession()
+    def terminate(signum, frame):
+        raise SystemExit(1)
+    signal.signal(signal.SIGTERM, terminate)
+    try:
+        emit("READY", manifest_sha256=manifest_sha256)
+        while True:
+            try:
+                request = read_request(sys.stdin)
+            except (OSError, ValueError, json.JSONDecodeError) as exc:
+                emit("FATAL", stage="protocol", error=f"{type(exc).__name__}: {exc}")
+                return 1
+            if request is None:
+                return 0
+            status = serve_request(infer_images.main, request, session)
+            if status != 0:
+                return status
+    finally:
+        # Keep protocol stdout clean during cleanup; request logs contain failures.
+        with contextlib.redirect_stdout(sys.stderr):
+            session.close()
+
 
 
 if __name__ == "__main__":

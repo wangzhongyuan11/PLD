@@ -56,6 +56,18 @@ def emit(event, **fields):
 '''
 
 
+FAKE_SESSION = (
+    "class InferenceSession:\n"
+    "    def __init__(self):\n"
+    "        self.device = None\n"
+    "        self.last_reuse = {'model_reused': True, 'hardware_reused': True}\n"
+    "    def release_hardware(self):\n"
+    "        self.device = None\n"
+    "    def close(self):\n"
+    "        self.release_hardware()\n"
+)
+
+
 class PersistentWorkerClientTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -73,7 +85,7 @@ class PersistentWorkerClientTests(unittest.TestCase):
         (runtime / "board/infer_images.py").write_text(
             "import json, pathlib, sys\n"
             "sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))\n"
-            "def main(argv):\n"
+            + FAKE_SESSION + "def main(argv, session=None):\n"
             "    output = pathlib.Path(argv[argv.index('--output') + 1]); output.mkdir(parents=True)\n"
             "    (output / 'frame_000001.json').write_text('{}')\n"
             "    (output / 'frame_000001.bin').write_bytes(b'head')\n"
@@ -124,7 +136,7 @@ class PersistentWorkerClientTests(unittest.TestCase):
         (runtime / "board/infer_images.py").write_text(
             "import pathlib, sys\n"
             "sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))\n"
-            "def main(argv):\n"
+            + FAKE_SESSION + "def main(argv, session=None):\n"
             "    output = pathlib.Path(argv[argv.index('--output') + 1])\n"
             "    output.mkdir(parents=True)\n"
             "    (output / 'frame_000001.bin').write_bytes(b'head')\n",
@@ -171,7 +183,7 @@ class PersistentWorkerClientTests(unittest.TestCase):
         (runtime / "board/infer_images.py").write_text(
             "import pathlib, sys\n"
             "sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))\n"
-            "def main(argv):\n"
+            + FAKE_SESSION + "def main(argv, session=None):\n"
             "    raise RuntimeError('inference exploded')\n",
             encoding="utf-8",
         )
@@ -386,7 +398,7 @@ class PersistentConsoleIntegrationTests(unittest.TestCase):
                     "--bit", "dma_top.bit", "--output", str(destination)]
 
         with patch.object(app, "stop_hdmi", side_effect=fake_stop_hdmi), \
-                patch("server.verify_runtime"), \
+                patch.object(app, "verify_deployment", return_value="full_sha256"), \
                 patch("server.inference_command", side_effect=fake_command), \
                 patch("server.PersistentBWorker", FakeWorker), \
                 patch("server.load_result", return_value=FakeResult()):
@@ -446,7 +458,7 @@ class PersistentConsoleIntegrationTests(unittest.TestCase):
             def close(self):
                 pass
 
-        with patch.object(app, "stop_hdmi"), patch("server.verify_runtime"), \
+        with patch.object(app, "stop_hdmi"), patch.object(app, "verify_deployment", return_value="full_sha256"), \
                 patch("server.inference_command", return_value=["python", "infer_images.py", "x"]), \
                 patch("server.PersistentBWorker", FakeWorker):
             ident = app.submit({"mode": "infer", "image": encoded_jpeg()})["id"]

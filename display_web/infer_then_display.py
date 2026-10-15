@@ -5,6 +5,7 @@ The two full bitstreams run sequentially. No concurrent inference/display.
 import argparse
 import hashlib
 import json
+import os
 import platform
 from pathlib import Path
 import signal
@@ -23,6 +24,61 @@ def verify_runtime(runtime):
             raise ValueError("Runtime manifest path escapes deployment")
         if hashlib.sha256(target.read_bytes()).hexdigest() != expected:
             raise ValueError("Runtime checksum mismatch: " + name)
+
+
+class RuntimeVerifier:
+    """Hash once; watch stat signatures per request on the local deployment FS.
+
+    This is a performance cache, not a defense against privileged tampering.
+    The deployment must remain immutable while a worker is alive.
+    """
+    def __init__(self, runtime):
+        self.runtime = Path(runtime).resolve()
+        self.identity = None
+        self.snapshot = None
+        self.full_checks = 0
+
+    def _snapshot(self, files):
+        result = {}
+        # Reuse parent resolution only within this snapshot, never across
+        # requests: directory symlink changes must still be detected.
+        parents = {}
+        root = str(self.runtime)
+        prefix = os.path.join(root, '')
+        for name in ['deployment_manifest.json'] + list(files):
+            parent, leaf = os.path.split(os.path.join(root, name))
+            if parent not in parents:
+                parents[parent] = os.path.realpath(parent)
+            target = os.path.join(parents[parent], leaf)
+            if os.path.islink(target):
+                target = os.path.realpath(target)
+            if not target.startswith(prefix):
+                raise ValueError('Runtime path escapes deployment: '+name)
+            stat = os.stat(target)
+            result[name] = (target, stat.st_dev, stat.st_ino, stat.st_size,
+                            stat.st_mtime_ns, stat.st_ctime_ns)
+        return result
+
+    def check(self):
+        manifest_path = self.runtime/'deployment_manifest.json'
+        raw = manifest_path.read_bytes()
+        identity = hashlib.sha256(raw).hexdigest()
+        if self.identity is not None and identity != self.identity:
+            raise ValueError('运行包清单已变更，请重启服务后重新校验')
+        files = json.loads(raw.decode('utf-8'))['files']
+        before = self._snapshot(files)
+        if self.snapshot == before and platform.system() == 'Linux':
+            return 'metadata_unchanged'
+        # Any detected change forces full content validation. Publish no cache
+        # until the manifest and all signatures remain stable across that read.
+        verify_runtime(self.runtime)
+        after = self._snapshot(files)
+        if before != after or manifest_path.read_bytes() != raw:
+            raise ValueError('校验期间运行包发生变化，请重启服务')
+        self.snapshot = after
+        self.identity = identity
+        self.full_checks += 1
+        return 'full_sha256'
 
 
 def inference_command(runtime, image, destination, portable=False):

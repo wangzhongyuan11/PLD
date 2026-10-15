@@ -230,7 +230,20 @@ class PersistentBWorker:
 
     def close(self):
         with self._lock:
-            self._stop("closed_by_service")
+            try:
+                self.release_hardware(self.runtime / "worker_release.log")
+            finally:
+                self._stop("closed_by_service")
+
+    def release_hardware(self, log_path):
+        with self._lock:
+            if self.process is None:
+                return
+            # A dead process may have left DMA active; do not permit HDMI.
+            if self.process.poll() is not None or self.close_reason is not None:
+                raise PersistentWorkerError("worker unavailable; hardware release unconfirmed",
+                                            hardware_unknown=True)
+            return self.run(["release"], log_path, action="release")
 
     def check_manifest(self):
         current = runtime_manifest_sha256(self.runtime)
@@ -241,8 +254,11 @@ class PersistentBWorker:
                 hardware_unknown=False, require_restart=True)
 
     def _ensure_started(self):
-        if self.process is not None and self.process.poll() is None:
-            return False
+        if self.process is not None:
+            if self.process.poll() is None:
+                return False
+            raise PersistentWorkerError("cached worker exited; hardware state unknown; restart service",
+                                        hardware_unknown=True, require_restart=True)
         started = time.perf_counter()
         deadline = time.monotonic() + self.startup_timeout
         self.events = queue.Queue()
@@ -301,7 +317,9 @@ class PersistentBWorker:
         except OSError:
             pass
 
-    def run(self, argv, log_path):
+    def run(self, argv, log_path, *, action="infer"):
+        if action not in ("infer", "release"):
+            raise ValueError("invalid worker action")
         argv = list(argv)
         if (not argv or len(argv) > 64 or
                 any(not isinstance(item, str) for item in argv)):
@@ -318,6 +336,7 @@ class PersistentBWorker:
                 request_started = time.perf_counter()
                 payload = {
                     "request_id": request_id,
+                    "action": action,
                     "argv": argv,
                     "log_path": str(Path(log_path).resolve()),
                 }
@@ -327,12 +346,14 @@ class PersistentBWorker:
                     raise ValueError("persistent worker request exceeds 64 KiB")
                 self.process.stdin.write(encoded)
                 self.process.stdin.flush()
-                deadline = time.monotonic() + self.request_timeout
+                deadline = time.monotonic() + (12.0 if action == "release" else self.request_timeout)
                 _, response = self._wait_event({"RESULT"}, request_id, deadline)
                 if response.get("status") != "success":
                     raise PersistentWorkerError(
                         "persistent B worker returned failure; device state unknown",
                         hardware_unknown=True)
+                if action == "release" and response.get("device_released") is not True:
+                    raise PersistentWorkerError("worker did not confirm hardware release", hardware_unknown=True)
                 self.last_request_seconds = time.perf_counter() - request_started
                 alive_after_reply = self.process.poll() is None
                 return dict(response, worker_pid=self.process.pid,

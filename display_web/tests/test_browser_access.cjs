@@ -69,7 +69,7 @@ async function main(){
  const html=fs.readFileSync(path.join(__dirname,'../static/index.html'),'utf8');
  assert.match(html,/id="uploadNote"/);
  assert.match(html,/大图上传前自动缩小/);
-assert.match(html,/服务端任务总时/);
+assert.match(html,/id="timeLabel"[^<]*服务端处理耗时/);
 assert.match(full,/request_to_job_complete_seconds/);
  console.log('PASS: access code, upload sizing, grayscale PNG, and page hint');
 }

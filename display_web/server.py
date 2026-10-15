@@ -19,6 +19,8 @@ import time
 import uuid
 import warnings
 import zipfile
+import struct
+import zlib
 from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -30,7 +32,7 @@ from PIL import Image, ImageOps
 from contour import process
 from pld_hdmi import binary_mask, fit_rgb
 from pld_result import load_result
-from infer_then_display import inference_command, verify_runtime
+from infer_then_display import inference_command, verify_runtime, RuntimeVerifier
 from persistent_worker import (PersistentBWorker, PersistentWorkerError,
                                runtime_manifest_sha256)
 
@@ -40,13 +42,48 @@ MAX_FILE = 8 * 1024 * 1024
 MAX_PIXELS = 12_000_000
 Image.MAX_IMAGE_PIXELS = MAX_PIXELS
 VIEWS = ("original", "mask", "contour", "outlined", "cutout", "comparison")
-# Lossless PNG settings selected by the host benchmark in tests/benchmark_output.py:
-# level 1 writes the six views faster at the cost of slightly larger encoded
-# bytes; decoded pixels are unchanged. Each job uses at most two bounded save
-# workers, and every file is closed before ZIP/report/history are created.
+# Lossless PNG: vectorized Sub + zlib RLE, benchmarked locally in
+# tests/benchmark_png.py. Keep two bounded writers and close all files before
+# packaging/history. Set PLD_PNG_BACKEND=pillow to restore the original encoder.
+PNG_BACKEND = os.environ.get("PLD_PNG_BACKEND", "fast_sub")
+if PNG_BACKEND not in ("fast_sub", "pillow"):
+    raise ValueError("PLD_PNG_BACKEND must be fast_sub or pillow")
 PNG_COMPRESS_LEVEL = 1
 PNG_SAVE_WORKERS = 2
 ZIP_COMPRESSION = zipfile.ZIP_STORED
+
+
+def save_lossless_png(array, path):
+    """8-bit L/RGB PNG; vectorized Sub filter plus zlib RLE level 1.
+
+    Pixels and dimensions are unchanged. Avoid Pillow's per-row adaptive filter
+    search on ARM; keep its original encoder available for rollback/benchmark.
+    """
+    a = np.asarray(array)
+    if a.dtype == bool:
+        a = a.astype(np.uint8)*255
+    if a.dtype != np.uint8 or not (a.ndim == 2 or (a.ndim == 3 and a.shape[2] == 3)):
+        raise ValueError('PNG requires uint8 L or RGB')
+    if PNG_BACKEND == 'pillow':
+        Image.fromarray(a).save(path, compress_level=PNG_COMPRESS_LEVEL)
+        return
+    h, w = a.shape[:2]
+    if h < 1 or w < 1: raise ValueError('empty PNG')
+    channels = 1 if a.ndim == 2 else 3
+    raw = np.ascontiguousarray(a).reshape(h, w*channels)
+    rows = np.empty((h, w*channels+1), dtype=np.uint8)
+    rows[:,0] = 1 # PNG Sub filter, applied independently to each byte channel.
+    rows[:,1:1+channels] = raw[:,:channels]
+    np.subtract(raw[:,channels:], raw[:,:-channels], out=rows[:,1+channels:])
+    def chunk(kind, data):
+        crc = zlib.crc32(data, zlib.crc32(kind)) & 0xffffffff
+        return struct.pack('!I',len(data))+kind+data+struct.pack('!I',crc)
+    header = struct.pack('!IIBBBBB',w,h,8,0 if channels==1 else 2,0,0,0)
+    compressor = zlib.compressobj(level=1, strategy=zlib.Z_RLE)
+    compressed = compressor.compress(rows.tobytes()) + compressor.flush()
+    encoded = (b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',header)+
+               chunk(b'IDAT',compressed)+chunk(b'IEND',b''))
+    Path(path).write_bytes(encoded)
 
 
 @lru_cache(maxsize=1)
@@ -105,7 +142,9 @@ def decode_upload(value, is_mask=False):
                 arr = np.asarray(im).copy()
                 binary_mask(arr)
             else:
-                arr = np.asarray(ImageOps.exif_transpose(im).convert("RGB")).copy()
+                # Avoid full-frame copies when no orientation/conversion is needed.
+                oriented = ImageOps.exif_transpose(im) if im.getexif().get(274, 1) in range(2, 9) else im
+                arr = np.array(oriented if oriented.mode == "RGB" else oriented.convert("RGB"))
     return raw, arr
 
 
@@ -118,6 +157,10 @@ class Console:
         self.portable = portable
         self.persistent_b_worker = persistent_b_worker
         self.b_worker = None
+        self.verifier = RuntimeVerifier(self.runtime) if self.runtime else None
+        self.warmup_state = "not_started"
+        self.warmup_seconds = None
+        self.warmup_thread = None
         self.board = platform.system() == "Linux" and platform.machine().lower().startswith("arm")
         self.lock = threading.RLock()
         self.jobs = {}
@@ -132,13 +175,49 @@ class Console:
         self.runtime_error = None
         if self.board and self.runtime:
             try:
-                verify_runtime(self.runtime)
+                self.verify_deployment()
                 inference_command(self.runtime, Path("check.jpg"), Path("check_out"), self.portable)
                 if self.persistent_b_worker:
                     runtime_manifest_sha256(self.runtime)
                 self.runtime_ok = True
             except Exception as exc:
                 self.runtime_error = str(exc)
+
+    def verify_deployment(self):
+        try:
+            if self.verifier is None:
+                self.verifier = RuntimeVerifier(self.runtime)
+            return self.verifier.check()
+        except Exception:
+            self.fault = "运行包校验失败或已变化，请重启服务并检查部署文件"
+            raise
+
+    def begin_warmup(self):
+        with self.lock:
+            if not (self.board and self.runtime_ok and self.persistent_b_worker):
+                return
+            if self.warmup_state != 'not_started': return
+            if self.active or self.hdmi is not None:
+                raise RuntimeError('不能在处理或显示期间预热')
+            self.warmup_state = 'running'
+            self.warmup_thread = threading.Thread(target=self._warmup, name='pld-warmup', daemon=True)
+            self.warmup_thread.start()
+
+    def _warmup(self):
+        started = time.perf_counter()
+        try:
+            self.verify_deployment()
+            command = inference_command(self.runtime, self.data/'warmup-unused.jpg',
+                                        self.data/'warmup-unused-output', self.portable)
+            if self.b_worker is None: self.b_worker = PersistentBWorker(self.runtime)
+            self.b_worker.run(command[2:]+['--warmup-only'], self.data/'warmup.log')
+            with self.lock: self.warmup_state = 'ready'
+        except Exception as exc:
+            with self.lock:
+                self.warmup_state = 'failed'
+                self.fault = '开机预热失败，请查看 warmup.log 并重启服务：'+str(exc)
+        finally:
+            with self.lock: self.warmup_seconds = time.perf_counter()-started
 
     def restore_history(self):
         for folder in self.data.iterdir():
@@ -170,8 +249,9 @@ class Console:
             if self.hdmi is not None and not running and self.hdmi.returncode != 0:
                 self.fault = "HDMI 子进程异常退出，请检查板端日志并重启服务确认硬件状态"
             ready = running and (self.data / self.hdmi_job / "hdmi.ready").exists()
-            return {"mode": "board" if self.board else "local", "inference_available": self.runtime_ok and not self.fault,
-                    "hdmi_available": self.board and not self.fault, "active": self.active,
+            return {"mode": "board" if self.board else "local", "inference_available": self.runtime_ok and not self.fault and self.warmup_state != "running",
+                    "warmup": self.warmup_state, "warmup_seconds": self.warmup_seconds,
+                    "hdmi_available": self.board and not self.fault and self.warmup_state != "running", "active": self.active,
                     "hdmi": "showing" if ready else "starting" if running else "off",
                     "hdmi_view": self.hdmi_view if running else None,
                     "fault": self.fault, "runtime_error": self.runtime_error}
@@ -191,10 +271,12 @@ class Console:
         width = body.get("thickness", 2)
         if type(width) is not int or not 1 <= width <= 8: raise ValueError("线宽须为 1–8 的整数")
         with self.lock:
+            if self.warmup_state == "running": raise RuntimeError("模型和 FPGA 正在预热，请稍候")
             if self.active: raise RuntimeError("已有任务处理中，请等待完成")
             if self.fault: raise RuntimeError(self.fault)
             if mode == "infer" and not self.runtime_ok:
                 raise ValueError("当前未连接可用的板端推理环境；可使用真实结果回放或上传配套掩膜")
+            upload_started = time.perf_counter()
             rgb = raw = mask = None
             if mode != "demo":
                 raw, rgb = decode_upload(body.get("image"))
@@ -205,6 +287,8 @@ class Console:
                 if mode == "mask":
                     _, mask = decode_upload(body.get("mask"), True)
                     binary_mask(mask, rgb.shape[:2])
+            upload_stages = {"request_receive_parse": max(0, submit_started-(request_started or submit_started)),
+                             "upload_decode_validate": time.perf_counter()-upload_started}
             ident = uuid.uuid4().hex
             self.jobs[ident] = {"id": ident, "state": "running", "stage": "准备数据", "progress": 10,
                                 "mode": mode, "name": str(body.get("name", "ISIC_0000003 · 真实掩膜回放"))[:120],
@@ -212,7 +296,7 @@ class Console:
             self.active = ident
             threading.Thread(target=self._run,
                              args=(ident, mode, raw, rgb, mask, width,
-                                   request_started or submit_started),
+                                   request_started or submit_started, upload_stages),
                              daemon=True).start()
             return self.job(ident)
 
@@ -235,6 +319,8 @@ class Console:
 
     def close(self):
         """Stop the optional idle B worker without disturbing HDMI ownership."""
+        if self.warmup_thread is not None:
+            self.warmup_thread.join()
         with self.lock:
             worker = self.b_worker
             self.b_worker = None
@@ -246,21 +332,29 @@ class Console:
             self.status()
             if not self.board: raise ValueError("HDMI 需要在 PYNQ 板端运行本服务")
             if self.fault: raise RuntimeError(self.fault)
+            if self.warmup_state == "running": raise RuntimeError("模型和 FPGA 正在预热，请稍候")
             if self.active: raise RuntimeError("请等待处理完成后再显示")
             j = self.job(ident)
             if j["state"] != "done" or view not in j["views"]: raise ValueError("该显示画面尚未生成")
             self.stop_hdmi()
             folder = self.data / ident
+            if self.b_worker is not None:
+                try:
+                    self.b_worker.release_hardware(folder / "inference_release.log")
+                except Exception as exc:
+                    self.fault = "推理硬件释放未确认，禁止启动 HDMI；请检查日志并重启服务"
+                    raise RuntimeError(self.fault) from exc
             (folder / "hdmi.ready").unlink(missing_ok=True)
             with (folder / "hdmi.log").open("w", encoding="utf-8") as log:
                 self.hdmi = subprocess.Popen([sys.executable, str(ROOT / "hdmi_worker.py"), str(folder), view], stdout=log, stderr=log)
             self.hdmi_job, self.hdmi_view = ident, view
             return self.status()
 
-    def _run(self, ident, mode, raw, rgb, mask, width, request_started):
+    def _run(self, ident, mode, raw, rgb, mask, width, request_started, upload_stages=None):
         folder = self.data / ident; folder.mkdir()
         job_start = time.perf_counter()
-        stages = {"request_to_job_start": job_start - request_started}
+        stages = dict(upload_stages or {})
+        stages["request_to_job_start"] = job_start - request_started
         png_timings = {}
         try:
             b = None
@@ -287,7 +381,7 @@ class Console:
                     except PersistentWorkerError as exc:
                         self.fault = str(exc)
                         raise
-                stage = time.perf_counter(); verify_runtime(self.runtime)
+                stage = time.perf_counter(); stages["runtime_check_kind"] = self.verify_deployment()
                 stages["runtime_verify"] = time.perf_counter() - stage
                 command = inference_command(self.runtime, source, folder / "inference", self.portable)
                 if self.persistent_b_worker:
@@ -299,6 +393,8 @@ class Console:
                     except PersistentWorkerError as exc:
                         self.fault = str(exc)
                         raise
+                    stages["model_reused"] = response.get("model_reused", False)
+                    stages["hardware_reused"] = response.get("hardware_reused", False)
                     stages["persistent_worker_startup"] = response["startup_seconds"]
                     stages["persistent_worker_request"] = response["request_seconds"]
                     stages["persistent_worker_pid"] = response["worker_pid"]
@@ -324,7 +420,7 @@ class Console:
                         raise RuntimeError(self.fault)
                     stages["inference_backend"] = "subprocess"
                 stage = time.perf_counter()
-                b = load_result(folder / "inference/frame_000001.json", source)
+                b = load_result(folder / "inference/frame_000001.json", source, decoded_rgb=rgb)
                 stages["result_load"] = time.perf_counter() - stage
                 stage = time.perf_counter()
                 mask = b.original_mask()
@@ -337,33 +433,6 @@ class Console:
             arrays = {k: result[k] for k in views}
             if rgb is not None:
                 arrays["original"] = rgb; views.insert(0, "original")
-            left = rgb if rgb is not None else np.repeat((mask.astype(np.uint8)*255)[:, :, None], 3, axis=2)
-            stage = time.perf_counter()
-            arrays["comparison"] = np.concatenate((fit_rgb(left, 640, 480), fit_rgb(result["outlined"], 640, 480)), axis=1)
-            stages["view_composition"] = time.perf_counter() - stage
-            views.append("comparison")
-
-            def save_png_group(group):
-                for key, array in group:
-                    started = time.perf_counter()
-                    image = Image.fromarray(array.astype(np.uint8)*255 if array.dtype == bool else array)
-                    image.save(folder / (key+".png"), compress_level=PNG_COMPRESS_LEVEL)
-                    png_timings[key] = time.perf_counter() - started
-
-            # Split this one batch into exactly one deterministic group per worker:
-            # at most two PNG encoders run concurrently, there is no pending queue
-            # beyond the six views, and each view is converted and written once.
-            # Leaving the executor context joins both workers, so ZIP/report and
-            # the successful history entry are only created after every file is
-            # closed. Any save error propagates and fails the whole job instead.
-            items = [(key, arrays[key]) for key in views]
-            with ThreadPoolExecutor(max_workers=PNG_SAVE_WORKERS,
-                                    thread_name_prefix="pld-png") as pool:
-                futures = [pool.submit(save_png_group, items[index::PNG_SAVE_WORKERS])
-                           for index in range(PNG_SAVE_WORKERS)]
-                for future in futures:
-                    future.result()
-            stages["png_save"] = {key: png_timings[key] for key in views}
             stats = result["statistics"]
             if b is not None:
                 stats["area_percent"] = b.stats["area_percent"]
@@ -374,11 +443,74 @@ class Console:
                 stats["historical_b_time"] = mode == "demo"
             else:
                 stats["area_scope"] = "上传掩膜的原图像素网格"
+            # Publish only after every small preview has been fully written.
+            # Full arrays remain untouched for export and HDMI.
+            def save_preview(key):
+                array = arrays[key]
+                pixels = array.astype(np.uint8)*255 if array.dtype == bool else array
+                im = Image.fromarray(pixels)
+                resample = getattr(Image, "Resampling", Image)
+                started = time.perf_counter()
+                im.thumbnail((800, 800), resample.NEAREST if pixels.ndim == 2 else resample.BILINEAR)
+                resize_seconds = time.perf_counter()-started
+                started = time.perf_counter()
+                save_lossless_png(np.asarray(im), folder / ("preview_"+key+".png"))
+                preview_details[key] = {"resize":resize_seconds, "encode_write":time.perf_counter()-started}
+            preview_started = time.perf_counter()
+            preview_details = {}
+            preview_views = ["original" if rgb is not None else "mask", "outlined"]
+            for key in preview_views: save_preview(key)
+            stages["preview_build"] = time.perf_counter() - preview_started
+            stages["request_to_preview_ready"] = time.perf_counter() - request_started
+            stages["preview_images"] = dict(preview_details)
+            stats["stage_seconds"] = dict(stages)
+            stats["preview_ready_seconds"] = stages["request_to_preview_ready"]
+            stats["data_source"] = "历史板测掩膜回放" if mode == "demo" else "用户图片及掩膜" if mode == "mask" else "本次板端 FPGA 推理"
+            self.update(ident, preview_ready=True, package_ready=False,
+                        preview_views=preview_views, views=list(views),
+                        statistics=json.loads(json.dumps(stats)), progress=82,
+                        stage="预览已就绪，后台生成原尺寸图片和结果包")
+            remaining_started = time.perf_counter()
+            for key in views:
+                if key not in preview_views: save_preview(key)
+            stages["preview_remaining"] = time.perf_counter()-remaining_started
+            stages["preview_images"] = preview_details
+            self.update(ident, preview_views=list(views))
+            left = rgb if rgb is not None else np.repeat((mask.astype(np.uint8)*255)[:, :, None], 3, axis=2)
+            stage = time.perf_counter()
+            arrays["comparison"] = np.concatenate((fit_rgb(left, 640, 480), fit_rgb(result["outlined"], 640, 480)), axis=1)
+            stages["view_composition"] = time.perf_counter() - stage
+            views.append("comparison")
+
+            def save_png_group(group):
+                for key, array in group:
+                    started = time.perf_counter()
+                    save_lossless_png(array, folder / (key+".png"))
+                    png_timings[key] = time.perf_counter() - started
+
+            # Split this one batch into exactly one deterministic group per worker:
+            # at most two PNG encoders run concurrently, there is no pending queue
+            # beyond the six views, and each view is converted and written once.
+            # Leaving the executor context joins both workers, so ZIP/report and
+            # the successful history entry are only created after every file is
+            # closed. Any save error propagates and fails the whole job instead.
+            items = [(key, arrays[key]) for key in views]
+            png_batch_started = time.perf_counter()
+            with ThreadPoolExecutor(max_workers=PNG_SAVE_WORKERS,
+                                    thread_name_prefix="pld-png") as pool:
+                futures = [pool.submit(save_png_group, items[index::PNG_SAVE_WORKERS])
+                           for index in range(PNG_SAVE_WORKERS)]
+                for future in futures:
+                    future.result()
+            stages["png_batch_wall"] = time.perf_counter()-png_batch_started
+            stages["png_save"] = {key: png_timings[key] for key in views}
             stats["processing_seconds"] = time.perf_counter()-job_start
             stats["processing_scope"] = "旧口径：任务线程启动到全部 PNG 写出；不含上传/浏览器、report/ZIP/历史提交；推理模式包含停止HDMI、校验和B子进程"
             stats["data_source"] = "历史板测掩膜，无原始 JPG；未重新推理" if mode == "demo" else "用户图片及掩膜；未执行模型推理" if mode == "mask" else "本次板端 FPGA 推理"
             stats["output_png_compress_level"] = PNG_COMPRESS_LEVEL
             stats["output_png_workers"] = PNG_SAVE_WORKERS
+            stats["output_png_backend"] = PNG_BACKEND
+            stats["output_png_bytes"] = sum((folder/(name+".png")).stat().st_size for name in views)
             stats["output_zip_compression"] = "stored"
             # Package the costly PNG payload first. This lets report.json state
             # exactly which stages were already complete when it was serialized;
@@ -410,7 +542,7 @@ class Console:
             stats["job_total_seconds"] = stages["job_total"]
             stats["request_to_job_complete_seconds"] = stages["request_to_job_complete"]
             completed = self.job(ident)
-            completed.update(state="done", stage="处理完成", progress=100, views=views, statistics=stats)
+            completed.update(state="done", package_ready=True, stage="完整结果包已就绪", progress=100, views=views, statistics=stats)
             # Commit only after every output is complete. Interrupted jobs never
             # appear as successful history after a service restart.
             temp = folder/'job.json.tmp'
@@ -418,7 +550,7 @@ class Console:
             temp.replace(folder/'job.json')
             self.update(ident, **{k:v for k,v in completed.items() if k != 'id'})
         except Exception as exc:
-            self.update(ident, state="error", stage="处理失败", error=str(exc), progress=0,
+            self.update(ident, state="error", package_ready=False, stage="完整结果生成失败" if self.job(ident).get("preview_ready") else "处理失败", error=str(exc), progress=0,
                         stage_seconds=stages, png_save_seconds=png_timings)
         finally:
             with self.lock: self.active = None
@@ -459,8 +591,11 @@ class Handler(BaseHTTPRequestHandler):
             if len(parts) == 3 and parts[0] == "files":
                 ident, name = parts[1:]
                 job = self.app.job(ident)
+                previews = ["preview_"+k+".png" for k in job.get("preview_views", [])]
                 allowed = [k+".png" for k in job.get("views", [])] + ["results.zip", "report.json"]
-                if job["state"] != "done" or name not in allowed: raise KeyError("文件尚不可用")
+                ready_preview = job.get("preview_ready") and name in previews
+                ready_export = job["state"] == "done" and name in allowed
+                if not (ready_preview or ready_export): raise KeyError("文件尚不可用")
                 f = self.app.data / ident / name
                 return self.send(200, f.read_bytes(), mimetypes.guess_type(name)[0] or "application/octet-stream")
             raise KeyError("页面不存在")
@@ -500,7 +635,7 @@ if __name__ == "__main__":
     p.add_argument("--runtime"); p.add_argument("--data", default=str(ROOT / "data"))
     p.add_argument("--portable", action="store_true"); p.add_argument("--open", action="store_true")
     p.add_argument("--persistent-b-worker", action="store_true",
-                   help="opt-in persistent B preloader; each job still owns and closes its overlay/DMA")
+                   help="persistent B session; explicit hardware release before HDMI")
     args = p.parse_args()
     app = Console(args.data, args.runtime, portable=args.portable,
                   persistent_b_worker=args.persistent_b_worker)
@@ -511,6 +646,7 @@ if __name__ == "__main__":
     if args.open:
         import webbrowser
         webbrowser.open(url)
+    app.begin_warmup()
     try: server.serve_forever()
     except KeyboardInterrupt: pass
     finally:

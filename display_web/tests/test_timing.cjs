@@ -1,0 +1,10 @@
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
+const code=fs.readFileSync(path.join(__dirname,'../static/app.js'),'utf8');
+const from=code.indexOf('const timingLabels='),to=code.indexOf('function showTimings(',from);
+const ctx={labels:{cutout:'切割图'}};vm.createContext(ctx);vm.runInContext(code.slice(from,to),ctx);
+const job={statistics:{final_stage_seconds:{persistent_worker_pid:2815,persistent_worker_alive_after_reply:true,persistent_worker_total:1.2,png_save:{cutout:.4},png_batch_wall:.5},stage_seconds:{job_total:999},b_seconds:.7}};
+const out=ctx.timingText(job,{submit_roundtrip:.2});
+assert(out.text.includes('1.200 秒'));assert(out.text.includes('0.400 秒'));assert(out.text.includes('PID：2815'));assert(!out.text.includes('2815.000 秒'));assert(!out.text.includes('999.000'));
+assert(ctx.timingText(job,{}).text.includes('历史记录未保存浏览器计时'));
+assert(ctx.timingText({},{}).text.includes('没有服务端分阶段数据'));
+console.log('PASS: final timings preferred, nested PNG timings, worker metadata, history/missing timings');
