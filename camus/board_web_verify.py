@@ -12,6 +12,8 @@ import zipfile
 import numpy as np
 from PIL import Image
 from .model import MODEL_SPEC_SHA256
+from .preprocess import preprocess
+from .result import CLASS_COLORS
 
 
 def main(argv=None):
@@ -65,12 +67,23 @@ def main(argv=None):
             for name in ('overlay.png','segmentation.png','label.png','label_raw.png'):
                 with Image.open(io.BytesIO(archive.read(name))) as image:
                     if image.size!=tuple(reversed(case['native_hw'])):raise RuntimeError('native PNG size changed')
+                    actual=np.array(image)
+                processed=expected['processed'];raw=expected['labels']
+                if name=='label_raw.png':pixels=np.asarray([0,85,170,255],np.uint8)[raw]
+                elif name=='label.png':pixels=np.asarray([0,85,170,255],np.uint8)[processed]
+                elif name=='segmentation.png':pixels=CLASS_COLORS[processed]
+                else:
+                    gray=np.clip(np.asarray(preprocess(a.dataset/case['input']).raw_gray,dtype=np.float32),0,255).astype(np.uint8)
+                    rgb=np.repeat(gray[:,:,None],3,axis=2)
+                    pixels=np.rint(.55*rgb.astype(np.float32)+.45*CLASS_COLORS[processed].astype(np.float32)).astype(np.uint8)
+                if not np.array_equal(actual,pixels):raise RuntimeError('PNG decoded pixels changed: '+name)
             if sum(r['pixels'] for r in result['output']['areas'].values())!=int(np.prod(case['native_hw'])):
                 raise RuntimeError('area total mismatch')
         row=dict(case=case['stem'],job_id=job['id'],head_equal=True,native_equal=True,postprocess_equal=True,
                  pngs=4,native_hw=case['native_hw'],zip_bytes=len(packed),post_to_zip_ready_seconds=ready,
                  post_to_zip_downloaded_seconds=download,server_seconds=job['server_seconds'],
                  stages_seconds=job['result']['stages_seconds'],after_hdmi_reinitialization=reinitialized)
+        row.update(png_pixels_equal=True,timing_details=result.get('timing_details'))
         report['frames'].append(row);save();print(json.dumps(row),flush=True)
         return job['id']
     try:

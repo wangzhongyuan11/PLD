@@ -12,6 +12,7 @@ from .reference import ReferenceNetwork
 from .graph import CamusGraph
 from .device import EmulatedTileAccelerator
 from .result import native_labels_from_head, class_areas, label_display_png, segmentation_rgb, overlay_rgb, write_html_preview
+from .png import save_views
 
 
 def protect_output(path, model_root):
@@ -35,6 +36,7 @@ class CamusPipeline:
             self.device = CamusTileAccelerator(runtime, self.model.root, timeout)
         elif backend == 'emulator': self.device = EmulatedTileAccelerator()
         self.network = CamusGraph(self.model, self.device) if self.device else ReferenceNetwork(self.model)
+        self.native = self.device.io.native_control if backend == 'pl' else None
         self.initialization_seconds = time.perf_counter()-started
 
     def close(self):
@@ -57,9 +59,13 @@ class CamusPipeline:
         t = time.perf_counter(); result = self.network.forward(prep.input_int8)
         stages['network'] = time.perf_counter()-t
         t = time.perf_counter()
-        labels = native_labels_from_head(result['head'], *prep.raw_gray.shape, self.model.head_scale)
-        processed = apply_island5_hole1(labels)
+        restore = self.native.restore if self.native is not None else native_labels_from_head
+        labels = restore(result['head'], *prep.raw_gray.shape, self.model.head_scale)
+        restore_seconds = time.perf_counter()-t
+        post_started = time.perf_counter()
+        processed = self.native.postprocess(labels) if self.native is not None else apply_island5_hole1(labels)
         stages['native_reconstruction_postprocess'] = time.perf_counter()-t
+        native_details = dict(reconstruction=restore_seconds,postprocess=time.perf_counter()-post_started)
         output.mkdir(parents=True, exist_ok=False)
         t = time.perf_counter(); (output/'head.bin').write_bytes(result['head'].tobytes())
         head_meta = dict(dtype='int8', layout='NCHW', shape=list(self.model.head_shape), scale=self.model.head_scale,
@@ -68,9 +74,7 @@ class CamusPipeline:
         np.savez_compressed(output/'labels_native.npz', labels_raw=labels, labels_processed=processed.labels)
         stages['head_labels_write'] = time.perf_counter()-t
         t = time.perf_counter()
-        for name, image in [('label_raw.png', label_display_png(labels)), ('label.png', label_display_png(processed.labels)),
-                            ('segmentation.png', segmentation_rgb(processed.labels)), ('overlay.png', overlay_rgb(prep.raw_gray, processed.labels))]:
-            image.save(output/name, compress_level=1)
+        png_details = save_views(output,prep.raw_gray,labels,processed.labels)
         stages['png_encoding'] = time.perf_counter()-t
         report = dict(schema='pld-camus-result-v1', backend=self.backend,
             evidence_scope='real PL execution' if self.backend == 'pl' else 'host software '+self.backend+'; no PL execution',
@@ -81,6 +85,8 @@ class CamusPipeline:
                         png_label_values=[0,85,170,255], argmax='restore four float32 channels, strict >, ties keep lower class',
                         postprocess={k:v for k,v in processed.__dict__.items() if k != 'labels'}),
             timings_seconds=stages, session_initialization_seconds=self.initialization_seconds, session_reused=self.jobs > 0,
+            timing_details=dict(native=native_details,png=png_details,png_workers=2,png_backend='sub_rle_level1',
+                                native_backend=self.native.info if self.native else None),
             command_events=result.get('events', []), conv_blocks=result.get('conv_records', []))
         if html: write_html_preview(output/'preview.html', 'CAMUS 四结构分割',
             [('处理后叠加','overlay.png'),('处理后四分类','segmentation.png'),('处理后标签','label.png'),('原始标签','label_raw.png')])

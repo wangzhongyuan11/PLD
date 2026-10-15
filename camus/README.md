@@ -138,3 +138,22 @@ CAMUS 网页支持叠加、四分类和标签视图。开始 HDMI 前关闭推�
 性能报告同时保留本机 reference/emulator 的实际端到端生成耗时和样本数。验证演示图由 A 首层量化输入反构造，能逐字节复现输入/head，但不称原始临床图。3 帧短测不继承 ISIC 的 dev638/1000 帧证据。
 
 若要求 CAMUS 4 FPS，必须改变计算并行度和数据流；当前 32 路 MAC 在 125 MHz 下即便满载也至少需 0.664 秒。三个 decoder 入口占 MAC 的 51.16%，应优先剖析；再减少中间特征 DDR 往返、单字节瓶颈和命令依赖。PS 调用优化无法单独达到 4 FPS。
+
+### 2026-10-15 PS 优化采用版
+
+`camus_ps_opt_release_20261015` 使用相同的 RTL、100 MHz bit/hwh/XSA 和 CAM2 ABI。新增 CAM2 原生有界控制、NEON 校验/拷贝、直接 halo 收集与输出拼接、TX 有效前缀缓存同步、固定分块/参数/LUT 复用。RX 全缓冲缓存维护、尾保护、任务号/帧号检查与恢复路径保留。四通道原尺寸恢复和 LV 后处理在原生 C 中执行，保持 float32 横向后纵向插值、严格大于及低类别优先、8 连通与 island5/hole1 全局比例规则；禁用 fast-math/FMA 合并。PNG 使用叠加查表、两个有界线程、Sub + zlib RLE level 1 无损编码，全部写完才打包。
+
+板端需要 `gcc`；首次启动按 C 源码、包装器、编译选项和架构哈希在 `/tmp/pld-camus-native/` 构建共享库，后续复用并核验库哈希。生成物不写入冻结运行包。原有 ISIC 源码与服务配置没有修改。
+
+同一组 20 张官方开发图，分别执行旧版及最终采用版真实 PL 网页流程；另一个中间候选亦做了 20 图短测，最终数字仅来自采用版。全部 head、原生/处理后标签、四张 PNG 解码像素和输出元数据精确一致，ZIP CRC 与独立报告一致。没有进行新的千帧长稳或物理 HDMI 测试。
+
+| 口径 | 旧版中位 | PS 优化中位 | 缩短 |
+|---|---:|---:|---:|
+| 网络，含传输 | 3.565765 s | 2.760981 s | 22.6% |
+| 原尺寸恢复与后处理 | 0.705083 s | 0.186150 s | 73.6% |
+| PNG 生成、编码与保存 | 0.881480 s | 0.309087 s | 64.9% |
+| HTTP 上传至 ZIP 就绪 | 5.826342 s | 3.911460 s | 32.9% |
+
+同组 HTTP P95 从 6.853502 s 降至 4.378222 s，优化版最慢 4.479964 s，20/20 请求在 5 s 内；不含服务启动和显式 HDMI 后的冷初始化，20 图短测不代表长期 P95 保证。ZIP 体积中位从 586599 B 到 599496 B（约 +2.2%）。每帧仍为 605 命令、33273648 字节和 110397056 engine cycles；没有将软件提速当作 PL 算力提高。证据：`out/camus/ps_optimization_validation.json` 与 `optimization_baseline20.json` / `optimization_final20.json`。
+
+采用版由 `/etc/systemd/system/pld-camus.service.d/30-ps-opt.conf` 指向独立运行目录，原 unit 和 `camus_release_r1_20261015` 保留。回退本次优化：删除该单独 drop-in 文件，执行 `systemctl daemon-reload`、`systemctl restart pld-camus.service`。切回 ISIC 仍使用 `systemctl start pld-web.service`。

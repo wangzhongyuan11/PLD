@@ -39,7 +39,7 @@ def _check(labels: np.ndarray) -> np.ndarray:
     array = np.asarray(labels)
     if array.ndim != 2 or array.size == 0 or not np.issubdtype(array.dtype, np.integer):
         raise PostprocessError("labels must be a nonempty 2-D integer array")
-    if not set(np.unique(array).tolist()) <= {0, 1, 2, 3}:
+    if array.min() < 0 or array.max() > 3:
         raise PostprocessError("labels must be in 0..3")
     return array
 
@@ -77,27 +77,24 @@ def apply_island5(labels: np.ndarray) -> PostprocessOutcome:
 def apply_island5_hole1(labels: np.ndarray) -> PostprocessOutcome:
     """Apply island5, then fill only small all-background holes enclosed by LV."""
     base = apply_island5(labels)
-    working = base.labels.copy()
-    retained = int((working == LV).sum())
+    working = base.labels
+    retained = base.lv_pixels_after
     filled = 0
     hole_ratio = 0.0
     applied = False
     if retained:
         enclosed = ndimage.binary_fill_holes(working == LV, structure=CONNECTIVITY8) & (working != LV)
         hole_map, hole_count = _label8(enclosed)
-        closed = []
-        for index in range(1, hole_count + 1):
-            mask = hole_map == index
-            if np.all(working[mask] == BACKGROUND):
-                closed.append((int(mask.sum()), index))
-        total_closed = sum(count for count, _index in closed)
+        sizes = np.bincount(hole_map.ravel(), minlength=hole_count+1)
+        foreign = np.bincount(hole_map[working != BACKGROUND], minlength=hole_count+1)
+        closed = (sizes > 0) & (foreign == 0)
+        closed[0] = False
+        total_closed = int(sizes[closed].sum())
         hole_ratio = total_closed / retained
-        if closed and hole_ratio <= HOLE_RATIO:
+        if np.any(closed) and hole_ratio <= HOLE_RATIO:
             applied = True
-            for _count, index in closed:
-                mask = hole_map == index
-                working[mask] = LV
-                filled += int(mask.sum())
+            working[closed[hole_map]] = LV
+            filled = total_closed
     return PostprocessOutcome(
         "island5_hole1", working, base.lv_pixels_before, int((working == LV).sum()),
         base.components, base.largest_component_pixels, base.secondary_pixels,

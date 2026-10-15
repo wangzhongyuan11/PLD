@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
+from functools import lru_cache
 
 import numpy as np
 from PIL import Image
@@ -34,8 +35,8 @@ def letterbox_meta_for_native(height: int, width: int, size: int = INPUT_SIZE):
     }
 
 
-def _output_bilinear_axis(array: np.ndarray, output_size: int, axis: int) -> np.ndarray:
-    input_size = array.shape[axis]
+@lru_cache(maxsize=32)
+def output_axis_plan(input_size: int, output_size: int):
     scale = np.float32(input_size / output_size)
     coordinate = np.maximum(
         scale * (np.arange(output_size, dtype=np.float32) + np.float32(0.5))
@@ -46,6 +47,12 @@ def _output_bilinear_axis(array: np.ndarray, output_size: int, axis: int) -> np.
     lower = np.minimum(lower, input_size - 1)
     upper = np.minimum(lower + 1, input_size - 1)
     weight = (coordinate - lower).astype(np.float32)
+    for value in (lower, upper, weight): value.flags.writeable = False
+    return lower, upper, weight
+
+
+def _output_bilinear_axis(array: np.ndarray, output_size: int, axis: int) -> np.ndarray:
+    lower, upper, weight = output_axis_plan(array.shape[axis], output_size)
     view_lower = np.take(array, lower.astype(np.intp), axis=axis)
     view_upper = np.take(array, upper.astype(np.intp), axis=axis)
     if axis == 0:
@@ -89,7 +96,7 @@ def native_labels_from_head(
         values = _resize_output_channel(dequant_crop(class_index), native_height, native_width)
         update = values > best
         labels[update] = class_index
-        best = np.where(update, values, best)
+        np.copyto(best, values, where=update)
     return labels
 
 
@@ -122,12 +129,16 @@ def overlay_rgb(gray: np.ndarray, labels: np.ndarray, alpha: float = 0.45) -> Im
     if source.shape != np.asarray(labels).shape:
         raise ResultError("overlay gray/labels shape mismatch")
     display = np.clip(source, 0.0, 255.0).astype(np.uint8)
-    rgb = np.repeat(display[:, :, None], 3, axis=2)
     values = np.clip(np.asarray(labels), 0, 3).astype(np.uint8)
-    blended = np.rint(
-        (1.0 - alpha) * rgb.astype(np.float32) + alpha * CLASS_COLORS[values].astype(np.float32)
-    ).astype(np.uint8)
+    blended = _overlay_lut(alpha)[values, display]
     return Image.fromarray(blended, mode="RGB")
+
+
+@lru_cache(maxsize=4)
+def _overlay_lut(alpha):
+    gray = np.arange(256, dtype=np.float32)[None, :, None]
+    colors = CLASS_COLORS.astype(np.float32)[:, None, :]
+    return np.rint((1.0-alpha)*gray + alpha*colors).astype(np.uint8)
 
 
 def write_html_preview(path: Path, title: str, entries: list[tuple[str, str]]) -> None:
