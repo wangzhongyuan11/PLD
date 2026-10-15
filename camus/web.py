@@ -7,6 +7,9 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
 import re
+import signal
+import subprocess
+import sys
 import threading
 import time
 from urllib.parse import urlsplit
@@ -44,19 +47,61 @@ def decode_upload(payload):
 
 class CamusServer(ThreadingHTTPServer):
     daemon_threads = True
-    def __init__(self, address, pipeline, data):
+    def __init__(self, address, pipeline, data, runtime=None):
         self.pipeline, self.data = pipeline, Path(data).resolve()
         protect_output(self.data/'_probe_not_created', pipeline.model.root)
         self.data.mkdir(parents=True, exist_ok=True)
         self.jobs, self.guard, self.busy = {}, threading.Lock(), threading.BoundedSemaphore(1)
         self.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='camus-inference')
         self.fault = False
+        self.runtime,self.released,self.hdmi = runtime,False,None
+        self.hdmi_folder,self.hdmi_started = None,0.
         super().__init__(address, Handler)
+
+    def hdmi_status(self):
+        process=self.hdmi
+        if process is None:return 'off'
+        code=process.poll()
+        if code is not None:
+            if code != 0:self.fault=True
+            return 'error' if code else 'off'
+        if (self.hdmi_folder/'hdmi.ready.json').exists():return 'showing'
+        if time.monotonic()-self.hdmi_started>45:self.fault=True;return 'error'
+        return 'starting'
+
+    def stop_hdmi(self):
+        if self.hdmi is not None:
+            if self.hdmi.poll() is None:
+                self.hdmi.terminate()
+                try:self.hdmi.wait(timeout=45)
+                except subprocess.TimeoutExpired:
+                    self.fault=True
+                    raise RuntimeError('HDMI did not confirm hardware release; inspect board before restarting')
+            if self.hdmi.returncode != 0:
+                self.fault=True;raise RuntimeError('HDMI child failed; hardware release requires inspection')
+            self.hdmi=None
+
+    def start_hdmi(self, identifier, view):
+        if self.pipeline.backend!='pl':raise ValueError('HDMI requires the real board PL backend')
+        if view not in ('overlay','segmentation','label','label_raw'):raise ValueError('invalid CAMUS HDMI view')
+        with self.guard:state=self.jobs.get(identifier,{}).get('state')
+        if state!='done':raise ValueError('completed CAMUS job required')
+        self.stop_hdmi()
+        self.pipeline.close();self.released=True
+        self.hdmi_folder=self.data/identifier/'output'
+        (self.hdmi_folder/'hdmi.ready.json').unlink(missing_ok=True)
+        with (self.hdmi_folder/'hdmi.log').open('w',encoding='utf-8') as log:
+            self.hdmi=subprocess.Popen([sys.executable,'-u','-m','camus.hdmi','--result',str(self.hdmi_folder),'--view',view],stdout=log,stderr=log)
+        self.hdmi_started=time.monotonic()
 
     def execute(self, job, selected, spacing):
         job['state'] = 'running'
         finished = {}
         try:
+            self.stop_hdmi()
+            if self.released:
+                self.pipeline=CamusPipeline(self.pipeline.model.root,'pl',self.runtime)
+                self.released=False
             result = self.pipeline.run(self.data/job['id']/'input'/selected,
                                        self.data/job['id']/'output', spacing)
             result.pop('output_dir'); result.pop('report')
@@ -76,6 +121,7 @@ class CamusServer(ThreadingHTTPServer):
     def server_close(self):
         super().server_close()
         self.executor.shutdown(wait=True)
+        self.stop_hdmi()
         self.pipeline.close()
 
 
@@ -97,8 +143,10 @@ class Handler(BaseHTTPRequestHandler):
         if path == '/':
             return self.send_bytes(Path(__file__).with_name('web.html').read_bytes(), kind='text/html; charset=utf-8')
         if path == '/api/status':
+            hdmi=self.server.hdmi_status()
             return self.json(dict(backend=self.server.pipeline.backend, spec_sha256=MODEL_SPEC_SHA256,
-                                  ready=not self.server.fault, model='CAMUS hidden_histogram INT8'))
+                                  ready=not self.server.fault, hdmi=hdmi,
+                                  model='CAMUS hidden_histogram INT8'))
         match = re.fullmatch(r'/api/jobs/([0-9a-f]{32})', path)
         if match:
             with self.server.guard: job = dict(self.server.jobs.get(match[1], {}))
@@ -114,6 +162,25 @@ class Handler(BaseHTTPRequestHandler):
         self.json(dict(error='not found'), 404)
 
     def do_POST(self):
+        origin=self.headers.get('Origin')
+        if origin and origin!='http://'+self.headers.get('Host',''):
+            return self.json(dict(error='cross-origin board control is not allowed'),403)
+        if urlsplit(self.path).path == '/api/hdmi':
+            if self.server.fault:return self.json(dict(error='hardware session faulted; inspect board'),503)
+            if not self.server.busy.acquire(blocking=False):return self.json(dict(error='inference is busy'),409)
+            try:
+                length=int(self.headers.get('Content-Length','0'))
+                if not 0<length<=2048:raise ValueError('invalid control request size')
+                request=json.loads(self.rfile.read(length))
+                if not isinstance(request,dict):raise ValueError('control request must be a JSON object')
+                if request.get('action')=='stop':self.server.stop_hdmi()
+                elif request.get('action')=='show':self.server.start_hdmi(request.get('id'),request.get('view','overlay'))
+                else:raise ValueError('unknown HDMI action')
+                return self.json(dict(hdmi=self.server.hdmi_status()),202)
+            except (ValueError,TypeError) as exc:return self.json(dict(error=str(exc)),400)
+            except Exception as exc:
+                self.server.fault=True;return self.json(dict(error=str(exc)),503)
+            finally:self.server.busy.release()
         if urlsplit(self.path).path != '/api/jobs': return self.json(dict(error='not found'), 404)
         started = time.perf_counter()
         if self.server.fault: return self.json(dict(error='PL session faulted; restart this CAMUS app after checking hardware'), 503)
@@ -151,7 +218,10 @@ def main(argv=None):
         p.error('this independent local app binds loopback only; remote access can use an SSH tunnel')
     pipeline = CamusPipeline(args.model, args.backend, args.runtime)
     try:
-        with CamusServer((args.host,args.port), pipeline, args.data) as server:
+        with CamusServer((args.host,args.port), pipeline, args.data, args.runtime) as server:
+            def stop_server(*_):
+                threading.Thread(target=server.shutdown,daemon=True).start()
+            signal.signal(signal.SIGTERM,stop_server);signal.signal(signal.SIGINT,stop_server)
             print(f'CAMUS_WEB http://{args.host}:{server.server_port} backend={args.backend}', flush=True)
             server.serve_forever()
     finally: pipeline.close()

@@ -20,6 +20,22 @@ from camus.preprocess import load_gray_frame, PreprocessError
 
 
 class ContractRegressionTests(unittest.TestCase):
+    def test_resize_uses_native_width_indices_on_32bit_arm(self):
+        from unittest.mock import patch
+        from camus.preprocess import _input_bilinear_axis
+        from camus.result import _output_bilinear_axis
+        original_take = np.take
+        observed = []
+        def take(array, indices, **kwargs):
+            self.assertEqual(indices.dtype, np.dtype('int32'))
+            observed.append(indices.copy())
+            return original_take(array, indices, **kwargs)
+        with patch.object(np, 'intp', np.int32), patch.object(np, 'take', side_effect=take):
+            a = np.arange(6,dtype=np.float32).reshape(2,3)
+            _input_bilinear_axis(a,5,1,3/5)
+            _output_bilinear_axis(a,5,1)
+        self.assertEqual(len(observed),4)
+
     def test_weight_bank_guard_and_preflight_before_mmio(self):
         io = CamusMMIO.__new__(CamusMMIO); io.core = Mock(); io.closed = False; io.frame = 0
         with self.assertRaises(ValueError): io.configure(0,10,10,191,33,3)

@@ -46,8 +46,8 @@ def _output_bilinear_axis(array: np.ndarray, output_size: int, axis: int) -> np.
     lower = np.minimum(lower, input_size - 1)
     upper = np.minimum(lower + 1, input_size - 1)
     weight = (coordinate - lower).astype(np.float32)
-    view_lower = np.take(array, lower, axis=axis)
-    view_upper = np.take(array, upper, axis=axis)
+    view_lower = np.take(array, lower.astype(np.intp), axis=axis)
+    view_upper = np.take(array, upper.astype(np.intp), axis=axis)
     if axis == 0:
         weight = weight[:, None]
     else:

@@ -73,13 +73,17 @@ def package_runtime(output=None, model_root=DEFAULT_MODEL_ROOT):
         if p.is_file() and '__pycache__' not in p.parts and p.suffix != '.pyc':
             paths[p.relative_to(ROOT).as_posix()] = p
     for folder, names in (('board', ('tensor_accel.py', 'simple_dma.py')),
+                          ('display_web', ('pld_hdmi.py',)),
                           ('reference', ('__init__.py', 'tiling.py', 'tinyunet.py'))):
         for name in names:
             if (ROOT/folder/name).is_file(): paths[folder+'/'+name] = ROOT/folder/name
     for p in model.root.rglob('*'):
         if p.is_file(): paths['model/int8_export/'+p.relative_to(model.root).as_posix()] = p
     for name in (*manifest['artifacts'], 'build_manifest.json'):
-        paths['overlay/'+name] = BUILD/name
+        # PYNQ 3.1.1 is_xsa() tests for a same-stem sibling, even when
+        # opening a .bit. Keep the paired XSA as evidence outside that path.
+        prefix = 'overlay/evidence/' if name.endswith('.xsa') else 'overlay/'
+        paths[prefix+name] = BUILD/name
     for rel in manifest['sources']:
         paths[rel] = ROOT/rel
     runtime = dict(schema='camus-runtime-v1', model_spec_sha256=MODEL_SPEC_SHA256,
@@ -98,6 +102,8 @@ def package_runtime(output=None, model_root=DEFAULT_MODEL_ROOT):
 
 def verify_runtime(runtime, model_root):
     runtime = Path(runtime).resolve()
+    if (runtime/'overlay/dma_top.xsa').exists():
+        raise ValueError('same-stem XSA shadows bit/HWH loading on PYNQ 3.1.1')
     manifest = json.loads((runtime/'runtime_manifest.json').read_text())
     if manifest.get('schema') != 'camus-runtime-v1' or manifest.get('model_spec_sha256') != MODEL_SPEC_SHA256:
         raise ValueError('not a frozen CAMUS runtime')

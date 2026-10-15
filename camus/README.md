@@ -2,7 +2,7 @@
 
 CAMUS 从单帧灰度输入经过精确预处理、15 层整数网络、原生尺寸恢复和固定后处理，输出背景、左心室腔、心肌、左心房四类。CLI、独立网页和性能测试使用同一个 `CamusPipeline`。现有 ISIC 网页、RTL、构建脚本和冻结交付未替换。
 
-本版本完成本机数值验收、CAM2 RTL 集成仿真、100 MHz 正式布线和运行包生成。没有连接或改动板卡；真实 PL 驱动尚无该 CAMUS 版本的板测证据。CPU reference / emulator 的耗时不能当作板卡性能。
+本版本已完成真实 PYNQ 数值板测：CAM2 ID/ABI、100 MHz 时钟、首帧 15 层输入/输出、三类故障后的整帧恢复，以及 50 人/200 张开发集原图全部通过。按用户要求在 218 帧后停止长测，218 帧输入/head/原生标签/后处理均零差异；没有完成或宣称 1000 帧验收。CPU reference / emulator 的耗时不能当作板卡性能。
 
 ## 使用
 
@@ -67,13 +67,61 @@ if (-not $env:PROCESSOR_ARCHITECTURE) { $env:PROCESSOR_ARCHITECTURE = 'AMD64' } 
 
 100 MHz 路由：WNS +0.344 ns、WHS +0.028 ns、WPWS +3.750 ns；6843 Slice LUT、7718 FF、67 BRAM36 等效、52 DSP。DRC 仍列出 DSP 流水、RAM 异步控制等告警及报告数量上限提示，均保留在 `drc.rpt`；时序通过不等于板级验收。
 
-未来在已安排独占使用的 PYNQ 上，从解压包根运行：
+在已安排独占使用的 PYNQ 上，从解压包根运行：
 
 ```bash
 sudo -E /usr/local/share/pynq-venv/bin/python3 -m camus --backend pl --runtime . frame.mhd results/frame001
 ```
 
-PL 入口先确认旧 `pld-web.service` inactive，并获取 CAMUS 进程锁；不会自动停止服务。该锁不能阻止不参与锁的手动旧程序。加载新位流会替换当前 PL，不能与 ISIC 同时推理。本轮未执行上述板端命令，也未切换服务或验证物理 HDMI。运行包默认不携带 200 例 dev 回放文件，包内验证可用 `camus.verify --skip-native-replay`。
+PL 入口先确认旧 `pld-web.service` inactive，并获取 CAMUS 进程锁；不会自动停止服务。该锁不能阻止不参与锁的手动旧程序。加载新位流会替换当前 PL，不能与 ISIC 同时推理。运行包默认不携带 200 例 dev 回放文件，包内软件验证可用 `camus.verify --skip-native-replay`。
+
+### 板端服务与切换
+
+板端依赖实测为 Python 3.10.4、NumPy 1.21.5、SciPy 1.8.0、Pillow 9.0.1、PYNQ 3.1.1。原始 NIfTI 使用隔离目录中的 nibabel 5.2.1，不替换系统环境。板上时钟不准，测量使用单调时钟，运行日期以主机记录为准。
+
+独立 `pld-camus.service` 绑定板端 `127.0.0.1:8090`。unit 通过 `Conflicts` 和启动顺序互斥原 `pld-web.service`，不改原 unit、drop-in、运行包、访问码或历史数据，也不改变原开机启动设置。从 CAMUS 运行包根执行：
+
+```bash
+sudo -E /usr/local/share/pynq-venv/bin/python3 -m camus.board_service status
+sudo -E /usr/local/share/pynq-venv/bin/python3 -m camus.board_service camus
+sudo -E /usr/local/share/pynq-venv/bin/python3 -m camus.board_service isic
+```
+
+首次安装使用 `board_service install --runtime ... --dependencies ... --data ...`；安装前校验冻结运行包，并用 `systemd-analyze verify` 检查新 unit。已有 unit 会拒绝覆盖，安装不会自动启用开机启动。验证进程还在运行时，切换命令拒绝抢占 PL。
+
+主机用 SSH 转发访问，认证信息来自交互或 `PLD_BOARD_PASS`，不得写入源码：
+
+```powershell
+& D:\conda\python.exe -m camus.tunnel --local-port 8091
+```
+
+打开 `http://127.0.0.1:8091/`，后端必须标为“真实 PL”。主机的隧道模块需要 paramiko，板端推理不依赖它。
+
+### 原图、长稳及网页验收
+
+`prepare_validation` 只按官方 validation 名单选择冻结导出对应的 50 名患者/200 张 ED/ES 端点，先核对原始 GT 与导出 GT，再冻结原 NIfTI、首层量化输入、head、原生及处理后标签的哈希。不会打开封存测试患者影像。
+
+```powershell
+& D:\conda\python.exe -m camus.prepare_validation --dataset 数据/CAMUS --candidate camus_candidate_hidden_histogram_int8_20261015 --output out/camus/new_dev200
+```
+
+传输并校验数据包后，板端通过登录 shell 初始化 XRT，在独占 PL 时运行：
+
+```bash
+sudo -E /usr/local/share/pynq-venv/bin/python3 -m camus.board_verify --runtime . --dataset /path/to/dev200 --output new_board_validation --frames 1000
+```
+
+该程序从第一层输入验证全部 30 个黄金张量，注入短包、缺包超时和计算中复位，每次恢复后重跑整帧。随后从原始 NIfTI 执行 200 张开发图循环，逐帧比较输入/head/原生标签/固定后处理；记录命令、字节、engine/core cycles、网络和在线处理耗时、RSS。`frames.jsonl` 持续落盘；`summary.json.complete=false` 不能当作长稳通过。在线处理统计不含 PNG/ZIP，完整结果生成另列。
+
+网页启动后，主机可运行 `camus.board_web_verify --url http://127.0.0.1:8091 --dataset ... --output ... --frames 20 --hdmi`：验证上传→真实 PL→四张全分辨率 PNG→ZIP、忙时 409、head/标签精确比较、ZIP CRC/报告一致性，并区分常驻请求与 HDMI 后的冷初始化。
+
+### HDMI
+
+CAMUS 网页支持叠加、四分类和标签视图。开始 HDMI 前关闭推理 DMA、释放 CAMUS 锁，再由独立子进程加载 PYNQ base overlay；下一次推理先等待 HDMI 关闭，再重建 CAM2 会话。C 的 `pld_hdmi.py` 只读复用，没有修改其二值掩膜或网页接口。超时或未确认释放时停止接受新硬件操作。
+
+独立 CLI：`python -m camus.hdmi --result /path/to/completed/result --view segmentation --duration 10`。HDMI 初始化及帧提交通过不代表真实屏幕目视通过；用户确认本轮未连接显示器。
+
+板测发现并修复两个仅靠主机仿真未暴露的问题：PYNQ 3.1.1 的同名 `.xsa` 旁路判定（XSA 改存 `overlay/evidence/`）；ARM 32 位 NumPy 的 `take` 索引必须为 `intp`（仅索引转换，不改坐标和权重算术）。
 
 ## 性能分析
 
@@ -84,6 +132,8 @@ PL 入口先确认旧 `pld-web.service` inactive，并获取 CAMUS 进程锁；�
 工具将解析 xsim 的 41 组 engine cycles 与状态机公式逐项核对，再投影整帧。当前调度 164 个卷积 tile、19 组参数、605 条命令、33273648 字节/帧；卷积投影 103056016 周期，含 tensor 的 engine 总量 110397056 周期。
 
 100 MHz 下 engine 投影约 1.104 秒，加上不可重叠的单字节装载/读回最低约 0.333 秒，得到约 1.437 秒/帧的流水下限（吞吐上限约 0.696 FPS）。这不是板测，也未包含所有 AXI 控制、PS、缓存、图像处理开销。125 MHz 仅作数学比较，当前通过构建的 CAMUS 位流是 100 MHz。
+
+真实 218 帧板测：网络中位 3.434083 秒、P95 3.611954 秒（中位约 0.291 FPS）；原图读取/预处理、PL 网络和原生恢复/后处理合计中位 4.271206 秒、P95 4.854623 秒，此口径不含 PNG/ZIP。首张原始 NIfTI 全流程生成四张 PNG 与 ZIP 为 6.078725 秒，不构成网页 P95≤5秒验收。每帧实测 engine 都为 110397056 周期，与 RTL 投影完全一致；PS/控制/DMA 等额外时间必须计入系统性能。
 
 性能报告同时保留本机 reference/emulator 的实际端到端生成耗时和样本数。验证演示图由 A 首层量化输入反构造，能逐字节复现输入/head，但不称原始临床图。3 帧短测不继承 ISIC 的 dev638/1000 帧证据。
 

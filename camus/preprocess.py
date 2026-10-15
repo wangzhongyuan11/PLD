@@ -290,8 +290,10 @@ def _input_bilinear_axis(array: np.ndarray, new_size: int, axis: int, scale: flo
     lower = np.floor(coordinates).astype(np.int64)
     upper = np.minimum(lower + 1, array.shape[axis] - 1)
     weight = (coordinates - lower).astype(np.float32)
-    view_lower = np.take(array, lower, axis=axis)
-    view_upper = np.take(array, upper, axis=axis)
+    # np.take requires native-width indices on 32-bit ARM NumPy 1.21.
+    # Keep coordinate/weight arithmetic unchanged, cast only at indexing.
+    view_lower = np.take(array, lower.astype(np.intp), axis=axis)
+    view_upper = np.take(array, upper.astype(np.intp), axis=axis)
     if axis == 0:
         weight = weight[:, None]
     else:
