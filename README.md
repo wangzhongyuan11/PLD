@@ -10,6 +10,7 @@
 |---|---|
 | C上板使用 | [冻结交付包及三步运行](delivery/c_v3/README.md)、[B→C合同](docs/C_HANDOFF.md) |
 | 网页与HDMI显示端（C源码） | [display_web 使用说明](display_web/README.md)、[板端部署与自启](display_web/docs/DEPLOYMENT.md) |
+| CAMUS 四结构分割独立实现 | [CAMUS 模型、CLI/网页、CAM2 RTL、构建与性能分析](camus/README.md)；保持原 ISIC 默认流程 |
 | 理解实现 | [整体数据流与模块职责](docs/IMPLEMENTATION.md)、[PL寄存器合同](docs/design/ACCELERATOR_REGISTERS.md) |
 | 核对真实结果 | [板测汇总](delivery/c_v3/validation/summary.json)、[详细验证记录](docs/FINAL_MODEL_STATUS.md) |
 | 修改与协作 | [团队开发说明](CONTRIBUTING.md)、[计划与剩余目标](docs/PLAN.md) |
