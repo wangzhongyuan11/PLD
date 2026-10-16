@@ -38,6 +38,8 @@ flowchart LR
 
 `conv_tile_engine.sv`从4个输入bank和32个权重bank读取数据，`conv_mac_array.sv`每组做8输出×4输入通道的INT8乘加；INT32累加显式检查溢出。`requant_q24.sv`保留宽乘积，正负最近偶数舍入后饱和到[-127,127]。输出是ReLU前的原始卷积结果。`tensor_tile_engine.sv`在同一组特征RAM上执行LUT/Pool/Upsample/Concat，和卷积互斥。
 
+2026-10-16 按用户要求恢复板端实际版本：`conv_tile_engine.sv` 撤销 `3de993e` 的 MAC/requant 重叠实验，恢复 SHA256 `7d99b861ac5c0e3697621c97608c939113a1da03a2425881d4b484515f25943d`。皮肤镜和 CAMUS 两套运行包 `overlay/build_manifest.json` 各引用的 8 个 RTL 文件均与本地原始字节 SHA256 一致；板端 bit/hwh 未替换。该核对证明源码与既有构建绑定，不是一次新的综合、布线或烧写验收。
+
 ABI 1.1模式5把8处独立MAP的ReLU/尺度表并入输入加载。ABI 1.2模式6把第8/10/12层decoder入口的双分支尺度转换、nearest×2和Concat并入卷积读取；deep使用半分辨率紧凑halo，PS只收集原始字节。调度器按真实bank容量选择32行tile，减少重复命令。网络算术仍在PL，PS快速量化只作用于首层图像。精确地址与容量见[寄存器合同](design/ACCELERATOR_REGISTERS.md)和[tile布局](design/TILE_ENGINES.md)。
 
 `vivado/build_dma_bd.tcl`构建PS7、DDR、AXI DMA和CNN最小BD，`vivado/ps7_config.tcl`保留从教程机械提取的PS7配置；重新构建不需要下载整个教程目录。`scripts/build.sh cnn`打包IP、实现、提取bit/hwh/XSA并检查时序，`write_build_manifest.py`绑定源码及产物。当前125MHz布线使用7108 LUT、67 BRAM36等效、53 DSP；WNS仅+0.013ns，C更改BD后必须重新布线，不能直接继承该裕量。
