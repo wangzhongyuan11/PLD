@@ -7,17 +7,17 @@ from pathlib import Path
 from PIL import Image
 import numpy as np
 from pld_hdmi import PynqHdmiDisplay, fit_rgb
+from quad_display import skin_frame
 
 stop_requested = threading.Event()
 
 
 def main():
     folder, view = Path(sys.argv[1]), sys.argv[2]
-    screen = fit_rgb(np.asarray(Image.open(folder / (view+".png")).convert("RGB")), 640, 480)
+    screen = skin_frame(folder)
     from pynq.overlays.base import BaseOverlay
     from hdmi_buttons import DebouncedButtons, handle_press
-    names = ["original", "cutout", "comparison"] if (folder / "original.png").exists() else ["mask", "contour", "outlined"]
-    screens = [fit_rgb(np.asarray(Image.open(folder / (v+".png")).convert("RGB")), 640, 480) for v in names]
+    screens = [screen, screen, screen]
     base = BaseOverlay("base.bit")
     display = PynqHdmiDisplay(base.video.hdmi_out)
     try:

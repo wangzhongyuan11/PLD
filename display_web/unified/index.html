@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PLD · 双模型分割工作台</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f7f9;color:#123342;font:16px system-ui,"Microsoft YaHei",sans-serif}header{background:#fff;border-bottom:1px solid #d8e4e9;padding:22px max(24px,calc((100vw - 1440px)/2));display:flex;align-items:center;gap:22px}strong.logo{font-size:30px;color:#00767c}header span{font-size:18px}main{max-width:1480px;margin:auto;padding:24px}.switcher{padding:24px;background:#fff;border:1px solid #d8e4e9;border-radius:16px}h1{margin:0 0 16px;font-size:24px}.buttons{display:flex;gap:12px;flex-wrap:wrap}button{border:1px solid #a9c4cc;color:#14535f;background:#fff;border-radius:10px;padding:13px 25px;font:inherit;cursor:pointer}button.selected{background:#00767c;color:#fff;border-color:#00767c}button:disabled{cursor:default;opacity:.55}p{line-height:1.7;margin:14px 0 0}.hint{font-size:14px;color:#627b89}#status{font-weight:600}#error{color:#ad3434;white-space:pre-wrap}#login{margin-top:15px}input{font:inherit;padding:12px;border:1px solid #a9c4cc;border-radius:8px;max-width:100%;width:360px}iframe{border:0;width:100%;min-height:1000px;margin-top:18px;background:#f3f7f9;border-radius:16px}details{margin-top:12px;font-size:13px;color:#627b89}pre{white-space:pre-wrap}[hidden]{display:none!important}@media(max-width:600px){main{padding:12px}.switcher{padding:18px}header{padding:16px}header span{font-size:15px}button{flex:1;padding:12px}}
+</style></head><body><header><strong class="logo">PLD</strong><span>双模型分割工作台</span></header><main>
+<section class="switcher"><h1>选择分割模型</h1><div class="buttons"><button id="skin" disabled>皮肤镜 · 皮损分割</button><button id="camus" disabled>CAMUS · 心脏超声</button></div>
+<p id="status" role="status" aria-live="polite">正在连接服务…</p><p class="hint">同一时间仅运行一个模型。切换时等待当前任务与结果包完成，释放旧模型，再初始化所选模型。</p>
+<p class="hint">切换前请下载需要的结果；切换会重载操作页面，CAMUS 本次页面的结果入口不会保留。磁盘上的结果文件不会删除。</p>
+<p><a href="/interactive" target="_blank">打开 ROI / 点提示 / 框提示交互工作台</a>（使用当前所选模型）</p>
+<form id="login" hidden><label for="token">原皮肤镜网页访问码</label><br><input id="token" type="password" autocomplete="off" required><button>连接工作台</button></form>
+<p id="error" role="alert"></p><details><summary>模型切换详情</summary><pre id="details"></pre></details></section>
+<iframe id="workspace" title="所选模型的上传与分割页面" hidden></iframe></main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+let frameKey='',loggedIn=false,refreshing=false,nextRefresh=0,pollDelay=1500;
+const names={skin:'皮肤镜',camus:'CAMUS'};
+async function api(path,body){const r=await fetch(path,{credentials:'same-origin',...(body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{})});const data=await r.json();if(!r.ok){const e=Error(data.error||'连接失败');e.status=r.status;throw e;}return data;}
+function render(s){
+ const ready=s.phase==='ready';
+ pollDelay=['waiting','stopping','loading'].includes(s.phase)?300:1500;
+ for(const key of ['skin','camus']){$(key).disabled=!ready;$(key).classList.toggle('selected',s.model===key&&ready);$(key).setAttribute('aria-pressed',String(s.model===key&&ready));}
+ const phase={idle:'准备启动模型',waiting:'等待当前任务与完整结果包完成…',stopping:'正在释放旧模型与 HDMI…',loading:'正在初始化 '+(names[s.target]||'模型')+'，请稍候…',ready:(names[s.model]||'模型')+'已就绪，可以上传图片',error:'切换未完成，请检查服务日志'};
+ $('status').textContent=phase[s.phase]||s.phase;$('error').textContent=s.error||'';
+ $('details').textContent=JSON.stringify({当前模型:s.model,目标模型:s.target,状态:s.phase,本次切换:s.switch,当前内存:s.memory},null,2);
+ const key=ready?s.model+'/g/'+s.generation:'';
+ if(key!==frameKey){frameKey=key;$('workspace').hidden=!ready;$('workspace').src=ready?'/'+key+'/':'about:blank';}
+}
+async function refresh(){if(refreshing)return;refreshing=true;try{const s=await api('/hub/status');loggedIn=true;$('login').hidden=true;render(s);}catch(e){if(e.status===401){loggedIn=false;$('login').hidden=false;$('status').textContent='请输入原网页访问码';}else{$('status').textContent='服务暂未连接';$('error').textContent=e.message;}for(const k of ['skin','camus'])$(k).disabled=true;}finally{refreshing=false;nextRefresh=Date.now()+pollDelay;}}
+async function login(token){await api('/hub/login',{token});try{localStorage.setItem('pld_token',token);}catch{}await refresh();}
+for(const model of ['skin','camus'])$(model).onclick=async()=>{for(const k of ['skin','camus'])$(k).disabled=true;try{render(await api('/hub/switch',{model}));nextRefresh=0;}catch(e){$('error').textContent=e.message;}};
+$('login').onsubmit=async event=>{event.preventDefault();try{await login($('token').value.trim());$('token').value='';}catch(e){$('error').textContent=e.message;}};
+let observer;
+$('workspace').onload=()=>{if(observer)observer.disconnect();try{const body=$('workspace').contentDocument.body;const resize=()=>{$('workspace').style.height=Math.max(1000,body.scrollHeight+32)+'px';};observer=new ResizeObserver(resize);observer.observe(body);resize();}catch{}};
+(async()=>{let token=location.hash.slice(1);if(token)history.replaceState(null,'',location.pathname);if(!token){try{token=localStorage.getItem('pld_token')||sessionStorage.getItem('pld_token')||'';}catch{}}if(token){try{await login(token);}catch(e){$('error').textContent=e.message;await refresh();}}else await refresh();setInterval(()=>{if(Date.now()>=nextRefresh)refresh();},300);})();
+</script></body></html>

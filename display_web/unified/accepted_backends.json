@@ -1,0 +1,39 @@
+{
+  "skin": {
+    "server.py": [
+      "535217c98b793f53aae52092bd4b4eca96e069ce64c33724aeb9ef2be66c025e",
+      "122580598d2941a2bb4124061a330e7a7ca39b9b58c40964c0b51c6802c54469"
+    ],
+    "persistent_worker.py": [
+      "c8d75b75be273e4a2d8dee074ca24f58fb7177d9039cce3e854c93ae154ebe67",
+      "c6c7320c27560c9fb5fccecdc9e76e1806f21ee1072236f46c9b1ce302702e83"
+    ],
+    "static/app.js": [
+      "b487c5462d84521559874ab53854c6abbd0c5185e9d5592045366e6df5a12caa",
+      "04e0bfe3429c0703adbd149f1e74e3716d875bfb28d437e8099eea52a1b9837e",
+      "9e1a88ea2f9ff4fbaf1431141ba9d8fba50586782d7acabcef2eed3aee580841",
+      "83a673bc171decf193699e83be18463f88e06d5e3555aadaef1ff3d0bf1ccb83"
+    ],
+    "static/index.html": [
+      "5013821099f11496a293a68b41c360bf479707cac8de77f3ef95a91c3e7736dc",
+      "2bf26d358bd0c7a7789bd9dbf64e1027209f30c6aedd8004bacbe3cc24b68f3f",
+      "fa6cbd0c9e413964ff2136b31d0d9fffb5b8705c15289b8f0b11d52816293b56",
+      "bea982bd404d98f9267c235bc79005340b872fcc2c22230833b6e7979a27c562"
+    ]
+  },
+  "camus": {
+    "camus/accelerator.py": [
+      "d5a9033d3be850fcb90f64c7b4bb5a85caeb0c8943fc70cc42a255d0a1cd6365",
+      "14f6206c93328d08cc1cbebee7d93bed21480b10e988e79f185ad41104fd947a",
+      "cf742f8f1310dfa6afb83c8ddaa2615e9e18e1b315524bdaada1d300e7242916"
+    ],
+    "camus/web.html": [
+      "899a1b0b1e5d8d53b72a3f748a5fc870e1d9f87dc354109c4f183fffd3e1e141",
+      "ad94f90be70d6df984f5be07036ef13dc583ae3b7a572cb3bf3aeb0671942346"
+    ],
+    "camus/web.py": [
+      "e64c10daf7e3ca3f91bae2c5788151a78e50b57e2bb1f763b02430cc53e58adb",
+      "58bb006266107d7a4c219535f5ae03865372136412945a8f8cd4c98fd69ec291"
+    ]
+  }
+}
