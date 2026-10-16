@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="PLD 皮损分割与轮廓工作台"><title>PLD · 图像分割工作台</title><link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/style.css"></head>
+<body><header><a class="brand" href="/">P<span>LD</span><small>图像分割工作台</small></a><div class="status-pill" id="connection">正在连接本地服务</div></header>
+<main><div class="heading"><div><p class="eyebrow">SEGMENTATION WORKSPACE</p><h1>从图像，到清晰的边界。</h1></div><button class="quiet" id="demo">加载真实结果示例</button></div>
+<div class="workspace"><aside class="controls"><div class="section-head"><span class="number">01</span><h2>输入与处理</h2></div>
+<label class="field">处理方式<select id="mode"><option value="mask">图片 + 配套掩膜</option><option value="infer" disabled>板端 FPGA 分割</option></select></label>
+<label class="upload" id="drop"><span class="upload-icon">＋</span><strong id="fileLabel">选择原始图片</strong><span>JPG / PNG · 大图上传前自动缩小</span><input type="file" id="imageFile" accept="image/jpeg,image/png"></label>
+<p class="hint" id="uploadNote" role="status">超过 300 万像素时等比例缩小；仅处理上传副本，电脑原文件保持不变。结果按上传尺寸生成。</p>
+<div id="maskField"><label class="field" for="maskFile">配套二值掩膜</label><input type="file" id="maskFile" accept="image/png"><p class="hint">黑色为背景，白色为病灶。尺寸须与原图一致。</p></div>
+<div class="range-label"><label for="thickness">轮廓线宽</label><output id="widthValue">2 px</output></div><input type="range" id="thickness" min="1" max="8" value="2"><p class="hint">调整线宽后，重新处理即可更新结果。</p>
+<button class="primary" id="run">开始处理</button><p class="mode-note" id="modeNote">本机可处理已有掩膜。新图片的模型分割需在 PYNQ 上启动本服务。</p>
+<div class="progress-block"><div><span id="stage">等待输入图片</span><span id="percent">0%</span></div><progress id="progress" max="100" value="0"></progress></div>
+</aside>
+<section class="viewer"><div class="viewer-top"><div><span class="number">02</span><h2>结果预览</h2></div><span id="jobName">尚未选择图像</span></div>
+<div class="tabs" role="tablist" aria-label="显示内容"><button role="tab" data-view="outlined" aria-selected="true">轮廓描边</button><button role="tab" data-view="cutout" aria-selected="false">切割图</button><button role="tab" data-view="mask" aria-selected="false">二值掩膜</button><button role="tab" data-view="contour" aria-selected="false">独立轮廓</button></div>
+<div class="image-grid"><figure><figcaption id="leftLabel">原始图像</figcaption><div class="image-box"><img id="leftImage" alt="原始图像" hidden><div class="empty" id="leftEmpty"><span>01 / INPUT</span><p>从左侧上传图片<br>或加载真实结果示例</p></div></div></figure><figure><figcaption id="rightLabel">轮廓描边</figcaption><div class="image-box"><img id="rightImage" alt="处理结果" hidden><div class="empty" id="rightEmpty"><span>02 / RESULT</span><p>处理结果将在这里显示</p></div></div></figure></div>
+<div class="result-foot"><span id="sourceNote">保留原图比例 · 黄色表示提取到的边界</span><button id="download" class="quiet" disabled>下载结果包</button></div>
+</section>
+<aside class="metrics"><div class="section-head"><span class="number">03</span><h2>量化结果</h2></div><div class="metric hero"><span>病灶面积占比</span><strong id="area">—<small>%</small></strong><p id="areaScope">有效区域像素占比</p></div><div class="metric"><span>病灶像素</span><strong id="pixels">—</strong></div><div class="metric"><span>边界像素</span><strong id="boundary">—</strong></div><div class="metric"><span id="timeLabel">服务端处理耗时</span><strong id="time">—</strong></div><p class="hint" id="timingNote">HTTP 请求体开始接收到含报告的 ZIP 完成；不含浏览器预处理/渲染和历史索引提交。</p>
+<div class="hdmi"><h2>HDMI 屏幕</h2><p id="hdmiState">电脑预览模式</p><button id="showHdmi" disabled>将当前结果显示到屏幕</button><button id="stopHdmi" class="quiet" disabled>停止 HDMI</button><p class="hint">板端先完成推理，再开启显示。</p></div></aside></div>
+<section class="history" aria-labelledby="timingTitle"><h2 id="timingTitle">本次处理各阶段耗时 · 预览优先 v2</h2><p class="hint">预览就绪后先显示阶段计时，完整结果包生成后更新总耗时。总计和子项有重叠，不可累加；并行 PNG 单图耗时不能相加当作等待时间。浏览器总计不含历史列表刷新及 HDMI。</p><pre id="stageTimings" style="white-space:pre-wrap;line-height:1.8">等待一次处理。已有历史记录也可点击“查看耗时”。</pre><button id="downloadTimings" class="quiet" disabled>下载计时报告</button></section>
+<div class="message" id="message" role="status" aria-live="polite">准备就绪。可先加载已有板测结果，查看真实轮廓。</div>
+<section class="history" aria-labelledby="historyTitle"><div class="history-heading"><div><h2 id="historyTitle">本次开机的处理记录</h2><p class="hint">刷新或重新打开网页后仍可查看；这里只显示本次开机生成的结果。</p></div><button id="refreshHistory" class="quiet">刷新记录</button></div><p id="historyEmpty" class="hint">本次开机还没有已完成的结果。</p><div id="historyList" class="history-list"></div></section>
+<footer><span>PLD / PYNQ-Z2</span><span>图像分割实验 · 面积为像素比例，非物理面积</span></footer></main><script src="/app.js"></script></body></html>

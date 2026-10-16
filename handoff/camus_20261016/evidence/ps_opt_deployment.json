@@ -1,0 +1,9 @@
+{
+  "release": "/home/xilinx/jupyter_notebooks/pld/camus_ps_opt_release_20261015",
+  "release_manifest_sha256": "616f9d48cfa8f49eee0f1a47617f171679182f037ba866fdf7231a667ad6710a",
+  "old_runtime_all_hashes_equal": true,
+  "tested_code_identical": true,
+  "rtl_overlay_identical": true,
+  "service_dropin_sha256": "a2bbf7ef4370030bfa4e6e0ae9da4e493f92e2861d21a482773fd7e831ef9740",
+  "main_unit_sha256": "17b169f4757b9da464805a3de5d89d0593f531cb8d7a59d95a3b53292d7b22c7"
+}

@@ -14,19 +14,34 @@ from reference.tinyunet import Model,DEFAULT_MODEL_ROOT,FINAL_SPEC_SHA256
 from write_build_manifest import verify
 
 
+BOARD_PYTHON_FILES=(
+    "simple_dma","tensor_accel","pl_graph","verify_cnn","profile_cnn",
+    "evaluate_dataset","infer_images","infer_worker","cpu_baseline",
+    "native_copy","cache_sync","native_control","native_resize",
+)
+
+
+def board_runtime_files():
+    return {f"board/{name}.py":ROOT/"board"/f"{name}.py" for name in BOARD_PYTHON_FILES}
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--build",type=Path,default=ROOT/"out/vivado_cnn")
     p.add_argument("--output",type=Path,default=ROOT/"out/stage34/cnn_bundle.tar.gz")
     p.add_argument("--model",type=Path,default=DEFAULT_MODEL_ROOT)
+    p.add_argument("--list-board-files",action="store_true",
+                   help="print the board Python files included in every package and exit")
     args=p.parse_args()
+    if args.list_board_files:
+        print("\n".join(sorted(board_runtime_files())))
+        return
     verify(args.build)
     model=Model(args.model)
     manifest=json.loads(model.manifest_path.read_text(encoding="utf-8"))
     model_directory="role_a_final" if model.spec_hash==FINAL_SPEC_SHA256 else "role_a_handoff/role_a"
     files={}
-    for name in ("simple_dma","tensor_accel","pl_graph","verify_cnn","profile_cnn","evaluate_dataset","infer_images","cpu_baseline","native_copy","cache_sync","native_control","native_resize"):
-        files[f"board/{name}.py"]=ROOT/"board"/f"{name}.py"
+    files.update(board_runtime_files())
     for name in ("__init__.py","tinyunet.py","tiling.py","preprocess.py","parallel_resize.py","native_resize.py","pillow_resize.py","evaluation.py","datasets.py","dataset_contracts.json","baseline_manifest.json","final_manifest.json"):
         files[f"reference/{name}"]=ROOT/"reference"/name
     files["scripts/prepare_cnn_input.py"]=ROOT/"scripts/prepare_cnn_input.py"

@@ -1,0 +1,26 @@
+{
+  "schema": "camus-handoff-status-v1",
+  "handoff_date": "2026-10-16",
+  "board_connected_at_handoff": false,
+  "target_seconds": 3.0,
+  "target_achieved": false,
+  "baseline_commit": "56066b8",
+  "github_branch": "codex/camus-handoff-20261016",
+  "candidate_runtime_sha256": "757d04f855e4006e8c5b66428faadf2bd32044ce7c809f742fa9431135bd05dc",
+  "stable_runtime_sha256": "0429504e39f4e9a362062d5554e9f494554d98111c0f66908e17c7ecf85da2b0",
+  "model_spec_sha256": "68b4f425cc3612ad72d5e83955c2018981edee912fbc0937e9ac8c1718e7b5ae",
+  "candidate": {
+    "board_http_frames": 3,
+    "host_tests": 44,
+    "host_native_class_skipped": true,
+    "previous_board_native_tests": 6,
+    "commands_per_frame": 547,
+    "dma_bytes_per_frame": 32153584,
+    "engine_cycles_per_frame": 110396848,
+    "clock_mhz": 100,
+    "rtl_changed": false,
+    "candidate_20_frame_validation_complete": false,
+    "physical_hdmi_verified": false
+  },
+  "current_board_state": "unknown; last observation was 2026-10-15 preconv candidate service, not refreshed at handoff"
+}

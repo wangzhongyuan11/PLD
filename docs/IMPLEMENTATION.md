@@ -47,3 +47,5 @@ ABI 1.1模式5把8处独立MAP的ReLU/尺度表并入输入加载。ABI 1.2模�
 `sim/`覆盖量化、加载、调度、DMA异常和RTL协议；`scripts/run_sim.sh`提供命令级、算子和真实模型tile仿真。`board/verify_cnn.py`从首层贯通并比较逐层原始输出及恢复；`board/evaluate_dataset.py`从真实JPEG比较输入和head，记录每帧指标、计时与内存；`scripts/audit_board_run.py`独立检查报告和精确部署包。
 
 最终v3的638图/1000帧结果和实测限制见[状态记录](FINAL_MODEL_STATUS.md)。本次目录整理不改变运行时或RTL；共享的冻结包保持原SHA256，历史实验保留在本机`out/`，团队只使用`delivery/c_v3/`指定版本。
+
+C的网页与HDMI显示应用源码位于`display_web/`，板上部署为`/home/xilinx/jupyter_notebooks/PLD_Web`（部署与自启见其[说明](../display_web/docs/DEPLOYMENT.md)）。它以子进程调用`board/infer_images.py`，并按`display_web/pld_result.py`校验head合同（模型身份、尺度、阈值q≥−1与letterbox几何）；推理与HDMI显示在该应用内部串行互斥，运行B的板测脚本前应先停止`pld-web.service`。板上网页/HDMI端到端联调尚未验收。

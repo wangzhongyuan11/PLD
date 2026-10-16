@@ -1,0 +1,18 @@
+{
+  "schema": "camus-handoff-microbench-v1",
+  "measured_date": "2026-10-15",
+  "scope": "Transcribed from board SSH command outputs on existing saved artifacts; no additional inference; single measurements, not end-to-end validation",
+  "implemented_in_candidate": false,
+  "report_json": {
+    "indent_2_seconds": 0.16005344600125682,
+    "indent_2_characters": 204677,
+    "compact_seconds": 0.05090041200310225,
+    "compact_characters": 152197
+  },
+  "npz_labels": {
+    "deflate_level_1_seconds": 0.04522,
+    "deflate_level_1_bytes": 15704,
+    "deflate_level_6_seconds": 0.11283,
+    "deflate_level_6_bytes": 6390
+  }
+}

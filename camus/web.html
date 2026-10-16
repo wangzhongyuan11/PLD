@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CAMUS 心脏超声分割</title>
+<style>
+body{font:16px/1.6 system-ui;background:#f3f6fa;color:#1e293b;margin:0}main{max-width:1100px;margin:36px auto;padding:0 22px}
+header,section{background:white;border-radius:14px;padding:22px;margin-bottom:20px;border:1px solid #dde5ef}
+h1{font-size:28px;margin:0}p{color:#526175}.tag{color:#176c65}button,a{display:inline-block;background:#146f68;color:white;padding:10px 18px;border:0;border-radius:8px;text-decoration:none;cursor:pointer}
+button:disabled{opacity:.5;cursor:wait}input{margin:8px}#views{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}img{width:100%;object-fit:contain;background:#101722;max-height:480px}#report{white-space:pre-wrap;overflow-wrap:anywhere;font:15px/1.9 system-ui;margin-top:14px}#error{color:#b42318}
+</style><main>
+<header><h1>CAMUS 心脏超声多结构分割</h1><p class="tag" id="backend">正在连接…</p>
+<p>灰度单帧输入 · 左心室腔 / 心肌 / 左心房。该入口使用独立 CAMUS 模型。</p></header>
+<p><span style="color:#ec3a3a">■ 左心室腔</span>　<span style="color:#3ab052">■ 心肌</span>　<span style="color:#527eec">■ 左心房</span></p>
+<section><label>输入文件 <input id="files" type="file" multiple accept=".png,.jpg,.jpeg,.npy,.npz,.mhd,.raw,.nii,.gz"></label>
+<p>支持灰度 PNG/JPEG、二维数组、单帧 MHD+RAW；MHD 请同时选择配套 RAW。强度按 0～255 处理。</p>
+<label>像素间距 Y（mm）<input id="sy" type="number" min="0" step="any"></label>
+<label>X（mm）<input id="sx" type="number" min="0" step="any"></label><p>无间距时显示像素面积；单帧不计算 EF。</p>
+<button id="run" disabled>开始分割</button> <span id="status">就绪</span><p id="error"></p></section>
+<section id="result" hidden><div id="views"></div><p><a id="download">下载完整结果 ZIP</a></p><div id="hdmi" hidden><select id="hdmiView"><option value="overlay">叠加图</option><option value="segmentation">四分类图</option><option value="label">标签图</option></select> <button id="showHdmi">显示到板卡 HDMI</button> <button id="stopHdmi">停止 HDMI</button><span id="hdmiStatus"></span><p>HDMI 与推理共享 FPGA，切换时自动释放并重新加载位流。</p></div><div id="metrics"></div><details><summary>执行耗时与版本</summary><div id="report"></div></details></section>
+</main><script>
+const $=id=>document.getElementById(id);let ready=false,latestJob=null,realPl=false;
+async function api(url,options){const r=await fetch(url,options);const v=await r.json();if(!r.ok)throw Error(v.error||r.status);return v;}
+function encoded(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]);r.onerror=reject;r.readAsDataURL(file);});}
+function formatExecutionDetails(job,report,clientSeconds){
+const result=job.result||{},stages=result.stages_seconds||report.timings_seconds||{};
+const seconds=value=>typeof value==='number'&&Number.isFinite(value)&&value>=0?value.toFixed(3)+' 秒':'未记录';
+const backend={pl:'板卡 PL 推理',reference:'整数软件参考',emulator:'分块软件模拟'};
+const lines=['整体耗时',
+'点击开始至结果包就绪：'+seconds(clientSeconds),
+'板端请求处理：'+seconds(job.server_seconds),
+'完整结果生成（含 PNG 和 ZIP）：'+seconds(result.end_to_end_seconds),
+'','各阶段耗时'];
+for(const [key,label] of [['input_read_preprocess','输入读取与预处理'],['network','网络推理（含数据传输）'],['native_reconstruction_postprocess','原生尺寸恢复与后处理'],['head_labels_write','推理结果与标签保存'],['png_encoding','PNG 图像编码与保存'],['zip_payload','ZIP 图像与标签打包']])lines.push(label+'：'+seconds(stages[key]));
+lines.push('','会话初始化：'+seconds(result.session_initialization_seconds??report.session_initialization_seconds),
+'初始化单独列出；会话复用时不重复执行。',
+'','模型与版本',
+'执行后端：'+(backend[job.backend||report.backend]||'未记录'),
+'模型：CAMUS hidden_histogram INT8',
+'模型版本（SHA256）：'+(report.model?.spec_sha256||'未记录'));
+return lines.join('\n');
+}
+api('/api/status').then(s=>{const names={reference:'本机整数参考',emulator:'分块软件模拟器',pl:'真实 PL'};$('backend').textContent=s.model+' · '+names[s.backend];realPl=s.backend==='pl';ready=s.ready;$('run').disabled=!ready;}).catch(e=>{$('error').textContent=e.message;});
+async function hdmi(action){$('showHdmi').disabled=true;$('stopHdmi').disabled=true;$('error').textContent='';try{let r=await api('/api/hdmi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,id:latestJob,view:$('hdmiView').value})});for(let n=0;r.hdmi==='starting'&&n<50;n++){await new Promise(r=>setTimeout(r,1000));r=await api('/api/status');}$('hdmiStatus').textContent=({showing:' 已提交到 HDMI',starting:' 正在初始化',off:' 已停止',error:' HDMI 异常'})[r.hdmi]||r.hdmi;if(r.hdmi==='error')throw Error('HDMI 初始化异常，请检查板端日志');}catch(e){$('error').textContent=e.message;}finally{$('showHdmi').disabled=false;$('stopHdmi').disabled=false;}}
+$('showHdmi').onclick=()=>hdmi('show');$('stopHdmi').onclick=()=>hdmi('stop');
+$('run').onclick=async()=>{const start=performance.now();$('run').disabled=true;$('error').textContent='';$('result').hidden=true;
+try{const files=Array.from($('files').files);if(!files.length)throw Error('请选择输入文件');if(files.reduce((n,f)=>n+f.size,0)>23*1024*1024)throw Error('文件合计需小于 23 MiB');
+const primary=files.find(f=>f.name.toLowerCase().endsWith('.mhd'))||files.find(f=>!f.name.toLowerCase().endsWith('.raw'));if(!primary)throw Error('RAW 需要对应 MHD');
+const payload={input_name:primary.name,files:await Promise.all(files.map(async f=>({name:f.name,data_base64:await encoded(f)})))};
+if($('sy').value||$('sx').value){payload.spacing=[Number($('sy').value),Number($('sx').value)];if(!payload.spacing.every(v=>Number.isFinite(v)&&v>0))throw Error('请填写两个正数间距');}
+$('status').textContent='上传与分割中…';let j=await api('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+for(;;){j=await api('/api/jobs/'+j.id);if(j.state==='done'||j.state==='error')break;await new Promise(r=>setTimeout(r,300));}
+if(j.state==='error')throw Error(j.error);const clientSeconds=(performance.now()-start)/1000;latestJob=j.id;$('hdmi').hidden=!realPl;const root='/files/'+j.id+'/';const report=await api(root+'report.json');$('views').replaceChildren();
+for(const [title,name] of [['原生尺寸叠加','overlay.png'],['四分类分割','segmentation.png'],['类别显示编码','label.png']]){const box=document.createElement('div');const text=document.createElement('strong');text.textContent=title;const img=document.createElement('img');img.src=root+name;img.alt=title;box.append(text,img);$('views').append(box);}
+$('download').href=root+'result.zip';$('download').download='camus_result.zip';const table=document.createElement('table');const head=document.createElement('tr');for(const text of ['结构','像素数','面积（mm²）']){const th=document.createElement('th');th.textContent=text;th.style.padding='8px 18px';head.append(th);}table.append(head);for(const [key,name] of [['background','背景'],['lv_cavity','左心室腔'],['myocardium','心肌'],['left_atrium','左心房']]){const value=report.output.areas[key];const row=document.createElement('tr');for(const text of [name,value.pixels,value.area_mm2===undefined?'未提供间距':value.area_mm2.toFixed(2)]){const cell=document.createElement('td');cell.textContent=String(text);cell.style.padding='8px 18px';row.append(cell);}table.append(row);}$('metrics').replaceChildren(table);$('report').textContent=formatExecutionDetails(j,report,clientSeconds);$('result').hidden=false;$('status').textContent='分割完成，结果包已就绪';
+}catch(e){$('error').textContent=e.message;$('status').textContent='任务未完成';}finally{$('run').disabled=!ready;}};
+</script></html>
