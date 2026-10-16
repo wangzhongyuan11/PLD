@@ -8,6 +8,7 @@ the host graph only gathers tile bytes and stores owned results.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 import math
 from typing import Iterable
 
@@ -92,6 +93,7 @@ def output_channel_chunks(ci: int, co: int, kernel: int) -> tuple[int, ...]:
     return tuple(result)
 
 
+@lru_cache(maxsize=128)
 def choose_camus_tile(ci: int, co: int, height: int, width: int, kernel: int) -> tuple[int, int]:
     """Choose a spatial tile under explicit CAMUS input/output bank occupancy."""
     if min(ci, co, height, width) <= 0 or kernel not in (1, 3):
@@ -100,18 +102,22 @@ def choose_camus_tile(ci: int, co: int, height: int, width: int, kernel: int) ->
         shape(0, kernel, kernel, ci, co, kernel)
     except ValueError as exc:
         raise DeviceContractError(str(exc)) from exc
-    candidates: list[tuple[int, int, int, int, int]] = []
-    heights = {height} | {1 << bit for bit in range(height.bit_length())}
-    widths = {width} | {1 << bit for bit in range(width.bit_length())}
-    for tile_h in heights:
-        for tile_w in widths:
-            if tile_h > height or tile_w > width:
-                continue
-            input_usage = input_bank_usage(ci, tile_h, tile_w, kernel)
-            output_usage = output_bank_usage(co, tile_h, tile_w)
-            if input_usage <= INPUT_BANK_BYTES and output_usage <= OUTPUT_BANK_BYTES:
-                count = math.ceil(height / tile_h) * math.ceil(width / tile_w)
-                candidates.append((count, -tile_h * tile_w, -tile_w, tile_h, tile_w))
+    candidates: list[tuple[int, int, int, int, int, int]] = []
+    for tile_h in range(1, height + 1):
+        low, high, widest = 1, width, 0
+        while low <= high:
+            tile_w = (low + high) // 2
+            if (input_bank_usage(ci, tile_h, tile_w, kernel) <= INPUT_BANK_BYTES and
+                    output_bank_usage(co, tile_h, tile_w) <= OUTPUT_BANK_BYTES and
+                    max(tile_h+kernel-1,tile_w+kernel-1) <= 258):
+                widest = tile_w
+                low = tile_w + 1
+            else:
+                high = tile_w - 1
+        if widest:
+            rows=math.ceil(height/tile_h);cols=math.ceil(width/widest)
+            halo_bytes=(height+rows*(kernel-1))*(width+cols*(kernel-1))*ci
+            candidates.append((rows*cols,halo_bytes,-tile_h*widest,-widest,tile_h,widest))
     if not candidates:
         raise DeviceContractError(f"no tile fits CAMUS banks: Ci={ci}, Co={co}, HW={height}x{width}")
     return min(candidates)[-2:]
@@ -283,6 +289,10 @@ class EmulatedTileAccelerator:
                             dict(command=4, mode=mode, bytes=cfg['output_bytes'])))
         return out.copy()
 
+    def _tensor_tile_into(self, cfg, first, second, multipliers, load_lut, result, tile):
+        result[:, :, tile.y:tile.y+tile.height, tile.x:tile.x+tile.width] = (
+            self._tensor_tile(cfg, first, second, multipliers, load_lut))
+
     def _tensor(self, mode, data, second=None, multipliers=(1 << 24,)):
         first = _validate_nchw_int8(data, 'tensor input')
         multipliers = tuple(int(m) for m in multipliers)
@@ -310,7 +320,7 @@ class EmulatedTileAccelerator:
                 part = first[:, :, y:y+hh, x:x+ww]
             other = second[:, :, y//2:(y+hh)//2, x//2:(x+ww)//2] if mode == 4 else None
             cfg = shape(mode, *part.shape[2:], c, split=split)
-            result[:, :, y:y+hh, x:x+ww] = self._tensor_tile(cfg, part, other, multipliers, index == 0)
+            self._tensor_tile_into(cfg, part, other, multipliers, index == 0, result, tile)
         return result
 
 

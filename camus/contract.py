@@ -1,6 +1,7 @@
 """CAM2 ABI shape rules, shared by scheduling, emulator and real MMIO driver."""
 from __future__ import annotations
 import math
+from functools import lru_cache
 import numpy as np
 
 
@@ -47,19 +48,29 @@ def shape(mode, h, w, ci, co=0, kernel=1, split=0, *, relu=False):
                 input_occupancy=int(occupancy), output_occupancy=int(output_occupancy))
 
 
+@lru_cache(maxsize=64)
 def tensor_tile_shape(mode, channels, height, width, split=0):
     """Choose OUTPUT tile dimensions; nearest-2 boundaries remain aligned."""
     candidates = []
-    for h in {height} | {1 << p for p in range(height.bit_length())}:
-        for w in {width} | {1 << p for p in range(width.bit_length())}:
-            if h > height or w > width or (mode in (3, 4) and (h % 2 or w % 2)):
-                continue
+    step = 2 if mode in (3, 4) else 1
+    # Occupancy grows with width: for each height, the widest legal tile
+    # minimizes the command count and the number of edge fragments.
+    for h in range(step, height + 1, step):
+        low, high, widest = 1, width // step, 0
+        while low <= high:
+            mid = (low + high) // 2
+            w = mid * step
             ih, iw = (h * 2, w * 2) if mode == 2 else (h // 2, w // 2) if mode == 3 else (h, w)
             try:
                 shape(mode, ih, iw, channels, split=split)
             except ValueError:
-                continue
-            candidates.append((math.ceil(height / h) * math.ceil(width / w), -h * w, -w, h, w))
+                high = mid - 1
+            else:
+                widest = w
+                low = mid + 1
+        if widest:
+            candidates.append((math.ceil(height / h) * math.ceil(width / widest),
+                               -h * widest, -widest, h, widest))
     if not candidates:
         raise ValueError("no CAM2 tensor tile fits")
     return min(candidates)[-2:]

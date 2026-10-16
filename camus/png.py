@@ -27,9 +27,15 @@ def save_png(image, path):
     Path(path).write_bytes(b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',header)+chunk(b'IDAT',compressed)+chunk(b'IEND',b''))
 
 
-def save_views(output,gray,labels,processed):
-    jobs=[('label_raw.png',label_display_png,(labels,)),('label.png',label_display_png,(processed,)),
-          ('segmentation.png',segmentation_rgb,(processed,)),('overlay.png',overlay_rgb,(gray,processed))]
+def save_views(output,gray,labels,processed,native=None):
+    if native is None:
+        jobs=[('label_raw.png',label_display_png,(labels,)),('label.png',label_display_png,(processed,)),
+              ('segmentation.png',segmentation_rgb,(processed,)),('overlay.png',overlay_rgb,(gray,processed))]
+    else:
+        started=time.perf_counter()
+        rendered=native.render_views(gray,labels,processed)
+        elapsed=time.perf_counter()-started
+        jobs=[(name,lambda image=image:image,()) for name,image in rendered.items()]
     def group(items):
         result={}
         for name,render,args in items:
@@ -39,4 +45,6 @@ def save_views(output,gray,labels,processed):
         return result
     with ThreadPoolExecutor(max_workers=2,thread_name_prefix='camus-png') as pool:
         futures=[pool.submit(group,jobs[index::2]) for index in range(2)]
-        return {name:row for future in futures for name,row in future.result().items()}
+        details={name:row for future in futures for name,row in future.result().items()}
+        if native is not None:details['overlay.png']['render']+=elapsed
+        return details

@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #ifdef __ARM_NEON
 #include <arm_neon.h>
 #endif
@@ -56,6 +57,68 @@ void camus_scatter(int8_t *dst, const int8_t *src, int c, int h, int w,
                     int y0, int x0, int th, int tw) {
     for(int ch=0;ch<c;ch++) for(int y=0;y<th;y++)
         memcpy(dst+((size_t)ch*h+y+y0)*w+x0,src+((size_t)ch*th+y)*tw,(size_t)tw);
+}
+
+int camus_scatter_checked(int8_t *dst, const uint8_t *src, size_t capacity,
+                          int c, int h, int w, int y0, int x0, int th, int tw) {
+    size_t count=(size_t)c*th*tw;
+    if(count>capacity) return 2;
+    for(size_t i=count;i<capacity;i++) if(src[i]!=0xa5) return 1;
+    camus_scatter(dst,(const int8_t *)src,c,h,w,y0,x0,th,tw);
+    return 0;
+}
+
+int camus_render_views(const uint8_t *raw,const uint8_t *processed,
+                       const uint8_t *gray,const uint8_t *lookup,
+                       uint8_t *raw_view,uint8_t *label_view,
+                       uint8_t *segmentation,uint8_t *overlay,
+                       size_t count) {
+    static const uint8_t colors[4][3]={{0,0,0},{236,58,58},{58,176,82},{82,126,236}};
+    static const uint8_t label_values[4]={0,85,170,255};
+    for(size_t p=0;p<count;p++) {
+        uint8_t r=raw[p],v=processed[p];
+        if(r>3 || v>3)return 1;
+        raw_view[p]=label_values[r];label_view[p]=label_values[v];
+        size_t rgb=p*3,lut=((size_t)v*256+gray[p])*3;
+        segmentation[rgb]=colors[v][0];segmentation[rgb+1]=colors[v][1];
+        segmentation[rgb+2]=colors[v][2];
+        overlay[rgb]=lookup[lut];overlay[rgb+1]=lookup[lut+1];overlay[rgb+2]=lookup[lut+2];
+    }
+    return 0;
+}
+
+int camus_preprocess(const float *raw,float *normalized,float *canvas,int8_t *quantized,
+                     int h,int w,int nh,int nw,int top,int left,
+                     const int32_t *yl,const int32_t *yu,const float *yw,
+                     const int32_t *xl,const int32_t *xu,const float *xw,
+                     int32_t counts[2]) {
+    if(h<1 || w<1 || nh<1 || nw<1 || top<0 || left<0 ||
+       top+nh>256 || left+nw>256 || (size_t)h*w>8000000)return 1;
+    float *vertical=malloc((size_t)nh*w*sizeof(float));
+    if(!vertical)return 2;
+    counts[0]=0;counts[1]=0;
+    for(size_t p=0;p<(size_t)h*w;p++) {
+        float v=raw[p];
+        counts[0]+=(v<0.0f);counts[1]+=(v>255.0f);
+        if(v<0.0f)v=0.0f;if(v>255.0f)v=255.0f;
+        normalized[p]=v/255.0f;
+    }
+    memset(canvas,0,256*256*sizeof(float));
+    memset(quantized,0,256*256);
+    for(int y=0;y<nh;y++) for(int x=0;x<w;x++) {
+        float a=normalized[(size_t)yl[y]*w+x],b=normalized[(size_t)yu[y]*w+x];
+        vertical[(size_t)y*w+x]=a*(1.0f-yw[y])+b*yw[y];
+    }
+    for(int y=0;y<nh;y++) for(int x=0;x<nw;x++) {
+        float a=vertical[(size_t)y*w+xl[x]],b=vertical[(size_t)y*w+xu[x]];
+        float v=a*(1.0f-xw[x])+b*xw[x];
+        size_t p=(size_t)(top+y)*256+left+x;
+        canvas[p]=v;
+        double q=nearbyint((double)v/(1.0/127.0));
+        if(q>127.0)q=127.0;if(q< -127.0)q= -127.0;
+        quantized[p]=(int8_t)q;
+    }
+    free(vertical);return 0;
 }
 
 int camus_restore(const int8_t *head, uint8_t *labels, int h, int w,

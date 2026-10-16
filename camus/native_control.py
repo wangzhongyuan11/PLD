@@ -87,15 +87,21 @@ class NativeControl:
         dma._pending=(None if receive else buffer,buffer if receive else None,
                       length if receive else None,(0x30,) if receive else (0,))
         dma.active=True
+        packet_begin=time.perf_counter()
         status=self.packet_fn(self.core_pointer,self.core_bytes,self.dma_pointer,self.dma_bytes,
                               command,device.frame,device.job,int(buffer.physical_address),length,
                               max(1,int(timeout*1e9)),self.result)
+        packet_seconds=time.perf_counter()-packet_begin
         if status:
             raise RuntimeError(f'native packet failed code={status} core_status={self.result[2]:#x} '
                                f'dma_status={self.result[3]:#x} core_error={self.result[6]}')
+        invalidate_begin=time.perf_counter()
         if receive:
             buffer.invalidate()
+        invalidate_seconds=time.perf_counter()-invalidate_begin
         dma.active=False
         dma._pending=None
-        return {'core_cycles':int(self.result[0]),'compute_cycles':int(self.result[1])}, (
+        return {'core_cycles':int(self.result[0]),'compute_cycles':int(self.result[1]),
+                'flush_seconds':flush_seconds,'packet_seconds':packet_seconds,
+                'invalidate_seconds':invalidate_seconds}, (
             flush_seconds+(int(self.result[4])+(int(self.result[5])<<32))/1e9)

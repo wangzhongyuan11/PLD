@@ -103,8 +103,8 @@ class PipelineIntegrationTests(unittest.TestCase):
             with CamusPipeline(model.root,'emulator') as pipeline:
                 first=pipeline.run(image,root/'result',spacing=(.2,.3))
                 events=first['report']['command_events']
-                self.assertEqual(len(events),605)
-                self.assertEqual(sum(e['bytes'] for e in events),33273648)
+                self.assertEqual(len(events),547)
+                self.assertEqual(sum(e['bytes'] for e in events),32153584)
                 self.assertEqual((root/'result/head.bin').read_bytes(),load_golden(model,model.layers[-1],'output_full_golden').tobytes())
                 with zipfile.ZipFile(root/'result/result.zip') as archive:
                     self.assertEqual(len(archive.namelist()),len(set(archive.namelist())))

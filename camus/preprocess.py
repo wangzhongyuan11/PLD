@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 import math
 import zipfile
 from pathlib import Path
@@ -284,12 +285,19 @@ def load_gray_frame(path: Path | str) -> LoadedGray:
     raise PreprocessError(f"unsupported input type {suffix!r}")
 
 
-def _input_bilinear_axis(array: np.ndarray, new_size: int, axis: int, scale: float) -> np.ndarray:
-    coordinates = (np.arange(new_size, dtype=np.float64) + 0.5) * scale - 0.5
-    coordinates = np.clip(coordinates, 0.0, array.shape[axis] - 1)
+@lru_cache(maxsize=64)
+def input_axis_plan(source_size: int, new_size: int):
+    coordinates = (np.arange(new_size, dtype=np.float64) + 0.5) * (source_size / float(new_size)) - 0.5
+    coordinates = np.clip(coordinates, 0.0, source_size - 1)
     lower = np.floor(coordinates).astype(np.int64)
-    upper = np.minimum(lower + 1, array.shape[axis] - 1)
+    upper = np.minimum(lower + 1, source_size - 1)
     weight = (coordinates - lower).astype(np.float32)
+    for value in (lower, upper, weight): value.flags.writeable = False
+    return lower, upper, weight
+
+
+def _input_bilinear_axis(array: np.ndarray, new_size: int, axis: int, scale: float) -> np.ndarray:
+    lower, upper, weight = input_axis_plan(array.shape[axis], new_size)
     # np.take requires native-width indices on 32-bit ARM NumPy 1.21.
     # Keep coordinate/weight arithmetic unchanged, cast only at indexing.
     view_lower = np.take(array, lower.astype(np.intp), axis=axis)

@@ -144,11 +144,11 @@ class CamusMMIO(TileAccelerator):
 
     def run_into(self,destination,tile):
         def operation():
-            started=time.perf_counter();n=self.config['output_bytes'];self._rx_view[:]=0xa5
+            started=time.perf_counter();n=self.config['output_bytes'];self._rx_view[n:]=0xa5
             result,dma_seconds=self._execute(4,self.rx,n)
-            if not np.all(self._rx_view[n:]==0xa5):raise RuntimeError('output length/tail guard mismatch')
-            self.native_control.scatter(destination,self._rx_view[:n],tile)
-            self.events.append(dict(result,command=4,mode=0,bytes=n,dma_seconds=dma_seconds,seconds=time.perf_counter()-started))
+            if self.native_control.scatter_checked(destination,self._rx_view,tile,n):
+                raise RuntimeError('output length/tail guard mismatch')
+            self.events.append(dict(result,command=4,mode=self.config['mode'],bytes=n,dma_seconds=dma_seconds,seconds=time.perf_counter()-started))
         self._guard(operation)
 
 
@@ -238,6 +238,15 @@ class CamusTileAccelerator(EmulatedTileAccelerator):
             self.io.load_lut(*self._lut_cache[key])
         self.io.load_input(first, second)
         return self.io.run()
+
+    def _tensor_tile_into(self, cfg, first, second, multipliers, load_lut, result, tile):
+        self.io.configure(cfg['mode'], cfg['h'], cfg['w'], cfg['ci'], split=cfg['split'], frame=self.frame)
+        if load_lut:
+            key=tuple(multipliers)
+            if key not in self._lut_cache:self._lut_cache[key]=tuple(lut(m) for m in key)
+            self.io.load_lut(*self._lut_cache[key])
+        self.io.load_input(first, second)
+        self.io.run_into(result,tile)
 
     def close(self):
         try:

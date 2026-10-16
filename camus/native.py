@@ -16,20 +16,22 @@ def load_native():
     sources=[root/'native/control.c',root/'native/ops.c',root/'native.py',root/'native_control.py']
     hashes={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}
     flags=['-O3','-std=c11','-shared','-fPIC','-fno-fast-math','-ffp-contract=off']
+    link_flags=['-lm']
     if platform.machine().startswith('arm'):flags+=['-mcpu=cortex-a9','-mfpu=neon','-mfloat-abi=hard']
-    key=hashlib.sha256(json.dumps([hashes,flags,platform.machine()],sort_keys=True).encode()).hexdigest()
+    key=hashlib.sha256(json.dumps([hashes,flags,link_flags,platform.machine()],sort_keys=True).encode()).hexdigest()
     folder=Path(tempfile.gettempdir())/'pld-camus-native'/key
     folder.mkdir(parents=True,exist_ok=True)
     library=folder/'camus.so';manifest=folder/'build.json'
     if not library.exists() or not manifest.exists():
         pending=folder/'camus.pending.so'
-        command=['gcc',*flags,*(str(p) for p in sources[:2]),'-o',str(pending)]
+        command=['gcc',*flags,*(str(p) for p in sources[:2]),'-o',str(pending),*link_flags]
         subprocess.run(command,check=True,capture_output=True,text=True,timeout=90)
         pending.replace(library)
-        manifest.write_text(json.dumps(dict(source_hashes=hashes,flags=flags,
+        manifest.write_text(json.dumps(dict(source_hashes=hashes,flags=flags,link_flags=link_flags,
             library_sha256=hashlib.sha256(library.read_bytes()).hexdigest()),indent=2)+'\n')
     record=json.loads(manifest.read_text())
-    if record['source_hashes']!=hashes or record['flags']!=flags or record['library_sha256']!=hashlib.sha256(library.read_bytes()).hexdigest():
+    if (record['source_hashes']!=hashes or record['flags']!=flags or
+            record.get('link_flags')!=link_flags or record['library_sha256']!=hashlib.sha256(library.read_bytes()).hexdigest()):
         raise ValueError('CAMUS native build drift')
     return NativeOps(library,record)
 
@@ -45,10 +47,16 @@ class NativeOps(NativeControl):
         self.gather_fn.argtypes=[p,p,*([i]*7)];self.gather_fn.restype=i
         self.scatter_fn=self.library.camus_scatter
         self.scatter_fn.argtypes=[p,p,*([i]*7)];self.scatter_fn.restype=None
+        self.scatter_checked_fn=self.library.camus_scatter_checked
+        self.scatter_checked_fn.argtypes=[p,p,ct.c_size_t,*([i]*7)];self.scatter_checked_fn.restype=i
         self.restore_fn=self.library.camus_restore
         self.restore_fn.argtypes=[p,p,*([i]*5),ct.c_float,*([p]*6)];self.restore_fn.restype=i
         self.post_fn=self.library.camus_postprocess
         self.post_fn.argtypes=[p,p,i,i,p];self.post_fn.restype=i
+        self.render_fn=self.library.camus_render_views
+        self.render_fn.argtypes=[*([p]*8),ct.c_size_t];self.render_fn.restype=i
+        self.preprocess_fn=self.library.camus_preprocess
+        self.preprocess_fn.argtypes=[*([p]*4),*([i]*6),*([p]*7)];self.preprocess_fn.restype=i
 
     def copy(self,destination,source):
         if (source.dtype!=np.int8 or source.ndim!=4 or destination.dtype not in (np.uint8,np.int8)
@@ -72,6 +80,15 @@ class NativeOps(NativeControl):
         if not destination.flags.c_contiguous or source.nbytes<c*tile.height*tile.width:
             raise ValueError('invalid native scatter arrays')
         self.scatter_fn(destination.ctypes.data,source.ctypes.data,c,h,w,tile.y,tile.x,tile.height,tile.width)
+
+    def scatter_checked(self,destination,source,tile,length):
+        _,c,h,w=destination.shape
+        if (destination.dtype!=np.int8 or not destination.flags.c_contiguous or
+                source.dtype!=np.uint8 or not source.flags.c_contiguous or
+                source.nbytes<length or length!=c*tile.height*tile.width):
+            raise ValueError('invalid native checked scatter arrays')
+        return self.scatter_checked_fn(destination.ctypes.data,source.ctypes.data,source.nbytes,
+                                       c,h,w,tile.y,tile.x,tile.height,tile.width)
 
     def restore(self,head,height,width,scale):
         from .result import letterbox_meta_for_native, output_axis_plan
@@ -97,6 +114,48 @@ class NativeOps(NativeControl):
         retained=before-(secondary if island else 0)
         return PostprocessOutcome('island5_hole1',output,before,after,components,largest,secondary,
             secondary/before if before else 0.,bool(island),filled,closed/retained if retained else 0.,bool(hole),changed)
+
+    def render_views(self,gray,labels,processed):
+        from .result import _overlay_lut
+        if (labels.dtype!=np.uint8 or labels.ndim!=2 or not labels.flags.c_contiguous or
+                processed.dtype!=np.uint8 or processed.shape!=labels.shape or
+                not processed.flags.c_contiguous or gray.shape!=labels.shape):
+            raise ValueError('invalid CAMUS view arrays')
+        gray8=np.ascontiguousarray(np.clip(np.asarray(gray,dtype=np.float32),0.,255.).astype(np.uint8))
+        h,w=labels.shape
+        raw=np.empty((h,w),np.uint8);label=np.empty_like(raw)
+        segmentation=np.empty((h,w,3),np.uint8);overlay=np.empty_like(segmentation)
+        lut=_overlay_lut(.45)
+        args=(labels,processed,gray8,lut,raw,label,segmentation,overlay)
+        if self.render_fn(*(a.ctypes.data for a in args),labels.size):
+            raise ValueError('CAMUS render labels outside 0..3')
+        return {'label_raw.png':raw,'label.png':label,
+                'segmentation.png':segmentation,'overlay.png':overlay}
+
+    def preprocess(self,path):
+        from .preprocess import LoadedGray, PreprocessResult, load_gray_frame, input_axis_plan
+        loaded=load_gray_frame(path)
+        raw=np.ascontiguousarray(np.asarray(loaded.data,dtype=np.float32))
+        h,w=raw.shape
+        scale=min(256/h,256/w)
+        nh=max(1,min(256,int(round(h*scale))))
+        nw=max(1,min(256,int(round(w*scale))))
+        top,left=(256-nh)//2,(256-nw)//2
+        meta=dict(original_height=h,original_width=w,scale=scale,new_height=nh,
+                  new_width=nw,top=top,left=left,size=256)
+        axes=(*input_axis_plan(h,nh),*input_axis_plan(w,nw))
+        axes=tuple(np.ascontiguousarray(a,dtype=np.float32 if j%3==2 else np.int32)
+                   for j,a in enumerate(axes))
+        normalized=np.empty_like(raw)
+        canvas=np.empty((256,256),np.float32)
+        quantized=np.empty((256,256),np.int8)
+        counts=np.empty(2,np.int32)
+        args=(raw,normalized,canvas,quantized)
+        code=self.preprocess_fn(*(a.ctypes.data for a in args),h,w,nh,nw,top,left,
+                                *(a.ctypes.data for a in axes),counts.ctypes.data)
+        if code:raise MemoryError(f'native CAMUS preprocessing failed code={code}')
+        return PreprocessResult(loaded.data.copy(),normalized,canvas,quantized[None,None],
+                                meta,int(counts[0]),int(counts[1]),loaded)
 
 
 class TXPrefix:

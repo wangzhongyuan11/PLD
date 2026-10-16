@@ -1,0 +1,303 @@
+{
+  "schema": "camus-ps-optimization-validation-v1",
+  "host_date": "2026-10-15",
+  "scope": "same 20 official development images, paired old/new real PL HTTP runs; not long stability or independent test",
+  "baseline": {
+    "frames": 20,
+    "median_seconds": 5.826341699998011,
+    "p95_seconds": 6.853501990011137,
+    "max_seconds": 6.914142199995695,
+    "within_5_seconds": 1,
+    "includes": "POST upload through ready-to-download ZIP; excludes initial service start and explicit HDMI reinitialization"
+  },
+  "optimized": {
+    "frames": 20,
+    "median_seconds": 3.911459949988057,
+    "p95_seconds": 4.378221639996627,
+    "max_seconds": 4.479963599995244,
+    "within_5_seconds": 20,
+    "includes": "POST upload through ready-to-download ZIP; excludes initial service start and explicit HDMI reinitialization"
+  },
+  "stages": {
+    "input_read_preprocess": {
+      "before_median": 0.19160020900017116,
+      "after_median": 0.20318826450056804,
+      "reduction_percent": -6.04803907097331,
+      "before_p95": 0.270236366501922,
+      "after_p95": 0.4336339650999436
+    },
+    "network": {
+      "before_median": 3.565764698998464,
+      "after_median": 2.7609806610016676,
+      "reduction_percent": 22.569746069415086,
+      "before_p95": 3.6086745081020126,
+      "after_p95": 2.858289584648446
+    },
+    "native_reconstruction_postprocess": {
+      "before_median": 0.7050829400013754,
+      "after_median": 0.18615007649896143,
+      "reduction_percent": 73.59883980477555,
+      "before_p95": 1.1091663168976083,
+      "after_p95": 0.29565049305110735
+    },
+    "head_labels_write": {
+      "before_median": 0.07989007650030544,
+      "after_median": 0.07886462450005638,
+      "reduction_percent": 1.2835786935879834,
+      "before_p95": 0.12133314344828251,
+      "after_p95": 0.1214421067006697
+    },
+    "png_encoding": {
+      "before_median": 0.8814796574988577,
+      "after_median": 0.30908676650142297,
+      "reduction_percent": 64.93546233631335,
+      "before_p95": 1.3925707623493508,
+      "after_p95": 0.4855688103503781
+    },
+    "zip_payload": {
+      "before_median": 0.02606748600010178,
+      "after_median": 0.026339529500546632,
+      "reduction_percent": -1.043612339309541,
+      "before_p95": 0.03233631360271829,
+      "after_p95": 0.030345538099027184
+    }
+  },
+  "zip_size_median_before": 586599,
+  "zip_size_median_after": 599496,
+  "all_20_heads_native_processed_png_pixels_equal": true,
+  "all_output_metadata_equal": true,
+  "metadata_checks": [
+    {
+      "case": "patient0200_2CH_ED",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0230_4CH_ED",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0235_2CH_ED",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0244_4CH_ES",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0249_2CH_ES",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0255_2CH_ED",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0257_4CH_ED",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0265_2CH_ES",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0268_4CH_ES",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0272_4CH_ED",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0282_2CH_ED",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0284_4CH_ES",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0288_2CH_ES",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0291_2CH_ED",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0294_4CH_ED",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0299_2CH_ES",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0304_4CH_ES",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0314_4CH_ED",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0333_2CH_ED",
+      "all_output_metadata_equal": true
+    },
+    {
+      "case": "patient0341_4CH_ES",
+      "all_output_metadata_equal": true
+    }
+  ],
+  "telemetry": [
+    {
+      "case": "patient0200_2CH_ED",
+      "network": 2.868834444998356,
+      "command_seconds": 2.51429105506395,
+      "dma_seconds": 1.7158621329805055
+    },
+    {
+      "case": "patient0230_4CH_ED",
+      "network": 2.788219048001338,
+      "command_seconds": 2.527228166924033,
+      "dma_seconds": 1.7213459780476659
+    },
+    {
+      "case": "patient0235_2CH_ED",
+      "network": 2.7505756319987995,
+      "command_seconds": 2.490463891055697,
+      "dma_seconds": 1.7146379330201829
+    },
+    {
+      "case": "patient0244_4CH_ES",
+      "network": 2.7372212819973356,
+      "command_seconds": 2.48039787595917,
+      "dma_seconds": 1.7123975579759954
+    },
+    {
+      "case": "patient0249_2CH_ES",
+      "network": 2.766669461001584,
+      "command_seconds": 2.508227599926613,
+      "dma_seconds": 1.7222819889634158
+    },
+    {
+      "case": "patient0255_2CH_ED",
+      "network": 2.7471882910031127,
+      "command_seconds": 2.4915011320626945,
+      "dma_seconds": 1.7130402200167532
+    },
+    {
+      "case": "patient0257_4CH_ED",
+      "network": 2.767134581001301,
+      "command_seconds": 2.5046141319653543,
+      "dma_seconds": 1.7159856269636395
+    },
+    {
+      "case": "patient0265_2CH_ES",
+      "network": 2.818292161999125,
+      "command_seconds": 2.5558505700282694,
+      "dma_seconds": 1.7487354899843368
+    },
+    {
+      "case": "patient0268_4CH_ES",
+      "network": 2.730291010997462,
+      "command_seconds": 2.476068949978071,
+      "dma_seconds": 1.7132701150158005
+    },
+    {
+      "case": "patient0272_4CH_ED",
+      "network": 2.7436289559991565,
+      "command_seconds": 2.489941036037635,
+      "dma_seconds": 1.7162577820026297
+    },
+    {
+      "case": "patient0282_2CH_ED",
+      "network": 2.857734591998451,
+      "command_seconds": 2.601841687974229,
+      "dma_seconds": 1.7934989140636515
+    },
+    {
+      "case": "patient0284_4CH_ES",
+      "network": 2.7449391959999048,
+      "command_seconds": 2.494013413983339,
+      "dma_seconds": 1.7155472680422499
+    },
+    {
+      "case": "patient0288_2CH_ES",
+      "network": 2.7299076999988756,
+      "command_seconds": 2.4806742939872493,
+      "dma_seconds": 1.7133155859775178
+    },
+    {
+      "case": "patient0291_2CH_ED",
+      "network": 2.7705194289992505,
+      "command_seconds": 2.506358517024637,
+      "dma_seconds": 1.719537195031539
+    },
+    {
+      "case": "patient0294_4CH_ED",
+      "network": 2.753183460998116,
+      "command_seconds": 2.4977885060397966,
+      "dma_seconds": 1.7160508320234829
+    },
+    {
+      "case": "patient0299_2CH_ES",
+      "network": 2.769672063001053,
+      "command_seconds": 2.514082847006648,
+      "dma_seconds": 1.717873198962945
+    },
+    {
+      "case": "patient0304_4CH_ES",
+      "network": 2.794360604999383,
+      "command_seconds": 2.5380625120160403,
+      "dma_seconds": 1.7325114660284364
+    },
+    {
+      "case": "patient0314_4CH_ED",
+      "network": 2.7222275720014295,
+      "command_seconds": 2.4691637820214964,
+      "dma_seconds": 1.7117690869726754
+    },
+    {
+      "case": "patient0333_2CH_ED",
+      "network": 2.7552918610017514,
+      "command_seconds": 2.4988676449902414,
+      "dma_seconds": 1.7174581050435538
+    },
+    {
+      "case": "patient0341_4CH_ES",
+      "network": 2.7668498610000825,
+      "command_seconds": 2.5060757369683415,
+      "dma_seconds": 1.7222352880321439
+    }
+  ],
+  "rtl_bit_hwh_xsa_unchanged": true,
+  "native_library_sha256": "766f26bb0ca2e03de147a706124876634232b1aa310f26b6b2449be51fa58eb9",
+  "host_unit_tests": {
+    "tests": 43,
+    "skipped_native_class": 1,
+    "passed": true
+  },
+  "board_native_unit_tests": {
+    "tests": 8,
+    "passed": true
+  },
+  "reports": [
+    "optimization_baseline20.json",
+    "optimization_candidate20.json",
+    "optimization_final20.json"
+  ],
+  "commit": "56066b8",
+  "release_sha256": "0429504e39f4e9a362062d5554e9f494554d98111c0f66908e17c7ecf85da2b0",
+  "candidate_to_release_changed_members": [
+    "camus/README.md"
+  ],
+  "deployment_directory": "/home/xilinx/jupyter_notebooks/pld/camus_ps_opt_release_20261015",
+  "rollback": "remove only /etc/systemd/system/pld-camus.service.d/30-ps-opt.conf; systemctl daemon-reload; systemctl restart pld-camus.service",
+  "release_http_status": {
+    "backend": "pl",
+    "spec_sha256": "68b4f425cc3612ad72d5e83955c2018981edee912fbc0937e9ac8c1718e7b5ae",
+    "ready": true,
+    "hdmi": "off",
+    "model": "CAMUS hidden_histogram INT8"
+  }
+}

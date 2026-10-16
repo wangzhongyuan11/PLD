@@ -47,7 +47,7 @@ class CamusPipeline:
 
     def run(self, input_path, output_dir, spacing=None, html=True):
         started = time.perf_counter(); output = protect_output(output_dir, self.model.root); stages = {}
-        t = time.perf_counter(); prep = preprocess(input_path)
+        t = time.perf_counter(); prep = self.native.preprocess(input_path) if self.native is not None else preprocess(input_path)
         stages['input_read_preprocess'] = time.perf_counter()-t
         source_spacing = prep.source.spacing_yx_mm
         if spacing is not None:
@@ -74,7 +74,7 @@ class CamusPipeline:
         np.savez_compressed(output/'labels_native.npz', labels_raw=labels, labels_processed=processed.labels)
         stages['head_labels_write'] = time.perf_counter()-t
         t = time.perf_counter()
-        png_details = save_views(output,prep.raw_gray,labels,processed.labels)
+        png_details = save_views(output,prep.raw_gray,labels,processed.labels,self.native)
         stages['png_encoding'] = time.perf_counter()-t
         report = dict(schema='pld-camus-result-v1', backend=self.backend,
             evidence_scope='real PL execution' if self.backend == 'pl' else 'host software '+self.backend+'; no PL execution',
@@ -85,7 +85,7 @@ class CamusPipeline:
                         png_label_values=[0,85,170,255], argmax='restore four float32 channels, strict >, ties keep lower class',
                         postprocess={k:v for k,v in processed.__dict__.items() if k != 'labels'}),
             timings_seconds=stages, session_initialization_seconds=self.initialization_seconds, session_reused=self.jobs > 0,
-            timing_details=dict(native=native_details,png=png_details,png_workers=2,png_backend='sub_rle_level1',
+            timing_details=dict(native=native_details,png=png_details,png_workers=2,png_backend='sub_rle_level1_native_render' if self.native else 'sub_rle_level1',
                                 native_backend=self.native.info if self.native else None),
             command_events=result.get('events', []), conv_blocks=result.get('conv_records', []))
         if html: write_html_preview(output/'preview.html', 'CAMUS 四结构分割',

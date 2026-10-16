@@ -157,3 +157,9 @@ CAMUS 网页支持叠加、四分类和标签视图。开始 HDMI 前关闭推�
 同组 HTTP P95 从 6.853502 s 降至 4.378222 s，优化版最慢 4.479964 s，20/20 请求在 5 s 内；不含服务启动和显式 HDMI 后的冷初始化，20 图短测不代表长期 P95 保证。ZIP 体积中位从 586599 B 到 599496 B（约 +2.2%）。每帧仍为 605 命令、33273648 字节和 110397056 engine cycles；没有将软件提速当作 PL 算力提高。证据：`out/camus/ps_optimization_validation.json` 与 `optimization_baseline20.json` / `optimization_final20.json`。
 
 采用版由 `/etc/systemd/system/pld-camus.service.d/30-ps-opt.conf` 指向独立运行目录，原 unit 和 `camus_release_r1_20261015` 保留。回退本次优化：删除该单独 drop-in 文件，执行 `systemctl daemon-reload`、`systemctl restart pld-camus.service`。切回 ISIC 仍使用 `systemctl start pld-web.service`。
+
+### 2026-10-16 继续优化候选收尾
+
+用户要求在板卡未连接时收尾并转交。当前源码是继续优化候选：扩展 tile 搜索、非卷积直接写回、原生尾部检查/四视图渲染与精确预处理；547 命令、32153584 字节、110396848 engine cycles。RTL 与相同 100 MHz bit/hwh/XSA 不变。候选只完成 3 图真实 HTTP/ZIP 短测，head/标签/四 PNG 像素一致，完整耗时 4.855870 / 3.649589 / 3.870941 秒，**没有达到 3 秒目标，也没有完成本候选 20 图验收**。2026-10-16 未重新连接板卡，实际服务状态待接手人查询。
+
+可回退的上一采用版仍以上节 20 图结果为准。最新候选、原始证据、阶段耗时、部署/回退和下一步见 [CAMUS 接手入口](../handoff/camus_20261016/README.md)。完整本地交付包位于 `out/handoff/CAMUS_20261016`；GitHub 交接分支仅提供源码与小型证据。

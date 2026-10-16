@@ -6,12 +6,25 @@ import unittest
 from unittest.mock import patch
 import numpy as np
 from PIL import Image
-from camus.result import overlay_rgb,CLASS_COLORS,native_labels_from_head
+from camus.result import overlay_rgb,segmentation_rgb,label_display_png,CLASS_COLORS,native_labels_from_head
 from camus.png import save_png,save_views
 from camus.postprocess import apply_island5_hole1
+from camus.contract import tensor_tile_shape
 
 
 class OptimizationTests(unittest.TestCase):
+    def test_nonconv_tiles_reduce_transactions_within_bank_limits(self):
+        from camus.contract import shape
+        for mode, channels, side, split, expected in (
+            (2,8,128,0,(32,128)), (2,16,64,0,(32,64)),
+            (2,32,32,0,(32,32)), (4,192,64,64,(10,34)),
+            (4,96,128,32,(26,26)), (4,48,256,16,(26,52)),
+        ):
+            th,tw=tensor_tile_shape(mode,channels,side,side,split)
+            self.assertEqual((th,tw),expected)
+            ih,iw=(th*2,tw*2) if mode==2 else (th,tw)
+            self.assertLessEqual(shape(mode,ih,iw,channels,split=split)['output_occupancy'],8192)
+
     def test_overlay_exhaustive_gray_class_lut_matches_float_formula(self):
         gray=np.tile(np.arange(256,dtype=np.uint8),(4,1))
         labels=np.repeat(np.arange(4,dtype=np.uint8)[:,None],256,axis=1)
@@ -62,6 +75,34 @@ class NativeOptimizationTests(unittest.TestCase):
             expected=native_labels_from_head(head,h,w,.19834566491795338)
             np.testing.assert_array_equal(self.native.restore(head,h,w,.19834566491795338),expected)
 
+    def test_native_four_view_pixels_match_existing_renderers(self):
+        rng=np.random.default_rng(914)
+        gray=rng.integers(0,4096,(67,89),dtype=np.uint16)
+        labels=rng.integers(0,4,gray.shape,dtype=np.uint8)
+        processed=rng.integers(0,4,gray.shape,dtype=np.uint8)
+        rendered=self.native.render_views(gray,labels,processed)
+        expected={'label_raw.png':label_display_png(labels),
+                  'label.png':label_display_png(processed),
+                  'segmentation.png':segmentation_rgb(processed),
+                  'overlay.png':overlay_rgb(gray,processed)}
+        for name,image in expected.items():
+            np.testing.assert_array_equal(rendered[name],np.asarray(image),err_msg=name)
+
+    def test_native_preprocess_matches_frozen_float_pipeline(self):
+        from camus.preprocess import preprocess
+        rng=np.random.default_rng(451)
+        with tempfile.TemporaryDirectory() as tmp:
+            for shape,dtype in (((487,590),np.float32),((616,748),np.uint16),((1,257),np.float64)):
+                values=rng.normal(120,100,shape).astype(dtype)
+                path=Path(tmp)/'frame.npy';np.save(path,values)
+                expected=preprocess(path);actual=self.native.preprocess(path)
+                np.testing.assert_array_equal(actual.normalized_float32,expected.normalized_float32)
+                np.testing.assert_array_equal(actual.canvas_float32,expected.canvas_float32)
+                np.testing.assert_array_equal(actual.input_int8,expected.input_int8)
+                self.assertEqual(actual.letterbox_meta,expected.letterbox_meta)
+                self.assertEqual((actual.clipped_low,actual.clipped_high),
+                                 (expected.clipped_low,expected.clipped_high))
+
     def test_native_copy_strides_reject_invalid_and_gather_halo_scatter(self):
         from reference.tiling import Tile,input_tile
         source=np.arange(60,dtype=np.int8).reshape(1,3,4,5)
@@ -74,6 +115,14 @@ class NativeOptimizationTests(unittest.TestCase):
         self.native.gather(dst,source,tile,3,1);np.testing.assert_array_equal(dst.reshape(expected.shape),expected)
         output=np.zeros_like(source);part=source[:,:,:2,:3].copy()
         self.native.scatter(output,part,tile);np.testing.assert_array_equal(output[:,:,:2,:3],part)
+        guard=np.full(64,np.uint8(0xa5));guard[:part.size]=part.view(np.uint8).ravel()
+        output.fill(0)
+        self.assertEqual(self.native.scatter_checked(output,guard,tile,part.size),0)
+        np.testing.assert_array_equal(output[:,:,:2,:3],part)
+        guard[-1]=0
+        output.fill(0)
+        self.assertEqual(self.native.scatter_checked(output,guard,tile,part.size),1)
+        self.assertEqual(np.count_nonzero(output),0)
 
     def test_native_cam2_config_registers_and_bounded_timeout(self):
         import ctypes as ct

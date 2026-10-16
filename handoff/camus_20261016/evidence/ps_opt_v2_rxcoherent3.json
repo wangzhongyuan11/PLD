@@ -1,0 +1,256 @@
+{
+  "schema": "camus-board-http-validation-v1",
+  "url": "http://127.0.0.1:8091",
+  "scope": "host HTTP through SSH loopback tunnel to real PL",
+  "complete": true,
+  "status": {
+    "backend": "pl",
+    "spec_sha256": "68b4f425cc3612ad72d5e83955c2018981edee912fbc0937e9ac8c1718e7b5ae",
+    "ready": true,
+    "hdmi": "off",
+    "model": "CAMUS hidden_histogram INT8"
+  },
+  "frames": [
+    {
+      "case": "patient0200_2CH_ED",
+      "job_id": "db0b09d146b4427ca2f2ed1e8d82a15a",
+      "head_equal": true,
+      "native_equal": true,
+      "postprocess_equal": true,
+      "pngs": 4,
+      "native_hw": [
+        487,
+        590
+      ],
+      "zip_bytes": 664680,
+      "post_to_zip_ready_seconds": 5.171370399999432,
+      "post_to_zip_downloaded_seconds": 5.270864999998594,
+      "server_seconds": 5.064548409995041,
+      "stages_seconds": {
+        "input_read_preprocess": 0.6181366390010226,
+        "network": 3.7023901980064693,
+        "native_reconstruction_postprocess": 0.1876185040018754,
+        "head_labels_write": 0.07221959999878891,
+        "png_encoding": 0.17658010400191415,
+        "zip_payload": 0.024786350993963424
+      },
+      "after_hdmi_reinitialization": false,
+      "png_pixels_equal": true,
+      "timing_details": {
+        "native": {
+          "reconstruction": 0.07414809200417949,
+          "postprocess": 0.11347508900507819
+        },
+        "png": {
+          "label_raw.png": {
+            "render": 1.0689000191632658e-05,
+            "encode_write": 0.027121266997710336
+          },
+          "segmentation.png": {
+            "render": 9.60000033956021e-06,
+            "encode_write": 0.053288659000827465
+          },
+          "label.png": {
+            "render": 1.0535994078963995e-05,
+            "encode_write": 0.02908089300035499
+          },
+          "overlay.png": {
+            "render": 0.036758171998371836,
+            "encode_write": 0.10166072599531617
+          }
+        },
+        "png_workers": 2,
+        "png_backend": "sub_rle_level1_native_render",
+        "native_backend": {
+          "kind": "camus_native",
+          "abi": 2,
+          "library_sha256": "5c1c62f1d9f9ad6d72b84cb991cfe1e212ca812302f097427edbd58fcfeca962",
+          "build": {
+            "source_hashes": {
+              "control.c": "e75a3cbaf0d438c15ca78d5015747a47172f5b7cdbe263d557f57b70b0c5d1cb",
+              "ops.c": "5dc3d58908596689772ac2c23ef074cbf79ac7437b62ad7e870cdd763b694ef8",
+              "native.py": "ea82c0b912564c4f267cb9dc28e6f0ae796baa950b2d2b1fc0a7165b433fc87d",
+              "native_control.py": "4591a089fe464b41c17485055d428a3182a4974235e8ff077c1ead0d5752d00f"
+            },
+            "flags": [
+              "-O3",
+              "-std=c11",
+              "-shared",
+              "-fPIC",
+              "-fno-fast-math",
+              "-ffp-contract=off",
+              "-mcpu=cortex-a9",
+              "-mfpu=neon",
+              "-mfloat-abi=hard"
+            ],
+            "library_sha256": "5c1c62f1d9f9ad6d72b84cb991cfe1e212ca812302f097427edbd58fcfeca962"
+          }
+        }
+      }
+    },
+    {
+      "case": "patient0279_4CH_ES",
+      "job_id": "ae55f6af943b493a8862b9c42450d870",
+      "head_equal": true,
+      "native_equal": true,
+      "postprocess_equal": true,
+      "pngs": 4,
+      "native_hw": [
+        519,
+        630
+      ],
+      "zip_bytes": 688301,
+      "post_to_zip_ready_seconds": 3.9932186999940313,
+      "post_to_zip_downloaded_seconds": 4.074606099980883,
+      "server_seconds": 3.902537914000277,
+      "stages_seconds": {
+        "input_read_preprocess": 0.21450337800342822,
+        "network": 2.9136081990000093,
+        "native_reconstruction_postprocess": 0.21211735399992904,
+        "head_labels_write": 0.09083926099992823,
+        "png_encoding": 0.18918265200045425,
+        "zip_payload": 0.02706894800212467
+      },
+      "after_hdmi_reinitialization": false,
+      "png_pixels_equal": true,
+      "timing_details": {
+        "native": {
+          "reconstruction": 0.07995190200017532,
+          "postprocess": 0.13216911999916192
+        },
+        "png": {
+          "label_raw.png": {
+            "render": 8.658003935124725e-06,
+            "encode_write": 0.031794246002391446
+          },
+          "segmentation.png": {
+            "render": 1.2258999049663544e-05,
+            "encode_write": 0.06089325499488041
+          },
+          "label.png": {
+            "render": 9.126000804826617e-06,
+            "encode_write": 0.025638320003054105
+          },
+          "overlay.png": {
+            "render": 0.04037293500005035,
+            "encode_write": 0.11686956899939105
+          }
+        },
+        "png_workers": 2,
+        "png_backend": "sub_rle_level1_native_render",
+        "native_backend": {
+          "kind": "camus_native",
+          "abi": 2,
+          "library_sha256": "5c1c62f1d9f9ad6d72b84cb991cfe1e212ca812302f097427edbd58fcfeca962",
+          "build": {
+            "source_hashes": {
+              "control.c": "e75a3cbaf0d438c15ca78d5015747a47172f5b7cdbe263d557f57b70b0c5d1cb",
+              "ops.c": "5dc3d58908596689772ac2c23ef074cbf79ac7437b62ad7e870cdd763b694ef8",
+              "native.py": "ea82c0b912564c4f267cb9dc28e6f0ae796baa950b2d2b1fc0a7165b433fc87d",
+              "native_control.py": "4591a089fe464b41c17485055d428a3182a4974235e8ff077c1ead0d5752d00f"
+            },
+            "flags": [
+              "-O3",
+              "-std=c11",
+              "-shared",
+              "-fPIC",
+              "-fno-fast-math",
+              "-ffp-contract=off",
+              "-mcpu=cortex-a9",
+              "-mfpu=neon",
+              "-mfloat-abi=hard"
+            ],
+            "library_sha256": "5c1c62f1d9f9ad6d72b84cb991cfe1e212ca812302f097427edbd58fcfeca962"
+          }
+        }
+      }
+    },
+    {
+      "case": "patient0341_4CH_ES",
+      "job_id": "aa421455d66d4fed9bc74bb491c9f34a",
+      "head_equal": true,
+      "native_equal": true,
+      "postprocess_equal": true,
+      "pngs": 4,
+      "native_hw": [
+        616,
+        748
+      ],
+      "zip_bytes": 777707,
+      "post_to_zip_ready_seconds": 4.4161747000180185,
+      "post_to_zip_downloaded_seconds": 4.512052700010827,
+      "server_seconds": 4.299627654996584,
+      "stages_seconds": {
+        "input_read_preprocess": 0.28306475700082956,
+        "network": 2.9771763579992694,
+        "native_reconstruction_postprocess": 0.3207549839935382,
+        "head_labels_write": 0.12346134800463915,
+        "png_encoding": 0.2721739689950482,
+        "zip_payload": 0.04140999999799533
+      },
+      "after_hdmi_reinitialization": false,
+      "png_pixels_equal": true,
+      "timing_details": {
+        "native": {
+          "reconstruction": 0.12633696499688085,
+          "postprocess": 0.19442068300122628
+        },
+        "png": {
+          "label_raw.png": {
+            "render": 8.738999895285815e-06,
+            "encode_write": 0.03677937800239306
+          },
+          "segmentation.png": {
+            "render": 9.348004823550582e-06,
+            "encode_write": 0.08328080600040266
+          },
+          "label.png": {
+            "render": 8.10399797046557e-06,
+            "encode_write": 0.03542153799935477
+          },
+          "overlay.png": {
+            "render": 0.05968564300565049,
+            "encode_write": 0.17045218400016893
+          }
+        },
+        "png_workers": 2,
+        "png_backend": "sub_rle_level1_native_render",
+        "native_backend": {
+          "kind": "camus_native",
+          "abi": 2,
+          "library_sha256": "5c1c62f1d9f9ad6d72b84cb991cfe1e212ca812302f097427edbd58fcfeca962",
+          "build": {
+            "source_hashes": {
+              "control.c": "e75a3cbaf0d438c15ca78d5015747a47172f5b7cdbe263d557f57b70b0c5d1cb",
+              "ops.c": "5dc3d58908596689772ac2c23ef074cbf79ac7437b62ad7e870cdd763b694ef8",
+              "native.py": "ea82c0b912564c4f267cb9dc28e6f0ae796baa950b2d2b1fc0a7165b433fc87d",
+              "native_control.py": "4591a089fe464b41c17485055d428a3182a4974235e8ff077c1ead0d5752d00f"
+            },
+            "flags": [
+              "-O3",
+              "-std=c11",
+              "-shared",
+              "-fPIC",
+              "-fno-fast-math",
+              "-ffp-contract=off",
+              "-mcpu=cortex-a9",
+              "-mfpu=neon",
+              "-mfloat-abi=hard"
+            ],
+            "library_sha256": "5c1c62f1d9f9ad6d72b84cb991cfe1e212ca812302f097427edbd58fcfeca962"
+          }
+        }
+      }
+    }
+  ],
+  "hdmi": [],
+  "busy_409": true,
+  "performance": {
+    "frames": 3,
+    "median_seconds": 4.4161747000180185,
+    "p95_seconds": 5.095850830001291,
+    "max_seconds": 5.171370399999432,
+    "within_5_seconds": 2,
+    "includes": "POST upload through ready-to-download ZIP; excludes initial service start and explicit HDMI reinitialization"
+  }
+}

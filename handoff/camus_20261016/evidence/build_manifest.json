@@ -1,0 +1,41 @@
+{
+  "schema": "camus-build-v1",
+  "clock_mhz": 100,
+  "git_head_at_certification": "bf2b1e57f633c22dd75ba837bcdc26c2ed71a6e3",
+  "provenance": "source SHA256 and packed RTL bind this build; Git HEAD alone does not identify uncommitted candidate source",
+  "sources": {
+    "rtl/conv_mac_array.sv": "4f5a6a671ac18756d04246aec67be13755c529008b5c7930d88b9761692358db",
+    "rtl/requant_q24.sv": "0b5c6920bda9c85026355c13ad5fe824cdfe236c6b88f0883121e2057e65d6a8",
+    "rtl/axi_lite_endpoint.sv": "a0bfa6c20a22a0fbae2ff91697fad09de798fcb0a3c3cefa007fde5fc447d947",
+    "rtl/axis_byte_pack.sv": "d1037ef0be2a5e87cffd5763b2b3702faef0621e9b541d5e6c2c61c8240ff7a9",
+    "rtl/axis_byte_unpack.sv": "f94545b14a06ead14bce966209caf0bdaf6734f86575e9e7a7bfdb6189514525",
+    "camus/rtl/axis_tensor_accel_camus.sv": "60b020536ca411bee8a0d7aad392c375efef024c667251b68ec26410c801e050",
+    "camus/rtl/conv_tile_engine_camus.sv": "6a9381c67c235dcf68bb5dc00903ebbd6d943784724643c2134a65a727ffb02e",
+    "camus/rtl/tensor_tile_engine_camus.sv": "6cdb690403501af7689e97c4b5cabe0c228aefb810a762dabd8a2d3485cb660e",
+    "camus/vivado/build.tcl": "c3f7b895daf19fd1df0b95b56e652879945e5c884db9ce4cb8ce9be4d93a7a59",
+    "camus/vivado/package.tcl": "56912eaa440c0a63f227c9ed035a63c4be18f9fac143bf56e91ed6716fb90bdc",
+    "camus/build.sh": "9dcb8bf8f2d533994ad9768f9099fca029ab58171a85022826c592c0a50aeda7",
+    "camus/package.py": "bf73fec76021a214ddbe3e80ecaa0d58bbccf779dd948191c6b631cf6080eeca",
+    "vivado/ps7_config.tcl": "963e86a02b9dd16a1de3be6233b5ba6f7380f742e5f7d865316b9a09d3575a83",
+    "scripts/extract_xsa.py": "b486f59685ca20098a103088bb895724d7d4953e183122796a28d3765dd5ef3e",
+    "scripts/check_build.py": "47a4dc42f8853e309efff00fb5e12d093b8af795822dcd9a5ae1a46b1c7bb946"
+  },
+  "artifacts": {
+    "dma_top.bit": "114b34b4fb1295784dd0b54ab250da0187c976f4e4d0b0bdc58da6d185cd07cd",
+    "dma_top.hwh": "79bac65de38f5398680a08734ee4eaaed0487d1fa5c6264c49512813659fa6a5",
+    "dma_top.xsa": "5a4f5d684634b6ba22896ba7fab4255bc75e61a70540732fe8e81e43f34535b8",
+    "timing_summary.rpt": "f24b9840c9488a3bb2f0495559c756472134c9254da2363a8c0b2bce200986a6",
+    "utilization.rpt": "f5f426181f3230f4b6f2d5c05d2c54681a30a26322a1c42212b49affb8a0ce6b",
+    "drc.rpt": "085fe0fe679aaea4a23bd0be365d62d5d1eda2f28c0e5a872a473667124d8b95"
+  },
+  "packed_rtl": {
+    "ip_repo/camus/axis_tensor_accel_camus/src/axis_byte_pack.sv": "d1037ef0be2a5e87cffd5763b2b3702faef0621e9b541d5e6c2c61c8240ff7a9",
+    "ip_repo/camus/axis_tensor_accel_camus/src/axis_byte_unpack.sv": "f94545b14a06ead14bce966209caf0bdaf6734f86575e9e7a7bfdb6189514525",
+    "ip_repo/camus/axis_tensor_accel_camus/src/axis_tensor_accel_camus.sv": "60b020536ca411bee8a0d7aad392c375efef024c667251b68ec26410c801e050",
+    "ip_repo/camus/axis_tensor_accel_camus/src/axi_lite_endpoint.sv": "a0bfa6c20a22a0fbae2ff91697fad09de798fcb0a3c3cefa007fde5fc447d947",
+    "ip_repo/camus/axis_tensor_accel_camus/src/conv_mac_array.sv": "4f5a6a671ac18756d04246aec67be13755c529008b5c7930d88b9761692358db",
+    "ip_repo/camus/axis_tensor_accel_camus/src/conv_tile_engine_camus.sv": "6a9381c67c235dcf68bb5dc00903ebbd6d943784724643c2134a65a727ffb02e",
+    "ip_repo/camus/axis_tensor_accel_camus/src/requant_q24.sv": "0b5c6920bda9c85026355c13ad5fe824cdfe236c6b88f0883121e2057e65d6a8",
+    "ip_repo/camus/axis_tensor_accel_camus/src/tensor_tile_engine_camus.sv": "6cdb690403501af7689e97c4b5cabe0c228aefb810a762dabd8a2d3485cb660e"
+  }
+}
