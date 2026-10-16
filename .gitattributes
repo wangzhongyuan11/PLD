@@ -2,6 +2,10 @@
 *.sh text eol=lf
 *.py text eol=lf
 *.sv text eol=lf
+# These deployed-source hashes bind historical mixed newline bytes. Preserve
+# them verbatim so a clean checkout matches the installed build manifests.
+rtl/requant_q24.sv -text
+rtl/tensor_tile_engine.sv -text
 *.tcl text eol=lf
 *.c text eol=lf
 *.json text eol=lf
