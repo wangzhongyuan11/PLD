@@ -44,16 +44,17 @@
    },
    "camus_delivery": {
     "name": "CAMUS 原交付（保持，不替换）",
-    "in_package": "deliverables/role_a_camus_opt_20261013/ 与 runs/role_a_camus/20261013_auto03/selection/",
+    "in_package": "deliverables/role_a_camus_opt_20261013/",
     "fp32": {
-     "path": "runs/role_a_camus/20261013_auto03/selection/model_state_fp32.pt",
-     "sha256": "3d8f268910783ea524513b3506f4425aec991a54dcb23bf25cff5598fb942378"
+     "path": "deliverables/role_a_camus_opt_20261013/weights/model_state_fp32.pt",
+     "sha256": "74d0da6f13b48528b221e6c295d90de73b6e16f1320a860bc086a05e3c2b774f"
     },
     "int8_spec": {
-     "path": "runs/role_a_camus/20261013_auto03/int8/export01/model_spec.json",
-     "sha256": "62f3a776f422b58ac96bb54877afab88fea25fe181e54e4e2490c5aafd987d5b"
+     "path": "deliverables/role_a_camus_opt_20261013/int8_export/model_spec.json",
+     "sha256": "26e200660f91d228afe7127e046f4d69d52000e4a240c9fc8f7068baf074cd1a"
     },
-    "io": "1x256x256 -> 4 类（背景/左室腔/心肌/左房），默认 argmax + island5_hole1"
+    "io": "1x256x256 -> 4 类（背景/左室腔/心肌/左房），默认 argmax + island5_hole1",
+    "identity_source": "software/interactive_segmentation/models.py REGISTRY ('camus','delivery'); verified inside the uploaded model ZIP"
    },
    "camus_candidate": {
     "name": "CAMUS 隐藏层直方图候选（单独候选，不替换原交付）",
@@ -66,8 +67,7 @@
      "path": "runs/role_a_camus/20261014_auto10/exports/hidden_histogram/model_spec.json",
      "sha256": "68b4f425cc3612ad72d5e83955c2018981edee912fbc0937e9ac8c1718e7b5ae"
     },
-    "head_output_scale": 0.19834566491795338,
-    "io": "1x256x256 -> 4 类，默认 argmax + island5_hole1；仅共享头 output_scale 与 Q24 乘子不同"
+    "io": "1x256x256 -> 4 类（背景/左室腔/心肌/左房），默认 argmax + island5_hole1"
    }
   }
  },
@@ -232,13 +232,26 @@
   "note": "A 的电脑端发布不改变 B/C 正式板端版本；正式指针与冻结 MANIFEST 保持原样。"
  },
  "not_in_release": [
-  "训练源码",
-  "过程日志",
-  "训练断点",
-  "虚拟环境",
-  "ISIC 2018 全部划分",
-  "novice/pilot/IMA++",
+  "全量实验目录与续训状态（runs/ 下的训练断点、checkpoint、日志与逐图输出未单独发布）",
+  "ISIC 2018 全部划分（含未打开的最终测试掩膜）",
+  "ISIC novice / pilot 与 IMA++ 数据",
+  "虚拟环境（统一模型包内不含 .venv，依赖需按 requirements.txt 自行安装）",
   "缓存与 soft target",
-  "三个旧模型 ZIP 的独立附件"
- ]
+  "三个旧模型 ZIP 的独立附件（仅作为统一包内的 original_deliveries/ 随包发布）"
+ ],
+ "model_package_scope": {
+  "contains": [
+   "deliverables/role_a_final/、deliverables/role_a_camus_opt_20261013/ 与候选 INT8 导出",
+   "software/role_a/ 运行闭包辅助源码（model.py、quant.py、quant_math.py、train.py、data.py、metrics.py、verify_export.py、__init__.py）",
+   "software/interactive_segmentation/ 与 host/interactive/ 接口实现",
+   "original_deliveries/ 内嵌的三个旧模型 ZIP",
+   "evidence/ 软件验收记录与两张开发演示输入（无参考标注）"
+  ],
+  "does_not_contain": [
+   "虚拟环境 .venv",
+   "原始影像与 GT 数据集",
+   "全量实验目录与续训断点"
+  ],
+  "note": "包内含运行所需辅助源码，因此不笼统称“不含训练源码”；Git PR 本身不跟踪训练源码。"
+ }
 }
