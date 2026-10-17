@@ -7,10 +7,10 @@ import zipfile
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'display_web/unified'))
 from install_interactive import HUB
-VERSION='PLD_Interactive_20261016_v4'
+VERSION='PLD_Interactive_20261017_v5'
 def package():
     members={};manifest={}
-    # Reviewed v1-v3 manifest hashes, including the actual deployed v3 payload.
+    # Reviewed v1-v4 manifest hashes, including the frozen v4 release payload.
     # The supplied source snapshot has no Git objects for its original history.
     accepted=json.loads((ROOT/'display_web/unified/interactive_accepted_versions.json').read_text())
     if set(accepted)!={'hub/'+name for name in HUB}:raise ValueError('Baseline member mismatch')
@@ -22,7 +22,7 @@ def package():
     dest=ROOT/('out/'+VERSION+'.zip');dest.parent.mkdir(exist_ok=True)
     with zipfile.ZipFile(dest,'w',compression=zipfile.ZIP_DEFLATED) as z:
         for name,raw in sorted(members.items()):
-            info=zipfile.ZipInfo(VERSION+'/'+name,date_time=(2026,10,16,0,0,0))
+            info=zipfile.ZipInfo(VERSION+'/'+name,date_time=(2026,10,17,0,0,0))
             info.compress_type=zipfile.ZIP_DEFLATED;info.external_attr=0o100644<<16
             z.writestr(info,raw)
     with zipfile.ZipFile(dest) as z:
