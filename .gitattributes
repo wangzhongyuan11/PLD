@@ -23,3 +23,4 @@ display_web/unified/prompt_seg/contracts.py whitespace=-blank-at-eof
 delivery/c_v3/hardware/*.rpt -text -whitespace
 delivery/c_v3/hardware/*.json -text -whitespace
 delivery/c_v3/validation/*.json -text -whitespace
+*.service text eol=lf
