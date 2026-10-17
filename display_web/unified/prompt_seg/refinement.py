@@ -2,7 +2,12 @@
 
 Only image features, frozen prediction probabilities and user prompts enter this
 module. No GT, training data or rectangle-filled segmentation fallback is used.
+
+The colour features, grid layout, edge list and pairwise weights depend only on the
+cropped image; they can be built once per crop and reused while every call still
+solves a real SciPy maximum flow with fresh unary terms and hard constraints.
 """
+import hashlib
 import numpy as np
 from PIL import Image
 from scipy import ndimage
@@ -18,23 +23,80 @@ def resize_float(array, shape):
         (shape[1],shape[0]), getattr(Image, 'Resampling', Image).BILINEAR), dtype=np.float64)
 
 
-def seeded_cut(image, probability, points, box=None):
+def _grid(probability):
+    h,w = probability.shape
+    scale = min(1., GRID_SIDE/max(h,w))
+    return h,w,max(2,round(h*scale)),max(2,round(w*scale))
+
+
+class CutContext:
+    """Immutable per-crop colour features, grid edges and pairwise weights."""
+
+    __slots__ = ('crop_shape','gh','gw','features','u','v','pairwise','n','image_sha','ids')
+
+    def __init__(self,crop_shape,gh,gw,features,u,v,pairwise,n,image_sha,ids):
+        # Immutable by construction: every array is marked read-only so a caller
+        # cannot mutate a cached context in place.
+        for array in (features,u,v,pairwise,ids):
+            array.setflags(write=False)
+        self.crop_shape=crop_shape;self.gh=gh;self.gw=gw;self.features=features
+        self.u=u;self.v=v;self.pairwise=pairwise;self.n=n;self.image_sha=image_sha;self.ids=ids
+
+    @property
+    def key(self):
+        return (self.crop_shape,self.gh,self.gw,self.image_sha)
+
+
+def image_sha256(image):
+    """Hash dtype, shape and raw bytes; never cast, so different inputs cannot collide."""
+    array = np.asarray(image)
+    header = f'{array.dtype.str}|{array.shape}|'.encode('ascii')
+    return hashlib.sha256(header + np.ascontiguousarray(array).tobytes()).hexdigest()
+
+
+def build_context(image, probability_shape):
+    """Build features/edges/pairwise weights for one crop (expensive, reusable)."""
+    rgb = np.asarray(image, dtype=np.float64)/255.
+    if rgb.ndim == 2:
+        rgb = rgb[...,None]
+    h,w = probability_shape
+    gh,gw = _grid(np.zeros((h,w),np.float32))[2:]
+    features = np.stack([resize_float(rgb[...,i],(gh,gw)) for i in range(rgb.shape[-1])], axis=-1)
+    ids = np.arange(gh*gw).reshape(gh,gw)
+    u = np.r_[ids[:,:-1].ravel(),ids[:-1,:].ravel()]
+    v = np.r_[ids[:,1:].ravel(),ids[1:,:].ravel()]
+    flat = features.reshape(-1,features.shape[-1])
+    difference = np.sum((flat[u]-flat[v])**2,axis=1)
+    beta = 1/max(2*float(difference.mean()),1e-8)
+    pairwise = np.maximum(1,np.rint(200*np.exp(-beta*difference))).astype(np.int64)
+    return CutContext((h,w),gh,gw,features,u,v,pairwise,gh*gw,image_sha256(image),ids)
+
+
+def seeded_cut(image, probability, points, box=None, context=None):
     """Return a native-size binary mask and truthful refinement metadata.
 
     points are (x,y,foreground) in the crop coordinate system. A box is a hard
-    outside-background constraint, never a foreground-filled output rectangle.
+    outside-background constraint, never a foreground-filled rectangle output.
+    Passing a context reuses the colour features/edges for the same crop; the
+    maximum flow itself is always solved again.
     """
     probability = np.asarray(probability, dtype=np.float64)
     h,w = probability.shape
     if not np.isfinite(probability).all() or np.any((probability < 0)|(probability > 1)):
         raise InputError('模型概率必须有限且位于0..1')
-    scale = min(1., GRID_SIDE/max(h,w))
-    gh,gw = max(2,round(h*scale)),max(2,round(w*scale))
+    if context is not None:
+        if context.crop_shape != (h,w):
+            raise InputError('图割上下文与当前裁剪尺寸不一致，请重建上下文')
+        if context.image_sha != image_sha256(image):
+            raise InputError('图割上下文与当前裁剪图像不一致，请重建上下文')
+        ctx = context
+        context_hit = True
+    else:
+        ctx = build_context(image, probability.shape)
+        context_hit = False
+    gh,gw = ctx.gh,ctx.gw
     q = np.clip(resize_float(probability,(gh,gw)), 1e-6,1-1e-6)
-    rgb = np.asarray(image, dtype=np.float64)/255.
-    if rgb.ndim == 2:
-        rgb = rgb[...,None]
-    features = np.stack([resize_float(rgb[...,i],(gh,gw)) for i in range(rgb.shape[-1])], axis=-1)
+    features = ctx.features
     fg, bg = np.zeros((gh,gw),bool), np.zeros((gh,gw),bool)
     # One grid pixel is a seed. Conflicts after downsampling are rejected rather
     # than silently overwritten; a smaller ROI provides finer control.
@@ -77,14 +139,8 @@ def seeded_cut(image, probability, points, box=None):
     # costs at one node, so violating a seed cannot minimize the energy.
     cost_bg[fg] = 100000; cost_fg[fg] = 0
     cost_fg[bg] = 100000; cost_bg[bg] = 0
-    ids = np.arange(gh*gw).reshape(gh,gw)
-    u = np.r_[ids[:,:-1].ravel(),ids[:-1,:].ravel()]
-    v = np.r_[ids[:,1:].ravel(),ids[1:,:].ravel()]
-    flat = features.reshape(-1,features.shape[-1])
-    difference = np.sum((flat[u]-flat[v])**2,axis=1)
-    beta = 1/max(2*float(difference.mean()),1e-8)
-    pairwise = np.maximum(1,np.rint(200*np.exp(-beta*difference))).astype(np.int64)
-    n = gh*gw; source,sink = n,n+1
+    ids,u,v,pairwise = ctx.ids,ctx.u,ctx.v,ctx.pairwise
+    n = ctx.n; source,sink = n,n+1
     nodes = ids.ravel()
     # Reachable/source-side nodes are foreground: S->p costs background,
     # p->T costs foreground. Two directed links express Potts smoothness.
@@ -125,4 +181,5 @@ def seeded_cut(image, probability, points, box=None):
         'foreground_points':sum(bool(p[2]) for p in points),
         'background_points':sum(not p[2] for p in points),
         'box_used_as_background_constraint':box is not None,
-        'network_prompt_conditioned':False}
+        'network_prompt_conditioned':False,
+        'context_cache_hit':context_hit}
