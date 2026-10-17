@@ -1,0 +1,2 @@
+# Only needed to convert JPEG/PNG files; baseline and synthetic demo use stdlib.
+Pillow

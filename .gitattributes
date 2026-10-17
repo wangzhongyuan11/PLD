@@ -24,3 +24,7 @@ delivery/c_v3/hardware/*.rpt -text -whitespace
 delivery/c_v3/hardware/*.json -text -whitespace
 delivery/c_v3/validation/*.json -text -whitespace
 *.service text eol=lf
+
+# Imported A sources and evidence have existing SHA256 provenance. Preserve
+# their original bytes; the existing B/C source and frozen rules above remain.
+pld-medical/** -text

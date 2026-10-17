@@ -28,6 +28,7 @@ python -m camus --plan
 | `vivado/`、`scripts/` | IP/BD 构建、校验、模型准备、部署与板测工具 |
 | `delivery/` | 当前版本指针、严格白名单 manifest、小型证据与部署模板 |
 | `docs/` | [架构](docs/IMPLEMENTATION.md)、[部署](docs/DEPLOYMENT.md)、[验证](docs/validation/CLEANUP_20261017.md)、历史与需求 |
+| `pld-medical/` | A 组算法、训练与量化源码、电脑交互接口、教材和历史决策；[工作区对照](docs/A_WORKSPACE.md) |
 | `role_a_final/`、`role_a_handoff/`、`camus_candidate_hidden_histogram_int8_20261015/` | 准备命令恢复的模型与旧回归 fixture，忽略展开文件 |
 | `数据/` | 本地原始数据及迁入 `validation/` 的验证输入，不公开上传 |
 | `out/`、`ip_repo/` | 可再生成产物和本地下载缓存，不作为版本入口 |
@@ -56,3 +57,5 @@ D:\Git\bin\bash.exe camus/run_sim.sh
 两模型所有网络算术由 PL 执行；原生恢复、显示与提示图割在 PS。交互缓存命中不重新运行 FPGA。交互后输出独立下载，普通历史、ZIP、HDMI 仍显示原任务结果。首次整流程 3 秒和持续 4 FPS 目标尚未通过。物理 HDMI 未接显示器时只验接口，不宣称屏幕目视验收。当前结果和分阶段耗时见 [本次验证记录](docs/validation/CLEANUP_20261017.md)。
 
 协作采用任务分支、聚焦提交、普通 PR，见 [CONTRIBUTING](CONTRIBUTING.md)。不强推，不推送归档/恢复分支，不提交原始数据、访问码或历史任务。
+
+本地 `E:\嵌赛` 自 2026-10-17 起整体关联本仓库。A 组保留在 `pld-medical/` 子目录，B/C 组继续使用现有根目录结构；两侧源码和文档通过同一 Git 历史、任务分支及 PR 协作。A 组大交付包与模型的来源和存储状态见 [产物索引](pld-medical/deliverables/GITHUB_ARTIFACTS.json)。A 的电脑端验证不覆盖上方正式板端交付的验收范围，`delivery/current.json` 保持唯一正式指针。

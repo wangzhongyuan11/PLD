@@ -71,3 +71,32 @@ NA/
 
 # Duplicate PDF retained while another application holds it open.
 /pld.pdf
+
+# A workspace: share sources/docs and artifact indexes, keep data and outputs local.
+/pld-medical/datasets/
+/pld-medical/runs/
+/pld-medical/data/raw/
+/pld-medical/data/processed/
+/pld-medical/output/
+/pld-medical/plot_cache/
+/pld-medical/tmp/
+/pld-medical/.tmp_*
+/pld-medical/deliverables/*
+!/pld-medical/deliverables/*_README.md
+!/pld-medical/deliverables/*.zip.sha256
+!/pld-medical/deliverables/*.zip.acceptance.json
+!/pld-medical/deliverables/GITHUB_ARTIFACTS.json
+/pld-medical/**/*.pt
+/pld-medical/**/*.pth
+/pld-medical/**/*.onnx
+/pld-medical/**/*.npy
+/pld-medical/**/*.npz
+/pld-medical/**/*.nii
+/pld-medical/**/*.nii.gz
+/pld-medical/**/*.raw
+/pld-medical/**/*.mhd
+
+# Rebuildable report previews and machine-specific tool shortcuts.
+/report_work/render/
+/report_work/chip_render/
+/*.lnk

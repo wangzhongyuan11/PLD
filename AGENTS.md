@@ -1,3 +1,22 @@
+# PLD 共享工作区入口（2026-10-17）
+
+本地根目录 `E:\嵌赛` 已关联团队仓库 `https://github.com/wangzhongyuan11/PLD`。
+A 组算法、训练、量化、教学及电脑端接口位于 `pld-medical/`，先读取该目录的 `AGENTS.md`；其规则只适用于 A 项目。
+根目录 `board/`、`camus/`、`display_web/`、`rtl/` 等为现有 B/C 团队工程，沿用下文完整团队准则。
+下文旧 `D:\PLD` 工具路径是 B 组历史环境记录，不代替本机 `E:\嵌赛` 的实际路径，不将其执行方式套用于 A 组。
+协作使用任务分支和 PR，保留远端历史，不覆盖正式交付或强推共享分支。
+
+## 原本地 A 项目定位规则
+
+# 当前工作区的项目指令入口
+
+本文件仅为 `E:\嵌赛\pld-medical` 竞赛项目定位持久协作准则。
+当任务涉及该项目的算法、量化、数据、训练、FPGA、教材或协作规则时，先读取 `pld-medical/AGENTS.md`，按其中准则工作；本轮已读则不重复读取。
+这些规则仅适用于该项目及其相关任务，不推广为用户的全局偏好，不应用于其他项目或无关聊天。独立任务应按自己的范围和指令执行。
+
+
+## 原 PLD 团队准则（完整保留）
+
 ## 当前正式入口（2026-10-17）
 
 唯一交付指针为 `delivery/current.json`，正式版本 `pld_dual_20261017`；运行、准备、验证和回退按根 README、`docs/DEPLOYMENT.md`、`docs/validation/CLEANUP_20261017.md`。板端版本根为 `/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017`，单 hub 调度，历史/data/deps 和系统依赖保留。模型/位流/完整运行时通过唯一 Release 附件，Git 仅跟踪源码、清单、模板与小型证据。保留 `conv_tile_engine.sv` 并与实际部署稳定 RTL 对齐；未采用 qdrain 不属于正式构建。下面旧日期段落属于历史证据，不能覆盖当前入口或继承为新版整体验收。本轮遵循用户已选择的 GPT 执行方式，不启用 GLM。

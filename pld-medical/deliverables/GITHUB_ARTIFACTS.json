@@ -1,0 +1,65 @@
+{
+  "schema": "pld-a-workspace-artifacts-v1",
+  "date": "2026-10-17",
+  "repository": "https://github.com/wangzhongyuan11/PLD",
+  "workspace": "E:\\嵌赛",
+  "source_root": "pld-medical",
+  "formal_board_delivery_pointer": "delivery/current.json",
+  "existing_team_release": "https://github.com/wangzhongyuan11/PLD/releases/tag/pld-dual-20261017",
+  "existing_team_assets": {
+    "name": "pld_dual_20261017_assets.zip",
+    "bytes": 68636544,
+    "sha256": "c19d9e47e2673d53e7f1e61e5bb61b29a73ebc340ef9019c895ed78a7ea3b2de"
+  },
+  "local_A_artifacts": [
+    {
+      "path": "pld-medical/deliverables/role_a_complete_interactive_20261016.zip",
+      "role": "A unified computer-side interface delivery",
+      "bytes": 468215138,
+      "sha256": "cf6fa99dda170b28df5739f7102790908930dfabd5b013ad7fd0ffdc19a0a794",
+      "storage": "existing_local_artifact",
+      "uploaded_to_git": false,
+      "uploaded_as_new_release_asset_in_this_task": false
+    },
+    {
+      "path": "pld-medical/deliverables/role_a_final.zip",
+      "role": "accepted skin model",
+      "bytes": 2741269,
+      "sha256": "893aa19fab3e322622f5f114361ff4d32d886af59f6b5b71507e52091418b81b",
+      "storage": "existing_local_artifact",
+      "uploaded_to_git": false,
+      "uploaded_as_new_release_asset_in_this_task": false
+    },
+    {
+      "path": "pld-medical/deliverables/role_a_camus_opt_20261013.zip",
+      "role": "accepted CAMUS main delivery",
+      "bytes": 405709345,
+      "sha256": "c8f31a1b143d29d8ae534b18d8922c9645aadb0c3230ebe56e0486e0d13ffda7",
+      "storage": "existing_local_artifact",
+      "uploaded_to_git": false,
+      "uploaded_as_new_release_asset_in_this_task": false
+    },
+    {
+      "path": "pld-medical/deliverables/camus_candidate_hidden_histogram_int8_20261015.zip",
+      "role": "separate CAMUS candidate",
+      "bytes": 40716535,
+      "sha256": "85c3fe51931980439e724e5a5532b5c92e91d62d17c9fa00f4e8bcce99abd580",
+      "storage": "existing_local_artifact",
+      "uploaded_to_git": false,
+      "uploaded_as_new_release_asset_in_this_task": false
+    }
+  ],
+  "local_only_roots": [
+    "pld-medical/.venv",
+    "pld-medical/data/raw",
+    "pld-medical/data/processed",
+    "pld-medical/datasets",
+    "pld-medical/runs",
+    "pld-medical/output",
+    "pld-medical/plot_cache",
+    "pld-medical/tmp"
+  ],
+  "data_and_model_files_uploaded": false,
+  "training_run": false,
+  "note": "Git tracks code, documentation and these checksum references. Large A archives stay at their existing local paths; this index is not a claim that those archives are Release attachments."
+}

@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+runs/
+data/raw/
+data/processed/
+*.bit
+*.jou
+*.log
+.Xil/
