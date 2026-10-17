@@ -1,0 +1,257 @@
+{
+ "schema": "pld-a-release-catalog-v2",
+ "date": "2026-10-17",
+ "status": "published_and_server_verified",
+ "release": {
+  "repository": "wangzhongyuan11/PLD",
+  "tag": "pld-dual-20261017",
+  "url": "https://github.com/wangzhongyuan11/PLD/releases/tag/pld-dual-20261017",
+  "purpose": "A 组三个分割模型、ISIC/CAMUS 数据与交互接口的统一发布点",
+  "server_verification": "每个附件的 size 与 sha256 digest 均由 GitHub 服务端返回核对一致",
+  "verified_assets": 13
+ },
+ "how_to_use": {
+  "download": "从上面的 Release 页面下载所需附件；URL 也可直接使用本文件中的 url 字段。",
+  "verify": "Windows 用 Get-FileHash -Algorithm SHA256；Linux/macOS 用 sha256sum -c A_RELEASE_SHA256SUMS_20261017.txt。",
+  "model_runtime": "模型包不含虚拟环境：解压后在包根目录 python -m venv .venv、.venv/Scripts/python.exe -m pip install -r requirements.txt，再运行 verify_package.py；细节以包内 README 为准。",
+  "interfaces": "两套接口的字段与数值约定见 pld-medical/docs/interactive/。"
+ },
+ "models": {
+  "note": "三个模型都已内嵌在统一模型包 role_a_complete_interactive_20261016.zip 中，不存在分别单独上传的旧模型 ZIP 附件；原三个旧 ZIP 仅随该包内的 original_deliveries/ 保留。",
+  "package": {
+   "name": "role_a_complete_interactive_20261016.zip",
+   "kind": "model_package",
+   "bytes": 468215138,
+   "sha256": "cf6fa99dda170b28df5739f7102790908930dfabd5b013ad7fd0ffdc19a0a794",
+   "url": "https://github.com/wangzhongyuan11/PLD/releases/download/pld-dual-20261017/role_a_complete_interactive_20261016.zip",
+   "server_size": 468215138,
+   "server_digest": "sha256:cf6fa99dda170b28df5739f7102790908930dfabd5b013ad7fd0ffdc19a0a794"
+  },
+  "items": {
+   "skin_lesion": {
+    "name": "皮肤病灶分割 role_a_final（soup_v5_a050）",
+    "in_package": "deliverables/role_a_final/",
+    "fp32": {
+     "path": "deliverables/role_a_final/best.pt",
+     "bytes": 501949,
+     "sha256": "f488719fe6d4d09c9b86be84d06b19d34241d6c14060b87da7bab25d1367eb77"
+    },
+    "int8_spec": {
+     "path": "deliverables/role_a_final/int8/model_spec.json",
+     "sha256": "fe137ca5b128fc1983fabad9bee39b3208cda4256e0d04c4e27cef5c07666aef"
+    },
+    "io": "RGB 3x256x256 -> 1 通道 logits；sigmoid>=0.45 二值化；1 类（病灶/背景）"
+   },
+   "camus_delivery": {
+    "name": "CAMUS 原交付（保持，不替换）",
+    "in_package": "deliverables/role_a_camus_opt_20261013/",
+    "fp32": {
+     "path": "deliverables/role_a_camus_opt_20261013/weights/model_state_fp32.pt",
+     "sha256": "74d0da6f13b48528b221e6c295d90de73b6e16f1320a860bc086a05e3c2b774f"
+    },
+    "int8_spec": {
+     "path": "deliverables/role_a_camus_opt_20261013/int8_export/model_spec.json",
+     "sha256": "26e200660f91d228afe7127e046f4d69d52000e4a240c9fc8f7068baf074cd1a"
+    },
+    "io": "1x256x256 -> 4 类（背景/左室腔/心肌/左房），默认 argmax + island5_hole1",
+    "identity_source": "software/interactive_segmentation/models.py REGISTRY ('camus','delivery'); verified inside the uploaded model ZIP"
+   },
+   "camus_candidate": {
+    "name": "CAMUS 隐藏层直方图候选（单独候选，不替换原交付）",
+    "in_package": "runs/role_a_camus/20261014_auto10/exports/hidden_histogram/",
+    "fp32": {
+     "path": "runs/role_a_camus/20261013_auto03/selection/model_state_fp32.pt",
+     "sha256": "3d8f268910783ea524513b3506f4425aec991a54dcb23bf25cff5598fb942378"
+    },
+    "int8_spec": {
+     "path": "runs/role_a_camus/20261014_auto10/exports/hidden_histogram/model_spec.json",
+     "sha256": "68b4f425cc3612ad72d5e83955c2018981edee912fbc0937e9ac8c1718e7b5ae"
+    },
+    "io": "1x256x256 -> 4 类（背景/左室腔/心肌/左房），默认 argmax + island5_hole1"
+   }
+  }
+ },
+ "data": {
+  "scope": "ISIC 2016 Task 1、ISIC 2017 Task 1（含已暴露 test）、CAMUS 官方包；不含 ISIC 2018、novice/pilot、IMA++、缓存与 soft target。",
+  "frozen_split": {
+   "merged": "train 2309 / dev 638",
+   "retention": {
+    "isic2016_train": "900 -> 897",
+    "isic2016_test": "379 -> 376",
+    "isic2017_training": "949 -> 946",
+    "isic2017_validation": "147 -> 145",
+    "isic2017_test": "600 -> 466 train + 117 dev（排除 17）"
+   },
+   "exposed_split_warning": "ISIC 2017 test 为已暴露来源，不是独立最终测试集，不得称为无偏外部验证。"
+  },
+  "licenses": {
+   "ISIC 2016/2017 Task 1": "CC0",
+   "CAMUS": "CC BY-NC-SA 4.0（仅非商业科研）"
+  },
+  "isic2016": [
+   {
+    "name": "isic2016_task1_train_images.zip",
+    "kind": "isic2016_archive",
+    "bytes": 631625308,
+    "sha256": "ad5b48fb7d9073f901d7ea353cc965360c003eabbce1c1f9cdd1c3c42bd90ba2",
+    "url": "https://github.com/wangzhongyuan11/PLD/releases/download/pld-dual-20261017/isic2016_task1_train_images.zip",
+    "server_size": 631625308,
+    "server_digest": "sha256:ad5b48fb7d9073f901d7ea353cc965360c003eabbce1c1f9cdd1c3c42bd90ba2",
+    "source": "data/raw/isic2016/downloads/train_images.zip",
+    "note": "官方原包字节副本，解压各自带官方目录前缀"
+   },
+   {
+    "name": "isic2016_task1_train_masks.zip",
+    "kind": "isic2016_archive",
+    "bytes": 6000606,
+    "sha256": "81cff572b1cc0e6198ddddc1c8e14ea13dc9b10bfa316ee1877a4b183ddd876a",
+    "url": "https://github.com/wangzhongyuan11/PLD/releases/download/pld-dual-20261017/isic2016_task1_train_masks.zip",
+    "server_size": 6000606,
+    "server_digest": "sha256:81cff572b1cc0e6198ddddc1c8e14ea13dc9b10bfa316ee1877a4b183ddd876a",
+    "source": "data/raw/isic2016/downloads/train_masks.zip",
+    "note": "官方原包字节副本，解压各自带官方目录前缀"
+   },
+   {
+    "name": "isic2016_task1_test_images.zip",
+    "kind": "isic2016_archive",
+    "bytes": 242932767,
+    "sha256": "5cb5766aecc0c2981b6fae544de790908c9e2465186e94965bfe88b413f63c99",
+    "url": "https://github.com/wangzhongyuan11/PLD/releases/download/pld-dual-20261017/isic2016_task1_test_images.zip",
+    "server_size": 242932767,
+    "server_digest": "sha256:5cb5766aecc0c2981b6fae544de790908c9e2465186e94965bfe88b413f63c99",
+    "source": "data/raw/isic2016/downloads/test_images.zip",
+    "note": "官方原包字节副本，解压各自带官方目录前缀"
+   },
+   {
+    "name": "isic2016_task1_test_masks.zip",
+    "kind": "isic2016_archive",
+    "bytes": 2376407,
+    "sha256": "065df24f07424aea8fdfe9f392d70d1ff8fba21a66736e1d51dc8b108492020e",
+    "url": "https://github.com/wangzhongyuan11/PLD/releases/download/pld-dual-20261017/isic2016_task1_test_masks.zip",
+    "server_size": 2376407,
+    "server_digest": "sha256:065df24f07424aea8fdfe9f392d70d1ff8fba21a66736e1d51dc8b108492020e",
+    "source": "data/raw/isic2016/downloads/test_masks.zip",
+    "note": "官方原包字节副本，解压各自带官方目录前缀"
+   }
+  ],
+  "isic2017": {
+   "name": "isic2017_task1_splits.zip",
+   "kind": "isic2017_dataset",
+   "bytes": 1583554246,
+   "sha256": "6cc27ddeef6460cf87e7a8ffc635f51e12fa586aa80e7a112fe623b0c43ec1f3",
+   "url": "https://github.com/wangzhongyuan11/PLD/releases/download/pld-dual-20261017/isic2017_task1_splits.zip",
+   "server_size": 1583554246,
+   "server_digest": "sha256:6cc27ddeef6460cf87e7a8ffc635f51e12fa586aa80e7a112fe623b0c43ec1f3",
+   "members": 3405,
+   "note": "解压为 isic2017_* 独立目录 + frozen/ 划分与排除清单；逐成员 SHA 见 A_RELEASE_ASSETS_20261017.json"
+  },
+  "camus": {
+   "original": {
+    "name": "CAMUS_public_6373703d_20261012.zip",
+    "bytes": 3835077244,
+    "sha256": "862474ff61a660d0d0e9fe9867d5189b8536406e266d983a9914a9cb165c0c35"
+   },
+   "shards": [
+    {
+     "name": "CAMUS_public_6373703d_20261012.zip.001",
+     "kind": "camus_shard",
+     "bytes": 1917538622,
+     "sha256": "76fca1f06d1bfccd8605841403ac37ab287f59b3e7ccc891b6490dd6ac42214d",
+     "url": "https://github.com/wangzhongyuan11/PLD/releases/download/pld-dual-20261017/CAMUS_public_6373703d_20261012.zip.001",
+     "server_size": 1917538622,
+     "server_digest": "sha256:76fca1f06d1bfccd8605841403ac37ab287f59b3e7ccc891b6490dd6ac42214d",
+     "offset": 0,
+     "note": "不可单独解压；按顺序连接后校验整包 SHA256"
+    },
+    {
+     "name": "CAMUS_public_6373703d_20261012.zip.002",
+     "kind": "camus_shard",
+     "bytes": 1917538622,
+     "sha256": "c1e214c119593926063b38f3c8dcc3a3f4cd90656545f072e94d8a7d81b3fc7d",
+     "url": "https://github.com/wangzhongyuan11/PLD/releases/download/pld-dual-20261017/CAMUS_public_6373703d_20261012.zip.002",
+     "server_size": 1917538622,
+     "server_digest": "sha256:c1e214c119593926063b38f3c8dcc3a3f4cd90656545f072e94d8a7d81b3fc7d",
+     "offset": 1917538622,
+     "note": "不可单独解压；按顺序连接后校验整包 SHA256"
+    }
+   ],
+   "citation": "Leclerc et al. 2019, DOI 10.1109/TMI.2019.2900516",
+   "license_note": "CC BY-NC-SA 4.0；须署名、相同方式共享、仅非商业科研；原条款见 CAMUS_LICENSE_TERMS_20261017.md"
+  }
+ },
+ "verification_attachments": {
+  "acceptance_record": {
+   "name": "role_a_complete_interactive_20261016.zip.acceptance.json",
+   "kind": "model_package_acceptance",
+   "bytes": 1123,
+   "sha256": "bfeead8599d1410f15da153d5747c9d7ad230f1d71943434265679e544f41ec0",
+   "url": "https://github.com/wangzhongyuan11/PLD/releases/download/pld-dual-20261017/role_a_complete_interactive_20261016.zip.acceptance.json",
+   "server_size": 1123,
+   "server_digest": "sha256:bfeead8599d1410f15da153d5747c9d7ad230f1d71943434265679e544f41ec0",
+   "note": "原软件验收记录；含本项目内部路径，不含密钥或令牌"
+  },
+  "release_manifest": {
+   "name": "A_RELEASE_ASSETS_20261017.json",
+   "kind": "release_manifest",
+   "bytes": 871888,
+   "sha256": "3e30f5979868d85f5bb6c9d27b961bb5e261c4186ce08a6b7f610b4532431c3c",
+   "url": "https://github.com/wangzhongyuan11/PLD/releases/download/pld-dual-20261017/A_RELEASE_ASSETS_20261017.json",
+   "server_size": 871888,
+   "server_digest": "sha256:3e30f5979868d85f5bb6c9d27b961bb5e261c4186ce08a6b7f610b4532431c3c"
+  },
+  "checksums": {
+   "name": "A_RELEASE_SHA256SUMS_20261017.txt",
+   "kind": "checksums",
+   "bytes": 805,
+   "sha256": "1150be9d1595df20d4e53b24bab6c34c33a028229df5f93910735f0307032593",
+   "url": "https://github.com/wangzhongyuan11/PLD/releases/download/pld-dual-20261017/A_RELEASE_SHA256SUMS_20261017.txt",
+   "server_size": 805,
+   "server_digest": "sha256:1150be9d1595df20d4e53b24bab6c34c33a028229df5f93910735f0307032593"
+  },
+  "readme": {
+   "name": "A_RELEASE_README_20261017.md",
+   "kind": "download_instructions",
+   "bytes": 5465,
+   "sha256": "03fe7a6865548eeba3188edae176df505d726326f3f1255e0e0a8c7e0a29aa0f",
+   "url": "https://github.com/wangzhongyuan11/PLD/releases/download/pld-dual-20261017/A_RELEASE_README_20261017.md",
+   "server_size": 5465,
+   "server_digest": "sha256:03fe7a6865548eeba3188edae176df505d726326f3f1255e0e0a8c7e0a29aa0f"
+  },
+  "camus_license": {
+   "name": "CAMUS_LICENSE_TERMS_20261017.md",
+   "kind": "license",
+   "bytes": 726,
+   "sha256": "cf1405fcaf9693635c0b704b9869fb376933d77164f3ae46f64282f8f3ead303",
+   "url": "https://github.com/wangzhongyuan11/PLD/releases/download/pld-dual-20261017/CAMUS_LICENSE_TERMS_20261017.md",
+   "server_size": 726,
+   "server_digest": "sha256:cf1405fcaf9693635c0b704b9869fb376933d77164f3ae46f64282f8f3ead303"
+  }
+ },
+ "formal_board_delivery": {
+  "pointer": "delivery/current.json",
+  "note": "A 的电脑端发布不改变 B/C 正式板端版本；正式指针与冻结 MANIFEST 保持原样。"
+ },
+ "not_in_release": [
+  "全量实验目录与续训状态（runs/ 下的训练断点、checkpoint、日志与逐图输出未单独发布）",
+  "ISIC 2018 全部划分（含未打开的最终测试掩膜）",
+  "ISIC novice / pilot 与 IMA++ 数据",
+  "虚拟环境（统一模型包内不含 .venv，依赖需按 requirements.txt 自行安装）",
+  "缓存与 soft target",
+  "三个旧模型 ZIP 的独立附件（仅作为统一包内的 original_deliveries/ 随包发布）"
+ ],
+ "model_package_scope": {
+  "contains": [
+   "deliverables/role_a_final/、deliverables/role_a_camus_opt_20261013/ 与候选 INT8 导出",
+   "software/role_a/ 运行闭包辅助源码（model.py、quant.py、quant_math.py、train.py、data.py、metrics.py、verify_export.py、__init__.py）",
+   "software/interactive_segmentation/ 与 host/interactive/ 接口实现",
+   "original_deliveries/ 内嵌的三个旧模型 ZIP",
+   "evidence/ 软件验收记录与两张开发演示输入（无参考标注）"
+  ],
+  "does_not_contain": [
+   "虚拟环境 .venv",
+   "原始影像与 GT 数据集",
+   "全量实验目录与续训断点"
+  ],
+  "note": "包内含运行所需辅助源码，因此不笼统称“不含训练源码”；Git PR 本身不跟踪训练源码。"
+ }
+}

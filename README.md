@@ -28,6 +28,7 @@ python -m camus --plan
 | `vivado/`、`scripts/` | IP/BD 构建、校验、模型准备、部署与板测工具 |
 | `delivery/` | 当前版本指针、严格白名单 manifest、小型证据与部署模板 |
 | `docs/` | [架构](docs/IMPLEMENTATION.md)、[部署](docs/DEPLOYMENT.md)、[验证](docs/validation/CLEANUP_20261017.md)、历史与需求 |
+| `pld-medical/` | A 组的协作说明、接口契约与产物索引（不含模型、训练源码与环境）；[工作区对照](docs/A_WORKSPACE.md)、[数据说明](docs/A_DATASETS.md) |
 | `role_a_final/`、`role_a_handoff/`、`camus_candidate_hidden_histogram_int8_20261015/` | 准备命令恢复的模型与旧回归 fixture，忽略展开文件 |
 | `数据/` | 本地原始数据及迁入 `validation/` 的验证输入，不公开上传 |
 | `out/`、`ip_repo/` | 可再生成产物和本地下载缓存，不作为版本入口 |
@@ -56,3 +57,5 @@ D:\Git\bin\bash.exe camus/run_sim.sh
 两模型所有网络算术由 PL 执行；原生恢复、显示与提示图割在 PS。交互缓存命中不重新运行 FPGA。交互后输出独立下载，普通历史、ZIP、HDMI 仍显示原任务结果。首次整流程 3 秒和持续 4 FPS 目标尚未通过。物理 HDMI 未接显示器时只验接口，不宣称屏幕目视验收。当前结果和分阶段耗时见 [本次验证记录](docs/validation/CLEANUP_20261017.md)。
 
 协作采用任务分支、聚焦提交、普通 PR，见 [CONTRIBUTING](CONTRIBUTING.md)。不强推，不推送归档/恢复分支，不提交原始数据、访问码或历史任务。
+
+A 组工作位于 `pld-medical/` 子目录，B/C 组继续使用根目录结构，两侧通过同一 Git 历史、任务分支和 PR 协作。**本仓库对 A 只跟踪协作说明、接口文档与产物索引**；训练源码、数据集、虚拟环境和模型权重都不进 Git，`git clone` 后拿不到它们。皮肤与 CAMUS 三个模型的 FP32/INT8 运行闭包在 [Release pld-dual-20261017](https://github.com/wangzhongyuan11/PLD/releases/tag/pld-dual-20261017) 的附件 `role_a_complete_interactive_20261016.zip`（468,215,138 B）中：下载、校验、解压后**在包根目录自建 `.venv` 并安装依赖**再运行，详见 [A 工作区说明](docs/A_WORKSPACE.md)。数据附件、校验文件和下载说明也在同一 Release。数据以原许可在同一个 Release 发布，见 [数据说明](docs/A_DATASETS.md) 与 [产物索引](pld-medical/deliverables/GITHUB_ARTIFACTS.json)。A 的电脑端验证不覆盖正式板端交付，`delivery/current.json` 保持唯一正式指针。

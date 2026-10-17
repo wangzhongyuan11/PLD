@@ -1,0 +1,110 @@
+{
+  "schema": "interactive-segmentation-api-examples-v1",
+  "model": "camus",
+  "endpoint": "POST /api/camus/predict",
+  "content_type": "application/json",
+  "request_envelope": {
+    "image": "<BASE64_IMAGE_PLACEHOLDER>",
+    "filename": "image.png",
+    "parameters": {}
+  },
+  "notes": [
+    "image 为占位符，本文件不含任何图像数据或令牌",
+    "parameters 允许字段：variant / backend / target_class / threshold / roi / box / points",
+    "CAMUS variant 支持 delivery（原交付）与 candidate（hidden_histogram 候选）",
+    "target_class：1 左室腔 / 2 心肌 / 3 左房（0 为背景，不可选）",
+    "threshold 默认 null；threshold=null 时严格使用多类 argmax（保留 argmax 语义）",
+    "给出 threshold 时按 target>=threshold 判定目标类别，否则回落到次优类别",
+    "坐标一律为原图像素（原始图像坐标），roi/box 右下边界不包含",
+    "points 每项为 {x, y, label}，label 为 foreground 或 background，最多 128 点",
+    "box 与 points 必须位于 roi 内；前景点必须位于 box 内（若给出 box）",
+    "CAMUS 结果默认先经过固定后处理 island5_hole1，再做提示式细化"
+  ],
+  "examples": {
+    "argmax_default": {
+      "description": "threshold 为 null，保留 CAMUS 默认四类 argmax",
+      "body": {
+        "image": "<BASE64_IMAGE_PLACEHOLDER>",
+        "filename": "camus.png",
+        "parameters": {"variant": "delivery", "backend": "int8", "target_class": 1, "threshold": null}
+      }
+    },
+    "argmax_target_myocardium": {
+      "description": "argmax 语义下选择心肌作为目标类别",
+      "body": {
+        "image": "<BASE64_IMAGE_PLACEHOLDER>",
+        "filename": "camus.png",
+        "parameters": {"variant": "delivery", "backend": "int8", "target_class": 2, "threshold": null}
+      }
+    },
+    "threshold_target_left_atrium": {
+      "description": "对左房使用显式阈值而非 argmax",
+      "body": {
+        "image": "<BASE64_IMAGE_PLACEHOLDER>",
+        "filename": "camus.png",
+        "parameters": {"variant": "delivery", "backend": "int8", "target_class": 3, "threshold": 0.5}
+      }
+    },
+    "roi_only": {
+      "description": "ROI 限定推理范围，区域外按背景输出",
+      "body": {
+        "image": "<BASE64_IMAGE_PLACEHOLDER>",
+        "filename": "camus.png",
+        "parameters": {"variant": "delivery", "backend": "int8", "target_class": 1, "threshold": null,
+                       "roi": {"x0": 40, "y0": 30, "x1": 220, "y1": 230}}
+      }
+    },
+    "box": {
+      "description": "框提示（框内候选，框本身不进入叠加图）",
+      "body": {
+        "image": "<BASE64_IMAGE_PLACEHOLDER>",
+        "filename": "camus.png",
+        "parameters": {"variant": "delivery", "backend": "int8", "target_class": 1, "threshold": null,
+                       "box": {"x0": 70, "y0": 60, "x1": 190, "y1": 200}}
+      }
+    },
+    "points": {
+      "description": "点提示触发模型辅助图割，细化目标类别",
+      "body": {
+        "image": "<BASE64_IMAGE_PLACEHOLDER>",
+        "filename": "camus.png",
+        "parameters": {"variant": "delivery", "backend": "int8", "target_class": 1, "threshold": null,
+                       "points": [{"x": 120, "y": 130, "label": "foreground"},
+                                  {"x": 60, "y": 70, "label": "background"}]}
+      }
+    },
+    "roi_box_points_threshold": {
+      "description": "ROI + 框 + 点 + 阈值组合",
+      "body": {
+        "image": "<BASE64_IMAGE_PLACEHOLDER>",
+        "filename": "camus.png",
+        "parameters": {"variant": "delivery", "backend": "int8", "target_class": 1, "threshold": 0.45,
+                       "roi": {"x0": 30, "y0": 20, "x1": 230, "y1": 240},
+                       "box": {"x0": 70, "y0": 60, "x1": 190, "y1": 200},
+                       "points": [{"x": 120, "y": 130, "label": "foreground"},
+                                  {"x": 55, "y": 65, "label": "background"}]}
+      }
+    },
+    "candidate_variant": {
+      "description": "改用 hidden_histogram 候选量化版本（单独候选，不替换原交付）",
+      "body": {
+        "image": "<BASE64_IMAGE_PLACEHOLDER>",
+        "filename": "camus.png",
+        "parameters": {"variant": "candidate", "backend": "int8", "target_class": 1, "threshold": null}
+      }
+    },
+    "fp32_backend": {
+      "description": "同一请求改用 FP32 后端",
+      "body": {
+        "image": "<BASE64_IMAGE_PLACEHOLDER>",
+        "filename": "camus.png",
+        "parameters": {"variant": "delivery", "backend": "fp32", "target_class": 1, "threshold": null}
+      }
+    }
+  },
+  "response_fields": ["request_id", "model", "identity", "image", "parameters", "operation",
+                      "refinement", "network_prompt_conditioned", "postprocess", "outputs",
+                      "statistics", "reference_available", "accuracy_metrics", "warnings", "elapsed_ms"],
+  "capabilities_endpoint": "GET /api/camus/capabilities",
+  "health_endpoint": "GET /health"
+}

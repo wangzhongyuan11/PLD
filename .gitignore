@@ -71,3 +71,44 @@ NA/
 
 # Duplicate PDF retained while another application holds it open.
 /pld.pdf
+
+# A workspace: only the B/C handoff entry documents are tracked. Sources, tests,
+# teaching material, data, outputs, checkpoints and A working notes stay local.
+# Anything else added under pld-medical/ must be a deliberate review decision.
+/pld-medical/*
+!/pld-medical/docs/
+!/pld-medical/deliverables/
+/pld-medical/docs/*
+!/pld-medical/docs/interactive/
+/pld-medical/docs/interactive/*
+!/pld-medical/docs/interactive/README.md
+!/pld-medical/docs/interactive/protocol.md
+!/pld-medical/docs/interactive/skin_api.md
+!/pld-medical/docs/interactive/skin_api_examples.json
+!/pld-medical/docs/interactive/camus_api.md
+!/pld-medical/docs/interactive/camus_api_examples.json
+/pld-medical/deliverables/*
+!/pld-medical/deliverables/GITHUB_ARTIFACTS.json
+!/pld-medical/deliverables/role_a_complete_interactive_20261016_README.md
+!/pld-medical/deliverables/role_a_complete_interactive_20261016.zip.sha256
+
+# Binary payloads are never tracked, even inside a whitelisted directory.
+/pld-medical/**/*.pt
+/pld-medical/**/*.pth
+/pld-medical/**/*.onnx
+/pld-medical/**/*.npy
+/pld-medical/**/*.npz
+/pld-medical/**/*.nii
+/pld-medical/**/*.nii.gz
+/pld-medical/**/*.raw
+/pld-medical/**/*.mhd
+/pld-medical/**/*.zip
+/pld-medical/**/*.pdf
+
+# Rebuildable report previews and machine-specific tool shortcuts.
+/report_work/
+/*.lnk
+
+# A teaching material stays local; the repository only carries the collaboration entry docs.
+/A组教材.pdf
+/B组教材.pdf
