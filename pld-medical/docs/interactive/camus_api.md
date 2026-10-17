@@ -8,7 +8,7 @@
 
 可使用普通图像或 2D 单帧 NIfTI。坐标对应解码后的原图，不是原始 NIfTI 文件索引顺序；网页会显示宽高。完整字段、PNG 输出和错误码见 [接口约定](protocol.md)，分别可复制的请求见 [CAMUS 示例](camus_api_examples.json)。示例坐标假定图像至少 230×240，需换成实际坐标与 Base64。
 
-Python 调用（项目根目录、现有 `.venv`）：
+Python 调用（**在 Release ZIP 解压出的包根目录**运行；先按包内 README 执行 `python -m venv .venv` 与 `pip install -r requirements.txt`，ZIP 不附带已装好的环境）：
 
 ```python
 from pathlib import Path

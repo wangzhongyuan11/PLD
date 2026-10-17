@@ -6,7 +6,7 @@
 
 点、框、ROI、阈值可单独使用或组合；先 ROI 推理，再按阈值判断，有点/框时执行模型辅助图割。完整字段、PNG 输出和错误码见 [接口约定](protocol.md)，分别可复制的请求见 [皮肤示例](skin_api_examples.json)。示例坐标假定图像至少 420×340，使用前替换为实际图像坐标和 Base64。
 
-Python 调用（项目根目录、现有 `.venv`）：
+Python 调用（**在 Release ZIP 解压出的包根目录**运行；先按包内 README 执行 `python -m venv .venv` 与 `pip install -r requirements.txt`，ZIP 不附带已装好的环境）：
 
 ```python
 import numpy as np
