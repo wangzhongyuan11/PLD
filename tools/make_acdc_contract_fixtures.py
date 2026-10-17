@@ -52,6 +52,27 @@ def build(output):
          'lut_bytes':512,'lut_index':'raw uint8 representation of the signed input byte'})
     write('q24_cases.json',{'multiplier_q24':1<<23,'accumulator':[-5,-3,-1,0,1,3,5],
                           'expected':[-2,-2,0,0,0,2,2],'rounding':'signed nearest ties to even'})
+    # Separate wide-layer cases make omitted/reordered/misplaced Co chunks visible.
+    # Each channel has a positive signature; the last one also consumes the LAST
+    # input channel's spatial ramp, so wrapped bias values cannot alias it.
+    for layer,ci,co,chunks in [('C07',64,128,[64,64]),('C08',128,128,[56,56,16]),('C09',192,64,[32,32])]:
+        x=bytearray(ci*6*6)
+        for y in range(4):
+            for col in range(4):x[(ci-1)*36+(y+1)*6+col+1]=y*4+col
+        weights=bytearray(co*ci*9);weights[((co-1)*ci+ci-1)*9+4]=1
+        biases=[c%127+1 for c in range(co)];multipliers=[1<<24]*co
+        expected=bytes(biases[c]+(y*4+col if c==co-1 else 0) for c in range(co) for y in range(4) for col in range(4))
+        write(f'wide/{layer}/input_chw.bin',bytes(x));write(f'wide/{layer}/expected_output_chw.bin',expected)
+        write(f'wide/{layer}/parameters.bin',bytes(weights)+struct.pack('<'+'i'*co,*biases)+struct.pack('<'+'i'*co,*multipliers))
+        offset=0;parts=[]
+        for j,count in enumerate(chunks):
+            part=bytes(weights[offset*ci*9:(offset+count)*ci*9])+struct.pack('<'+'i'*count,*biases[offset:offset+count])+struct.pack('<'+'i'*count,*multipliers[offset:offset+count])
+            write(f'wide/{layer}/chunk{j}_parameters.bin',part)
+            write(f'wide/{layer}/chunk{j}_expected.bin',expected[offset*16:(offset+count)*16])
+            parts.append({'start_output_channel':offset,'output_channels':count});offset+=count
+        write(f'wide/{layer}/case.json',{'synthetic':True,'mode':0,'input_shape':[1,ci,6,6],'output_shape':[1,co,4,4],
+             'kernel':3,'padding':0,'relu':True,'chunks':parts,'full_Ci_accumulation':True,
+             'purpose':'detect missing/swapped/misplaced output chunks and last-input-channel loss'})
     write('README.md',b'# SYNTHETIC INTERFACE FIXTURES\n\nNo trained weights, no dataset, no segmentation quality evidence.\nDo not load into the production model loader or publish as a trained model.\nThree constant but distinct heads test profile-switch cache invalidation.\nAll first-layer input channels and all head channels are contiguous CHW.\n')
     manifest={'schema':'acdc-contract-fixture-manifest-v1','synthetic':True,'members':members,
               'bytes':sum(m['bytes'] for m in members),'models_and_datasets':False}

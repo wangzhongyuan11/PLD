@@ -2,7 +2,7 @@
 
 本扩展使用 `ACDC25D-B16-P3-v1`，三个方向分别加载一套权重。新 MRI 分支与已有皮损、CAMUS 分支分开；正式部署指针 `delivery/current.json` 不因本扩展自动切换。
 
-规格见 [板端预适配规格](ACDC25D_B16_P3_v1.md)，机器可读合同见 [MODEL_CONTRACT.json](MODEL_CONTRACT.json)。A 的模型训练及完整 PC/板端适配运行源码保留在 `pld-medical/`，冻结权重、数据来源及运行闭包经 Release 交付；本目录只共享 B/C 对接必要资料。
+规格见 [板端预适配规格](ACDC25D_B16_P3_v1.md)，机器可读合同见 [MODEL_CONTRACT.json](MODEL_CONTRACT.json)，完整体数据任务和head回传见 [PC/板端交换接口](BOARD_EXCHANGE.md)。A 的模型训练及完整 PC/板端适配运行源码保留在 `pld-medical/`，冻结权重、数据来源及运行闭包经 Release 交付；本目录只共享 B/C 对接必要资料。
 
 | 项目 | 固定规则 |
 | --- | --- |
@@ -20,6 +20,8 @@
 
 从仓库根运行 `python tools/make_acdc_contract_fixtures.py --out <新建的本地目录>`，只需 Python 标准库。它生成三个**合成接口配置**、全零权重/固定偏置参数、已知整网输出、mode4拼接和带符号Q24平局用例。三个方向的固定head不同，能发现切换参数后缓存未失效的问题。
 
+另有C07/C08/C09宽卷积独立用例：各输出通道使用非零偏置签名，最后一通道读取最后输入通道的空间斜坡，提供完整输出与逐块黄金值。必须分别核对64+64、56+56+16、32+32的偏移和结果；整网固定head用例不能替代通道块验证。
+
 产物全部标记 `synthetic=true` 和 `NOT_A_TRAINED_MODEL`，生产加载器必须拒绝。通过这些用例只证明布局/算术/调度接口，不能证明训练质量、位流可用或板端性能。生成的大文件不提交Git。
 
 ## 几何与验收
@@ -30,6 +32,8 @@
 
 100名官方训练患者按五疾病组16/4固定分层，共80训练/20开发；50名官方测试患者封存，未用于选择或校准。评估须分别报告三个方向、2D基线、概率融合，以及FP32/INT8差异；最终分割和体积回到原生网格，距离使用毫米。开发指标不能称独立测试成绩。
 
-截至本接口初次提交，训练和软件验收正在进行。现有CAM2硬件规则支持Ci≤192及输出通道分块，但既有CAMUS加载器固定Ci=1；A提供独立加载适配，不修改旧模型身份。真实bit/HWH配对、加载切换、数值、DDR峰值、故障恢复和时延均须另行板测。
+截至本接口初次提交，训练和软件验收正在进行。要求的硬件是**独立CAM2**：VLNV `user:pld:axis_tensor_accel_camus:1.0`，ID `0x43414D32`，ABI `0x00020000`。[CAM2 RTL](../../camus/rtl/axis_tensor_accel_camus.sv)使用8位Ci并允许Ci≤192，[卷积引擎](../../camus/rtl/conv_tile_engine_camus.sv)亦检查192通道。根 `rtl/axis_tensor_accel.sv` 是Ci≤96的旧皮损ABI-1内核，不能用于本合同；不能仅因寄存器基址相同就认为兼容。C08/C09输入通道不做拆分，输出通道按上述规则分块。
+
+既有CAMUS模型加载器固定Ci=1；A提供独立加载适配，不修改旧模型身份。上述源码容量证明不能继承为新ACDC模型已上板，实际bit/HWH配对、加载切换、数值、DDR峰值、故障恢复和时延均须另行板测。
 
 官方来源：[ACDC训练集说明](https://www.creatis.insa-lyon.fr/Challenge/acdc/databasesTraining.html)、[标签与评价口径](https://www.creatis.insa-lyon.fr/Challenge/acdc/evaluation.html)。数据按 CC BY-NC-SA 4.0及严格非商业科研条款使用；引用Bernard等，IEEE TMI 2018，DOI:10.1109/TMI.2018.2837502。

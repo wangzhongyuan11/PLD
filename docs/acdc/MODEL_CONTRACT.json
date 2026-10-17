@@ -6,6 +6,14 @@
     "coronal": "acdc_coronal_v1",
     "sagittal": "acdc_sagittal_v1"
   },
+  "required_device": {
+    "vlnv": "user:pld:axis_tensor_accel_camus:1.0",
+    "device_id": "0x43414D32",
+    "abi_version": "0x00020000",
+    "rtl": "camus/rtl/axis_tensor_accel_camus.sv",
+    "max_ci": 192,
+    "reject_skin_abi1": true
+  },
   "convolution_layers": [
     {
       "id": "C01",
