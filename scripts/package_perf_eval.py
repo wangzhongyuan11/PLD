@@ -1,15 +1,15 @@
-"""Package standalone evaluator plus required read-only source dependencies."""
+"""Package standalone evaluator plus required read-only source dependencies; no private experiment outputs."""
+import argparse
 import hashlib
 import json
 from pathlib import Path
-import shutil
 import subprocess
 import zipfile
 ROOT=Path(__file__).resolve().parents[1]
-NAME='PLD_离线评测_20261017'
+NAME='PLD_EvaluationTools'
 
-def package():
-    dest=ROOT/'out'/NAME
+def package(output=None):
+    dest=Path(output).resolve() if output is not None else ROOT/'out'/NAME
     if dest.exists():raise ValueError('package staging already exists; choose a new output or inspect it')
     dest.mkdir(parents=True)
     def put(name,data):
@@ -28,12 +28,6 @@ def package():
     put('requirements.txt','numpy>=1.21\nPillow>=8.2\n# Optional FP32: torch (install separately for your CPU/platform)\n')
     put('templates/score_pairs.json',json.dumps(dict(classes=4,dataset_split='development',label_scope='native_labels_no_display_encoding',pairs=[dict(id='case_0001',prediction='prediction.npy',truth='truth.npy',valid='valid_bool.npy')]),indent=2))
     put('templates/power_samples.json',json.dumps(dict(scope='board_input',instrument='fill actual instrument name',frames=None,idle_power_w=None,samples=[]),indent=2))
-    evidence=ROOT.parent/'outputs/perf_eval_20261017'
-    for folder,new_name in [('skin_inputs','skin_inputs'),('camus_inputs','camus_inputs'),('skin_cpu_final','skin_cpu'),('camus_cpu_final','camus_cpu'),('offline_report','离线示例报告')]:
-        for p in (evidence/folder).rglob('*'):
-            if p.is_file():put('examples/'+new_name+'/'+p.relative_to(evidence/folder).as_posix(),p.read_bytes())
-    for name in ('skin_resource_historical.json','skin_web_timing_historical.json','camus_dma_historical.json','pending_board_measurements.json'):
-        put('examples/'+name,(evidence/name).read_bytes())
     put('测试与限制.md','''# 本次验证范围（2026-10-17）
 
 20项自动测试通过：时间统计、DMA计数、Dice/IoU、同GT精度变化、误配拒绝、资源报告解析、HTML转义、模型占用检查、首帧/预热排除、失败及释放异常不标成功等。
@@ -44,7 +38,7 @@ def package():
 
 没有连接板子，没有部署或停止服务。PL接口未实测。当前没有PyTorch，FP32入口已编写但尚未执行。功耗缺原报告和仪器数据；DDR仅DMA包流量估算。源码不含新RTL优化或新训练模型。
 
-先看使用说明，再查看examples/离线示例报告/report.html。性能表中的合成数据标志应保持展示，不可删除后当作真实医学测试。
+先看使用说明，准备正式Release模型后自行生成报告。此包只包含工具与源码，不附私有实验目录、权重、位流或示例测量成绩。性能表中的合成数据标志应保持展示。
 ''')
     put('verify_package.py','''from pathlib import Path
 import hashlib,json
@@ -57,7 +51,7 @@ print('VERIFY_PASS',len(manifest),'files')
 ''')
     manifest={p.relative_to(dest).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in dest.rglob('*') if p.is_file()}
     put('SHA256.json',json.dumps(manifest,ensure_ascii=False,indent=2))
-    archive=ROOT/'out'/(NAME+'.zip')
+    archive=dest.with_suffix('.zip')
     with zipfile.ZipFile(archive,'w') as z:
         for p in sorted(dest.rglob('*')):
             if not p.is_file():continue
@@ -67,4 +61,8 @@ print('VERIFY_PASS',len(manifest),'files')
         if z.testzip() is not None:raise ValueError('archive CRC failed')
     print('PACKAGE_PASS',len(manifest),'files',archive,'SHA256',hashlib.sha256(archive.read_bytes()).hexdigest())
     return dest
-if __name__=='__main__':package()
+if __name__=='__main__':
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output',type=Path,help='new standalone tool directory')
+    args=parser.parse_args()
+    package(args.output)

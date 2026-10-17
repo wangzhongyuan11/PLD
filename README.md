@@ -56,3 +56,7 @@ D:\Git\bin\bash.exe camus/run_sim.sh
 两模型所有网络算术由 PL 执行；原生恢复、显示与提示图割在 PS。交互缓存命中不重新运行 FPGA。交互后输出独立下载，普通历史、ZIP、HDMI 仍显示原任务结果。首次整流程 3 秒和持续 4 FPS 目标尚未通过。物理 HDMI 未接显示器时只验接口，不宣称屏幕目视验收。当前结果和分阶段耗时见 [本次验证记录](docs/validation/CLEANUP_20261017.md)。
 
 协作采用任务分支、聚焦提交、普通 PR，见 [CONTRIBUTING](CONTRIBUTING.md)。不强推，不推送归档/恢复分支，不提交原始数据、访问码或历史任务。
+
+## 可选离线性能评测
+
+[perf_eval 使用说明](perf_eval/README.md)提供CPU/PL延迟与吞吐、输出一致性、Dice/IoU变化、资源/功耗报告和DMA流量分析。先按本页准备唯一正式Release模型；`python -m unittest discover -s perf_eval/tests -q`可在不连接板子、未展开模型的干净克隆中执行。评测工具不修改正式发布产物，板端成绩需另行测量。

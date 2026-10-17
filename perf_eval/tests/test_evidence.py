@@ -11,10 +11,19 @@ from perf_eval.benchmark import load_dataset
 from perf_eval.engines import Lease,SPECS
 
 class EvidenceTests(unittest.TestCase):
-    def test_real_resource_report(self):
-        file=Path(__file__).resolve().parents[2]/'delivery/c_v3/hardware/utilization.rpt'
-        row=utilization(file)
-        self.assertEqual(row['resources']['FF']['used'],8052);self.assertEqual(row['resources']['DSP']['used'],53)
+    def test_resource_report_without_external_release_assets(self):
+        # Synthetic parser fixture, never reported as measured hardware usage.
+        with tempfile.TemporaryDirectory() as temp:
+            file=Path(temp)/'utilization.rpt'
+            file.write_text('| Design State : Physopt postRoute |\n'
+                '| Slice LUTs | 1234 | 0 | 0 | 53200 | 2.32 |\n'
+                '| Register as Flip Flop | 2345 | 0 | 0 | 106400 | 2.20 |\n'
+                '| Block RAM Tile | 36.5 | 0 | 0 | 140 | 26.07 |\n'
+                '| DSPs | 17 | 0 | 0 | 220 | 7.73 |\n')
+            row=utilization(file)
+        self.assertEqual(row['resources']['FF']['used'],2345)
+        self.assertEqual(row['resources']['BRAM36_equivalent']['used'],36.5)
+        self.assertEqual(row['resources']['DSP']['used'],17)
         self.assertFalse(row['bitstream_association_verified'])
     def test_import_overlap_and_pid_not_duration(self):
         with tempfile.TemporaryDirectory() as temp:
