@@ -2,6 +2,10 @@
 *.sh text eol=lf
 *.py text eol=lf
 *.sv text eol=lf
+# These deployed-source hashes bind historical mixed newline bytes. Preserve
+# them verbatim so a clean checkout matches the installed build manifests.
+rtl/requant_q24.sv -text
+rtl/tensor_tile_engine.sv -text
 *.tcl text eol=lf
 *.c text eol=lf
 *.json text eol=lf
@@ -13,7 +17,10 @@
 *.docx binary
 .gitattributes text eol=lf
 .gitignore text eol=lf
+# Keep the verified upstream contract's trailing blank line in this import.
+display_web/unified/prompt_seg/contracts.py whitespace=-blank-at-eof
 # Preserve measured evidence bytes, including original report whitespace.
 delivery/c_v3/hardware/*.rpt -text -whitespace
 delivery/c_v3/hardware/*.json -text -whitespace
 delivery/c_v3/validation/*.json -text -whitespace
+*.service text eol=lf

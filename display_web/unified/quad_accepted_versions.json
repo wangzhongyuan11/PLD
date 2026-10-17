@@ -1,0 +1,54 @@
+{
+  "skin/static/index.html": [
+    "2bf26d358bd0c7a7789bd9dbf64e1027209f30c6aedd8004bacbe3cc24b68f3f",
+    "5013821099f11496a293a68b41c360bf479707cac8de77f3ef95a91c3e7736dc",
+    "fa6cbd0c9e413964ff2136b31d0d9fffb5b8705c15289b8f0b11d52816293b56"
+  ],
+  "skin/static/app.js": [
+    "04e0bfe3429c0703adbd149f1e74e3716d875bfb28d437e8099eea52a1b9837e",
+    "b487c5462d84521559874ab53854c6abbd0c5185e9d5592045366e6df5a12caa",
+    "9e1a88ea2f9ff4fbaf1431141ba9d8fba50586782d7acabcef2eed3aee580841"
+  ],
+  "skin/static/style.css": [
+    "4fa78b1c098b5c2982ca2b9fbdbea68227c453fc75e608fa026ef2ab6532ceb6",
+    "b87863b46065c776da1ffbf4aeea1b459224780ff979375c31b2c4c63e464336",
+    "ca38cc0154d41942a17c7d3119f728e03fef1092f5aba7185691e0f2e3931a0a",
+    "0b4a3f3849f3ea063d8c5e3568f15ad25f6184250e7597a7885cc170e9950250"
+  ],
+  "skin/hdmi_worker.py": [
+    "5e36b9d44a1d827aff85c46750d45e905bedb8a5f926298dbdeca5ada658e939",
+    "58b6fc96a7805c12f9744fe5d8b03cbb0efe3829044abae7ad17fc811d8d1fba",
+    "a84f494b7ade0b4b38fb1d04f651bed29171bf24f8236f242fd745a7fe111f67"
+  ],
+  "skin/quad_display.py": [
+    null,
+    "11ed140052ca9171b2aaa601118072cf7ac9ff6b8ad11e4eb578af7567a19eca"
+  ],
+  "hub/backend_launcher.py": [
+    "8542361da94c58f10b3b68785453a5078618ad6d69b22f4802c35ee76c729c59",
+    "6e5a99ff18ab2001322752ccf996b1c83e652af52188672e1c6520e27715b4f8",
+    "e5c90bbed1e429d9df613a5fb3a0a6465bfef64e7ae95d065b65e2e642c55f95"
+  ],
+  "hub/accepted_backends.json": [
+    "f9acd6a400931b8f7c7031527d07a61ae996d28c70ab8439f9caf683c7188157",
+    "a92e4ee71465bec29ee4554cf36c7e06a6cf7de830344e1d4cd273cde86c35a0",
+    "b19941ba6c8d1a28a0ef46655e8b094ddcd29e7762fd24f20155466ca6b208ce",
+    "3782a3ae301efe5822ed3b4bff7bd5a07cd5b6bfeccadee8ac7d1389293255c5"
+  ],
+  "hub/camus_quad.py": [
+    null,
+    "3e6f871ee85697fd584b2f3f7c525706313ca073cf33f479408d53e1c50577ec"
+  ],
+  "hub/quad_display.py": [
+    null,
+    "11ed140052ca9171b2aaa601118072cf7ac9ff6b8ad11e4eb578af7567a19eca"
+  ],
+  "hub/quad_camus.html": [
+    null,
+    "333f96a29bd0036f763dd1a9c52b7c2b993675eb954fe17002663b8b6e3dd83f"
+  ],
+  "hub/quad_camus_hdmi.py": [
+    null,
+    "204b3226c32662e1fb8da394ead64496bcfec8e107a5f5fcfed3031c105baf73"
+  ]
+}

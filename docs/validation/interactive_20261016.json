@@ -1,0 +1,1385 @@
+{
+  "host_recorded_at": "2026-10-16T23:48:31.790008+08:00",
+  "scope": "PYNQ-Z2 real PL, authenticated loopback HTTP, 100ms test polling, public development fixtures resized to long edge 512. Single run per case, not a quality, sustained FPS, browser/LAN, power or physical HDMI acceptance.",
+  "source_package": "PLD_20261016_最终代码与模型汇总; snapshot reported fee8f4d5ceaa160d5fdd625f45a63f3b2b81e477",
+  "patch": "PLD_Interactive_20261016_v4",
+  "rollback_backup": "/home/xilinx/jupyter_notebooks/PLD_DualModel/backup_interactive_1746558739280287258",
+  "board_bindings": {
+    "skin": {
+      "rtl": {
+        "rtl/conv_mac_array.sv": "4f5a6a671ac18756d04246aec67be13755c529008b5c7930d88b9761692358db",
+        "rtl/requant_q24.sv": "0b5c6920bda9c85026355c13ad5fe824cdfe236c6b88f0883121e2057e65d6a8",
+        "rtl/conv_tile_engine.sv": "7d99b861ac5c0e3697621c97608c939113a1da03a2425881d4b484515f25943d",
+        "rtl/tensor_tile_engine.sv": "c2a7a71872f9768cc1a41d347eef4e39305f74c399249bdae0e6865c46225a3e",
+        "rtl/axi_lite_endpoint.sv": "a0bfa6c20a22a0fbae2ff91697fad09de798fcb0a3c3cefa007fde5fc447d947",
+        "rtl/axis_byte_pack.sv": "d1037ef0be2a5e87cffd5763b2b3702faef0621e9b541d5e6c2c61c8240ff7a9",
+        "rtl/axis_byte_unpack.sv": "f94545b14a06ead14bce966209caf0bdaf6734f86575e9e7a7bfdb6189514525",
+        "rtl/axis_tensor_accel.sv": "50234e00cb771c59829b77e85f60354365bc8abafb0eac753cd1c6085f16c237"
+      },
+      "artifacts": {
+        "dma_top.bit": "0df9c718172d2d496f28a93719a2858d3a9b366ea9145d58bf0a3788687f0baf",
+        "dma_top.hwh": "7adfbe2d757dd09f5dab77562b2fb4db2ef86435db2fb60bf3ca85a02281da13"
+      }
+    },
+    "camus": {
+      "rtl": {
+        "rtl/conv_mac_array.sv": "4f5a6a671ac18756d04246aec67be13755c529008b5c7930d88b9761692358db",
+        "rtl/requant_q24.sv": "0b5c6920bda9c85026355c13ad5fe824cdfe236c6b88f0883121e2057e65d6a8",
+        "rtl/axi_lite_endpoint.sv": "a0bfa6c20a22a0fbae2ff91697fad09de798fcb0a3c3cefa007fde5fc447d947",
+        "rtl/axis_byte_pack.sv": "d1037ef0be2a5e87cffd5763b2b3702faef0621e9b541d5e6c2c61c8240ff7a9",
+        "rtl/axis_byte_unpack.sv": "f94545b14a06ead14bce966209caf0bdaf6734f86575e9e7a7bfdb6189514525",
+        "camus/rtl/axis_tensor_accel_camus.sv": "60b020536ca411bee8a0d7aad392c375efef024c667251b68ec26410c801e050",
+        "camus/rtl/conv_tile_engine_camus.sv": "6a9381c67c235dcf68bb5dc00903ebbd6d943784724643c2134a65a727ffb02e",
+        "camus/rtl/tensor_tile_engine_camus.sv": "6cdb690403501af7689e97c4b5cabe0c228aefb810a762dabd8a2d3485cb660e"
+      },
+      "artifacts": {
+        "dma_top.bit": "114b34b4fb1295784dd0b54ab250da0187c976f4e4d0b0bdc58da6d185cd07cd",
+        "dma_top.hwh": "79bac65de38f5398680a08734ee4eaaed0487d1fa5c6264c49512813659fa6a5"
+      }
+    }
+  },
+  "ordinary_artifacts": {
+    "skin_zip_crc": "2/2 pass",
+    "camus_zip_crc": "2/2 pass",
+    "camus_quad_size": "2/2 640x480"
+  },
+  "tests": {
+    "unified_python": 49,
+    "node": [
+      "unified UI",
+      "quad view",
+      "interactive coordinates and readable timings"
+    ]
+  },
+  "runs": {
+    "skin_before": {
+      "model": "skin",
+      "image": "/home/xilinx/jupyter_notebooks/pld/stage5_dataset_20260927/dataset/images/ISIC_0000003.jpg",
+      "source_sha256": "e3092bd47d1955c117a18acb1e236222cae99acfbd393d0c7f07b4e6b8978857",
+      "processing_size": [
+        512,
+        384
+      ],
+      "switch_wait_seconds": 2.1828000171808526e-05,
+      "switch": {
+        "seconds": 27.53316703600001,
+        "stages_seconds": {
+          "wait_idle": 0.15245283100000506,
+          "release": 1.9191725880000092,
+          "initialize": 25.460571039
+        },
+        "before": {
+          "MemAvailable": "313192 kB",
+          "CmaTotal": "131072 kB",
+          "CmaFree": "26768 kB"
+        },
+        "after_release": {
+          "MemAvailable": "372320 kB",
+          "CmaTotal": "131072 kB",
+          "CmaFree": "46752 kB"
+        },
+        "after_ready": {
+          "MemAvailable": "298384 kB",
+          "CmaTotal": "131072 kB",
+          "CmaFree": "12324 kB"
+        }
+      },
+      "scope": "public development image; functionality and latency only, no quality/long-run/HDMI acceptance",
+      "jobs": [
+        {
+          "case": "full",
+          "http_submit_to_result_seconds": 6.172103628000059,
+          "result": {
+            "request_id": "bb95329c061b4ea1809aa70257ded7f4",
+            "model": "skin",
+            "identity": {
+              "model": "skin",
+              "variant": "delivery",
+              "backend": "pl_int8",
+              "spec_sha256": "fe137ca5b128fc1983fabad9bee39b3208cda4256e0d04c4e27cef5c07666aef",
+              "prediction_cache_hit": false,
+              "software_only": false,
+              "refinement_backend": "PS/CPU scipy maximum_flow",
+              "board_verified": false,
+              "execution": "existing PL backend completed; interactive integration needs board acceptance",
+              "source_job": "1a3cc391fee642888a1bda7bd59f03ed",
+              "input_encoding": "JPEG quality100 4:4:4"
+            },
+            "image": {
+              "width": 512,
+              "height": 384,
+              "sha256": "4c39f8f8145adf959353aa95aeb991ccccf14e61975c4cc1b0f07164ee704088"
+            },
+            "parameters": {
+              "variant": "delivery",
+              "backend": "pl_int8",
+              "target_class": 1,
+              "threshold": 0.45,
+              "roi": null,
+              "box": null,
+              "points": []
+            },
+            "operation": "model_inference",
+            "refinement": null,
+            "network_prompt_conditioned": false,
+            "postprocess": "none",
+            "statistics": {
+              "target_pixels": 69784,
+              "processed_pixels": 196608,
+              "area_ratio": 0.3549397786458333,
+              "per_class_pixels": {
+                "0": 126824,
+                "1": 69784
+              },
+              "changed_pixels_by_refinement": 0
+            },
+            "reference_available": false,
+            "accuracy_metrics": null,
+            "warnings": [
+              "交互输出单独下载；原任务历史、ZIP及HDMI仍是交互前结果。皮肤ROI以JPEG质量100编码。"
+            ],
+            "elapsed_ms": 4039.25,
+            "evidence_scope": "FPGA概率 + PS交互图割；本补丁尚待板端验收"
+          },
+          "outputs": {
+            "labels_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 1667,
+              "pixels_sha256": "bfad450f5e07484935cfebc85178de14eaff5d9b71756cd0ec5ad3fe077dd02e"
+            },
+            "target_mask_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 1682,
+              "pixels_sha256": "798d95f40f8d8cfd41a0639e65d2e7c3f6b2b56b1a9d2438cf714f17bace8478"
+            },
+            "overlay_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 151358,
+              "pixels_sha256": "d243d89b09cad17fe15b3b959aba30adeff0235092519f408465628259b1d7aa"
+            },
+            "original_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 163365,
+              "pixels_sha256": "4c39f8f8145adf959353aa95aeb991ccccf14e61975c4cc1b0f07164ee704088"
+            },
+            "enhanced_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 191601,
+              "pixels_sha256": "8ad1d8cd9cad3f0d156d907f2eaa6504c84940b3a87ada411b601f29e3e2f59b"
+            }
+          }
+        },
+        {
+          "case": "cached_prompts",
+          "http_submit_to_result_seconds": 5.230384859999958,
+          "result": {
+            "request_id": "d60e8f80588941d49cca3abc6990c1e4",
+            "model": "skin",
+            "identity": {
+              "model": "skin",
+              "variant": "delivery",
+              "backend": "pl_int8",
+              "spec_sha256": "fe137ca5b128fc1983fabad9bee39b3208cda4256e0d04c4e27cef5c07666aef",
+              "prediction_cache_hit": true,
+              "software_only": false,
+              "refinement_backend": "PS/CPU scipy maximum_flow",
+              "board_verified": false,
+              "execution": "existing PL backend completed; interactive integration needs board acceptance",
+              "source_job": "1a3cc391fee642888a1bda7bd59f03ed",
+              "input_encoding": "JPEG quality100 4:4:4"
+            },
+            "image": {
+              "width": 512,
+              "height": 384,
+              "sha256": "4c39f8f8145adf959353aa95aeb991ccccf14e61975c4cc1b0f07164ee704088"
+            },
+            "parameters": {
+              "variant": "delivery",
+              "backend": "pl_int8",
+              "target_class": 1,
+              "threshold": 0.45,
+              "roi": null,
+              "box": {
+                "x0": 64,
+                "y0": 48,
+                "x1": 448,
+                "y1": 336
+              },
+              "points": [
+                {
+                  "x": 256,
+                  "y": 192,
+                  "label": "foreground"
+                },
+                {
+                  "x": 128,
+                  "y": 96,
+                  "label": "background"
+                }
+              ]
+            },
+            "operation": "prompt_refinement",
+            "refinement": {
+              "algorithm": "seeded_min_cut",
+              "grid_size": [
+                256,
+                192
+              ],
+              "appearance_used": true,
+              "flow_value": 177620,
+              "appearance_weight": 0.2,
+              "model_log_odds_limit": 3.0,
+              "foreground_points": 1,
+              "background_points": 1,
+              "box_used_as_background_constraint": true,
+              "network_prompt_conditioned": false
+            },
+            "network_prompt_conditioned": false,
+            "postprocess": "none",
+            "statistics": {
+              "target_pixels": 65184,
+              "processed_pixels": 196608,
+              "area_ratio": 0.33154296875,
+              "per_class_pixels": {
+                "0": 131424,
+                "1": 65184
+              },
+              "changed_pixels_by_refinement": 4608
+            },
+            "reference_available": false,
+            "accuracy_metrics": null,
+            "warnings": [
+              "提示由模型辅助图割处理；原网络未经过提示式训练，交互结果的精度需另行验证",
+              "交互输出单独下载；原任务历史、ZIP及HDMI仍是交互前结果。皮肤ROI以JPEG质量100编码。"
+            ],
+            "elapsed_ms": 3103.0,
+            "evidence_scope": "FPGA概率 + PS交互图割；本补丁尚待板端验收"
+          },
+          "outputs": {
+            "labels_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 1381,
+              "pixels_sha256": "865b7b771f992f7be173210d99daa99271a227268293e91e894fc85d611f31f1"
+            },
+            "target_mask_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 1385,
+              "pixels_sha256": "0532c48558241717f13dfa7d1be4435c76028cc1b285098c44f4bc2ceb45bff2"
+            },
+            "overlay_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 150616,
+              "pixels_sha256": "d4ad074ea0c44f9b881e809b60aa1b93ea3a186bf10181e06d4333aee6639162"
+            },
+            "original_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 163365,
+              "pixels_sha256": "4c39f8f8145adf959353aa95aeb991ccccf14e61975c4cc1b0f07164ee704088"
+            },
+            "enhanced_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 191601,
+              "pixels_sha256": "8ad1d8cd9cad3f0d156d907f2eaa6504c84940b3a87ada411b601f29e3e2f59b"
+            }
+          }
+        }
+      ]
+    },
+    "skin_after": {
+      "model": "skin",
+      "image": "/home/xilinx/jupyter_notebooks/pld/stage5_dataset_20260927/dataset/images/ISIC_0000003.jpg",
+      "source_sha256": "e3092bd47d1955c117a18acb1e236222cae99acfbd393d0c7f07b4e6b8978857",
+      "processing_size": [
+        512,
+        384
+      ],
+      "switch_wait_seconds": 2.6522999633016298e-05,
+      "switch": {
+        "seconds": 28.475957335999738,
+        "stages_seconds": {
+          "wait_idle": 0.2589955869998448,
+          "release": 0.7281176050000795,
+          "initialize": 27.48775330699982
+        },
+        "before": {
+          "MemAvailable": "380372 kB",
+          "CmaTotal": "131072 kB",
+          "CmaFree": "52944 kB"
+        },
+        "after_release": {
+          "MemAvailable": "380016 kB",
+          "CmaTotal": "131072 kB",
+          "CmaFree": "52944 kB"
+        },
+        "after_ready": {
+          "MemAvailable": "303720 kB",
+          "CmaTotal": "131072 kB",
+          "CmaFree": "15588 kB"
+        }
+      },
+      "scope": "public development image; functionality and latency only, no quality/long-run/HDMI acceptance",
+      "jobs": [
+        {
+          "case": "full",
+          "http_submit_to_result_seconds": 4.240471962999891,
+          "result": {
+            "request_id": "dd3b1715109440339141e17f44ed44ff",
+            "model": "skin",
+            "identity": {
+              "model": "skin",
+              "variant": "delivery",
+              "backend": "pl_int8",
+              "spec_sha256": "fe137ca5b128fc1983fabad9bee39b3208cda4256e0d04c4e27cef5c07666aef",
+              "prediction_cache_hit": false,
+              "software_only": false,
+              "refinement_backend": "PS/CPU scipy maximum_flow",
+              "board_verified": false,
+              "execution": "existing PL backend completed; interactive integration needs board acceptance",
+              "source_job": "b32dd173716643efa98c897fbe936cce",
+              "input_encoding": "JPEG quality100 4:4:4",
+              "prediction_timings_ms": {
+                "input_encoding": 68.60796899991328,
+                "backend_job_wait": 2546.940426999754,
+                "probability_restore": 120.13720000004469
+              },
+              "backend_timing": {
+                "request_receive_parse": 0.0055328860003101,
+                "upload_decode_validate": 0.14262443699999494,
+                "request_to_job_start": 0.15221629500001654,
+                "stop_hdmi": 4.4954000259167515e-05,
+                "input_write": 0.001997974999994767,
+                "runtime_check_kind": "metadata_unchanged",
+                "runtime_verify": 0.050795772000128636,
+                "model_reused": true,
+                "hardware_reused": true,
+                "persistent_worker_startup": 0.0,
+                "persistent_worker_request": 1.1265817220000827,
+                "persistent_worker_pid": 8480,
+                "persistent_worker_alive_after_reply": true,
+                "persistent_worker_total": 1.1301518200002647,
+                "inference_backend": "persistent_b_worker",
+                "result_load": 0.019221476999973675,
+                "mask_remap": 0.013957090000076278,
+                "contour_process": 0.04032054800018159,
+                "preview_build": 0.23493500299991865,
+                "request_to_preview_ready": 1.6503054010004234,
+                "preview_images": {
+                  "original": {
+                    "resize": 0.00014482500000667642,
+                    "encode_write": 0.10941639399970882
+                  },
+                  "outlined": {
+                    "resize": 8.646099968245835e-05,
+                    "encode_write": 0.11097433900022224
+                  },
+                  "mask": {
+                    "resize": 6.708899991281214e-05,
+                    "encode_write": 0.014558142000169028
+                  },
+                  "contour": {
+                    "resize": 6.684900017717155e-05,
+                    "encode_write": 0.014862338000057207
+                  },
+                  "cutout": {
+                    "resize": 8.433299990429077e-05,
+                    "encode_write": 0.07886958100016273
+                  }
+                },
+                "preview_remaining": 0.12564134200010812,
+                "view_composition": 0.2325484489997507,
+                "png_batch_wall": 0.4406562770000164,
+                "png_save": {
+                  "original": 0.11229236899998796,
+                  "mask": 0.02232255399985661,
+                  "contour": 0.02369350100025258,
+                  "outlined": 0.10380334100000255,
+                  "cutout": 0.07406463400002394,
+                  "comparison": 0.3100611380000373
+                },
+                "zip_payload": 0.04666211099993234,
+                "report_write": 0.003366350999840506,
+                "zip_report_append": 0.007626382000125886,
+                "zip_package": 0.054288493000058224,
+                "job_total": 2.357233529000041,
+                "request_to_job_complete": 2.5094547600001533
+              },
+              "display_cache_hit": false
+            },
+            "image": {
+              "width": 512,
+              "height": 384,
+              "sha256": "4c39f8f8145adf959353aa95aeb991ccccf14e61975c4cc1b0f07164ee704088"
+            },
+            "parameters": {
+              "variant": "delivery",
+              "backend": "pl_int8",
+              "target_class": 1,
+              "threshold": 0.45,
+              "roi": null,
+              "box": null,
+              "points": []
+            },
+            "operation": "model_inference",
+            "refinement": null,
+            "network_prompt_conditioned": false,
+            "postprocess": "none",
+            "statistics": {
+              "target_pixels": 69784,
+              "processed_pixels": 196608,
+              "area_ratio": 0.3549397786458333,
+              "per_class_pixels": {
+                "0": 126824,
+                "1": 69784
+              },
+              "changed_pixels_by_refinement": 0
+            },
+            "timings_ms": {
+              "input_validation": 0.33047999977497966,
+              "prediction": 2747.206765000101,
+              "decision_postprocess": 167.59611099996619,
+              "prompt_refinement": 0.03731700007847394,
+              "render_statistics": 264.0202699999463,
+              "result_png": 244.38191999979608,
+              "original_enhanced_png": 249.98188900008245,
+              "request_validation_decode": 329.67376599981435
+            },
+            "reference_available": false,
+            "accuracy_metrics": null,
+            "warnings": [
+              "交互输出单独下载；原任务历史、ZIP及HDMI仍是交互前结果。皮肤ROI以JPEG质量100编码。"
+            ],
+            "elapsed_ms": 4035.18,
+            "evidence_scope": "FPGA概率 + PS交互图割；本补丁尚待板端验收",
+            "timing_scope": "server submit through all five PNG/base64 outputs; excludes HTTP JSON transfer and browser polling/render"
+          },
+          "outputs": {
+            "labels_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 2136,
+              "pixels_sha256": "bfad450f5e07484935cfebc85178de14eaff5d9b71756cd0ec5ad3fe077dd02e"
+            },
+            "target_mask_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 2136,
+              "pixels_sha256": "798d95f40f8d8cfd41a0639e65d2e7c3f6b2b56b1a9d2438cf714f17bace8478"
+            },
+            "overlay_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 183745,
+              "pixels_sha256": "d243d89b09cad17fe15b3b959aba30adeff0235092519f408465628259b1d7aa"
+            },
+            "original_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 202870,
+              "pixels_sha256": "4c39f8f8145adf959353aa95aeb991ccccf14e61975c4cc1b0f07164ee704088"
+            },
+            "enhanced_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 234152,
+              "pixels_sha256": "8ad1d8cd9cad3f0d156d907f2eaa6504c84940b3a87ada411b601f29e3e2f59b"
+            }
+          },
+          "all_five_png_pixels_match_before": true
+        },
+        {
+          "case": "cached_prompts",
+          "http_submit_to_result_seconds": 2.8496549120000054,
+          "result": {
+            "request_id": "779747c5603947818e5a079d2fdb7dbe",
+            "model": "skin",
+            "identity": {
+              "model": "skin",
+              "variant": "delivery",
+              "backend": "pl_int8",
+              "spec_sha256": "fe137ca5b128fc1983fabad9bee39b3208cda4256e0d04c4e27cef5c07666aef",
+              "prediction_cache_hit": true,
+              "software_only": false,
+              "refinement_backend": "PS/CPU scipy maximum_flow",
+              "board_verified": false,
+              "execution": "existing PL backend completed; interactive integration needs board acceptance",
+              "source_job": "b32dd173716643efa98c897fbe936cce",
+              "input_encoding": "JPEG quality100 4:4:4",
+              "prediction_timings_ms": {
+                "cache_lookup_copy": 28.47958100028336
+              },
+              "backend_timing": {
+                "request_receive_parse": 0.0055328860003101,
+                "upload_decode_validate": 0.14262443699999494,
+                "request_to_job_start": 0.15221629500001654,
+                "stop_hdmi": 4.4954000259167515e-05,
+                "input_write": 0.001997974999994767,
+                "runtime_check_kind": "metadata_unchanged",
+                "runtime_verify": 0.050795772000128636,
+                "model_reused": true,
+                "hardware_reused": true,
+                "persistent_worker_startup": 0.0,
+                "persistent_worker_request": 1.1265817220000827,
+                "persistent_worker_pid": 8480,
+                "persistent_worker_alive_after_reply": true,
+                "persistent_worker_total": 1.1301518200002647,
+                "inference_backend": "persistent_b_worker",
+                "result_load": 0.019221476999973675,
+                "mask_remap": 0.013957090000076278,
+                "contour_process": 0.04032054800018159,
+                "preview_build": 0.23493500299991865,
+                "request_to_preview_ready": 1.6503054010004234,
+                "preview_images": {
+                  "original": {
+                    "resize": 0.00014482500000667642,
+                    "encode_write": 0.10941639399970882
+                  },
+                  "outlined": {
+                    "resize": 8.646099968245835e-05,
+                    "encode_write": 0.11097433900022224
+                  },
+                  "mask": {
+                    "resize": 6.708899991281214e-05,
+                    "encode_write": 0.014558142000169028
+                  },
+                  "contour": {
+                    "resize": 6.684900017717155e-05,
+                    "encode_write": 0.014862338000057207
+                  },
+                  "cutout": {
+                    "resize": 8.433299990429077e-05,
+                    "encode_write": 0.07886958100016273
+                  }
+                },
+                "preview_remaining": 0.12564134200010812,
+                "view_composition": 0.2325484489997507,
+                "png_batch_wall": 0.4406562770000164,
+                "png_save": {
+                  "original": 0.11229236899998796,
+                  "mask": 0.02232255399985661,
+                  "contour": 0.02369350100025258,
+                  "outlined": 0.10380334100000255,
+                  "cutout": 0.07406463400002394,
+                  "comparison": 0.3100611380000373
+                },
+                "zip_payload": 0.04666211099993234,
+                "report_write": 0.003366350999840506,
+                "zip_report_append": 0.007626382000125886,
+                "zip_package": 0.054288493000058224,
+                "job_total": 2.357233529000041,
+                "request_to_job_complete": 2.5094547600001533
+              },
+              "display_cache_hit": true
+            },
+            "image": {
+              "width": 512,
+              "height": 384,
+              "sha256": "4c39f8f8145adf959353aa95aeb991ccccf14e61975c4cc1b0f07164ee704088"
+            },
+            "parameters": {
+              "variant": "delivery",
+              "backend": "pl_int8",
+              "target_class": 1,
+              "threshold": 0.45,
+              "roi": null,
+              "box": {
+                "x0": 64,
+                "y0": 48,
+                "x1": 448,
+                "y1": 336
+              },
+              "points": [
+                {
+                  "x": 256,
+                  "y": 192,
+                  "label": "foreground"
+                },
+                {
+                  "x": 128,
+                  "y": 96,
+                  "label": "background"
+                }
+              ]
+            },
+            "operation": "prompt_refinement",
+            "refinement": {
+              "algorithm": "seeded_min_cut",
+              "grid_size": [
+                256,
+                192
+              ],
+              "appearance_used": true,
+              "flow_value": 177620,
+              "appearance_weight": 0.2,
+              "model_log_odds_limit": 3.0,
+              "foreground_points": 1,
+              "background_points": 1,
+              "box_used_as_background_constraint": true,
+              "network_prompt_conditioned": false
+            },
+            "network_prompt_conditioned": false,
+            "postprocess": "none",
+            "statistics": {
+              "target_pixels": 65184,
+              "processed_pixels": 196608,
+              "area_ratio": 0.33154296875,
+              "per_class_pixels": {
+                "0": 131424,
+                "1": 65184
+              },
+              "changed_pixels_by_refinement": 4608
+            },
+            "timings_ms": {
+              "input_validation": 0.595613000314188,
+              "prediction": 28.55851000003895,
+              "decision_postprocess": 164.24081199966167,
+              "prompt_refinement": 1807.0037330003288,
+              "render_statistics": 233.322768999642,
+              "result_png": 216.05342700013352,
+              "original_enhanced_png": 0.03751999975065701,
+              "request_validation_decode": 177.91624599976785
+            },
+            "reference_available": false,
+            "accuracy_metrics": null,
+            "warnings": [
+              "提示由模型辅助图割处理；原网络未经过提示式训练，交互结果的精度需另行验证",
+              "交互输出单独下载；原任务历史、ZIP及HDMI仍是交互前结果。皮肤ROI以JPEG质量100编码。"
+            ],
+            "elapsed_ms": 2655.24,
+            "evidence_scope": "FPGA概率 + PS交互图割；本补丁尚待板端验收",
+            "timing_scope": "server submit through all five PNG/base64 outputs; excludes HTTP JSON transfer and browser polling/render"
+          },
+          "outputs": {
+            "labels_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 1945,
+              "pixels_sha256": "865b7b771f992f7be173210d99daa99271a227268293e91e894fc85d611f31f1"
+            },
+            "target_mask_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 1945,
+              "pixels_sha256": "0532c48558241717f13dfa7d1be4435c76028cc1b285098c44f4bc2ceb45bff2"
+            },
+            "overlay_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 183782,
+              "pixels_sha256": "d4ad074ea0c44f9b881e809b60aa1b93ea3a186bf10181e06d4333aee6639162"
+            },
+            "original_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 202870,
+              "pixels_sha256": "4c39f8f8145adf959353aa95aeb991ccccf14e61975c4cc1b0f07164ee704088"
+            },
+            "enhanced_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 234152,
+              "pixels_sha256": "8ad1d8cd9cad3f0d156d907f2eaa6504c84940b3a87ada411b601f29e3e2f59b"
+            }
+          },
+          "all_five_png_pixels_match_before": true
+        },
+        {
+          "case": "changed_roi",
+          "http_submit_to_result_seconds": 3.3250445060002676,
+          "result": {
+            "request_id": "050b0c5c3df74c76ab0e9d3f4fbb9e68",
+            "model": "skin",
+            "identity": {
+              "model": "skin",
+              "variant": "delivery",
+              "backend": "pl_int8",
+              "spec_sha256": "fe137ca5b128fc1983fabad9bee39b3208cda4256e0d04c4e27cef5c07666aef",
+              "prediction_cache_hit": false,
+              "software_only": false,
+              "refinement_backend": "PS/CPU scipy maximum_flow",
+              "board_verified": false,
+              "execution": "existing PL backend completed; interactive integration needs board acceptance",
+              "source_job": "594f93116f4b424c887bf535762eb7cd",
+              "input_encoding": "JPEG quality100 4:4:4",
+              "prediction_timings_ms": {
+                "input_encoding": 80.59461599987117,
+                "backend_job_wait": 2163.511412000389,
+                "probability_restore": 40.21678699973563
+              },
+              "backend_timing": {
+                "request_receive_parse": 0.002956615000130114,
+                "upload_decode_validate": 0.032997704000081285,
+                "request_to_job_start": 0.03837084899987531,
+                "stop_hdmi": 0.004520996999872295,
+                "input_write": 0.0017258030002267333,
+                "runtime_check_kind": "metadata_unchanged",
+                "runtime_verify": 0.05606643700002678,
+                "model_reused": true,
+                "hardware_reused": true,
+                "persistent_worker_startup": 0.0,
+                "persistent_worker_request": 1.032623765000153,
+                "persistent_worker_pid": 8480,
+                "persistent_worker_alive_after_reply": true,
+                "persistent_worker_total": 1.0365889650001918,
+                "inference_backend": "persistent_b_worker",
+                "result_load": 0.014758226999674662,
+                "mask_remap": 0.005436504000044806,
+                "contour_process": 0.023744103999888466,
+                "preview_build": 0.14086345800023992,
+                "request_to_preview_ready": 1.3279220350000287,
+                "preview_images": {
+                  "original": {
+                    "resize": 8.496000009472482e-05,
+                    "encode_write": 0.06630356899995604
+                  },
+                  "outlined": {
+                    "resize": 7.967400006236858e-05,
+                    "encode_write": 0.06762567299983857
+                  },
+                  "mask": {
+                    "resize": 6.80059997648641e-05,
+                    "encode_write": 0.008792744999936986
+                  },
+                  "contour": {
+                    "resize": 6.549499994434882e-05,
+                    "encode_write": 0.013850111000010656
+                  },
+                  "cutout": {
+                    "resize": 8.859700028551742e-05,
+                    "encode_write": 0.05593864599995868
+                  }
+                },
+                "preview_remaining": 0.08630275699988488,
+                "view_composition": 0.21285835699973177,
+                "png_batch_wall": 0.4144162449997566,
+                "png_save": {
+                  "original": 0.06351130999973975,
+                  "mask": 0.012871832999735489,
+                  "contour": 0.00945018499987782,
+                  "outlined": 0.06742710200023794,
+                  "cutout": 0.061986264000097435,
+                  "comparison": 0.3281627199999093
+                },
+                "zip_payload": 0.044995297999776085,
+                "report_write": 0.0032543390002501837,
+                "zip_report_append": 0.0037524240001403086,
+                "zip_package": 0.048747721999916394,
+                "job_total": 2.057754421000027,
+                "request_to_job_complete": 2.096130463999998
+              },
+              "display_cache_hit": true
+            },
+            "image": {
+              "width": 512,
+              "height": 384,
+              "sha256": "4c39f8f8145adf959353aa95aeb991ccccf14e61975c4cc1b0f07164ee704088"
+            },
+            "parameters": {
+              "variant": "delivery",
+              "backend": "pl_int8",
+              "target_class": 1,
+              "threshold": 0.45,
+              "roi": {
+                "x0": 64,
+                "y0": 48,
+                "x1": 448,
+                "y1": 336
+              },
+              "box": null,
+              "points": []
+            },
+            "operation": "roi_model_inference",
+            "refinement": null,
+            "network_prompt_conditioned": false,
+            "postprocess": "none",
+            "statistics": {
+              "target_pixels": 67002,
+              "processed_pixels": 110592,
+              "area_ratio": 0.6058485243055556,
+              "per_class_pixels": {
+                "0": 43590,
+                "1": 67002
+              },
+              "changed_pixels_by_refinement": 0
+            },
+            "timings_ms": {
+              "input_validation": 0.3449720002208778,
+              "prediction": 2291.2518919997638,
+              "decision_postprocess": 77.60643700021319,
+              "prompt_refinement": 0.034934999803226674,
+              "render_statistics": 230.32785200030048,
+              "result_png": 257.6024619997952,
+              "original_enhanced_png": 0.04904000024907873,
+              "request_validation_decode": 172.27860899993175
+            },
+            "reference_available": false,
+            "accuracy_metrics": null,
+            "warnings": [
+              "仅处理 ROI；区域外未推理并输出背景，面积占比以 ROI 为分母",
+              "交互输出单独下载；原任务历史、ZIP及HDMI仍是交互前结果。皮肤ROI以JPEG质量100编码。"
+            ],
+            "elapsed_ms": 3066.53,
+            "evidence_scope": "FPGA概率 + PS交互图割；本补丁尚待板端验收",
+            "timing_scope": "server submit through all five PNG/base64 outputs; excludes HTTP JSON transfer and browser polling/render"
+          },
+          "outputs": {
+            "labels_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 2080,
+              "pixels_sha256": "750a070c03b2d2eb09d9fccc71149d3e3b978928b63070a3e7b7573e3c5753d5"
+            },
+            "target_mask_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 2080,
+              "pixels_sha256": "f1d57a44343c70a877a276f93888bebad548d5773b4044bf75b99242f4d50f2f"
+            },
+            "overlay_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 184641,
+              "pixels_sha256": "38947eb56efe6acd5f0a96530b7cc43e1094453a4076be1b2b0b6f775b2e707d"
+            },
+            "original_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 202870,
+              "pixels_sha256": "4c39f8f8145adf959353aa95aeb991ccccf14e61975c4cc1b0f07164ee704088"
+            },
+            "enhanced_png": {
+              "size": [
+                512,
+                384
+              ],
+              "bytes": 234152,
+              "pixels_sha256": "8ad1d8cd9cad3f0d156d907f2eaa6504c84940b3a87ada411b601f29e3e2f59b"
+            }
+          }
+        }
+      ]
+    },
+    "camus_after": {
+      "model": "camus",
+      "image": "/home/xilinx/jupyter_notebooks/pld/camus_dev200_20261015/patient0200_2CH_ED.nii.gz",
+      "source_sha256": "c977e5d4b8981d31c0c35791ee73ba6d9279db01951168ffd1b9668d2bf462ad",
+      "processing_size": [
+        512,
+        423
+      ],
+      "switch_wait_seconds": 2.2399999579647556e-05,
+      "switch": {
+        "seconds": 26.283064060000015,
+        "stages_seconds": {
+          "wait_idle": 0.14981702200020663,
+          "release": 2.4000059720001445,
+          "initialize": 23.732204124999953
+        },
+        "before": {
+          "MemAvailable": "284376 kB",
+          "CmaTotal": "131072 kB",
+          "CmaFree": "31604 kB"
+        },
+        "after_release": {
+          "MemAvailable": "369020 kB",
+          "CmaTotal": "131072 kB",
+          "CmaFree": "62860 kB"
+        },
+        "after_ready": {
+          "MemAvailable": "291096 kB",
+          "CmaTotal": "131072 kB",
+          "CmaFree": "28032 kB"
+        }
+      },
+      "scope": "public development image; functionality and latency only, no quality/long-run/HDMI acceptance",
+      "jobs": [
+        {
+          "case": "full",
+          "http_submit_to_result_seconds": 7.093195878000188,
+          "result": {
+            "request_id": "3e57f5471c2f4c2f8fd98d289cb09585",
+            "model": "camus",
+            "identity": {
+              "model": "camus",
+              "variant": "candidate",
+              "backend": "pl_int8",
+              "spec_sha256": "68b4f425cc3612ad72d5e83955c2018981edee912fbc0937e9ac8c1718e7b5ae",
+              "prediction_cache_hit": false,
+              "software_only": false,
+              "refinement_backend": "PS/CPU scipy maximum_flow",
+              "board_verified": false,
+              "execution": "existing PL backend completed; interactive integration needs board acceptance",
+              "source_job": "2d9d413c56534088b6377057df0fa963",
+              "input_encoding": "8-bit grayscale PNG (RGB converted to L)",
+              "prediction_timings_ms": {
+                "input_encoding": 96.15772899996955,
+                "backend_job_wait": 4881.084479000037,
+                "probability_restore": 565.077470000233
+              },
+              "backend_timing": {
+                "input_read_preprocess": 0.0440906589997212,
+                "network": 3.2315967829999863,
+                "native_reconstruction_postprocess": 0.14057014699983483,
+                "head_labels_write": 0.05684946499968646,
+                "png_encoding": 0.13634219599998687,
+                "zip_payload": 0.024835027999870363,
+                "quad_display": 0.8754476849999264
+              },
+              "display_cache_hit": false
+            },
+            "image": {
+              "width": 512,
+              "height": 423,
+              "sha256": "0189468d4043d6556eee2c9dd1be2788fa55842682096bb112e974f04bda3083"
+            },
+            "parameters": {
+              "variant": "candidate",
+              "backend": "pl_int8",
+              "target_class": 1,
+              "threshold": null,
+              "roi": null,
+              "box": null,
+              "points": []
+            },
+            "operation": "model_inference",
+            "refinement": null,
+            "network_prompt_conditioned": false,
+            "postprocess": "island5_hole1_before_refinement",
+            "statistics": {
+              "target_pixels": 18434,
+              "processed_pixels": 216576,
+              "area_ratio": 0.08511561761229314,
+              "per_class_pixels": {
+                "0": 171945,
+                "1": 18434,
+                "2": 18854,
+                "3": 7343
+              },
+              "changed_pixels_by_refinement": 0
+            },
+            "timings_ms": {
+              "input_validation": 0.23332399996434106,
+              "prediction": 5565.670569999838,
+              "decision_postprocess": 502.2359009999491,
+              "prompt_refinement": 0.03395000021555461,
+              "render_statistics": 193.9549479998277,
+              "result_png": 238.09081200033688,
+              "original_enhanced_png": 214.34225799976048,
+              "request_validation_decode": 213.87274400012757
+            },
+            "reference_available": false,
+            "accuracy_metrics": null,
+            "warnings": [
+              "交互输出单独下载；原任务历史、ZIP及HDMI仍是交互前结果。皮肤ROI以JPEG质量100编码。",
+              "CAMUS 输入转换为8位灰度；彩色图不代表该模型的有效医学输入。"
+            ],
+            "elapsed_ms": 6957.22,
+            "evidence_scope": "FPGA概率 + PS交互图割；本补丁尚待板端验收",
+            "timing_scope": "server submit through all five PNG/base64 outputs; excludes HTTP JSON transfer and browser polling/render"
+          },
+          "outputs": {
+            "labels_png": {
+              "size": [
+                512,
+                423
+              ],
+              "bytes": 3123,
+              "pixels_sha256": "e71b3935c5d90bf821d6633ad2b0d0530d715d4cf258cccb4aa090112a5c80ec"
+            },
+            "target_mask_png": {
+              "size": [
+                512,
+                423
+              ],
+              "bytes": 1689,
+              "pixels_sha256": "4b945cd888c1d6fed67c7b0cf8dcc78bddb87472f252663e273c10d3ef4775ac"
+            },
+            "overlay_png": {
+              "size": [
+                512,
+                423
+              ],
+              "bytes": 168015,
+              "pixels_sha256": "e4349fdc46138c03de359449abc66910fb101e16d4b69ed94a429f71a7876e6d"
+            },
+            "original_png": {
+              "size": [
+                512,
+                423
+              ],
+              "bytes": 167393,
+              "pixels_sha256": "0189468d4043d6556eee2c9dd1be2788fa55842682096bb112e974f04bda3083"
+            },
+            "enhanced_png": {
+              "size": [
+                512,
+                423
+              ],
+              "bytes": 199748,
+              "pixels_sha256": "a09e2f3c3fde699871505c1ea09307b4b2b5624c3281ca9ff5fde953d510cf1b"
+            }
+          }
+        },
+        {
+          "case": "cached_prompts",
+          "http_submit_to_result_seconds": 2.9499381250002443,
+          "result": {
+            "request_id": "69636a1a7caa4f8681808e995bbed29f",
+            "model": "camus",
+            "identity": {
+              "model": "camus",
+              "variant": "candidate",
+              "backend": "pl_int8",
+              "spec_sha256": "68b4f425cc3612ad72d5e83955c2018981edee912fbc0937e9ac8c1718e7b5ae",
+              "prediction_cache_hit": true,
+              "software_only": false,
+              "refinement_backend": "PS/CPU scipy maximum_flow",
+              "board_verified": false,
+              "execution": "existing PL backend completed; interactive integration needs board acceptance",
+              "source_job": "2d9d413c56534088b6377057df0fa963",
+              "input_encoding": "8-bit grayscale PNG (RGB converted to L)",
+              "prediction_timings_ms": {
+                "cache_lookup_copy": 41.61686199995529
+              },
+              "backend_timing": {
+                "input_read_preprocess": 0.0440906589997212,
+                "network": 3.2315967829999863,
+                "native_reconstruction_postprocess": 0.14057014699983483,
+                "head_labels_write": 0.05684946499968646,
+                "png_encoding": 0.13634219599998687,
+                "zip_payload": 0.024835027999870363,
+                "quad_display": 0.8754476849999264
+              },
+              "display_cache_hit": true
+            },
+            "image": {
+              "width": 512,
+              "height": 423,
+              "sha256": "0189468d4043d6556eee2c9dd1be2788fa55842682096bb112e974f04bda3083"
+            },
+            "parameters": {
+              "variant": "candidate",
+              "backend": "pl_int8",
+              "target_class": 1,
+              "threshold": null,
+              "roi": null,
+              "box": {
+                "x0": 64,
+                "y0": 52,
+                "x1": 448,
+                "y1": 370
+              },
+              "points": [
+                {
+                  "x": 256,
+                  "y": 211,
+                  "label": "foreground"
+                },
+                {
+                  "x": 128,
+                  "y": 105,
+                  "label": "background"
+                }
+              ]
+            },
+            "operation": "prompt_refinement",
+            "refinement": {
+              "algorithm": "seeded_min_cut",
+              "grid_size": [
+                256,
+                212
+              ],
+              "appearance_used": true,
+              "flow_value": 136655,
+              "appearance_weight": 0.2,
+              "model_log_odds_limit": 3.0,
+              "foreground_points": 1,
+              "background_points": 1,
+              "box_used_as_background_constraint": true,
+              "network_prompt_conditioned": false
+            },
+            "network_prompt_conditioned": false,
+            "postprocess": "island5_hole1_before_refinement",
+            "statistics": {
+              "target_pixels": 17564,
+              "processed_pixels": 216576,
+              "area_ratio": 0.08109855200945626,
+              "per_class_pixels": {
+                "0": 171945,
+                "1": 17564,
+                "2": 19610,
+                "3": 7457
+              },
+              "changed_pixels_by_refinement": 900
+            },
+            "timings_ms": {
+              "input_validation": 0.5964920001133578,
+              "prediction": 41.69510200017612,
+              "decision_postprocess": 472.3174629998539,
+              "prompt_refinement": 1666.802552000263,
+              "render_statistics": 194.80878099966503,
+              "result_png": 235.63596900021366,
+              "original_enhanced_png": 0.037180999697739026,
+              "request_validation_decode": 167.29011100005664
+            },
+            "reference_available": false,
+            "accuracy_metrics": null,
+            "warnings": [
+              "提示由模型辅助图割处理；原网络未经过提示式训练，交互结果的精度需另行验证",
+              "交互输出单独下载；原任务历史、ZIP及HDMI仍是交互前结果。皮肤ROI以JPEG质量100编码。",
+              "CAMUS 输入转换为8位灰度；彩色图不代表该模型的有效医学输入。"
+            ],
+            "elapsed_ms": 2808.26,
+            "evidence_scope": "FPGA概率 + PS交互图割；本补丁尚待板端验收",
+            "timing_scope": "server submit through all five PNG/base64 outputs; excludes HTTP JSON transfer and browser polling/render"
+          },
+          "outputs": {
+            "labels_png": {
+              "size": [
+                512,
+                423
+              ],
+              "bytes": 3106,
+              "pixels_sha256": "e28a74504150c1449b7438850842e84c69488f53c4aa925b22bbbf10253bf61d"
+            },
+            "target_mask_png": {
+              "size": [
+                512,
+                423
+              ],
+              "bytes": 1656,
+              "pixels_sha256": "34d04c684037a68c89c801b7f01306a58d796c584f38e9f6bad1ddad52cee111"
+            },
+            "overlay_png": {
+              "size": [
+                512,
+                423
+              ],
+              "bytes": 167662,
+              "pixels_sha256": "406e87b83b63707302ed0b53c2b8578c8650a1909365ed62047124605666339a"
+            },
+            "original_png": {
+              "size": [
+                512,
+                423
+              ],
+              "bytes": 167393,
+              "pixels_sha256": "0189468d4043d6556eee2c9dd1be2788fa55842682096bb112e974f04bda3083"
+            },
+            "enhanced_png": {
+              "size": [
+                512,
+                423
+              ],
+              "bytes": 199748,
+              "pixels_sha256": "a09e2f3c3fde699871505c1ea09307b4b2b5624c3281ca9ff5fde953d510cf1b"
+            }
+          }
+        },
+        {
+          "case": "changed_roi",
+          "http_submit_to_result_seconds": 5.118860040999607,
+          "result": {
+            "request_id": "f1089a50671a4433b9f6bb1b803b44fe",
+            "model": "camus",
+            "identity": {
+              "model": "camus",
+              "variant": "candidate",
+              "backend": "pl_int8",
+              "spec_sha256": "68b4f425cc3612ad72d5e83955c2018981edee912fbc0937e9ac8c1718e7b5ae",
+              "prediction_cache_hit": false,
+              "software_only": false,
+              "refinement_backend": "PS/CPU scipy maximum_flow",
+              "board_verified": false,
+              "execution": "existing PL backend completed; interactive integration needs board acceptance",
+              "source_job": "f0cc88870a5e4261b5d90240033a41de",
+              "input_encoding": "8-bit grayscale PNG (RGB converted to L)",
+              "prediction_timings_ms": {
+                "input_encoding": 109.237543999825,
+                "backend_job_wait": 3745.827280999947,
+                "probability_restore": 242.9948610001702
+              },
+              "backend_timing": {
+                "input_read_preprocess": 0.027310202999615285,
+                "network": 2.5745600400000512,
+                "native_reconstruction_postprocess": 0.08997024600012082,
+                "head_labels_write": 0.039454412999930355,
+                "png_encoding": 0.09163348299989593,
+                "zip_payload": 0.02439680599991334,
+                "quad_display": 0.5945422879999569
+              },
+              "display_cache_hit": true
+            },
+            "image": {
+              "width": 512,
+              "height": 423,
+              "sha256": "0189468d4043d6556eee2c9dd1be2788fa55842682096bb112e974f04bda3083"
+            },
+            "parameters": {
+              "variant": "candidate",
+              "backend": "pl_int8",
+              "target_class": 1,
+              "threshold": null,
+              "roi": {
+                "x0": 64,
+                "y0": 52,
+                "x1": 448,
+                "y1": 370
+              },
+              "box": null,
+              "points": []
+            },
+            "operation": "roi_model_inference",
+            "refinement": null,
+            "network_prompt_conditioned": false,
+            "postprocess": "island5_hole1_before_refinement",
+            "statistics": {
+              "target_pixels": 18616,
+              "processed_pixels": 122112,
+              "area_ratio": 0.15245020964360587,
+              "per_class_pixels": {
+                "0": 81168,
+                "1": 18616,
+                "2": 13229,
+                "3": 9099
+              },
+              "changed_pixels_by_refinement": 0
+            },
+            "timings_ms": {
+              "input_validation": 0.33887300014612265,
+              "prediction": 4111.504092999894,
+              "decision_postprocess": 256.03645499995764,
+              "prompt_refinement": 0.03248000029998366,
+              "render_statistics": 178.69030099973315,
+              "result_png": 233.5238579998986,
+              "original_enhanced_png": 0.03612299997257651,
+              "request_validation_decode": 163.1912799998645
+            },
+            "reference_available": false,
+            "accuracy_metrics": null,
+            "warnings": [
+              "仅处理 ROI；区域外未推理并输出背景，面积占比以 ROI 为分母",
+              "交互输出单独下载；原任务历史、ZIP及HDMI仍是交互前结果。皮肤ROI以JPEG质量100编码。",
+              "CAMUS 输入转换为8位灰度；彩色图不代表该模型的有效医学输入。"
+            ],
+            "elapsed_ms": 4971.59,
+            "evidence_scope": "FPGA概率 + PS交互图割；本补丁尚待板端验收",
+            "timing_scope": "server submit through all five PNG/base64 outputs; excludes HTTP JSON transfer and browser polling/render"
+          },
+          "outputs": {
+            "labels_png": {
+              "size": [
+                512,
+                423
+              ],
+              "bytes": 3729,
+              "pixels_sha256": "3b00bca0333c0a57a20ffa3587507c994b41b4216b00282fa47e26af539466e7"
+            },
+            "target_mask_png": {
+              "size": [
+                512,
+                423
+              ],
+              "bytes": 1910,
+              "pixels_sha256": "f226b843908862423c5029ee6db1210367f9aa95345f097fda1d0d4f6fd510d4"
+            },
+            "overlay_png": {
+              "size": [
+                512,
+                423
+              ],
+              "bytes": 168892,
+              "pixels_sha256": "b7a377e7e377726555492f4e594f7f385d2939c44bef1a02cd2e98a37df03778"
+            },
+            "original_png": {
+              "size": [
+                512,
+                423
+              ],
+              "bytes": 167393,
+              "pixels_sha256": "0189468d4043d6556eee2c9dd1be2788fa55842682096bb112e974f04bda3083"
+            },
+            "enhanced_png": {
+              "size": [
+                512,
+                423
+              ],
+              "bytes": 199748,
+              "pixels_sha256": "a09e2f3c3fde699871505c1ea09307b4b2b5624c3281ca9ff5fde953d510cf1b"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "rtl_git_blob_hashes_match_board": true,
+  "patch_zip_sha256": "021410175af9bdddc8005699ebfcc5d04ab652d3722959ff694aed78b1e188d6",
+  "final_status": {
+    "hub": "active",
+    "model": "camus",
+    "phase": "ready",
+    "backend": "pl",
+    "active_job": false,
+    "fault": false,
+    "hdmi": "off",
+    "skin_service": "inactive",
+    "deployed_payload_verified_files": 9
+  }
+}

@@ -1,3 +1,5 @@
+> 当前唯一正式版本为 pld_dual_20261017，部署/回退和验证入口见仓库根 README 及 docs/DEPLOYMENT.md。本页独立应用/补丁步骤保留作模块说明，旧目录名和单模型启动方式不作为正式系统入口。
+
 # PLD 网页与显示系统
 
 本项目负责 PYNQ-Z2 皮损分割系统的网页操作、结果读取、轮廓处理、面积统计和 HDMI 显示。模型训练与 FPGA 加速器由同学的 PLD 工程提供，本项目调用其冻结运行包，不包含训练数据、模型权重或硬件比特流。
@@ -29,6 +31,8 @@ python server.py --open
 电脑端不执行 FPGA 推理或驱动 HDMI。可以点击“加载真实结果示例”，或上传 `samples/synthetic_original.png` 和 `samples/synthetic_mask.png` 验证操作。合成图片不是模型预测。
 
 ## 板端使用
+
+需要同一网址切换皮肤镜和 CAMUS 时，使用可选的 [统一入口](unified/README.md)。它保留两套现有操作界面，等待任务结束后停止旧模型，再启动所选模型；安装与回退均通过独立 systemd 配置完成。当前只完成本地自动化验证，双模型实际 FPGA / HDMI 切换仍待板端验收。
 
 目录保持为 `/home/xilinx/jupyter_notebooks/PLD_Web`。部署步骤、开机自启和故障排查见 [部署说明](docs/DEPLOYMENT.md)。
 

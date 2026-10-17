@@ -1,0 +1,19 @@
+[PASS] sha256 best.pt f488719fe6d4d09c...
+[PASS] sha256 weights_int8.bin 6d1eb288acc14c0d...
+[PASS] sha256 bias.bin fb93cb922debc16d...
+[PASS] encoders_0_0       acc=True req=True slice=True
+[PASS] encoders_0_2       acc=True req=True slice=True
+[PASS] encoders_1_0       acc=True req=True slice=True
+[PASS] encoders_1_2       acc=True req=True slice=True
+[PASS] encoders_2_0       acc=True req=True slice=True
+[PASS] encoders_2_2       acc=True req=True slice=True
+[PASS] encoders_3_0       acc=True req=True slice=True
+[PASS] encoders_3_2       acc=True req=True slice=True
+[PASS] decoder_blocks_0_0 acc=True req=True slice=True
+[PASS] decoder_blocks_0_2 acc=True req=True slice=True
+[PASS] decoder_blocks_1_0 acc=True req=True slice=True
+[PASS] decoder_blocks_1_2 acc=True req=True slice=True
+[PASS] decoder_blocks_2_0 acc=True req=True slice=True
+[PASS] decoder_blocks_2_2 acc=True req=True slice=True
+[PASS] head               acc=True req=True slice=True
+ALL PASS

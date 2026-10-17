@@ -314,11 +314,10 @@ class DeploySwitchTests(unittest.TestCase):
         content = source.read_bytes()
         self.assertEqual(hashlib.sha256(content).hexdigest(),
                          deploy.CANDIDATE_C_SHA256["static/style.css"])
-        # The deployed file really has mixed CRLF/LF; its pin must therefore
-        # differ from the Git-normalized blob hash. If this assertion fails,
-        # the file or the pin changed and both need a conscious review.
-        normalized = hashlib.sha256(content.replace(b"\r\n", b"\n")).hexdigest()
-        self.assertNotEqual(normalized, deploy.CANDIDATE_C_SHA256["static/style.css"])
+        # This fixture pins the current checkout's raw bytes (see SwitchFixture).
+        # A clean checkout can contain LF; the frozen production v3 pins above
+        # intentionally describe a different historical deployment. Hash drift
+        # rejection is tested independently and must not assume checkout EOLs.
         self.assertEqual((self.fixture.candidate_c / "static" / "style.css").read_bytes(),
                          content)
 

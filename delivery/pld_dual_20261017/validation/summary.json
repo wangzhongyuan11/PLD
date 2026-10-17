@@ -1,0 +1,232 @@
+{
+  "release": "pld_dual_20261017",
+  "host_date": "2026-10-17",
+  "models": {
+    "skin": {
+      "frames": 6,
+      "median_seconds": 4.714330488000087,
+      "p95_seconds": 6.195241795250013,
+      "max_seconds": 6.5777643100000205,
+      "within_5_seconds": 4,
+      "first_seconds": 4.982053149000421,
+      "warm_remaining_median_seconds": 4.446607826999752,
+      "stage_medians_seconds": {
+        "request_receive_parse": 0.0020381079993967433,
+        "upload_decode_validate": 0.11944469800027946,
+        "request_to_job_start": 0.12393427349979902,
+        "stop_hdmi": 4.467649978323607e-05,
+        "input_write": 0.0018726739999692654,
+        "runtime_verify": 0.051262178500564914,
+        "persistent_worker_startup": 0.0,
+        "persistent_worker_request": 1.077102296999783,
+        "persistent_worker_total": 1.0808754415002113,
+        "result_load": 0.028418329500254913,
+        "mask_remap": 0.03973390149985789,
+        "contour_process": 0.1656563565002216,
+        "preview_build": 0.9052647985004114,
+        "request_to_preview_ready": 2.431927106999865,
+        "preview_remaining": 0.47191664249976384,
+        "view_composition": 0.4041902300000402,
+        "png_batch_wall": 0.9603726414998164,
+        "zip_payload": 0.08797624950011596,
+        "report_write": 0.003192178500285081,
+        "zip_report_append": 0.003687689499656699,
+        "zip_package": 0.09168507149934157,
+        "job_total": 4.246533322999767,
+        "request_to_job_complete": 4.369684639500065
+      },
+      "before_after": [
+        {
+          "source": "ISIC_0000003.jpg",
+          "head_and_png_pixels_equal": true,
+          "before_seconds": 4.515544294999927,
+          "after_seconds": 4.982053149000421
+        },
+        {
+          "source": "ISIC_0000012.jpg",
+          "head_and_png_pixels_equal": true,
+          "before_seconds": 4.647915395999917,
+          "after_seconds": 5.0476742509999895
+        }
+      ],
+      "interactive": [
+        {
+          "case": "full",
+          "before_seconds": 7.683243600999958,
+          "after_seconds": 4.0206880369996725,
+          "five_png_pixels_equal": true
+        },
+        {
+          "case": "cached_prompts",
+          "before_seconds": 2.9325590789999296,
+          "after_seconds": 2.7838306730000113,
+          "five_png_pixels_equal": true
+        },
+        {
+          "case": "changed_roi",
+          "before_seconds": 3.280515680999997,
+          "after_seconds": 3.2647453859999587,
+          "five_png_pixels_equal": true
+        }
+      ],
+      "hdmi_interface_seconds": 38.35042973399959,
+      "after_hdmi_reinitialize_seconds": 7.704694247000589,
+      "switch": {
+        "seconds": 32.65155960700031,
+        "stages_seconds": {
+          "wait_idle": 0.3917426460002389,
+          "release": 1.0147496039999169,
+          "initialize": 31.243916028000058
+        },
+        "before": {
+          "MemAvailable": "390300 kB",
+          "CmaTotal": "131072 kB",
+          "CmaFree": "8620 kB"
+        },
+        "after_release": {
+          "MemAvailable": "384484 kB",
+          "CmaTotal": "131072 kB",
+          "CmaFree": "7696 kB"
+        },
+        "after_ready": {
+          "MemAvailable": "318532 kB",
+          "CmaTotal": "131072 kB",
+          "CmaFree": "14032 kB"
+        }
+      }
+    },
+    "camus": {
+      "frames": 6,
+      "median_seconds": 4.936680709499797,
+      "p95_seconds": 6.2164377522503855,
+      "max_seconds": 6.526413584000693,
+      "within_5_seconds": 3,
+      "first_seconds": 6.526413584000693,
+      "warm_remaining_median_seconds": 4.58939348199965,
+      "stage_medians_seconds": {
+        "input_read_preprocess": 0.042884642999979405,
+        "network": 2.6341420574999574,
+        "native_reconstruction_postprocess": 0.18081815650020872,
+        "head_labels_write": 0.07334175699998013,
+        "png_encoding": 0.16741605500010337,
+        "zip_payload": 0.029851584499738237,
+        "quad_display": 1.154244712000036
+      },
+      "before_after": [
+        {
+          "source": "patient0200_2CH_ED.nii.gz",
+          "head_and_png_pixels_equal": true,
+          "before_seconds": 5.59574794900027,
+          "after_seconds": 6.526413584000693
+        },
+        {
+          "source": "patient0341_4CH_ES.nii.gz",
+          "head_and_png_pixels_equal": true,
+          "before_seconds": 5.292574311999942,
+          "after_seconds": 5.286510256999463
+        }
+      ],
+      "interactive": [
+        {
+          "case": "full",
+          "before_seconds": 7.15507988499985,
+          "after_seconds": 6.714363250999668,
+          "five_png_pixels_equal": true
+        },
+        {
+          "case": "cached_prompts",
+          "before_seconds": 2.937818821000292,
+          "after_seconds": 2.847834155999408,
+          "five_png_pixels_equal": true
+        },
+        {
+          "case": "changed_roi",
+          "before_seconds": 5.117005297000105,
+          "after_seconds": 5.155871579999257,
+          "five_png_pixels_equal": true
+        }
+      ],
+      "hdmi_interface_seconds": 34.431949826000164,
+      "after_hdmi_reinitialize_seconds": 13.63222461999976,
+      "switch": {
+        "seconds": 27.484724875999746,
+        "stages_seconds": {
+          "wait_idle": 0.14707349499985867,
+          "release": 3.7404482100000678,
+          "initialize": 23.596185614000206
+        },
+        "before": {
+          "MemAvailable": "294580 kB",
+          "CmaTotal": "131072 kB",
+          "CmaFree": "53240 kB"
+        },
+        "after_release": {
+          "MemAvailable": "380120 kB",
+          "CmaTotal": "131072 kB",
+          "CmaFree": "77612 kB"
+        },
+        "after_ready": {
+          "MemAvailable": "327320 kB",
+          "CmaTotal": "131072 kB",
+          "CmaFree": "39448 kB"
+        }
+      }
+    }
+  },
+  "local_tests": {
+    "skin": 79,
+    "camus": 44,
+    "display_web": 78,
+    "unified": 49,
+    "skips": 3,
+    "total": 250
+  },
+  "board_native_optimization_tests": 11,
+  "node_test_files": 6,
+  "rtl_simulations": [
+    "ALL_SIMS_PASS",
+    "CAMUS_ALL_SIMS_PASS"
+  ],
+  "fresh_builds": {
+    "skin": {
+      "mhz": 125,
+      "wns_ns": 0.013,
+      "whs_ns": 0.049,
+      "wpws_ns": 2.75,
+      "lut": 7108,
+      "ff": 8052,
+      "bram36": 67,
+      "dsp": 53
+    },
+    "camus": {
+      "mhz": 100,
+      "wns_ns": 0.344,
+      "whs_ns": 0.028,
+      "wpws_ns": 3.75,
+      "lut": 6843,
+      "ff": 7718,
+      "bram36": 67,
+      "dsp": 52
+    }
+  },
+  "normal_successful_http_frames": 20,
+  "interactive_requests": 12,
+  "limits": [
+    "loopback HTTP, excludes LAN/browser",
+    "short development sample, not quality/long-run acceptance",
+    "cold startup and HDMI recovery separate",
+    "fresh rebuild binaries not substituted for deployed frozen binaries",
+    "physical HDMI screen not connected"
+  ],
+  "rollback_golden_equal": true,
+  "final_after_cleanup_golden_equal": true,
+  "final_after_cleanup_seconds": 4.635742030000074,
+  "deployment_asset_sha256": "c19d9e47e2673d53e7f1e61e5bb61b29a73ebc340ef9019c895ed78a7ea3b2de",
+  "protected_history_files_verified": 2840,
+  "access_tokens_unchanged": true,
+  "board_removed_paths": 215,
+  "board_removed_bytes": 1154397528,
+  "local_removed_bytes": 1265358470,
+  "local_archived_intact_bytes": 366872562,
+  "final_hub_phase": "ready"
+}

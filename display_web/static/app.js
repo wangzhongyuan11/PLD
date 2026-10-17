@@ -40,7 +40,7 @@ async function refreshStatus() {
     if (!busy && !status.active) await refreshHistory();
     $('connection').textContent=status.warmup==='running' ? '开机预热中 · 请稍候' : status.mode==='board' ? 'PYNQ 板端服务' : '电脑本地服务';
     $('mode').querySelector('[value=infer]').disabled=!status.inference_available;
-    $('hdmiState').textContent=status.hdmi==='showing' ? '正在显示 · '+(labels[status.hdmi_view]||status.hdmi_view) : status.hdmi==='starting' ? '正在启动 HDMI…' : status.hdmi_available ? '已就绪，等待显示' : '电脑预览模式 · 未启用 HDMI';
+    $('hdmiState').textContent=status.hdmi==='showing' ? '正在显示 · 四宫格' : status.hdmi==='starting' ? '正在启动 HDMI…' : status.hdmi_available ? '已就绪，等待显示' : '电脑预览模式 · 未启用 HDMI';
     if(status.warmup==='running') message('正在提前初始化模型与 FPGA，完成后即可处理图片。');
     else if(previousWarmup==='running' && status.warmup==='ready') message('开机预热完成，可以开始处理图片。');
     previousWarmup=status.warmup;
@@ -159,11 +159,11 @@ async function watchCurrent(clientTimes, clickStarted) {
   let rendered=false;
   while(true) {
     stage(current);buttons();
-    if(current.preview_ready && !rendered) {
+    if(current.preview_ready && (!rendered || (current.preview_views?.includes('mask') && $('maskImage').hidden))) {
       resultStatistics(current);
-      const previewStarted=performance.now();await render();rendered=true;
-      clientTimes.preview_load=(performance.now()-previewStarted)/1000;
-      if(clickStarted!==null) clientTimes.click_to_preview=(performance.now()-clickStarted)/1000;
+      const initialPreview=!rendered;const previewStarted=performance.now();await render();rendered=true;
+      if(initialPreview) clientTimes.preview_load=(performance.now()-previewStarted)/1000;
+      if(initialPreview && clickStarted!==null) clientTimes.click_to_preview=(performance.now()-clickStarted)/1000;
       showTimings(current,clientTimes);
       message('预览已显示，可切换查看。后台正在生成原尺寸图片和完整结果包，请稍候。');
     }
@@ -206,20 +206,35 @@ async function historyAsset(id, name) {
   const response=await fetch('/files/'+id+'/'+name,{headers:{Authorization:'Bearer '+token}});
   if(!response.ok) throw new Error('结果文件读取失败'); return response.blob();
 }
+function enhancePreview(image,canvas){
+ const scale=Math.min(1,640/image.naturalWidth,480/image.naturalHeight);
+ canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
+ const ctx=canvas.getContext('2d');ctx.drawImage(image,0,0,canvas.width,canvas.height);
+ const frame=ctx.getImageData(0,0,canvas.width,canvas.height),hist=Array.from({length:3},()=>new Uint32Array(256));
+ for(let i=0;i<frame.data.length;i+=4)for(let c=0;c<3;c++)hist[c][frame.data[i+c]]++;
+ const cut=Math.floor(canvas.width*canvas.height*.01),ranges=hist.map(h=>{let lo=0,hi=255,n=0;while(lo<255&&n+h[lo]<=cut)n+=h[lo++];n=0;while(hi>lo&&n+h[hi]<=cut)n+=h[hi--];return[lo,hi];});
+ for(let i=0;i<frame.data.length;i+=4)for(let c=0;c<3;c++){const[lo,hi]=ranges[c];if(hi>lo)frame.data[i+c]=Math.floor(Math.max(0,Math.min(255,(frame.data[i+c]-lo)*255/(hi-lo))));}
+ ctx.putImageData(frame,0,0);
+}
 let renderVersion=0;
 async function render() {
   const version=++renderVersion;
-  const job=current, view=currentView;
+  const job=current, view='outlined';
   const left=job.views.includes('original')?'original':'mask';
   const filename=name=>(job.preview_ready && job.preview_views?.includes(name)?'preview_':'')+name+'.png';
-  const blobs=await Promise.all([historyAsset(job.id,filename(left)),historyAsset(job.id,filename(view))]);
+  const hasMask=job.state==='done'||job.preview_views?.includes('mask');
+  const blobs=await Promise.all([historyAsset(job.id,filename(left)),historyAsset(job.id,filename(view)),...(hasMask?[historyAsset(job.id,filename('mask'))]:[])]);
   if(version!==renderVersion) return;
   imageUrls.forEach(URL.revokeObjectURL); imageUrls=blobs.map(b=>URL.createObjectURL(b));
   $('leftImage').src=imageUrls[0]; $('rightImage').src=imageUrls[1];
   await Promise.all([$ ('leftImage').decode(), $('rightImage').decode()]);
+  if(version!==renderVersion) return;
+  const c=$('enhancedImage');enhancePreview($('leftImage'),c);c.hidden=false;$('enhancedEmpty').hidden=true;
+  $('maskImage').hidden=!hasMask;$('maskEmpty').hidden=hasMask;
+  if(hasMask){$('maskImage').src=imageUrls[2];await $('maskImage').decode();}
   $('leftImage').hidden=false;$('rightImage').hidden=false;$('leftEmpty').hidden=true;$('rightEmpty').hidden=true;
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-  $('leftLabel').textContent=left==='original'?'原始图像':'真实板测掩膜 · 非原图'; $('rightLabel').textContent=labels[currentView];
+  $('leftLabel').textContent=left==='original'?'原始图像':'真实板测掩膜 · 非原图'; $('rightLabel').textContent='轮廓叠加';
   $('leftImage').alt=$('leftLabel').textContent;$('rightImage').alt=labels[currentView];
   document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.view===currentView)));
 }
@@ -243,7 +258,7 @@ $('imageFile').onchange=()=>{$('fileLabel').textContent=$('imageFile').files[0]?
 $('thickness').oninput=()=>{$('widthValue').textContent=$('thickness').value+' px';};
 document.querySelectorAll('[data-view]').forEach(b=>{b.onclick=async()=>{currentView=b.dataset.view;try{await render();}catch(e){message(e.message,true);}};b.onkeydown=e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key))return;const tabs=[...document.querySelectorAll('[data-view]')].filter(t=>!t.disabled);const i=tabs.indexOf(b);tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length].focus();e.preventDefault();};});
 $('download').onclick=async()=>{try{const blob=await asset('results.zip');const url=URL.createObjectURL(blob);const a=Object.assign(document.createElement('a'),{href:url,download:'PLD_'+current.id.slice(0,8)+'.zip'});a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(e){message(e.message,true);}};
-$('showHdmi').onclick=async()=>{try{await api('/api/hdmi',{action:'show',id:current.id,view:currentView});await refreshStatus();message('已请求显示，请查看 HDMI 屏幕。');}catch(e){message(e.message,true);}};
+$('showHdmi').onclick=async()=>{try{await api('/api/hdmi',{action:'show',id:current.id,view:'outlined'});await refreshStatus();message('已请求显示，请查看 HDMI 屏幕。');}catch(e){message(e.message,true);}};
 $('stopHdmi').onclick=async()=>{try{await api('/api/hdmi',{action:'stop'});await refreshStatus();message('HDMI 已停止。');}catch(e){message(e.message,true);}};
 const drop=$('drop');drop.ondragover=e=>{e.preventDefault();drop.classList.add('drag');};drop.ondragleave=()=>drop.classList.remove('drag');drop.ondrop=e=>{e.preventDefault();drop.classList.remove('drag');if(!busy && !preparing && e.dataTransfer.files.length){$('imageFile').files=e.dataTransfer.files;$('imageFile').onchange();}};
 if(document.modelContext?.registerTool){try{document.modelContext.registerTool({name:'load_segmentation_example',description:'加载历史板测掩膜，运行轮廓提取并更新可见预览；不启动 FPGA 或 HDMI。',inputSchema:{type:'object',properties:{},additionalProperties:false},execute:async(input)=>{if(!input||Object.keys(input).length)throw new Error('无需参数');await start({mode:'demo',thickness:Number($('thickness').value)});if(current?.state!=='done')throw new Error('处理未完成');return {id:current.id,state:current.state,statistics:current.statistics};}});}catch(e){console.warn('WebMCP unavailable',e);}}

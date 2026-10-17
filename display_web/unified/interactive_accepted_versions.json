@@ -1,0 +1,40 @@
+{
+  "hub/hub.py": [
+    "fa5a999577134c07d88dbe189100949890c78b79f0cc016e50d469d697929fd0",
+    "32f9ad9d4dafece832ea7224242b86b034facb7426638077b447c5556baee76e",
+    "34319554bcc42dd1b433953e7f0f61fa60d467c574946b99b2eed39115f9e3d5"
+  ],
+  "hub/index.html": [
+    "5339228be03bdb3a41d8c171f013397dd999902c1f13a1a5deacb46ca7a3ce05",
+    "2d08653f6a3bffb8b6f0c66ecca104bf2a9f841888bc0eef9ea3994a42f8e1f9",
+    "f6916cc2f6898e3061367d0f11a518e46b5ff7627a6cfcde521dce55f23a529c"
+  ],
+  "hub/interactive_bridge.py": [
+    null,
+    "26d631f6ff4157a8534c7844448ee2e4d926d29596a6d0f8bc6e582ca95bbcd6"
+  ],
+  "hub/interactive.html": [
+    null,
+    "c86e744b9dfe4898ea29450c91a68c96c8e49e2105efd77fc71fe642fe6fd1a2"
+  ],
+  "hub/interactive.js": [
+    null,
+    "4e2b466ab4baa9617c2c5013edfe5751192029aec2a4de3972208b6ec4effe67"
+  ],
+  "hub/prompt_seg/__init__.py": [
+    null,
+    "a2bb7903c14a7f0359f02dc1055a3733e47c6ddaab2b102cdccc95a75d6adcd9"
+  ],
+  "hub/prompt_seg/contracts.py": [
+    null,
+    "cadfbedfc1c5a1abf4788c24f0c4063ce5d6b7f865ca5bc55f41a2da99fc772d"
+  ],
+  "hub/prompt_seg/refinement.py": [
+    null,
+    "5f12b99aa9a13e807476a7a0b944c73ecadcf21d83ce1f91010020050d4d085e"
+  ],
+  "hub/prompt_seg/service.py": [
+    null,
+    "0ac18687871eccbf1e4ae5ff0bcecc0083f8e1a9b7bd4865b758f18e96fabc07"
+  ]
+}

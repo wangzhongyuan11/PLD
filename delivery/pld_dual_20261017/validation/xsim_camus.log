@@ -1,0 +1,3 @@
+CAMUS_VECTORS layers=15 runs=41 loads=80 errors=7
+TB_PASS tb_axis_tensor_accel_camus runs=41 loads=80 errors=7 bytes=304184
+CAMUS_ALL_SIMS_PASS

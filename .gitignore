@@ -1,5 +1,9 @@
 # ---- 数据与镜像（大文件，永不进库）----
 ISBI2016_ISIC_*/
+数据/CAMUS/*
+!数据/CAMUS/README.md
+数据/STARE/*
+!数据/STARE/README.md
 labels-vk/
 *.img
 *.zip
@@ -55,8 +59,15 @@ NA/
 *.pem
 *.key
 
-# Frozen team handoff archives under delivery/ are intentionally versioned.
-!/delivery/**/*.tar.gz
+# Frozen binary assets are published through the one current GitHub Release.
 
 # C display app: small real board-test head sample required by its regression tests.
 !display_web/samples/frame_000001.bin
+
+# Current prepared CAMUS model and private datasets.
+/camus_candidate_hidden_histogram_int8_20261015/
+/模型/
+/数据/
+
+# Duplicate PDF retained while another application holds it open.
+/pld.pdf

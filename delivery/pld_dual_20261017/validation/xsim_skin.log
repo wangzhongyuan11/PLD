@@ -1,0 +1,130 @@
+=== tb_axis_reg_slice ===
+phase b2b: OK (16 beats)
+phase src-gaps: OK (128 beats)
+phase full-rate: OK (128 beats)
+TB_PASS tb_axis_reg_slice beats=272
+PASS tb_axis_reg_slice
+=== tb_axis_incr ===
+phase 1 OK (beats=1 pkts=1)
+phase 2 OK (beats=2 pkts=2)
+phase 3 OK (beats=5 pkts=3)
+phase 4 OK (beats=34 pkts=11)
+phase 5 OK (beats=76 pkts=19)
+phase 6 OK (beats=77 pkts=20)
+phase 7 OK (beats=118 pkts=40)
+phase 8 OK (beats=1142 pkts=41)
+phase 9 OK (beats=1444 pkts=49)
+phase 10 OK (beats=1679 pkts=57)
+phase 11 OK (beats=1987 pkts=63)
+phase 12 OK (beats=2416 pkts=69)
+phase 13 OK (beats=2918 pkts=75)
+phase 14 OK (beats=3273 pkts=81)
+phase 15 OK (beats=3611 pkts=87)
+phase 16 OK (beats=3927 pkts=93)
+phase 17 OK (beats=4226 pkts=99)
+phase 18 OK (beats=4689 pkts=105)
+phase 19 OK (beats=5059 pkts=111)
+phase 21 OK (beats=5349 pkts=116)
+TB_PASS tb_axis_incr beats=5349 pkts=116
+PASS tb_axis_incr
+REQUANT_VECTORS count=14450 path=out\vectors\requant.txt
+=== tb_requant_q24 ===
+TB_PASS tb_requant_q24 vectors=14515 received=14515 reset_flush=PASS
+PASS tb_requant_q24
+MAC_VECTORS packets=132 beats=7143 path=out\vectors\mac.txt
+=== tb_conv_mac_array ===
+TB_PASS tb_conv_mac_array beats=7143 packets=166 overflow=PASS reset=PASS
+PASS tb_conv_mac_array
+TILE_VECTORS cases=22 successful_runs=24 rejected=16 path=out\vectors\tile.txt
+=== tb_conv_tile_engine ===
+phase tile run=1 cycles=1795 OK
+phase tile run=2 cycles=1795 OK
+phase tile run=3 cycles=2371 OK
+phase tile run=4 cycles=4739 OK
+phase tile run=5 cycles=7043 OK
+phase tile run=6 cycles=14083 OK
+phase tile run=7 cycles=23299 OK
+phase tile run=8 cycles=46595 OK
+phase tile run=9 cycles=83459 OK
+phase tile run=10 cycles=60163 OK
+phase tile run=11 cycles=23299 OK
+phase tile run=12 cycles=16259 OK
+phase tile run=13 cycles=7043 OK
+phase tile run=14 cycles=4675 OK
+phase tile run=15 cycles=2371 OK
+phase tile run=16 cycles=899 OK
+phase tile run=17 cycles=5162 OK
+phase tile run=18 cycles=16 OK
+phase tile run=19 cycles=188419 OK
+phase tile run=20 cycles=595 OK
+phase tile run=21 cycles=1123 OK
+phase tile run=22 cycles=1123 OK
+phase tile run=23 cycles=1239 OK
+phase tile run=24 cycles=2211 OK
+TB_PASS tb_conv_tile_engine runs=24 rejected=16 output_bytes=90338
+PASS tb_conv_tile_engine
+TENSOR_VECTORS A_transitions=14 runs=21 bytes=127223 rejected=10
+=== tb_tensor_tile_engine ===
+phase tensor run=1 cycles=519 OK
+phase tensor run=2 cycles=519 OK
+phase tensor run=3 cycles=2055 OK
+phase tensor run=4 cycles=1031 OK
+phase tensor run=5 cycles=4103 OK
+phase tensor run=6 cycles=2055 OK
+phase tensor run=7 cycles=8199 OK
+phase tensor run=8 cycles=4103 OK
+phase tensor run=9 cycles=6151 OK
+phase tensor run=10 cycles=2055 OK
+phase tensor run=11 cycles=3079 OK
+phase tensor run=12 cycles=1031 OK
+phase tensor run=13 cycles=1543 OK
+phase tensor run=14 cycles=519 OK
+phase tensor run=15 cycles=519 OK
+phase tensor run=16 cycles=307 OK
+phase tensor run=17 cycles=307 OK
+phase tensor run=18 cycles=1207 OK
+phase tensor run=19 cycles=727 OK
+phase tensor run=20 cycles=131079 OK
+phase tensor run=21 cycles=65543 OK
+TB_PASS tb_tensor_tile_engine runs=21 rejected=10 output_bytes=127223
+PASS tb_tensor_tile_engine
+=== tb_axi_lite_endpoint ===
+TB_PASS tb_axi_lite_endpoint commits=6
+PASS tb_axi_lite_endpoint
+=== tb_axis_bytes ===
+TB_PASS tb_axis_bytes packets=40 bytes=67137 malformed=3
+PASS tb_axis_bytes
+ACCEL_VECTORS runs=58 loads=132 jobs=217
+=== tb_axis_tensor_accel ===
+phase accelerator run=30 bytes=1536 OK
+phase accelerator run=31 bytes=512 OK
+phase accelerator run=32 bytes=512 OK
+phase accelerator run=33 bytes=255 OK
+phase accelerator run=34 bytes=315 OK
+phase accelerator run=35 bytes=315 OK
+phase accelerator run=36 bytes=7 OK
+phase accelerator run=37 bytes=7 OK
+phase accelerator run=38 bytes=512 OK
+phase accelerator run=39 bytes=1024 OK
+phase accelerator run=40 bytes=2048 OK
+phase accelerator run=41 bytes=4096 OK
+phase accelerator run=42 bytes=2048 OK
+phase accelerator run=43 bytes=1024 OK
+phase accelerator run=44 bytes=512 OK
+phase accelerator run=45 bytes=100 OK
+phase accelerator run=46 bytes=65536 OK
+phase accelerator run=47 bytes=65536 OK
+phase accelerator run=48 bytes=65536 OK
+phase accelerator run=49 bytes=65536 OK
+phase accelerator run=50 bytes=65536 OK
+phase accelerator run=51 bytes=65536 OK
+phase accelerator run=52 bytes=65536 OK
+phase accelerator run=53 bytes=65536 OK
+phase accelerator run=54 bytes=65536 OK
+phase accelerator run=55 bytes=144 OK
+phase accelerator run=56 bytes=144 OK
+phase accelerator run=57 bytes=144 OK
+phase accelerator run=58 bytes=1 OK
+TB_PASS tb_axis_tensor_accel runs=58 loads=133 errors=24 bytes=652052
+PASS tb_axis_tensor_accel
+ALL_SIMS_PASS
