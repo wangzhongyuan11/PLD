@@ -1,0 +1,35 @@
+{
+  "release": "pld_dual_20261017",
+  "asset_sha256": "c19d9e47e2673d53e7f1e61e5bb61b29a73ebc340ef9019c895ed78a7ea3b2de",
+  "runtime": {
+    "skin": {
+      "manifest_sha256": "edabb8ba857e361a5ea272f071133c8aa7f5c49572426ce09bfe5c19084a75ba",
+      "members_verified": 162,
+      "bit_sha256": "0df9c718172d2d496f28a93719a2858d3a9b366ea9145d58bf0a3788687f0baf",
+      "hwh_sha256": "7adfbe2d757dd09f5dab77562b2fb4db2ef86435db2fb60bf3ca85a02281da13"
+    },
+    "camus": {
+      "manifest_sha256": "3350c62621223a2781216993df4201b2ad25e60a4133efde150fdef3360bf310",
+      "members_verified": 249,
+      "bit_sha256": "114b34b4fb1295784dd0b54ab250da0187c976f4e4d0b0bdc58da6d185cd07cd",
+      "hwh_sha256": "79bac65de38f5398680a08734ee4eaaed0487d1fa5c6264c49512813659fa6a5"
+    }
+  },
+  "verified_installed_asset_members": 473,
+  "metadata_tools_updated": [
+    "hub/README.md",
+    "tools/deploy_release.py",
+    "tools/release_assets.py",
+    "tools/verify_interactive_board.py",
+    "tools/verify_release_board.py",
+    "web/README.md"
+  ],
+  "protected_history_files_verified": 2840,
+  "broken_symlinks": [],
+  "units": {
+    "pld-hub.service": "MainPID=14173\nWorkingDirectory=/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/hub\nActiveState=active\nDropInPaths=\nUnitFileState=enabled\n",
+    "pld-web.service": "MainPID=14442\nWorkingDirectory=/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/web\nActiveState=active\nDropInPaths=\nUnitFileState=disabled\n",
+    "pld-camus.service": "MainPID=0\nWorkingDirectory=/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/camus\nActiveState=inactive\nDropInPaths=\nUnitFileState=disabled\n"
+  },
+  "physical_hdmi_observed": false
+}

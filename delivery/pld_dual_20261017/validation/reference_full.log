@@ -1,0 +1,16 @@
+LAYER_PASS 00 encoders_0_0 input/output mismatch=0
+LAYER_PASS 01 encoders_0_2 input/output mismatch=0
+LAYER_PASS 02 encoders_1_0 input/output mismatch=0
+LAYER_PASS 03 encoders_1_2 input/output mismatch=0
+LAYER_PASS 04 encoders_2_0 input/output mismatch=0
+LAYER_PASS 05 encoders_2_2 input/output mismatch=0
+LAYER_PASS 06 encoders_3_0 input/output mismatch=0
+LAYER_PASS 07 encoders_3_2 input/output mismatch=0
+LAYER_PASS 08 decoder_blocks_0_0 input/output mismatch=0
+LAYER_PASS 09 decoder_blocks_0_2 input/output mismatch=0
+LAYER_PASS 10 decoder_blocks_1_0 input/output mismatch=0
+LAYER_PASS 11 decoder_blocks_1_2 input/output mismatch=0
+LAYER_PASS 12 decoder_blocks_2_0 input/output mismatch=0
+LAYER_PASS 13 decoder_blocks_2_2 input/output mismatch=0
+LAYER_PASS 14 head input/output mismatch=0
+FULL_REFERENCE_PASS 15/15 layers seconds=1.111

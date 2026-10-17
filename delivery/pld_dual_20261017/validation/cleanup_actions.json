@@ -1,0 +1,1123 @@
+{
+  "local_deleted": [
+    {
+      "path": "D:\\PLD\\模型\\role_a_camus_20261012",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 363,
+      "removed_bytes": 41228687,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\模型\\role_a_camus_int8_20261012",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 707,
+      "removed_bytes": 64051073,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\final_model\\mode6_build",
+      "action": "DEDUPLICATE_AFTER_DELIVERY_ASSEMBLY",
+      "removed_files": 7,
+      "removed_bytes": 5187256,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\final_model\\persistent_worker_package_smoke.tar.gz",
+      "action": "ARCHIVE_NOT_FORMAL",
+      "removed_files": 1,
+      "removed_bytes": 2962763,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\final_model\\mode6_tile32_fastq_v3.tar.gz",
+      "action": "ARCHIVE_HISTORICAL_RUNTIME",
+      "removed_files": 1,
+      "removed_bytes": 2955159,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\vivado_cnn_qdrain_20261014",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 528,
+      "removed_bytes": 138837498,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\ip_repo",
+      "action": "REGENERATE_FROM_STABLE_SOURCE",
+      "removed_files": 4,
+      "removed_bytes": 25939,
+      "retained": 20
+    },
+    {
+      "path": "D:\\PLD\\out\\team_checkout_validation",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 440,
+      "removed_bytes": 34025129,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\team_checkout_validation3",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 440,
+      "removed_bytes": 34025221,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\team_checkout_validation.tar",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 1,
+      "removed_bytes": 11857920,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\team_checkout_validation3.tar",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 1,
+      "removed_bytes": 11857920,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\handoff",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 1472,
+      "removed_bytes": 218921414,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\PLD_2026-10-14_修改汇总",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 87,
+      "removed_bytes": 951247,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\PLD_20261016_最终代码与模型汇总",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 580,
+      "removed_bytes": 51583205,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\accel_synth",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 5,
+      "removed_bytes": 2164997,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\numeric_synth",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 6,
+      "removed_bytes": 507996,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\tile_synth",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 14,
+      "removed_bytes": 1648674,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\vivado_env_check",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 435,
+      "removed_bytes": 82846553,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\vivado_fifo",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 429,
+      "removed_bytes": 82723900,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\vivado_incr",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 425,
+      "removed_bytes": 81838799,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\vectors",
+      "action": "ARCHIVE_THEN_REMOVE",
+      "removed_files": 5,
+      "removed_bytes": 59124964,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\sim_tb_axi_lite_endpoint",
+      "action": "REMOVE_GENERATED_AFTER_APPROVAL",
+      "removed_files": 23,
+      "removed_bytes": 146706,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\sim_tb_axis_bytes",
+      "action": "REMOVE_GENERATED_AFTER_APPROVAL",
+      "removed_files": 24,
+      "removed_bytes": 155288,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\sim_tb_axis_incr",
+      "action": "REMOVE_GENERATED_AFTER_APPROVAL",
+      "removed_files": 24,
+      "removed_bytes": 151317,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\sim_tb_axis_reg_slice",
+      "action": "REMOVE_GENERATED_AFTER_APPROVAL",
+      "removed_files": 23,
+      "removed_bytes": 111564,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\sim_tb_axis_tensor_accel",
+      "action": "REMOVE_GENERATED_AFTER_APPROVAL",
+      "removed_files": 30,
+      "removed_bytes": 1308408,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\sim_tb_conv_mac_array",
+      "action": "REMOVE_GENERATED_AFTER_APPROVAL",
+      "removed_files": 23,
+      "removed_bytes": 171287,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\sim_tb_conv_tile_engine",
+      "action": "REMOVE_GENERATED_AFTER_APPROVAL",
+      "removed_files": 25,
+      "removed_bytes": 442391,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\sim_tb_requant_q24",
+      "action": "REMOVE_GENERATED_AFTER_APPROVAL",
+      "removed_files": 23,
+      "removed_bytes": 138854,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\out\\sim_tb_tensor_tile_engine",
+      "action": "REMOVE_GENERATED_AFTER_APPROVAL",
+      "removed_files": 26,
+      "removed_bytes": 531425,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\local\\third_party",
+      "action": "ARCHIVE_OUTSIDE_FORMAL_TREE",
+      "removed_files": 1360,
+      "removed_bytes": 332256243,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\NA",
+      "action": "REMOVE_DUPLICATE_AFTER_APPROVAL",
+      "removed_files": 1,
+      "removed_bytes": 618673,
+      "retained": 0
+    },
+    {
+      "path": "D:\\PLD\\pld.pdf",
+      "action": "REMOVE_DUPLICATE_AFTER_APPROVAL",
+      "removed_files": 0,
+      "removed_bytes": 0,
+      "retained": 1
+    }
+  ],
+  "board_deleted": {
+    "removed": [
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_DualModel",
+        "bytes": 333598
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_DualModel.zip",
+        "bytes": 25088
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_DualModel_20261016_final.zip",
+        "bytes": 30410
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_DualModel_input_fix_1792125735",
+        "bytes": 19458
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_DualModel_input_fix_20261016.zip",
+        "bytes": 28893
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_DualModel_speed_1792129682",
+        "bytes": 23254
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_HDMI_Start",
+        "bytes": 8459781
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Interactive_20261016",
+        "bytes": 78418
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Interactive_20261016.zip",
+        "bytes": 31837
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Interactive_20261016_v2",
+        "bytes": 79167
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Interactive_20261016_v2.zip",
+        "bytes": 32197
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Interactive_20261016_v3",
+        "bytes": 80113
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Interactive_20261016_v3.zip",
+        "bytes": 32576
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_QuadView_20261016",
+        "bytes": 76890
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_QuadView_20261016.zip",
+        "bytes": 34216
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_QuadView_20261016_v2",
+        "bytes": 77383
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_QuadView_20261016_v2.zip",
+        "bytes": 34569
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web.zip",
+        "bytes": 78824
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_backup_20250504_172345",
+        "bytes": 25039
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_backup_20250504_172440",
+        "bytes": 25039
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_before_history_20250504_191954.tar.gz",
+        "bytes": 13625
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_before_timing_20250505_144051.tar.gz",
+        "bytes": 19173
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_code_backup_20261013",
+        "bytes": 42736
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_perf_candidate_20261013",
+        "bytes": 14180377
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_worker_candidate_20261013",
+        "bytes": 25065190
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_worker_candidate_v2_20261013",
+        "bytes": 81338716
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_auto_resize",
+        "bytes": 26568
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_auto_resize.zip",
+        "bytes": 12315
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_autostart.zip",
+        "bytes": 4698
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_b1089_logs.tar.gz",
+        "bytes": 3733
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_board_lifecycle.py",
+        "bytes": 1074
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_board_measure.py",
+        "bytes": 2269
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_board_profile.py",
+        "bytes": 1209
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_board_refine_test.py",
+        "bytes": 2088
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_fastboot_backup_20250505_191110_868208",
+        "bytes": 118962
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_fastboot_backup_20250505_192114_748022",
+        "bytes": 12073
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_fastboot_refine",
+        "bytes": 23591
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_fastboot_refine.zip",
+        "bytes": 9388
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_fastboot_update",
+        "bytes": 136485
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_fastboot_update.zip",
+        "bytes": 48359
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_fixed_url.zip",
+        "bytes": 11220
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_history.zip",
+        "bytes": 16524
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_preview_backup_20250505_235759_556916",
+        "bytes": 63991
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_preview_update",
+        "bytes": 76814
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_preview_update.zip",
+        "bytes": 28876
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_preview_v2",
+        "bytes": 91115
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_preview_v2.zip",
+        "bytes": 33952
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_preview_v2_backup_20250506_002350_526753",
+        "bytes": 78453
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_reuse_backup_20250505_162424_892944",
+        "bytes": 107690
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_reuse_update",
+        "bytes": 124725
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_reuse_update.zip",
+        "bytes": 43953
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_running_before_timing_20250505_151456.tar.gz",
+        "bytes": 20173
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_running_source.tar.gz",
+        "bytes": 96121
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_running_timing.zip",
+        "bytes": 20778
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_timing.zip",
+        "bytes": 18487
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_validation_20261014",
+        "bytes": 89135
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/audit_fastq_profile_v2.py",
+        "bytes": 3915
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/audit_formal_reapply_v3.py",
+        "bytes": 1933
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/audit_formal_web_v3.py",
+        "bytes": 4091
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/audit_png_worker_candidate_v3.py",
+        "bytes": 4688
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/audit_png_worker_hdmi_v3.py",
+        "bytes": 472
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/audit_png_worker_stress_v3.py",
+        "bytes": 320
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/audit_worker_candidate_20261013.py",
+        "bytes": 11216
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/audit_worker_candidate_repeat_v2.py",
+        "bytes": 4044
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/audit_worker_candidate_v2.py",
+        "bytes": 11230
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/audit_worker_parent_kill_v2.py",
+        "bytes": 5459
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/bench_png_levels_20261013.py",
+        "bytes": 2711
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/benchmark_live_http_repeat_20261013.py",
+        "bytes": 3639
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/check_png_worker_outputs_v3.py",
+        "bytes": 1511
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/collect_live_http_repeat_20261013.py",
+        "bytes": 2718
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/formal_web_reapply_v3_20261014.json",
+        "bytes": 1900
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/formal_web_v3_audit_20261014.json",
+        "bytes": 7805
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/live_http_repeat_baseline_20261013.json",
+        "bytes": 12142
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld_hdmi_btn3_fix_20260929.zip",
+        "bytes": 15518
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld_hdmi_comparison_20260929.zip",
+        "bytes": 21326
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld_hdmi_upload_20260929.zip",
+        "bytes": 94142
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/png_level_sweep_20261013.json",
+        "bytes": 8493
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/png_worker_candidate_audit_v3_20261014.json",
+        "bytes": 11852
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/png_worker_candidate_c_delta_v3_20261014.tar",
+        "bytes": 30720
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/png_worker_candidate_hashes_v3_20261014.json",
+        "bytes": 380
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/png_worker_hdmi_audit_v3_20261014.json",
+        "bytes": 7986
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/png_worker_stress_v3_20261014.json",
+        "bytes": 46650
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/prepare_worker_candidate.py",
+        "bytes": 3388
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/prepare_worker_candidate_v2.py",
+        "bytes": 3405
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/stage_png_worker_candidate_v3.py",
+        "bytes": 2314
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/worker_candidate_b_delta_20261013.tar",
+        "bytes": 30720
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/worker_candidate_b_delta_v2_20261013.tar",
+        "bytes": 30720
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/worker_candidate_board_audit_20261013.json",
+        "bytes": 5516
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/worker_candidate_board_audit_v2_20261013.json",
+        "bytes": 7957
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/worker_candidate_c_delta_20261013.tar",
+        "bytes": 51200
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/worker_candidate_c_delta_v2_20261013.tar",
+        "bytes": 51200
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/worker_candidate_delta_hashes_20261013.json",
+        "bytes": 623
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/worker_candidate_delta_hashes_v2_20261013.json",
+        "bytes": 623
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/worker_candidate_repeat_v2_20261013.json",
+        "bytes": 11653
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/worker_candidate_upload_20261013.tar",
+        "bytes": 89600
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/worker_parent_kill_audit_v2_20261013.json",
+        "bytes": 231
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/README.md",
+        "bytes": 5491
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/VALIDATION.md",
+        "bytes": 1188
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/__pycache__",
+        "bytes": 57684
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/backups",
+        "bytes": 16070
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/contour.py",
+        "bytes": 5487
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/hdmi_buttons.py",
+        "bytes": 2908
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/hdmi_worker.py",
+        "bytes": 1722
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/infer_then_display.py",
+        "bytes": 3858
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/install_autostart.py",
+        "bytes": 5937
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/loaded.xclbin",
+        "bytes": 3941
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/pld_hdmi.py",
+        "bytes": 11482
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/pld_result.py",
+        "bytes": 10569
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/requirements.txt",
+        "bytes": 24
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/samples",
+        "bytes": 74516
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/server.py",
+        "bytes": 22839
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/show_result.py",
+        "bytes": 3816
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/start_board.sh",
+        "bytes": 218
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/start_windows.cmd",
+        "bytes": 234
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/static",
+        "bytes": 28167
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/tests",
+        "bytes": 6788
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/хЫ║хоЪч╜СхЭАцЫ┤цЦ░шп┤цШО.md",
+        "bytes": 1847
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web/х╝АцЬ║шЗкхРпшп┤цШО.md",
+        "bytes": 2851
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/README.md",
+        "bytes": 5491
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/VALIDATION.md",
+        "bytes": 1188
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/__pycache__",
+        "bytes": 53562
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/backups",
+        "bytes": 16070
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/candidate_server_v2.log",
+        "bytes": 65
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/candidate_server_v3_repeat.log",
+        "bytes": 65
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/contour.py",
+        "bytes": 6050
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/hdmi_buttons.py",
+        "bytes": 2908
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/hdmi_worker.py",
+        "bytes": 1502
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/infer_then_display.py",
+        "bytes": 6458
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/install_autostart.py",
+        "bytes": 5937
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/loaded.xclbin",
+        "bytes": 3941
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/persistent_worker.py",
+        "bytes": 17043
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/pld_hdmi.py",
+        "bytes": 11482
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/pld_result.py",
+        "bytes": 10970
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/quad_display.py",
+        "bytes": 2286
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/requirements.txt",
+        "bytes": 24
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/samples",
+        "bytes": 74516
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/server.py",
+        "bytes": 37401
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/show_result.py",
+        "bytes": 3816
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/start_board.sh",
+        "bytes": 218
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/start_windows.cmd",
+        "bytes": 234
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/static",
+        "bytes": 41201
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/хЫ║хоЪч╜СхЭАцЫ┤цЦ░шп┤цШО.md",
+        "bytes": 1847
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/PLD_Web_png_worker_candidate_v3_20261014/х╝АцЬ║шЗкхРпшп┤цШО.md",
+        "bytes": 2851
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/40-ps-opt-v2-candidate.conf",
+        "bytes": 366
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/50-ps-opt-v2-profile.conf",
+        "bytes": 360
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/60-ps-opt-v2-preconv.conf",
+        "bytes": 360
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/60-ps-opt-v2-rxcoherent.conf",
+        "bytes": 366
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/camus_bf2b1e5_20261015",
+        "bytes": 42406288
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/camus_board_v2_20261015",
+        "bytes": 42543077
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/camus_board_v3_20261015",
+        "bytes": 42446850
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/camus_board_v4_20261015",
+        "bytes": 43842235
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/camus_ps_opt_candidate1_20261015",
+        "bytes": 42530430
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/camus_ps_opt_candidate2_20261015",
+        "bytes": 42537836
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/camus_ps_opt_release_20261015",
+        "bytes": 42540701
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/camus_ps_opt_v2_candidate1",
+        "bytes": 42558890
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/camus_ps_opt_v2_preconv",
+        "bytes": 42566626
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/camus_ps_opt_v2_profile",
+        "bytes": 42549805
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/camus_ps_opt_v2_rxcoherent",
+        "bytes": 42550014
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/camus_release_r1_20261015",
+        "bytes": 42533079
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/camus_service_candidate_20261015",
+        "bytes": 42352689
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/check_public_and_subset.py",
+        "bytes": 1626
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/check_rows_runtime.py",
+        "bytes": 1069
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/fastq_profile_v2_20261013.json",
+        "bytes": 54496
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/fastq_profile_v2_20261013.json.prof",
+        "bytes": 13227
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/fastq_profile_v2_20261013.json.profile.txt",
+        "bytes": 5516
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/fastq_profile_v2_20261013.log",
+        "bytes": 262
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/fastq_profile_v2_audit_20261013.json",
+        "bytes": 402
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_clock125_20260928_v1",
+        "bytes": 18061309
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_clock125_20260928_v1.tar.gz",
+        "bytes": 2940910
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_fastq_profile_20261013",
+        "bytes": 17603760
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_fastq_worker_candidate_20261013",
+        "bytes": 17620215
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_fastq_worker_candidate_v2_20261013",
+        "bytes": 17861787
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_fused_20260927_v1",
+        "bytes": 15848852
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_fused_v1.tar.gz",
+        "bytes": 2920055
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_mode6_20260929_v1",
+        "bytes": 16765016
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_mode6_20260929_v1.tar.gz",
+        "bytes": 2953899
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_mode6_fastq_20260929_v3",
+        "bytes": 17591822
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_mode6_fastq_20260929_v3.tar.gz",
+        "bytes": 2955159
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_mode6_rows2_20260929_v4",
+        "bytes": 15419287
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_mode6_rows2_20260929_v4.tar.gz",
+        "bytes": 2955994
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_mode6_tile32_20260929_v2",
+        "bytes": 15635568
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_mode6_tile32_20260929_v2.tar.gz",
+        "bytes": 2954418
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_model_20260927_v1",
+        "bytes": 56670945
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_model_20260927_v1.tar.gz",
+        "bytes": 2920813
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_resize_candidate",
+        "bytes": 105472
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_resize_candidate.tar.gz",
+        "bytes": 6660
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_rows_candidate",
+        "bytes": 405035
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_rows_candidate.tar.gz",
+        "bytes": 27097
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_rows_runtime",
+        "bytes": 42636
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/final_rows_tinyunet.py",
+        "bytes": 12173
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/link_board_images.py",
+        "bytes": 645
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/preprocess_probe_20260926",
+        "bytes": 10712241
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/preprocess_probe_20260926.tar.gz",
+        "bytes": 2331808
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/resize_v2_candidate_20261014",
+        "bytes": 17215302
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/resize_v2_candidate_20261014.tar.gz",
+        "bytes": 2966131
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/rows_runtime.tar.gz",
+        "bytes": 6325
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/runtime_ps_opt_v2_candidate1.tar.gz",
+        "bytes": 7121445
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/runtime_ps_opt_v2_preconv.tar.gz",
+        "bytes": 7122516
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/runtime_ps_opt_v2_profile.tar.gz",
+        "bytes": 7121526
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/runtime_ps_opt_v2_rxcoherent.tar.gz",
+        "bytes": 7121601
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/stage012_20260926",
+        "bytes": 13200116
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/stage34_cnn_20260926_v1",
+        "bytes": 15303944
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/stage34_cnn_20260926_v1.tar.gz",
+        "bytes": 2628553
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/stage34_dma_20260926",
+        "bytes": 37148
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/stage5_20260927_baseline",
+        "bytes": 15021964
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/stage5_eval_baseline",
+        "bytes": 16130149
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/stage5_pl_opt3",
+        "bytes": 15128062
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/stage5_ps_control",
+        "bytes": 15429960
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/stage5_ps_neon",
+        "bytes": 15152376
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/stage5_ps_opt1",
+        "bytes": 15112523
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/stage5_ps_opt1.tar.gz",
+        "bytes": 2629913
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/stage5_ps_opt2",
+        "bytes": 15161334
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/stage5_ps_opt2.tar.gz",
+        "bytes": 2630006
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/stage5_ps_opt3",
+        "bytes": 15182050
+      },
+      {
+        "path": "/home/xilinx/jupyter_notebooks/pld/stage5_ps_range",
+        "bytes": 16842278
+      }
+    ],
+    "retained": [],
+    "bytes": 1154397528
+  },
+  "migrated_data": "数据/validation/{skin,camus}",
+  "migrated_evidence": "docs/history/handoff_camus_20261016",
+  "archived_intact": [
+    "out/vivado_cnn/proj",
+    "out/camus/vivado/proj",
+    "PYNQ_tutorials",
+    "模型/camus_candidate_hidden_histogram_int8_20261015"
+  ],
+  "archive_root": "D:\\PLD_AUDIT_BACKUP_20261017\\retired_live",
+  "deferred": [
+    {
+      "path": "pld.pdf",
+      "reason": "open by another process; canonical docs/requirements/project.pdf and verified backup retained"
+    }
+  ],
+  "protected": [
+    "raw datasets",
+    "all current and unique job histories/access token",
+    "linked worktree",
+    "Git history/recovery objects",
+    "system/PYNQ/toolchain dependencies"
+  ]
+}

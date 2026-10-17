@@ -1,3 +1,7 @@
+## 当前正式入口（2026-10-17）
+
+唯一交付指针为 `delivery/current.json`，正式版本 `pld_dual_20261017`；运行、准备、验证和回退按根 README、`docs/DEPLOYMENT.md`、`docs/validation/CLEANUP_20261017.md`。板端版本根为 `/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017`，单 hub 调度，历史/data/deps 和系统依赖保留。模型/位流/完整运行时通过唯一 Release 附件，Git 仅跟踪源码、清单、模板与小型证据。保留 `conv_tile_engine.sv` 并与实际部署稳定 RTL 对齐；未采用 qdrain 不属于正式构建。下面旧日期段落属于历史证据，不能覆盖当前入口或继承为新版整体验收。本轮遵循用户已选择的 GPT 执行方式，不启用 GLM。
+
 # AGENTS.md — PYNQ-Z2 皮损分割（B：PL 加速器与 PS 交互）
 
 ## 目标与边界

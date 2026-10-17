@@ -1,0 +1,484 @@
+{
+  "camus_frames": [
+    {
+      "source": "patient0200_2CH_ED.nii.gz",
+      "network_seconds": 3.2997571949999838,
+      "events": 547,
+      "commands": {
+        "1": {
+          "count": 19,
+          "bytes": 492016,
+          "seconds": 0.021721764000176336,
+          "dma_seconds": 0.011350350000154732,
+          "flush_seconds": 0.00591539000015473,
+          "packet_seconds": 0.0080476439998165,
+          "invalidate_seconds": 7.735600047453772e-05
+        },
+        "2": {
+          "count": 261,
+          "bytes": 17831168,
+          "seconds": 0.6997205020043111,
+          "dma_seconds": 0.31461382499356283,
+          "flush_seconds": 0.11499551399356278,
+          "packet_seconds": 0.23500372799753677,
+          "invalidate_seconds": 0.0009956450003301143
+        },
+        "3": {
+          "count": 6,
+          "bytes": 2304,
+          "seconds": 0.0036235509996913606,
+          "dma_seconds": 0.0012625729996389393,
+          "flush_seconds": 0.0012303639996389393,
+          "packet_seconds": 0.0006844719991931925,
+          "invalidate_seconds": 2.2171999262354802e-05
+        },
+        "4": {
+          "count": 261,
+          "bytes": 13828096,
+          "seconds": 1.7553661770079998,
+          "dma_seconds": 1.3555502000024218,
+          "flush_seconds": 0.10858055200242234,
+          "packet_seconds": 1.2822341779956332,
+          "invalidate_seconds": 0.100697490021048
+        }
+      },
+      "command_wall_seconds": 2.4804319940121786,
+      "graph_configuration_gap_seconds": 0.8193252009878051,
+      "gather_scatter_guard_and_python_seconds": 0.6219474890031051,
+      "run_compute_cycles_seconds": 1.10396848,
+      "native_report": {
+        "reconstruction": 0.07755016600003728,
+        "postprocess": 0.11581803599983687
+      },
+      "png_report": {
+        "label_raw.png": {
+          "render": 1.0086000656883698e-05,
+          "encode_write": 0.018597698000121454
+        },
+        "segmentation.png": {
+          "render": 1.1470999197626952e-05,
+          "encode_write": 0.052550141000210715
+        },
+        "label.png": {
+          "render": 9.039999895321671e-06,
+          "encode_write": 0.021762203999969643
+        },
+        "overlay.png": {
+          "render": 0.040362732999710715,
+          "encode_write": 0.10637561799921968
+        }
+      },
+      "pipeline_untimed_seconds": 0.2142926880005689,
+      "server_outside_pipeline_seconds": 0.6608179569993808,
+      "http_poll_transfer_seconds": 0.30666560500048945
+    },
+    {
+      "source": "patient0247_4CH_ES.nii.gz",
+      "network_seconds": 2.63756298699991,
+      "events": 547,
+      "commands": {
+        "1": {
+          "count": 19,
+          "bytes": 492016,
+          "seconds": 0.021494541004358325,
+          "dma_seconds": 0.011067563001432473,
+          "flush_seconds": 0.005633143001432472,
+          "packet_seconds": 0.007733613000709738,
+          "invalidate_seconds": 7.093600288499147e-05
+        },
+        "2": {
+          "count": 261,
+          "bytes": 17831168,
+          "seconds": 0.6923722470091889,
+          "dma_seconds": 0.3132120310136436,
+          "flush_seconds": 0.11417957301364368,
+          "packet_seconds": 0.23610931700386573,
+          "invalidate_seconds": 0.0010620980037856498
+        },
+        "3": {
+          "count": 6,
+          "bytes": 2304,
+          "seconds": 0.004144096998970781,
+          "dma_seconds": 0.0013951869991047747,
+          "flush_seconds": 0.0013626839991047746,
+          "packet_seconds": 0.0007375449986284366,
+          "invalidate_seconds": 2.2510999770020135e-05
+        },
+        "4": {
+          "count": 261,
+          "bytes": 13828096,
+          "seconds": 1.7434229099981167,
+          "dma_seconds": 1.348829677990195,
+          "flush_seconds": 0.1051857019901945,
+          "packet_seconds": 1.27805247899596,
+          "invalidate_seconds": 0.10181346800345636
+        }
+      },
+      "command_wall_seconds": 2.4614337950106346,
+      "graph_configuration_gap_seconds": 0.17612919198927557,
+      "gather_scatter_guard_and_python_seconds": 0.6094707259971983,
+      "run_compute_cycles_seconds": 1.10396848,
+      "native_report": {
+        "reconstruction": 0.06795814700035407,
+        "postprocess": 0.10031766099928063
+      },
+      "png_report": {
+        "label_raw.png": {
+          "render": 9.18200021260418e-06,
+          "encode_write": 0.023347760000433482
+        },
+        "segmentation.png": {
+          "render": 1.540300036140252e-05,
+          "encode_write": 0.04637949500011018
+        },
+        "label.png": {
+          "render": 9.968999620468821e-06,
+          "encode_write": 0.021839034000549873
+        },
+        "overlay.png": {
+          "render": 0.0319696490005299,
+          "encode_write": 0.0901188120005827
+        }
+      },
+      "pipeline_untimed_seconds": 0.21038901699921553,
+      "server_outside_pipeline_seconds": 0.10058603000015864,
+      "http_poll_transfer_seconds": 0.21136060299977544
+    },
+    {
+      "source": "patient0267_4CH_ES.nii.gz",
+      "network_seconds": 2.671984488999442,
+      "events": 547,
+      "commands": {
+        "1": {
+          "count": 19,
+          "bytes": 492016,
+          "seconds": 0.020875865997368237,
+          "dma_seconds": 0.011352759997913346,
+          "flush_seconds": 0.005920675997913349,
+          "packet_seconds": 0.007541207000940631,
+          "invalidate_seconds": 7.464600003004307e-05
+        },
+        "2": {
+          "count": 261,
+          "bytes": 17831168,
+          "seconds": 0.6987250060001315,
+          "dma_seconds": 0.3224803989998659,
+          "flush_seconds": 0.12156560699986585,
+          "packet_seconds": 0.23334078699645033,
+          "invalidate_seconds": 0.0009374900073453318
+        },
+        "3": {
+          "count": 6,
+          "bytes": 2304,
+          "seconds": 0.003370996999365161,
+          "dma_seconds": 0.0012220240014531392,
+          "flush_seconds": 0.0011901590014531394,
+          "packet_seconds": 0.0005979379993732437,
+          "invalidate_seconds": 2.1285999537212774e-05
+        },
+        "4": {
+          "count": 261,
+          "bytes": 13828096,
+          "seconds": 1.7675795329969333,
+          "dma_seconds": 1.3653857429995482,
+          "flush_seconds": 0.11037368599954789,
+          "packet_seconds": 1.2938923279925802,
+          "invalidate_seconds": 0.10617766700124776
+        }
+      },
+      "command_wall_seconds": 2.490551401993798,
+      "graph_configuration_gap_seconds": 0.18143308700564376,
+      "gather_scatter_guard_and_python_seconds": 0.6089179249975132,
+      "run_compute_cycles_seconds": 1.10396848,
+      "native_report": {
+        "reconstruction": 0.05817384600049991,
+        "postprocess": 0.07485187699967355
+      },
+      "png_report": {
+        "label_raw.png": {
+          "render": 1.066999993781792e-05,
+          "encode_write": 0.01197591999971337
+        },
+        "segmentation.png": {
+          "render": 1.1168999662913848e-05,
+          "encode_write": 0.03399879399967176
+        },
+        "label.png": {
+          "render": 1.1310999980196357e-05,
+          "encode_write": 0.012059568999575276
+        },
+        "overlay.png": {
+          "render": 0.025372727000103623,
+          "encode_write": 0.06771724900045228
+        }
+      },
+      "pipeline_untimed_seconds": 0.19779005499822233,
+      "server_outside_pipeline_seconds": 0.07498612299968954,
+      "http_poll_transfer_seconds": 0.22628920600072888
+    },
+    {
+      "source": "patient0286_4CH_ES.nii.gz",
+      "network_seconds": 2.614260648000709,
+      "events": 547,
+      "commands": {
+        "1": {
+          "count": 19,
+          "bytes": 492016,
+          "seconds": 0.023675512001318566,
+          "dma_seconds": 0.014339288999728802,
+          "flush_seconds": 0.008909467999728804,
+          "packet_seconds": 0.00743844699809415,
+          "invalidate_seconds": 6.67000003886642e-05
+        },
+        "2": {
+          "count": 261,
+          "bytes": 17831168,
+          "seconds": 0.6897756550170016,
+          "dma_seconds": 0.3125763129989881,
+          "flush_seconds": 0.1134869739989881,
+          "packet_seconds": 0.2383639699928608,
+          "invalidate_seconds": 0.0009349489982923842
+        },
+        "3": {
+          "count": 6,
+          "bytes": 2304,
+          "seconds": 0.003583193001759355,
+          "dma_seconds": 0.0012699030000205655,
+          "flush_seconds": 0.0012379820000205655,
+          "packet_seconds": 0.0006197110014909413,
+          "invalidate_seconds": 2.0846999177592807e-05
+        },
+        "4": {
+          "count": 261,
+          "bytes": 13828096,
+          "seconds": 1.7289859519896709,
+          "dma_seconds": 1.3501037260010942,
+          "flush_seconds": 0.10435824500109447,
+          "packet_seconds": 1.2788659940006255,
+          "invalidate_seconds": 0.09992607099593442
+        }
+      },
+      "command_wall_seconds": 2.4460203120097503,
+      "graph_configuration_gap_seconds": 0.16824033599095856,
+      "gather_scatter_guard_and_python_seconds": 0.5917909540230539,
+      "run_compute_cycles_seconds": 1.10396848,
+      "native_report": {
+        "reconstruction": 0.10978233900004852,
+        "postprocess": 0.19577837500037276
+      },
+      "png_report": {
+        "label_raw.png": {
+          "render": 8.664999768370762e-06,
+          "encode_write": 0.02827269499994145
+        },
+        "segmentation.png": {
+          "render": 1.0517000191612169e-05,
+          "encode_write": 0.10172971100018913
+        },
+        "label.png": {
+          "render": 8.780999451118987e-06,
+          "encode_write": 0.03098366799986252
+        },
+        "overlay.png": {
+          "render": 0.05826801799958048,
+          "encode_write": 0.1995352300000377
+        }
+      },
+      "pipeline_untimed_seconds": 0.20851380200019776,
+      "server_outside_pipeline_seconds": 0.16556966799907968,
+      "http_poll_transfer_seconds": 0.11864164300004632
+    },
+    {
+      "source": "patient0299_4CH_ES.nii.gz",
+      "network_seconds": 2.6307211280000047,
+      "events": 547,
+      "commands": {
+        "1": {
+          "count": 19,
+          "bytes": 492016,
+          "seconds": 0.023666947999117838,
+          "dma_seconds": 0.010713734003928724,
+          "flush_seconds": 0.005281636003928725,
+          "packet_seconds": 0.010733210999205767,
+          "invalidate_seconds": 7.018699852778809e-05
+        },
+        "2": {
+          "count": 261,
+          "bytes": 17831168,
+          "seconds": 0.6858040470006017,
+          "dma_seconds": 0.3128078809996239,
+          "flush_seconds": 0.11367693299962411,
+          "packet_seconds": 0.22884169399549137,
+          "invalidate_seconds": 0.000979807994553994
+        },
+        "3": {
+          "count": 6,
+          "bytes": 2304,
+          "seconds": 0.0037428069990710355,
+          "dma_seconds": 0.001282315000868042,
+          "flush_seconds": 0.001250028000868042,
+          "packet_seconds": 0.0007008689999565831,
+          "invalidate_seconds": 2.1480998839251697e-05
+        },
+        "4": {
+          "count": 261,
+          "bytes": 13828096,
+          "seconds": 1.742378292997273,
+          "dma_seconds": 1.3513185210048797,
+          "flush_seconds": 0.10772633000487986,
+          "packet_seconds": 1.2742510940151988,
+          "invalidate_seconds": 0.10122362499259907
+        }
+      },
+      "command_wall_seconds": 2.4555920949960637,
+      "graph_configuration_gap_seconds": 0.175129033003941,
+      "gather_scatter_guard_and_python_seconds": 0.6108351989923904,
+      "run_compute_cycles_seconds": 1.10396848,
+      "native_report": {
+        "reconstruction": 0.05538841199995659,
+        "postprocess": 0.07269137799994496
+      },
+      "png_report": {
+        "label_raw.png": {
+          "render": 1.0294999810867012e-05,
+          "encode_write": 0.02330952600004821
+        },
+        "segmentation.png": {
+          "render": 1.1692000043694861e-05,
+          "encode_write": 0.05543620299977192
+        },
+        "label.png": {
+          "render": 1.0468000255059451e-05,
+          "encode_write": 0.024855531999492086
+        },
+        "overlay.png": {
+          "render": 0.024089293000542966,
+          "encode_write": 0.08778376599912008
+        }
+      },
+      "pipeline_untimed_seconds": 0.22537326899964683,
+      "server_outside_pipeline_seconds": 0.07063640000160376,
+      "http_poll_transfer_seconds": 0.1397232979988985
+    },
+    {
+      "source": "patient0341_4CH_ES.nii.gz",
+      "network_seconds": 2.588613355999769,
+      "events": 547,
+      "commands": {
+        "1": {
+          "count": 19,
+          "bytes": 492016,
+          "seconds": 0.019969290999142686,
+          "dma_seconds": 0.010819160998399933,
+          "flush_seconds": 0.005388928998399933,
+          "packet_seconds": 0.007390165999822784,
+          "invalidate_seconds": 6.571799985977123e-05
+        },
+        "2": {
+          "count": 261,
+          "bytes": 17831168,
+          "seconds": 0.6747186880074878,
+          "dma_seconds": 0.31006916999583656,
+          "flush_seconds": 0.11099883399583632,
+          "packet_seconds": 0.22913965500265476,
+          "invalidate_seconds": 0.0009311650110248593
+        },
+        "3": {
+          "count": 6,
+          "bytes": 2304,
+          "seconds": 0.0034171789993706625,
+          "dma_seconds": 0.0012308670000582109,
+          "flush_seconds": 0.001198891000058211,
+          "packet_seconds": 0.000609325000368699,
+          "invalidate_seconds": 2.0930000573571306e-05
+        },
+        "4": {
+          "count": 261,
+          "bytes": 13828096,
+          "seconds": 1.7242257740044806,
+          "dma_seconds": 1.3486661879965283,
+          "flush_seconds": 0.10455776899652847,
+          "packet_seconds": 1.2789880830032416,
+          "invalidate_seconds": 0.09993329100052506
+        }
+      },
+      "command_wall_seconds": 2.4223309320104818,
+      "graph_configuration_gap_seconds": 0.16628242398928705,
+      "gather_scatter_guard_and_python_seconds": 0.5831081760015877,
+      "run_compute_cycles_seconds": 1.10396848,
+      "native_report": {
+        "reconstruction": 0.10854242500045075,
+        "postprocess": 0.19220171000051778
+      },
+      "png_report": {
+        "label_raw.png": {
+          "render": 8.996999895316549e-06,
+          "encode_write": 0.035668116999659105
+        },
+        "segmentation.png": {
+          "render": 1.1379000170563813e-05,
+          "encode_write": 0.1003061350002099
+        },
+        "label.png": {
+          "render": 1.0781000128190499e-05,
+          "encode_write": 0.03420111400009773
+        },
+        "overlay.png": {
+          "render": 0.0588138089997301,
+          "encode_write": 0.16866812900025252
+        }
+      },
+      "pipeline_untimed_seconds": 0.224187618000542,
+      "server_outside_pipeline_seconds": 0.16707293499985099,
+      "http_poll_transfer_seconds": 0.1665834889990947
+    }
+  ],
+  "access_tokens_unchanged": true,
+  "final_hub_status": {
+    "model": "skin",
+    "target": "skin",
+    "phase": "ready",
+    "error": null,
+    "generation": 2,
+    "memory": {
+      "MemAvailable": "314296 kB",
+      "CmaTotal": "131072 kB",
+      "CmaFree": "32860 kB"
+    },
+    "switch": {
+      "seconds": 27.361915769000007,
+      "stages_seconds": {
+        "wait_idle": 0.19657201900008658,
+        "release": 1.890361116999884,
+        "initialize": 25.27397818999998
+      },
+      "before": {
+        "MemAvailable": "324196 kB",
+        "CmaTotal": "131072 kB",
+        "CmaFree": "20292 kB"
+      },
+      "after_release": {
+        "MemAvailable": "378996 kB",
+        "CmaTotal": "131072 kB",
+        "CmaFree": "34656 kB"
+      },
+      "after_ready": {
+        "MemAvailable": "313840 kB",
+        "CmaTotal": "131072 kB",
+        "CmaFree": "6084 kB"
+      }
+    },
+    "backend": {
+      "mode": "board",
+      "inference_available": true,
+      "warmup": "ready",
+      "warmup_seconds": 14.951930070000344,
+      "hdmi_available": true,
+      "active": null,
+      "hdmi": "off",
+      "hdmi_view": null,
+      "fault": null,
+      "runtime_error": null
+    }
+  }
+}

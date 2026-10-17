@@ -1,0 +1,28 @@
+{
+  "sources": {
+    "rtl/conv_mac_array.sv": "4f5a6a671ac18756d04246aec67be13755c529008b5c7930d88b9761692358db",
+    "rtl/requant_q24.sv": "0b5c6920bda9c85026355c13ad5fe824cdfe236c6b88f0883121e2057e65d6a8",
+    "rtl/conv_tile_engine.sv": "7d99b861ac5c0e3697621c97608c939113a1da03a2425881d4b484515f25943d",
+    "rtl/tensor_tile_engine.sv": "c2a7a71872f9768cc1a41d347eef4e39305f74c399249bdae0e6865c46225a3e",
+    "rtl/axi_lite_endpoint.sv": "a0bfa6c20a22a0fbae2ff91697fad09de798fcb0a3c3cefa007fde5fc447d947",
+    "rtl/axis_byte_pack.sv": "d1037ef0be2a5e87cffd5763b2b3702faef0621e9b541d5e6c2c61c8240ff7a9",
+    "rtl/axis_byte_unpack.sv": "f94545b14a06ead14bce966209caf0bdaf6734f86575e9e7a7bfdb6189514525",
+    "rtl/axis_tensor_accel.sv": "50234e00cb771c59829b77e85f60354365bc8abafb0eac753cd1c6085f16c237",
+    "vivado/package_axis_tensor_accel.tcl": "26988d60bc0eceeb569bd383847de2e04b66f814f441c5975e6a5b8508658ced",
+    "vivado/build_dma_bd.tcl": "40e60b233f09345fd12c0f44703d44354de2d3c7bfc66476acc0133f8fa2c717",
+    "vivado/ps7_config.tcl": "963e86a02b9dd16a1de3be6233b5ba6f7380f742e5f7d865316b9a09d3575a83",
+    "scripts/build.sh": "1e7f60389dc1b5ba8268ab2bf49d707cdf4a495edf735bbbbdfa5fa7a53498b0",
+    "scripts/check_build.py": "47a4dc42f8853e309efff00fb5e12d093b8af795822dcd9a5ae1a46b1c7bb946",
+    "scripts/extract_xsa.py": "b486f59685ca20098a103088bb895724d7d4953e183122796a28d3765dd5ef3e",
+    "scripts/write_build_manifest.py": "29b167e110a3cac47dfd8ef76b6f5f06ee16fd1fb1a6e81dae4875e742a8c995"
+  },
+  "artifacts": {
+    "dma_top.bit": "6eb4ae4165106f20c280b55cf417fcaefd8ebb3e3717a901fd7f2f242d63b324",
+    "dma_top.hwh": "8ee4d0876b56110d5f1e8a5fba3b1f66c03699c7001d61a85c8377ed64539064",
+    "dma_top.xsa": "b4fba8e54bb67debb12f758bd98739a58c39911e334c4e3c98b75ac01e4670f4",
+    "timing_summary.rpt": "a56b7c8b904b53d563ed26dc5eb1beba0a923884b761c9bfe0d47a9073b0b6e6",
+    "utilization.rpt": "a7c542eac2784f04b1d1c3174c997b94b4571d80a73486eafa1558c9306117ad",
+    "drc.rpt": "7abf62ce625342a81f48684e80991b0bf9c2533a8e654ef0608509bc9e0aeaf6"
+  },
+  "git_head": "5da4a00b0fd9d742f6386fab30ffe587c2b17943"
+}

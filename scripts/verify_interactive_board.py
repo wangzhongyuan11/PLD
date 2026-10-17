@@ -26,8 +26,10 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--baseline', action='store_true')
     parser.add_argument('--switch', action='store_true')
+    parser.add_argument('--hub-root', type=Path,
+                        default=Path('/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/hub'))
     args = parser.parse_args()
-    root = Path('/home/xilinx/jupyter_notebooks/PLD_DualModel')
+    root = args.hub_root
     installation = json.loads((root/'installation.json').read_text())
     config = json.loads((root/'config.json').read_text())
     token = Path(config['token_file']).read_text().strip()

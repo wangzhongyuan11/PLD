@@ -8,7 +8,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / "PYNQ_tutorials/dma/dma_tutorial.tcl"
+SRC = ROOT / "vivado/seed/dma_tutorial.tcl"
 DST = ROOT / "vivado/ps7_config.tcl"
 
 def main():
