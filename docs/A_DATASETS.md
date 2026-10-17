@@ -23,12 +23,14 @@
 
 ## 3. 发布方式
 
-数据已随 [Release pld-dual-20261017](https://github.com/wangzhongyuan11/PLD/releases/tag/pld-dual-20261017) 发布：附件的下载 URL、字节数、SHA256 与 GitHub 服务端 digest 见 [产物索引](../pld-medical/deliverables/GITHUB_ARTIFACTS.json)；还原与校验步骤见同 Release 的 `A_RELEASE_README_20261017.md` 与 `A_RELEASE_SHA256SUMS_20261017.txt`。
+数据与三个模型已整合到 [Release pld-dual-20261017](https://github.com/wangzhongyuan11/PLD/releases/tag/pld-dual-20261017) 的单一总 ZIP，以四卷传输。完整目录、8 项下载文件和一键还原步骤见 [总包说明](A_RELEASE_BUNDLE.md)，大小及服务端 SHA 见 [产物索引](../pld-medical/deliverables/GITHUB_ARTIFACTS.json)。
 
-- GitHub 单个附件上限 2 GiB，**CAMUS 原包 3.84 GB 必须分片**；分片为原始字节顺序切割，连接后必须与记录的整包 SHA256 一致。
-- ISIC 2016 四份官方 ZIP 原字节复用，只改名发布，不重新打包。
-- ISIC 2017 现有 images/masks + provenance/split 清单打成单个 <1.8 GB ZIP，逐成员记录 hash 与划分，不新增下载。
+- 总包 `datasets/ISIC2016/` 保留四个官方原 ZIP 的字节。
+- `datasets/ISIC2017/` 保留来源、影像/标注、冻结划分与逐成员校验原包。
+- `datasets/CAMUS/` 已包含合回完整的官方原 ZIP；不再需要单独连接旧 CAMUS 分片。
+- `licenses/` 保留 CAMUS 原许可；`metadata/original_release/` 仅供历史追溯。
+- 原 13 个散附件已迁入总包并退役，新的下载入口不再依赖其旧直链。
 
 ## 4. 边界
 
-数据不随 clone 分发；`git clone` 后拿不到任何影像或标注。A 的电脑端模型与接口运行闭包在 `role_a_complete_interactive_20261016.zip`：**该包不含完整数据集**，只含模型、运行源码、派生结果，以及**两张既有开发演示输入（无参考标注）**。需要重训或重新校准时，须自行按上述来源获取数据并核对 SHA256。
+数据不随 clone 分发；`git clone` 后拿不到任何影像或标注。A 的电脑端模型与接口运行闭包在 `role_a_complete_interactive_20261016.zip`：**该包不含完整数据集**，只含模型、运行源码、派生结果，以及**两张既有开发演示输入（无参考标注）**。完整数据已放在总包的 `datasets/` 下；来源与冻结角色仍按上述清单核对，不改变任何训练/测试授权。
