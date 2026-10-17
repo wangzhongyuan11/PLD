@@ -4,12 +4,14 @@
 
 ## 先取运行闭包（不要依赖 clone）
 
-本仓库 clone 只含接口文档与产物索引，**不含**模型、运行源码、数据集或虚拟环境。运行前先下载唯一 Release 资产 `pld-dual-20261017` 的附件 `role_a_complete_interactive_20261016.zip`（468,215,138 B，SHA256 `cf6fa99dda170b28df5739f7102790908930dfabd5b013ad7fd0ffdc19a0a794`）。
+本仓库 clone 只含接口文档、产物索引和还原工具，**不含**模型、运行源码、数据集或虚拟环境。运行前从 [Release pld-dual-20261017](https://github.com/wangzhongyuan11/PLD/releases/tag/pld-dual-20261017) 下载 A 组总包的四个分卷、清单和还原工具，按 [总包说明](../../../docs/A_RELEASE_BUNDLE.md) 校验并还原 `PLD_A_Models_and_Datasets_20261017.zip`。
+
+先解压总 ZIP，再从其中的 `models/` 取出 `role_a_complete_interactive_20261016.zip`（468,215,138 B，SHA256 `cf6fa99dda170b28df5739f7102790908930dfabd5b013ad7fd0ffdc19a0a794`）。该模型原包已内嵌在总包中，不再是单独的 Release 附件。
 
 **ZIP 内不含 `.venv`**（也不含 Python 安装器）。先在下载目录校验哈希，再解压，然后在**解压出的包根目录**安装依赖：
 
 ```powershell
-# 下载目录：校验附件
+# 总包内 models/ 目录：校验模型原包，然后解压模型原包
 Get-FileHash .\role_a_complete_interactive_20261016.zip -Algorithm SHA256
 
 # 解压后的包根目录：创建本包自己的环境并安装依赖
