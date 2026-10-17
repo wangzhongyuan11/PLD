@@ -16,6 +16,17 @@ SCHEMA = 'pld-a-models-datasets-distribution-v1'
 BLOCK = 4 * 1024 * 1024
 
 
+def publish_without_replacement(source, destination):
+    if os.name == 'nt':
+        # Windows rename fails atomically if the destination already exists.
+        os.rename(source, destination)
+    else:
+        # A link in the same directory publishes atomically and fails on EEXIST.
+        # Unsupported filesystems fail safely; never fall back to replacing rename.
+        os.link(source, destination)
+        source.unlink()
+
+
 def load_manifest(directory):
     data = json.loads((directory / MANIFEST).read_text(encoding='utf-8'))
     if data.get('schema') != SCHEMA or data.get('archive', {}).get('name') != ARCHIVE:
@@ -83,7 +94,7 @@ def restore(directory, verify_only=False, output=None):
                 raise ValueError('Restored file is not a valid ZIP')
             if output.exists():
                 raise FileExistsError('Output appeared during restoration; it was not overwritten')
-            os.rename(temporary, output)
+            publish_without_replacement(temporary, output)
             temporary = None
         print('All hashes match. ' + ('Verification complete.' if verify_only else 'ZIP ready: '+str(output)), flush=True)
         return output

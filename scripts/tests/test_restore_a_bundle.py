@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest import mock
 import zipfile
 
 HERE=Path(__file__).resolve().parent
@@ -68,6 +69,28 @@ class RestoreTests(unittest.TestCase):
     def test_inconsistent_total_size_rejected(self):
         self.manifest['archive']['bytes']+=1;self.write_manifest()
         with self.assertRaises(ValueError):self.run_restore()
+
+    def test_posix_publish_without_replacement(self):
+        source=self.root/'source';destination=self.root/'destination'
+        source.write_bytes(b'complete archive')
+        with mock.patch.object(restore.os,'name','posix'):
+            restore.publish_without_replacement(source,destination)
+        self.assertEqual(destination.read_bytes(),b'complete archive')
+        self.assertFalse(source.exists())
+
+    def test_posix_concurrent_output_preserved_and_temporary_cleaned(self):
+        publish=restore.publish_without_replacement
+        real_link=restore.os.link
+        def racing_publish(source,destination):
+            def racing_link(src,dst):
+                destination.write_bytes(b'concurrently created file')
+                real_link(src,dst)
+            with mock.patch.object(restore.os,'name','posix'), mock.patch.object(restore.os,'link',side_effect=racing_link):
+                publish(source,destination)
+        with mock.patch.object(restore,'publish_without_replacement',side_effect=racing_publish):
+            with self.assertRaises(FileExistsError):self.run_restore()
+        self.assertEqual((self.root/restore.ARCHIVE).read_bytes(),b'concurrently created file')
+        self.assertEqual(list(self.root.glob('*.assembling')),[])
 
 
 if __name__=='__main__':unittest.main(verbosity=2)
