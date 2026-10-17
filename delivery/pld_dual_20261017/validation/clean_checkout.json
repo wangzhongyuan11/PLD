@@ -1,0 +1,31 @@
+{
+  "source_commit_under_test": "01d95fd8cc7ff0086b06883759d0ad7f8a2129ad",
+  "clone": "git clone --no-local --single-branch from named source branch; no old workspace models or caches copied",
+  "preparation": "verified public asset ZIP; restored 1150 model/build files",
+  "asset_sha256": "c19d9e47e2673d53e7f1e61e5bb61b29a73ebc340ef9019c895ed78a7ea3b2de",
+  "python_tests": {
+    "skin": {
+      "cases": 79,
+      "result": "pass",
+      "skips": 0
+    },
+    "camus": {
+      "cases": 44,
+      "result": "pass",
+      "skips": 1
+    },
+    "web": {
+      "cases": 78,
+      "result": "pass",
+      "skips": 2
+    },
+    "unified": {
+      "cases": 49,
+      "result": "pass",
+      "skips": 0
+    }
+  },
+  "camus_default_plan_exit": 0,
+  "local_markdown_broken_links": 0,
+  "limits": "conventional host dependencies preinstalled; this is not an OS image installation test"
+}
