@@ -4,6 +4,8 @@
 
 规格见 [板端预适配规格](ACDC25D_B16_P3_v1.md)，机器可读合同见 [MODEL_CONTRACT.json](MODEL_CONTRACT.json)，完整体数据任务和head回传见 [PC/板端交换接口](BOARD_EXCHANGE.md)。A 的模型训练及完整 PC/板端适配运行源码保留在 `pld-medical/`，冻结权重、数据来源及运行闭包经 Release 交付；本目录只共享 B/C 对接必要资料。
 
+预处理、三方向轴定义、动态工作网格、ED/ES、21节点尺度连续性、整数参数、融合与评价的精确定义见 [生产数值接口补充](PRODUCTION_NUMERICS.md)、[PREPROCESSING_CONTRACT.json](PREPROCESSING_CONTRACT.json) 和 [患者名单/时相](PATIENT_SPLIT.json)。规则已绑定当前实现，最终生产模型尺度与指标仍待INT8验收；无模型适配可先进行。
+
 | 项目 | 固定规则 |
 | --- | --- |
 | 方向 | axial / coronal / sagittal；同一拓扑，独立权重，依次加载 |

@@ -1,0 +1,490 @@
+{
+  "schema": "acdc-preprocessing-numerics-v1",
+  "architecture": "ACDC25D-B16-P3-v1",
+  "version": "20261018-v1",
+  "status": {
+    "rules": "frozen against current implementation",
+    "accepted_production_profiles": [],
+    "model_numeric_values": "pending INT8 acceptance; first minmax candidate rejected",
+    "physical_board_accepted": false
+  },
+  "implementation_binding": {
+    "files_sha256": {
+      "software/role_a_acdc/geometry.py": "4040571ba642cbfffeab98f3d659e08263be2ef422978ee51e7b62dacbad2e33",
+      "software/role_a_acdc/inference.py": "3f1b757d69283a8b58d41d3c1efcece2d83bc9c1549e4f940bb060decb2d9985",
+      "software/role_a_acdc/pipeline.py": "ef557d0c8f296f8b4a1284e0bd7e7956facad27c6dc612712da3588784a9d9af",
+      "software/role_a_acdc/board_jobs.py": "6488bc68e1916f65e35453d7f344104bb4bf52d4d29099b805f2f90d609aaeea",
+      "software/role_a/quant_math.py": "cd56a0f6e1f07647a0c68e7b079db9cea4cbe6830a9d71921827480887338158"
+    },
+    "python": "3.12.14",
+    "libraries": {
+      "numpy": "2.3.5",
+      "scipy": "1.18.1",
+      "nibabel": "5.4.2",
+      "torch": "2.11.0+cu128"
+    },
+    "scope": "runtime reference in Release; no private training sources or model/data blobs in Git"
+  },
+  "normalization": {
+    "granularity": "one original3D patient-phase volume before spatial resampling",
+    "read": "NIfTI get_fdata(float32), applying file intensity slope/intercept",
+    "statistics": "all finite nonzero source values, including negatives",
+    "percentiles": [
+      1.0,
+      99.0
+    ],
+    "percentile_method": "linear rank (n-1)*p/100",
+    "formula": "clip(2*(x-low)/(high-low)-1,-1,1)",
+    "intermediate_dtype": "float64",
+    "output_dtype": "float32",
+    "raw_zeros": "apply same formula; no forced replacement",
+    "reject": [
+      "NaN/Inf",
+      "fewer than8 nonzero voxels",
+      "high<=low"
+    ],
+    "cross_phase_statistics": false,
+    "roi_crop": false,
+    "production_float16_roundtrip": false
+  },
+  "geometry": {
+    "default_policy": "strict",
+    "acdc_policy": "acdc-direction-only-sform-v1",
+    "affine_pixdim_match_tolerance": {
+      "rtol": 0.0001,
+      "atol": 1e-05
+    },
+    "acdc_repair_requires": {
+      "qform_code": 0,
+      "sform_code": 2,
+      "column_norms": 1.0,
+      "column_norm_atol": 1e-06,
+      "orthogonal_atol": 1e-05,
+      "positive_finite_pixdim": true
+    },
+    "acdc_repair": "direction columns times corresponding header pixdim; unchanged translation",
+    "working_axis_codes": [
+      "R",
+      "A",
+      "S"
+    ],
+    "spacing_mm": [
+      2.0,
+      2.0,
+      2.0
+    ],
+    "direction_matrix": [
+      [
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        1
+      ]
+    ],
+    "origin_rule": "world-coordinate minima of eight native voxel-center corners under adopted physical affine",
+    "size_rule": "ceil((corner_world_max-corner_world_min)/spacing)+1 per axis",
+    "size_is_case_specific": true,
+    "working_shape_not_fixed_256_cube": true,
+    "image_resample": {
+      "reference": "nibabel.processing.resample_to_output",
+      "order": 1,
+      "mode": "constant",
+      "cval": -1.0
+    },
+    "label_resample": {
+      "order": 0,
+      "cval": 0
+    },
+    "native_mapping_uses": "adopted physical affine, original native array shape",
+    "required_sidecar": [
+      "native_shape",
+      "native_affine",
+      "source_affine",
+      "source_pixdim",
+      "working_shape",
+      "working_affine",
+      "working_spacing_mm",
+      "normalization",
+      "geometry_policy",
+      "geometry_decision"
+    ]
+  },
+  "directions": {
+    "axial": {
+      "axis": 2,
+      "plane": "V[:,:,j].T",
+      "plane_hw": [
+        "Ny",
+        "Nx"
+      ],
+      "row_positive": "A",
+      "col_positive": "R"
+    },
+    "coronal": {
+      "axis": 1,
+      "plane": "V[:,j,:].T",
+      "plane_hw": [
+        "Nz",
+        "Nx"
+      ],
+      "row_positive": "S",
+      "col_positive": "R"
+    },
+    "sagittal": {
+      "axis": 0,
+      "plane": "V[j,:,:].T",
+      "plane_hw": [
+        "Nz",
+        "Ny"
+      ],
+      "row_positive": "S",
+      "col_positive": "A"
+    }
+  },
+  "stack": {
+    "index_base": 0,
+    "all_centers": true,
+    "channel_order": [
+      "previous",
+      "center",
+      "next"
+    ],
+    "neighbor_indices": "max(j-1,0),j,min(j+1,Naxis-1)",
+    "spatial_not_temporal": true,
+    "physical_step_mm": 2.0,
+    "total_jobs_per_phase": "Nx+Ny+Nz"
+  },
+  "letterbox": {
+    "size": [
+      256,
+      256
+    ],
+    "scale": "min(256/H,256/W)",
+    "resized_hw": "max(1,min(256,RNE(original_dimension*scale)))",
+    "top_left": "floor((256-resized_dimension)/2)",
+    "odd_remainder": "bottom/right",
+    "image_mode": "bilinear",
+    "align_corners": false,
+    "antialias": false,
+    "image_cval": -1.0,
+    "label_mode": "nearest",
+    "label_cval": 0,
+    "source_coordinate": "(out_index+0.5)*in_size/out_size-0.5",
+    "inverse": "crop exact stored pad, bilinear to stored original_hw, transpose back"
+  },
+  "input": {
+    "shape": [
+      1,
+      3,
+      256,
+      256
+    ],
+    "layout": "NCHW C-order",
+    "dtype": "int8",
+    "bytes": 196608,
+    "scale": 0.007874015748031496,
+    "zero_point": 0,
+    "range": [
+      -127,
+      127
+    ],
+    "quantize": "clip(RNE(float64(normalized)*127),-127,127)",
+    "board_preprocess_again": false
+  },
+  "phases": {
+    "accepted_input": "two explicit independent3D NIfTI ED/ES files",
+    "direct4D_supported": false,
+    "frame_ids": "Info.cfg ED/ES directly identify frameNN filenames; not zero-based array offsets",
+    "automatic_phase_or_patient_detection": false
+  },
+  "continuous_scales": {
+    "numeric_source": "accepted direction-specific model_spec.json, bound by exact spec SHA",
+    "logical_nodes": [
+      {
+        "id": "C01",
+        "kind": "conv",
+        "input_scale_ref": "input.scale",
+        "output_scale_ref": "C01.output_scale",
+        "relu": true
+      },
+      {
+        "id": "C02",
+        "kind": "conv",
+        "input_scale_ref": "C01.output_scale",
+        "output_scale_ref": "C02.output_scale",
+        "relu": true
+      },
+      {
+        "id": "Pool0",
+        "kind": "maxpool2",
+        "input_scale_ref": "C02.output_scale",
+        "output_scale_ref": "C02.output_scale"
+      },
+      {
+        "id": "C03",
+        "kind": "conv",
+        "input_scale_ref": "C02.output_scale",
+        "output_scale_ref": "C03.output_scale",
+        "relu": true
+      },
+      {
+        "id": "C04",
+        "kind": "conv",
+        "input_scale_ref": "C03.output_scale",
+        "output_scale_ref": "C04.output_scale",
+        "relu": true
+      },
+      {
+        "id": "Pool1",
+        "kind": "maxpool2",
+        "input_scale_ref": "C04.output_scale",
+        "output_scale_ref": "C04.output_scale"
+      },
+      {
+        "id": "C05",
+        "kind": "conv",
+        "input_scale_ref": "C04.output_scale",
+        "output_scale_ref": "C05.output_scale",
+        "relu": true
+      },
+      {
+        "id": "C06",
+        "kind": "conv",
+        "input_scale_ref": "C05.output_scale",
+        "output_scale_ref": "C06.output_scale",
+        "relu": true
+      },
+      {
+        "id": "Pool2",
+        "kind": "maxpool2",
+        "input_scale_ref": "C06.output_scale",
+        "output_scale_ref": "C06.output_scale"
+      },
+      {
+        "id": "C07",
+        "kind": "conv",
+        "input_scale_ref": "C06.output_scale",
+        "output_scale_ref": "C07.output_scale",
+        "relu": true
+      },
+      {
+        "id": "C08",
+        "kind": "conv",
+        "input_scale_ref": "C07.output_scale",
+        "output_scale_ref": "C08.output_scale",
+        "relu": true
+      },
+      {
+        "id": "CAT0",
+        "kind": "nearest2_cat",
+        "skip_scale_ref": "C06.output_scale",
+        "deep_scale_ref": "C08.output_scale",
+        "output_scale_ref": "CAT0.common_scale",
+        "common_rule": "max(skip_scale,deep_scale)",
+        "branch_requantization": "separate Q24 RNE then signed127 saturation",
+        "skip_first": true
+      },
+      {
+        "id": "C09",
+        "kind": "conv",
+        "input_scale_ref": "CAT0.common_scale",
+        "output_scale_ref": "C09.output_scale",
+        "relu": true
+      },
+      {
+        "id": "C10",
+        "kind": "conv",
+        "input_scale_ref": "C09.output_scale",
+        "output_scale_ref": "C10.output_scale",
+        "relu": true
+      },
+      {
+        "id": "CAT1",
+        "kind": "nearest2_cat",
+        "skip_scale_ref": "C04.output_scale",
+        "deep_scale_ref": "C10.output_scale",
+        "output_scale_ref": "CAT1.common_scale",
+        "common_rule": "max(skip_scale,deep_scale)",
+        "branch_requantization": "separate Q24 RNE then signed127 saturation",
+        "skip_first": true
+      },
+      {
+        "id": "C11",
+        "kind": "conv",
+        "input_scale_ref": "CAT1.common_scale",
+        "output_scale_ref": "C11.output_scale",
+        "relu": true
+      },
+      {
+        "id": "C12",
+        "kind": "conv",
+        "input_scale_ref": "C11.output_scale",
+        "output_scale_ref": "C12.output_scale",
+        "relu": true
+      },
+      {
+        "id": "CAT2",
+        "kind": "nearest2_cat",
+        "skip_scale_ref": "C02.output_scale",
+        "deep_scale_ref": "C12.output_scale",
+        "output_scale_ref": "CAT2.common_scale",
+        "common_rule": "max(skip_scale,deep_scale)",
+        "branch_requantization": "separate Q24 RNE then signed127 saturation",
+        "skip_first": true
+      },
+      {
+        "id": "C13",
+        "kind": "conv",
+        "input_scale_ref": "CAT2.common_scale",
+        "output_scale_ref": "C13.output_scale",
+        "relu": true
+      },
+      {
+        "id": "C14",
+        "kind": "conv",
+        "input_scale_ref": "C13.output_scale",
+        "output_scale_ref": "C14.output_scale",
+        "relu": true
+      },
+      {
+        "id": "C15",
+        "kind": "conv",
+        "input_scale_ref": "C14.output_scale",
+        "output_scale_ref": "C15.output_scale",
+        "relu": false
+      }
+    ],
+    "conv_padding_qvalue": 0,
+    "pool_or_nearest_changes_scale": false,
+    "hidden_extra_scale_conversions": false
+  },
+  "integer_arithmetic": {
+    "weight_scale": "max(maxabs(W[o])/127,1e-8)",
+    "weight_dtype": "int8 OIHW per-output-channel",
+    "bias": "RNE(b/(Sx*Sw[o])) little-endian int32",
+    "multiplier": "RNE(Sx*Sw[o]/Sy*2^24) positive little-endian int32",
+    "accumulator": "sum(qx*qw)+qb, int32 with conservative per-channel bound proof",
+    "product": "int64 acc*M with overflow proof",
+    "round": "signed nearest ties-to-even",
+    "saturation": [
+      -127,
+      127
+    ],
+    "hidden_activation": "ReLU C01..C14",
+    "head_activation": "none",
+    "cat_common": "max(skip_scale,deep_scale)",
+    "cat_multipliers": "RNE(branch_scale/common_scale*2^24), independently per branch",
+    "cat_mode": 4,
+    "cat_split": [
+      64,
+      32,
+      16
+    ],
+    "cat_lut_index": "q &255; -128 forbidden as production input",
+    "cat_payload": "all skip CHW then half-resolution deep CHW"
+  },
+  "head": {
+    "shape": [
+      1,
+      4,
+      256,
+      256
+    ],
+    "bytes": 262144,
+    "dtype": "int8",
+    "layout": "NCHW",
+    "zero_point": 0,
+    "scale": "one positive shared scalar per accepted profile; numerical value pending",
+    "classes": {
+      "0": "background",
+      "1": "RV_cavity",
+      "2": "LV_myocardium",
+      "3": "LV_cavity"
+    }
+  },
+  "fusion": {
+    "order": [
+      "head dequantization",
+      "class softmax at256x256",
+      "remove letterbox",
+      "bilinear back to original plane",
+      "transpose into working volume",
+      "linear resample probabilities to native physical grid",
+      "per-direction channel renormalization",
+      "equal mean of directions",
+      "class argmax"
+    ],
+    "direction_order": [
+      "axial",
+      "coronal",
+      "sagittal"
+    ],
+    "weights": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "dtype": "float32",
+    "native_outside_probability": 0.0,
+    "low_probability_sum_fallback": "if sum<=1e-8 set BG=1, retain others, then divide by max(new_sum,1e-8)",
+    "valid_fov_weight_renormalization": false,
+    "missing_job_or_direction": "error; no fallback synthesis",
+    "argmax_tie": "lowest class index",
+    "postprocessing": [],
+    "output": "uint8 native-grid labels"
+  },
+  "evaluation": {
+    "split_file": "PATIENT_SPLIT.json",
+    "split_file_sha256": "b35c8ccb34ffe7fed3e2159ba78cb46541886d019cdbdbc630accb775941c850",
+    "train_patients": 80,
+    "dev_patients": 20,
+    "dev_volumes": 40,
+    "official_test_access": false,
+    "calibration_patients": 32,
+    "calibration_stacks": 128,
+    "primary": "mean of patient means over ED/ES and three foreground class Dice; equal patient weighting",
+    "dice_empty": "both empty1, one empty0",
+    "distance_surface": "six-neighbor one-iteration erosion, outside0; surface voxel centers in physical mm",
+    "hd95": "linear95 percentile of pooled directed nearest-surface-center distances",
+    "assd": "mean pooled directed distances",
+    "distance_empty": "both empty0; one empty null with status",
+    "volume_ml": "native label voxel count *abs(det(adopted_affine[:3,:3]))/1000",
+    "ef_percent": "100*(EDV-ESV)/EDV; valid iff EDV>0 and0<=ESV<=EDV, else null plus raw/status",
+    "gates": {
+      "maximum_macro_dice_drop": 0.01,
+      "maximum_per_class_drop": 0.02,
+      "maximum_single_volume_macro_drop": 0.05,
+      "new_empty_predictions_allowed": false,
+      "independent_integer_oracle_differences_allowed": 0
+    },
+    "required_reports": [
+      "2D baseline",
+      "each direction FP32/INT8",
+      "equal-weight fusion FP32/INT8",
+      "actual fusion delta vs2D"
+    ],
+    "final_numeric_reports": "pending; never substitute training AMP or fake quant metrics"
+  },
+  "required_production_identity": [
+    "architecture",
+    "profile_id",
+    "model_spec_sha256",
+    "input_sha256",
+    "geometry_sha256",
+    "run_id",
+    "request_id",
+    "phase",
+    "orientation",
+    "center_index"
+  ],
+  "production_ready": false
+}
