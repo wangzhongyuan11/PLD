@@ -4,6 +4,8 @@
 
 当前没有A验收通过的模型，也未连接板卡。`demo`为解析强度示意，不执行神经网络；`synthetic-model`生成可验证完整网络和接口的明确合成参数。两者均不提供真实ACDC精度或板测性能证据。实施范围见[计划](docs/IMPLEMENTATION_PLAN.md)，实测范围见[验证记录](docs/VALIDATION.md)，内部模型交换格式见[模型接口](docs/MODEL_BUNDLE.md)。
 
+后续硬件重构按[4 FPS优化与8 FPS冲刺计划](docs/OPTIMIZATION_4FPS_8FPS.md)：以P256精确打包阵列、宽DMA、整网自主调度和CAT/Pool融合为主线，P384用于8 FPS候选。该文明确数值约束、资源/时延预算、阶段与验收条件；新架构尚未实现，预测不代表板测达标。
+
 ## PC安装与直接演示
 
 在仓库根目录执行。PC依赖放入独立 `acdc/.venv`，不改变原工程环境。需要uv和Python3.13；安装脚本可以通过`-PythonPath`指定解释器。
