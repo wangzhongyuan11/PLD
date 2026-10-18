@@ -1,0 +1,18 @@
+[Unit]
+Description=Independent ACDC Axial PL worker
+After=network.target pld-hub.service pld-web.service pld-camus.service
+Conflicts=pld-hub.service pld-web.service pld-camus.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=@RELEASE@
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/bin/bash -lc 'source /etc/profile; exec /usr/local/share/pynq-venv/bin/python3 -m acdc worker --backend pl --model @RELEASE@/model --model-spec-sha @SPEC_SHA@ --runtime @RELEASE@ --port 8093'
+KillMode=control-group
+TimeoutStopSec=90
+SendSIGKILL=no
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

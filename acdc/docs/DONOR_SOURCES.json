@@ -1,0 +1,8 @@
+{
+  "scope": "Compatibility core fork; not the 128-MAC candidate",
+  "donors": {
+    "camus\\rtl\\conv_tile_engine_camus.sv": "6a9381c67c235dcf68bb5dc00903ebbd6d943784724643c2134a65a727ffb02e",
+    "camus\\rtl\\tensor_tile_engine_camus.sv": "6cdb690403501af7689e97c4b5cabe0c228aefb810a762dabd8a2d3485cb660e",
+    "camus\\rtl\\axis_tensor_accel_camus.sv": "60b020536ca411bee8a0d7aad392c375efef024c667251b68ec26410c801e050"
+  }
+}

@@ -1,0 +1,2 @@
+# Preserve original user-provided requirement bytes and their recorded SHA256.
+*.md -text
