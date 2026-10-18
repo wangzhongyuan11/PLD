@@ -224,7 +224,7 @@
         "relu": true
       },
       {
-        "id": "Pool0",
+        "id": "P0",
         "kind": "maxpool2",
         "input_scale_ref": "C02.output_scale",
         "output_scale_ref": "C02.output_scale"
@@ -244,7 +244,7 @@
         "relu": true
       },
       {
-        "id": "Pool1",
+        "id": "P1",
         "kind": "maxpool2",
         "input_scale_ref": "C04.output_scale",
         "output_scale_ref": "C04.output_scale"
@@ -264,7 +264,7 @@
         "relu": true
       },
       {
-        "id": "Pool2",
+        "id": "P2",
         "kind": "maxpool2",
         "input_scale_ref": "C06.output_scale",
         "output_scale_ref": "C06.output_scale"
@@ -284,11 +284,12 @@
         "relu": true
       },
       {
-        "id": "CAT0",
+        "id": "CAT1",
         "kind": "nearest2_cat",
+        "concat_spec_index": 0,
         "skip_scale_ref": "C06.output_scale",
         "deep_scale_ref": "C08.output_scale",
-        "output_scale_ref": "CAT0.common_scale",
+        "output_scale_ref": "CAT1.common_scale",
         "common_rule": "max(skip_scale,deep_scale)",
         "branch_requantization": "separate Q24 RNE then signed127 saturation",
         "skip_first": true
@@ -296,7 +297,7 @@
       {
         "id": "C09",
         "kind": "conv",
-        "input_scale_ref": "CAT0.common_scale",
+        "input_scale_ref": "CAT1.common_scale",
         "output_scale_ref": "C09.output_scale",
         "relu": true
       },
@@ -308,11 +309,12 @@
         "relu": true
       },
       {
-        "id": "CAT1",
+        "id": "CAT2",
         "kind": "nearest2_cat",
+        "concat_spec_index": 1,
         "skip_scale_ref": "C04.output_scale",
         "deep_scale_ref": "C10.output_scale",
-        "output_scale_ref": "CAT1.common_scale",
+        "output_scale_ref": "CAT2.common_scale",
         "common_rule": "max(skip_scale,deep_scale)",
         "branch_requantization": "separate Q24 RNE then signed127 saturation",
         "skip_first": true
@@ -320,7 +322,7 @@
       {
         "id": "C11",
         "kind": "conv",
-        "input_scale_ref": "CAT1.common_scale",
+        "input_scale_ref": "CAT2.common_scale",
         "output_scale_ref": "C11.output_scale",
         "relu": true
       },
@@ -332,11 +334,12 @@
         "relu": true
       },
       {
-        "id": "CAT2",
+        "id": "CAT3",
         "kind": "nearest2_cat",
+        "concat_spec_index": 2,
         "skip_scale_ref": "C02.output_scale",
         "deep_scale_ref": "C12.output_scale",
-        "output_scale_ref": "CAT2.common_scale",
+        "output_scale_ref": "CAT3.common_scale",
         "common_rule": "max(skip_scale,deep_scale)",
         "branch_requantization": "separate Q24 RNE then signed127 saturation",
         "skip_first": true
@@ -344,7 +347,7 @@
       {
         "id": "C13",
         "kind": "conv",
-        "input_scale_ref": "CAT2.common_scale",
+        "input_scale_ref": "CAT3.common_scale",
         "output_scale_ref": "C13.output_scale",
         "relu": true
       },
@@ -444,7 +447,7 @@
   },
   "evaluation": {
     "split_file": "PATIENT_SPLIT.json",
-    "split_file_sha256": "b35c8ccb34ffe7fed3e2159ba78cb46541886d019cdbdbc630accb775941c850",
+    "split_file_sha256": "00deb8e9fe45bd77ebd31d2411ac3682688e92739305212b09e48214330ec78f",
     "train_patients": 80,
     "dev_patients": 20,
     "dev_volumes": 40,

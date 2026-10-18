@@ -1,8 +1,8 @@
 {
   "schema": "acdc-preprocessing-checks-v1",
   "status": "PASSED_SYNTHETIC_SOFTWARE_CONTRACT_CHECKS",
-  "contract_sha256": "5cb3237c03485efa109c9e26e2c575a325ab12b1197829e4601218779b57ef51",
-  "split_sha256": "b35c8ccb34ffe7fed3e2159ba78cb46541886d019cdbdbc630accb775941c850",
+  "contract_sha256": "6ccbf772f30f5bf39bd62af49d7a36293ae3592dfedabda0db75033274c60709",
+  "split_sha256": "00deb8e9fe45bd77ebd31d2411ac3682688e92739305212b09e48214330ec78f",
   "checks": [
     {
       "name": "nonzero volume linear percentiles and float64 formula",
@@ -106,6 +106,10 @@
     },
     {
       "name": "21 logical nodes no hidden conversion",
+      "passed": true
+    },
+    {
+      "name": "logical node IDs match frozen topology exactly",
       "passed": true
     },
     {

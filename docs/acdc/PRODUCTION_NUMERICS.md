@@ -85,27 +85,27 @@
 |---:|---|---|---|
 |1|C01|S0|S1|
 |2|C02|S1|S2|
-|3|Pool0|S2|S2|
+|3|P0|S2|S2|
 |4|C03|S2|S3|
 |5|C04|S3|S4|
-|6|Pool1|S4|S4|
+|6|P1|S4|S4|
 |7|C05|S4|S5|
 |8|C06|S5|S6|
-|9|Pool2|S6|S6|
+|9|P2|S6|S6|
 |10|C07|S6|S7|
 |11|C08|S7|S8|
-|12|CAT0|skip S6 / deep S8|T0=max(S6,S8)|
-|13|C09|T0|S9|
+|12|CAT1|skip S6 / deep S8|T1=max(S6,S8)|
+|13|C09|T1|S9|
 |14|C10|S9|S10|
-|15|CAT1|skip S4 / deep S10|T1=max(S4,S10)|
-|16|C11|T1|S11|
+|15|CAT2|skip S4 / deep S10|T2=max(S4,S10)|
+|16|C11|T2|S11|
 |17|C12|S11|S12|
-|18|CAT2|skip S2 / deep S12|T2=max(S2,S12)|
-|19|C13|T2|S13|
+|18|CAT3|skip S2 / deep S12|T3=max(S2,S12)|
+|19|C13|T3|S13|
 |20|C14|S13|S14|
 |21|C15/head|S14|S15|
 
-每个Conv的 `input_scale` 必须等于上表生产者/转换输出；Pool和nearest本身不改变scale。CAT两路分别转换到common，不允许隐藏额外转换。
+节点ID与拓扑合同一致；CAT1/2/3分别对应模型spec的 `concat[0/1/2]`。每个Conv的 `input_scale` 必须等于上表生产者/转换输出；Pool和nearest本身不改变scale。CAT两路分别转换到common，不允许隐藏额外转换。
 
 整数生成规则（RNE均为带符号最近偶数）：
 
@@ -157,4 +157,4 @@ head 为 NCHW int8 `[1,4,256,256]`，262144 B，zero_point=0，共享正scale `S
 
 当前实现来源及库版本见机器合同的 `implementation_binding`。变更以上规则必须升预处理版本、重新生成黄金输入并重跑相关评价，不能沿用旧指标。
 
-小型无模型检查及可重建合成用例见 [PREPROCESSING_CHECKS.json](PREPROCESSING_CHECKS.json)：覆盖32项规则检查和5个强度/几何/letterbox样例。float32样例散列按IEEE754小端C-order字节计算。该证据仅覆盖所列软件约定，不是生产模型或上板验收。
+小型无模型检查及可重建合成用例见 [PREPROCESSING_CHECKS.json](PREPROCESSING_CHECKS.json)：覆盖33项规则检查和5个强度/几何/letterbox样例。float32样例散列按IEEE754小端C-order字节计算。该证据仅覆盖所列软件约定，不是生产模型或上板验收。
