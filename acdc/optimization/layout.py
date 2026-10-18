@@ -55,6 +55,24 @@ def unpack_weights(blocks, co, ci):
                                .reshape(a.shape[0]*8, a.shape[1]*8, *a.shape[2:4])[:co, :ci])
 
 
+def pack_parameter_groups(oihw, bias, multipliers):
+    """Derived Co8 DMA packets: little-endian bias[8], M[8], then W8x8 taps."""
+    w = _int8(oihw, 4)
+    b, m = np.asarray(bias), np.asarray(multipliers)
+    if (b.dtype != np.int32 or m.dtype != np.int32 or b.shape != (w.shape[0],)
+            or m.shape != b.shape or np.any(m <= 0)):
+        raise ValueError('INT32 Co-sized bias and positive multipliers required')
+    blocks = pack_weights(w)
+    packets = []
+    for group in range(blocks.shape[0]):
+        count = min(8, w.shape[0]-group*8)
+        bp = np.zeros(8, dtype='<i4'); mp = np.ones(8, dtype='<i4')
+        bp[:count] = b[group*8:group*8+count]
+        mp[:count] = m[group*8:group*8+count]
+        packets.append(bp.tobytes()+mp.tobytes()+blocks[group].tobytes())
+    return packets
+
+
 @dataclass(frozen=True)
 class BankGeometry:
     """One read of 8 Ci per spatial bank; address in 64-bit words."""
