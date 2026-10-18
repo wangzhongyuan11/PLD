@@ -1,0 +1,59 @@
+{
+  "schema": "pld-acdc-tile-integration-v1",
+  "scope": "Co8 tile, no full-network DMA or board inference",
+  "components": {
+    "tile_p4_synth": {
+      "manifest_sha256": "fac490335b6d9122d1da5d3ae105080e0a63b7e2ef277455a05eeca76e9782cd",
+      "schema": "pld-acdc-ooc-synthesis-v1",
+      "board_validated": false,
+      "full_system_timing": false,
+      "expected_dsp_checked_by_tcl": 148,
+      "sources": {
+        "acdc/optimization/rtl/conv_array.sv": "a3cacc2fb9b2b05e4de025fd0252029787cf13840358a2e475063b9beb390dc9",
+        "acdc/optimization/rtl/conv_compute.sv": "26b4f1a640b506e4305f95f1cb318419e14c59c20054c72205c43a6f29ddbed3",
+        "acdc/optimization/rtl/tile_banks.sv": "0b798983b64914a4926aea19b9b4081ab39b95a9df2e0934a892279637a194b4",
+        "acdc/optimization/rtl/tile_conv.sv": "71372c9d86313873ac98fcdd796443fa2b0f59f4200c75a1098ccc71b80a4621",
+        "rtl/requant_q24.sv": "0b5c6920bda9c85026355c13ad5fe824cdfe236c6b88f0883121e2057e65d6a8",
+        "acdc/optimization/vivado/synth_tile.tcl": "1964fde06b72041ee4562d53a2af2eaa8cd97e69808a9a2071b088c24fc2fd63",
+        "acdc/optimization/synth_guard.py": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139"
+      },
+      "artifacts": {
+        "utilization.rpt": "ddaf6346a64911d84e386dd8770daf737230b278e88315d1157cf00b1fc6f807",
+        "timing.rpt": "c1d54ce661920c82e62f477a3b53e0d9a4537ff263ab22dfd49ace245ce279cf",
+        "core.dcp": "61045c63a4b96a14c7756fe51df6d02a48e7f957305ff0765f90be039c812415"
+      }
+    },
+    "tile_p6_synth": {
+      "manifest_sha256": "335a54eb5ba439ebbae91d3f729a8565185f516f3e09d856abc7e4ab3d655d9a",
+      "schema": "pld-acdc-ooc-synthesis-v1",
+      "board_validated": false,
+      "full_system_timing": false,
+      "expected_dsp_checked_by_tcl": 212,
+      "sources": {
+        "acdc/optimization/rtl/conv_array.sv": "a3cacc2fb9b2b05e4de025fd0252029787cf13840358a2e475063b9beb390dc9",
+        "acdc/optimization/rtl/conv_compute.sv": "26b4f1a640b506e4305f95f1cb318419e14c59c20054c72205c43a6f29ddbed3",
+        "acdc/optimization/rtl/tile_banks.sv": "0b798983b64914a4926aea19b9b4081ab39b95a9df2e0934a892279637a194b4",
+        "acdc/optimization/rtl/tile_conv.sv": "71372c9d86313873ac98fcdd796443fa2b0f59f4200c75a1098ccc71b80a4621",
+        "rtl/requant_q24.sv": "0b5c6920bda9c85026355c13ad5fe824cdfe236c6b88f0883121e2057e65d6a8",
+        "acdc/optimization/vivado/synth_tile.tcl": "1964fde06b72041ee4562d53a2af2eaa8cd97e69808a9a2071b088c24fc2fd63",
+        "acdc/optimization/synth_guard.py": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139"
+      },
+      "artifacts": {
+        "utilization.rpt": "1e082658405d2212fc6042a9929e9b8a0ea057bbb6dcbeb5f79afafc287b3fd8",
+        "timing.rpt": "4170100a9c43eb908393b9e965a6c85064c4150ea3a80a9233ef2948740c93af",
+        "core.dcp": "7832b21e8926f4b54f54bfdf07bfdd39b6025a6576795752395ca683ea3521bb"
+      }
+    }
+  },
+  "simulations": {
+    "tile_p4_sim": {
+      "sha256": "8ccc0e4a12f0ea6fa7adeae52739734b3d0db2c5d15cbba45a579bdaec88e9ba",
+      "pass_line": "TB_PASS tile_conv P=4 dense_tiles=23 output_beats=22032 expected_errors=2 cycles=143999"
+    },
+    "tile_p6_sim": {
+      "sha256": "6a944fb77845957aee2a6270410c5344a3acedb5d246a127f3d73afb52f64b5f",
+      "pass_line": "TB_PASS tile_conv P=6 dense_tiles=23 output_beats=23052 expected_errors=2 cycles=132109"
+    }
+  },
+  "datamover_configuration_sha256": "db63dc958e1ca9a6f67b756ea3a58cd2e26d3975d0d36468a64afe7183f19e18"
+}
