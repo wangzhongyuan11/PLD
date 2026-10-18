@@ -1,0 +1,331 @@
+{
+  "schema": "acdc-preprocessing-checks-v1",
+  "status": "PASSED_SYNTHETIC_SOFTWARE_CONTRACT_CHECKS",
+  "contract_sha256": "54dfdaa59e403ce003199c71d19a9aba4237fa9bd7b85b4efef18c255e4e90b1",
+  "split_sha256": "00deb8e9fe45bd77ebd31d2411ac3682688e92739305212b09e48214330ec78f",
+  "checks": [
+    {
+      "name": "nonzero volume linear percentiles and float64 formula",
+      "passed": true
+    },
+    {
+      "name": "raw zero is not forcibly replaced by padding value",
+      "passed": true
+    },
+    {
+      "name": "NaN rejected",
+      "passed": true
+    },
+    {
+      "name": "Inf rejected",
+      "passed": true
+    },
+    {
+      "name": "constant rejected",
+      "passed": true
+    },
+    {
+      "name": "fewer_than8_nonzero rejected",
+      "passed": true
+    },
+    {
+      "name": "strict rejects direction-only sform mismatch",
+      "passed": true
+    },
+    {
+      "name": "explicit ACDC repair restores pixdim",
+      "passed": true
+    },
+    {
+      "name": "ACDC repair rejects wrong qform flag",
+      "passed": true
+    },
+    {
+      "name": "dynamic RAS origin size and positive2mm direction",
+      "passed": true
+    },
+    {
+      "name": "axial rowY colX",
+      "passed": true
+    },
+    {
+      "name": "coronal rowZ colX",
+      "passed": true
+    },
+    {
+      "name": "sagittal rowZ colY",
+      "passed": true
+    },
+    {
+      "name": "constant full-FOV letterbox 12x256",
+      "passed": true
+    },
+    {
+      "name": "constant full-FOV letterbox 256x12",
+      "passed": true
+    },
+    {
+      "name": "constant full-FOV letterbox 2x7",
+      "passed": true
+    },
+    {
+      "name": "odd pad remainder is bottom",
+      "passed": true
+    },
+    {
+      "name": "unsupported probability FOV receives background then renormalizes",
+      "passed": true
+    },
+    {
+      "name": "argmax exact tie selects smallest class",
+      "passed": true
+    },
+    {
+      "name": "pool preserves scales",
+      "passed": true
+    },
+    {
+      "name": "CAT two scales common and downstream continuity",
+      "passed": true
+    },
+    {
+      "name": "80/20 patients disjoint and100 total",
+      "passed": true
+    },
+    {
+      "name": "all disease groups16/4",
+      "passed": true
+    },
+    {
+      "name": "calibration32 train only128 stacks",
+      "passed": true
+    },
+    {
+      "name": "one-based phase filename example",
+      "passed": true
+    },
+    {
+      "name": "21 logical nodes no hidden conversion",
+      "passed": true
+    },
+    {
+      "name": "logical node IDs match frozen topology exactly",
+      "passed": true
+    },
+    {
+      "name": "unaccepted model cannot become production-ready",
+      "passed": true
+    },
+    {
+      "name": "required identity paths match actual frozen request ABI",
+      "passed": true
+    },
+    {
+      "name": "source binding software/role_a_acdc/contract.py",
+      "passed": true
+    },
+    {
+      "name": "source binding software/role_a_acdc/geometry.py",
+      "passed": true
+    },
+    {
+      "name": "source binding software/role_a_acdc/inference.py",
+      "passed": true
+    },
+    {
+      "name": "source binding software/role_a_acdc/pipeline.py",
+      "passed": true
+    },
+    {
+      "name": "source binding software/role_a_acdc/board_jobs.py",
+      "passed": true
+    },
+    {
+      "name": "source binding software/role_a/quant_math.py",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "normalization_positive",
+      "shape": [
+        3,
+        2,
+        2
+      ],
+      "source_flat": [
+        0.0,
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0,
+        11.0
+      ],
+      "normalized_flat": [
+        -1.0,
+        -1.0,
+        -0.8163265585899353,
+        -0.6122449040412903,
+        -0.40816327929496765,
+        -0.20408163964748383,
+        0.0,
+        0.20408163964748383,
+        0.40816327929496765,
+        0.6122449040412903,
+        0.8163265585899353,
+        1.0
+      ],
+      "low": 1.1,
+      "high": 10.9,
+      "normalized_float32_c_order_sha256": "e777190691c1696c43e17a6c565c93691303909d4830ad28db580c534e1fbdfc",
+      "quantized_signed127_sha256": "389563d1eb0a5dad49de6ccdf5cc6277433f46794309361dec46610b1ce61cb2"
+    },
+    {
+      "id": "ras_negative_x",
+      "source_shape": [
+        4,
+        5,
+        6
+      ],
+      "source_affine": [
+        [
+          -2.0,
+          0.0,
+          0.0,
+          100.0
+        ],
+        [
+          0.0,
+          3.0,
+          0.0,
+          200.0
+        ],
+        [
+          0.0,
+          0.0,
+          4.0,
+          300.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "source_values": "C-order arange(1,121).astype(float32)",
+      "working_shape": [
+        4,
+        7,
+        11
+      ],
+      "working_affine": [
+        [
+          2.0,
+          0.0,
+          0.0,
+          94.0
+        ],
+        [
+          0.0,
+          2.0,
+          0.0,
+          200.0
+        ],
+        [
+          0.0,
+          0.0,
+          2.0,
+          300.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "letterbox_constant_one_12x256",
+      "source_shape": [
+        3,
+        12,
+        256
+      ],
+      "source_fill": 1.0,
+      "transform": {
+        "original_hw": [
+          12,
+          256
+        ],
+        "resized_hw": [
+          12,
+          256
+        ],
+        "top": 122,
+        "left": 0,
+        "size": 256
+      },
+      "input_int8_bytes": 196608,
+      "input_int8_c_order_sha256": "489cfa51009f800b6272673bb2abed8834a4b2f2af72052d3aef14148ca205bd"
+    },
+    {
+      "id": "letterbox_constant_one_256x12",
+      "source_shape": [
+        3,
+        256,
+        12
+      ],
+      "source_fill": 1.0,
+      "transform": {
+        "original_hw": [
+          256,
+          12
+        ],
+        "resized_hw": [
+          256,
+          12
+        ],
+        "top": 0,
+        "left": 122,
+        "size": 256
+      },
+      "input_int8_bytes": 196608,
+      "input_int8_c_order_sha256": "a817db7e3a3afd669c03e840b5a46a7a93e65d64d56ad459834d5c79458e7e12"
+    },
+    {
+      "id": "letterbox_constant_one_2x7",
+      "source_shape": [
+        3,
+        2,
+        7
+      ],
+      "source_fill": 1.0,
+      "transform": {
+        "original_hw": [
+          2,
+          7
+        ],
+        "resized_hw": [
+          73,
+          256
+        ],
+        "top": 91,
+        "left": 0,
+        "size": 256
+      },
+      "input_int8_bytes": 196608,
+      "input_int8_c_order_sha256": "fac27637b4c2125109142a0bb2e8ace9ddce5466bbc6cea36fb357a9175672c3"
+    }
+  ],
+  "actual_model_or_dataset_images_used": false,
+  "physical_board_accepted": false,
+  "limitation": "Small contract checks and simple generated fixtures; not full model, latency, board, or clinical validation."
+}
