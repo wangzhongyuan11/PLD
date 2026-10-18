@@ -2,9 +2,9 @@
 
 独立于 Skin/CAMUS 的 Axial-only 工程。输入显式 ED、ES 两个3D NIfTI；按A的生产数值文字合同预处理，逐Axial中心片执行15Conv/21节点，恢复原生概率与标签，提供三平面MPR、无平滑3D表面、LV/RV/MYO容积、LV/RV EF、异步网页与结果包。
 
-当前没有A验收通过的模型，也未连接板卡。`demo`为解析强度示意，不执行神经网络；`synthetic-model`生成可验证完整网络和接口的明确合成参数。两者均不提供真实ACDC精度或板测性能证据。实施范围见[计划](docs/IMPLEMENTATION_PLAN.md)，实测范围见[验证记录](docs/VALIDATION.md)，内部模型交换格式见[模型接口](docs/MODEL_BUNDLE.md)。
+当前没有A验收通过的模型；板卡已通过SSH接通并只读核对环境，新优化架构尚未上板推理。`demo`为解析强度示意，不执行神经网络；`synthetic-model`生成可验证完整网络和接口的明确合成参数。两者均不提供真实ACDC精度或板测性能证据。实施范围见[计划](docs/IMPLEMENTATION_PLAN.md)，原离线验证见[验证记录](docs/VALIDATION.md)，内部模型交换格式见[模型接口](docs/MODEL_BUNDLE.md)。
 
-后续硬件重构按[4 FPS优化与8 FPS冲刺计划](docs/OPTIMIZATION_4FPS_8FPS.md)：以P256精确打包阵列、宽DMA、整网自主调度和CAT/Pool融合为主线，P384用于8 FPS候选。该文明确数值约束、资源/时延预算、阶段与验收条件；新架构尚未实现，预测不代表板测达标。
+后续硬件重构按[4 FPS优化与8 FPS冲刺计划](docs/OPTIMIZATION_4FPS_8FPS.md)：以P256精确打包阵列、宽DMA、整网自主调度和CAT/Pool融合为主线，P384用于8 FPS候选。[组件实现进度](optimization/README.md)记录已通过的算术流水与bank验证；整网/DMA尚未集成，预测不代表板测达标。
 
 ## PC安装与直接演示
 
