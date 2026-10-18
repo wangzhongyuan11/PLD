@@ -10,6 +10,7 @@
   },
   "implementation_binding": {
     "files_sha256": {
+      "software/role_a_acdc/contract.py": "0096f13b40754be7b72f1b18563829ff5e3c2ad9e4c5576ddf83eba7d6cc57e1",
       "software/role_a_acdc/geometry.py": "4040571ba642cbfffeab98f3d659e08263be2ef422978ee51e7b62dacbad2e33",
       "software/role_a_acdc/inference.py": "3f1b757d69283a8b58d41d3c1efcece2d83bc9c1549e4f940bb060decb2d9985",
       "software/role_a_acdc/pipeline.py": "ef557d0c8f296f8b4a1284e0bd7e7956facad27c6dc612712da3588784a9d9af",
@@ -478,16 +479,23 @@
     "final_numeric_reports": "pending; never substitute training AMP or fake quant metrics"
   },
   "required_production_identity": [
-    "architecture",
-    "profile_id",
+    "architecture_id",
+    "model_id",
     "model_spec_sha256",
-    "input_sha256",
+    "input.sha256",
     "geometry_sha256",
     "run_id",
+    "volume_id",
     "request_id",
     "phase",
     "orientation",
-    "center_index"
+    "center_index",
+    "neighbor_indices",
+    "slice_count"
   ],
+  "response_input_identity_mapping": {
+    "response_field": "input_sha256",
+    "request_field": "input.sha256"
+  },
   "production_ready": false
 }

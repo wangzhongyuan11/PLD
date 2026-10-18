@@ -155,6 +155,8 @@ head 为 NCHW int8 `[1,4,256,256]`，262144 B，zero_point=0，共享正scale `S
 
 最终Release还须补齐验收模型注册表（每方向实际spec SHA/head_scale/参数SHA）、完整FP32/INT8/融合指标、实际黄金用例，以及中位与最差开发病例。**这些结果仍在产生，当前生产参数验收字段保持未通过，加载器必须拒绝将待验收状态当作生产链路完成。**
 
+请求wire字段为 `architecture_id`、`model_id`、`volume_id` 等既定键；请求输入散列位于 `input.sha256`，响应的 `input_sha256` 回填该值。内部模型spec的 `profile_id` 作为请求 `model_id` 的值，键名不混用。
+
 当前实现来源及库版本见机器合同的 `implementation_binding`。变更以上规则必须升预处理版本、重新生成黄金输入并重跑相关评价，不能沿用旧指标。
 
-小型无模型检查及可重建合成用例见 [PREPROCESSING_CHECKS.json](PREPROCESSING_CHECKS.json)：覆盖33项规则检查和5个强度/几何/letterbox样例。float32样例散列按IEEE754小端C-order字节计算。该证据仅覆盖所列软件约定，不是生产模型或上板验收。
+小型无模型检查及可重建合成用例见 [PREPROCESSING_CHECKS.json](PREPROCESSING_CHECKS.json)：覆盖35项规则检查和5个强度/几何/letterbox样例。float32样例散列按IEEE754小端C-order字节计算。该证据仅覆盖所列软件约定，不是生产模型或上板验收。

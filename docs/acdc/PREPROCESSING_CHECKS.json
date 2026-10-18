@@ -1,7 +1,7 @@
 {
   "schema": "acdc-preprocessing-checks-v1",
   "status": "PASSED_SYNTHETIC_SOFTWARE_CONTRACT_CHECKS",
-  "contract_sha256": "6ccbf772f30f5bf39bd62af49d7a36293ae3592dfedabda0db75033274c60709",
+  "contract_sha256": "54dfdaa59e403ce003199c71d19a9aba4237fa9bd7b85b4efef18c255e4e90b1",
   "split_sha256": "00deb8e9fe45bd77ebd31d2411ac3682688e92739305212b09e48214330ec78f",
   "checks": [
     {
@@ -114,6 +114,14 @@
     },
     {
       "name": "unaccepted model cannot become production-ready",
+      "passed": true
+    },
+    {
+      "name": "required identity paths match actual frozen request ABI",
+      "passed": true
+    },
+    {
+      "name": "source binding software/role_a_acdc/contract.py",
       "passed": true
     },
     {
