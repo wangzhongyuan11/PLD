@@ -5,8 +5,14 @@
   "status": {
     "rules": "frozen against current implementation",
     "accepted_production_profiles": [],
-    "model_numeric_values": "pending INT8 acceptance; first minmax candidate rejected",
-    "physical_board_accepted": false
+    "model_numeric_values": "frozen software-accepted research profiles; RESEARCH_RELEASE.json binds spec SHA and actual head scales",
+    "physical_board_accepted": false,
+    "accepted_research_profiles": [
+      "acdc_axial_v1",
+      "acdc_coronal_v1",
+      "acdc_sagittal_v1"
+    ],
+    "research_model_index": "RESEARCH_RELEASE.json"
   },
   "implementation_binding": {
     "files_sha256": {
@@ -407,7 +413,7 @@
     "dtype": "int8",
     "layout": "NCHW",
     "zero_point": 0,
-    "scale": "one positive shared scalar per accepted profile; numerical value pending",
+    "scale": "one positive shared scalar per accepted profile; exact value and spec SHA in RESEARCH_RELEASE.json",
     "classes": {
       "0": "background",
       "1": "RV_cavity",
@@ -476,7 +482,7 @@
       "equal-weight fusion FP32/INT8",
       "actual fusion delta vs2D"
     ],
-    "final_numeric_reports": "pending; never substitute training AMP or fake quant metrics"
+    "final_numeric_reports": "software development acceptance complete; reports in the research package; no independent test or physical-board claim"
   },
   "required_production_identity": [
     "architecture_id",
