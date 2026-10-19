@@ -2,9 +2,9 @@
 
 独立于 Skin/CAMUS 的 Axial-only 工程。输入显式 ED、ES 两个3D NIfTI；按A的生产数值文字合同预处理，逐Axial中心片执行15Conv/21节点，恢复原生概率与标签，提供三平面MPR、无平滑3D表面、LV/RV/MYO容积、LV/RV EF、异步网页与结果包。
 
-A的完整研究Release已于2026-10-19取得并通过完整性校验；一个真实Axial黄金输入经B独立INT64参考得到完全一致的head。当前正式加载器仍需适配A格式及真实MRI几何/依赖，不能直接按旧命令加载A包。后续实施以[最终模型对齐与4/8 FPS优化计划](docs/FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)为准。新优化架构尚未上板，4/8 FPS未验收；`demo`与`synthetic-model`仍仅用于明确标记的演示/合成测试。原离线证据见[验证记录](docs/VALIDATION.md)，旧内部格式见[模型接口](docs/MODEL_BUNDLE.md)。
+A真实研究Release已接入：原spec/参数身份保留，独立参考、Torch整数见证和tile模拟器的21节点精确一致。固定20名开发患者40体已实际复现Axial Dice 0.8823042898，与A逐体逐类Dice及容积差异均为0。现有`import-release`可导入必要材料子集；真实ACDC几何与SciPy依赖已对齐。当前事实、命令和硬件缺口见[实施状态](docs/IMPLEMENTATION_STATUS.md)，后续范围以[最终优化计划](docs/FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)为准。4/8 FPS尚无合格板测证据。
 
-P256/P384算术、CAT/Pool、DMA流接口、双任务预取、整网执行表及AXI-Lite控制已写出，有合成参数RTL验证；[组件记录](optimization/README.md)保留分层证据。综合后keep/tag异常尚未证明解决，厂商DataMover完整BD、ACD8驱动和真实板测待完成。旧[性能计划](docs/OPTIMIZATION_4FPS_8FPS.md)保留设计历史，具体剩余工作与真实模型预算以最终计划为准。
+前版P256/P384真实模型完整256网格RTL已通过，packed-tag版P4 OOC功能网表小空间全网也已通过。厂商DataMover完整BD和ACD8驱动已写出；当前版本拆分容量检查并增加地址/计算输入弹性寄存器，完整尺寸仿真和布线尚待完成，未切换板卡。旧[性能计划](docs/OPTIMIZATION_4FPS_8FPS.md)与[组件记录](optimization/README.md)保留各版本证据范围。
 
 ## PC安装与直接演示
 

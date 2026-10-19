@@ -71,6 +71,63 @@ class DemoBackend:
     def close(self):pass
 
 
+class SpatialBackend:
+    kind='pl'
+    def __init__(self,model,runtime):
+        from .optimization.device import SpatialDevice
+        import json
+        from pathlib import Path
+        begin=time.perf_counter()
+        self.model=model;self.model_sha=model.model_sha256;self.head_scale=model.head_scale
+        self.synthetic=model.synthetic;self.binding=model.implementation_binding
+        self.runtime_sha=file_sha(Path(runtime)/'runtime_manifest.json')
+        self.hardware_info=json.loads((Path(runtime)/'overlay/build_manifest.json').read_text('utf-8'))
+        self.device=SpatialDevice(runtime,model)
+        self.initialization_seconds=time.perf_counter()-begin
+
+    def infer(self,x,request,cancel=None):
+        validate_request(request)
+        if request['model_sha256']!=self.model_sha or request.get('runtime_sha256')!=self.runtime_sha:
+            raise ContractError('spatial request model/runtime mismatch')
+        head,timing=self.device.forward(x,cancel=cancel)
+        meta=response_meta(request,self.head_scale,self.kind,self.synthetic)
+        meta.update(timing,nodes=[],events=[],runtime_sha256=self.runtime_sha,
+                    hardware={k:self.hardware_info[k] for k in ('hardware_id','abi','spatial_p','clock_mhz')})
+        return head,meta
+
+    def close(self):self.device.close()
+
+
+class TorchReferenceBackend:
+    """Explicit PC validation backend, exact integer arithmetic via FP64 conv.
+
+    Never selected as a PL fallback. The independent INT64 oracle remains in
+    integer.py; verify-model compares all nodes of both implementations.
+    """
+    kind='reference_torch'
+    def __init__(self,model):
+        import torch
+        begin=time.perf_counter();torch.set_num_threads(4)
+        self.model=model;self.model_sha=model.model_sha256;self.head_scale=model.head_scale
+        self.synthetic=model.synthetic;self.binding=model.implementation_binding
+        self.runtime_sha=None;self.hardware_info=None
+        self.initialization_seconds=time.perf_counter()-begin
+
+    def infer(self,x,request,cancel=None):
+        from .witness import forward
+        validate_request(request)
+        if request['model_sha256']!=self.model_sha or request.get('runtime_sha256') is not None:
+            raise ContractError('reference request model/runtime mismatch')
+        if cancel is not None and cancel.is_set():raise InterruptedError('reference cancelled')
+        begin=time.perf_counter();captures=forward(self.model,x)
+        meta=response_meta(request,self.head_scale,self.kind,self.synthetic)
+        meta.update(nodes=[],events=[],slice_seconds=time.perf_counter()-begin,
+                    arithmetic='exact integer witness using FP64 convolution under proven INT32 bounds',runtime_sha256=None)
+        return captures['C15'],meta
+
+    def close(self):pass
+
+
 class RemoteBackend:
     kind='remote'
     def __init__(self,url,*,model_sha,head_scale,synthetic=False,timeout=30,binding=None):
@@ -89,9 +146,9 @@ class RemoteBackend:
                 or health.get('synthetic') is not synthetic or (not synthetic and health.get('backend')!='pl')):
             self.connection.close();raise ContractError('worker/model provenance handshake mismatch')
         self.runtime_sha=health.get('runtime_sha256');self.hardware_info=health.get('hardware')
+        supported={(0x41434433,0x00030000),(0x41434434,0x00030000),(0x41434438,0x00020000)}
         if not synthetic and (not is_sha(self.runtime_sha) or not isinstance(self.hardware_info,dict)
-                or self.hardware_info.get('hardware_id') not in (0x41434433,0x41434434)
-                or self.hardware_info.get('abi')!=0x00030000):
+                or (self.hardware_info.get('hardware_id'),self.hardware_info.get('abi')) not in supported):
             self.connection.close();raise ContractError('production worker lacks certified ACDC hardware/runtime provenance')
 
     def infer(self,x,request,cancel=None):

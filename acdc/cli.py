@@ -11,7 +11,7 @@ def parser():
     sub.add_parser('plan',help='static 15-layer/tile/cycle budget; no model or PYNQ required')
     for name in ('run','web','worker'):
         q=sub.add_parser(name)
-        q.add_argument('--backend',choices=('reference','emulator','pl','remote','demo'),required=True)
+        q.add_argument('--backend',choices=('reference','reference_torch','emulator','pl','remote','demo'),required=True)
         q.add_argument('--model',type=Path);q.add_argument('--model-spec-sha');q.add_argument('--allow-synthetic',action='store_true')
         q.add_argument('--runtime',type=Path);q.add_argument('--board-url')
         if name=='run':
@@ -24,6 +24,9 @@ def parser():
         q.add_argument('--recognized-acdc',action='store_true',help='explicit operator attestation of recognized ACDC source')
     q=sub.add_parser('phantom');q.add_argument('output',type=Path)
     q=sub.add_parser('synthetic-model');q.add_argument('output',type=Path)
+    q=sub.add_parser('import-release',help='import the authenticated Axial model and required research evidence')
+    q.add_argument('source',type=Path);q.add_argument('output',type=Path)
+    q.add_argument('--model-spec-sha',required=True)
     q=sub.add_parser('verify-model');q.add_argument('model',type=Path);q.add_argument('--model-spec-sha');q.add_argument('--allow-synthetic',action='store_true')
     q.add_argument('--full',action='store_true',help='execute full 256x256 integer reference/emulator and compare all 21 nodes')
     q=sub.add_parser('package');q.add_argument('output',type=Path)
@@ -40,6 +43,14 @@ def backend(args):
     if args.backend=='demo':return DemoBackend()
     if args.model is None:raise ValueError('--model is required except for explicit analytic demo')
     model=load_bundle(args.model,expected_sha=args.model_spec_sha,allow_synthetic=args.allow_synthetic)
+    if args.backend=='reference_torch':
+        from .backend import TorchReferenceBackend
+        return TorchReferenceBackend(model)
+    if args.backend=='pl' and args.runtime:
+        cert=json.loads((args.runtime/'overlay/build_manifest.json').read_text('utf-8'))
+        if cert.get('hardware_id')==0x41434438:
+            from .backend import SpatialBackend
+            return SpatialBackend(model,args.runtime)
     if args.backend=='remote':
         if not args.board_url:raise ValueError('--board-url required')
         return RemoteBackend(args.board_url,model_sha=model.model_sha256,head_scale=model.head_scale,
@@ -58,6 +69,11 @@ def main(argv=None):
     if args.command=='synthetic-model':
         from .model import create_synthetic_bundle
         print(create_synthetic_bundle(args.output));return
+    if args.command=='import-release':
+        from .release import import_release
+        model=import_release(args.source,args.output,expected_sha=args.model_spec_sha)
+        print(json.dumps(dict(model_sha256=model.model_sha256,head_scale=model.head_scale,
+                              members=len(model.spec['release_members']),qualification=model.spec['qualification'])));return
     if args.command=='verify-model':
         from .model import load_bundle
         model=load_bundle(args.model,expected_sha=args.model_spec_sha,allow_synthetic=args.allow_synthetic)

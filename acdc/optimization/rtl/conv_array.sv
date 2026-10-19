@@ -29,7 +29,9 @@ module conv_array #(
   (* use_dsp="no" *) logic signed [32:0] next_acc [P][8];
   logic [5:0] valid,first,last;
   logic [255:0] bias_pipe [6];
-  logic [TAG_WIDTH-1:0] tag_pipe [6];
+  // Explicit packed stage registers: metadata advances with the arithmetic
+  // pipeline and must never be inferred as a multi-address memory.
+  logic [6*TAG_WIDTH-1:0] tag_pipe;
   logic advance,overflow_q,overflow_now;
   assign advance=!m_valid||m_ready;
   assign s_ready=advance;
@@ -51,7 +53,7 @@ module conv_array #(
       m_valid<=valid[5]&&last[5];
       if(s_valid)begin
         bias_pipe[0]<=s_bias;
-        tag_pipe[0]<=s_tag;
+        tag_pipe[0+:TAG_WIDTH]<=s_tag;
         for(int p=0;p<P/2;p++)for(int i=0;i<8;i++)begin
           packed_a[p][i]<=($signed({{17{s_input[((2*p+1)*8+i)*8+7]}},s_input[((2*p+1)*8+i)*8+:8]}) <<< 16)
                         +$signed({{17{s_input[(2*p*8+i)*8+7]}},s_input[(2*p*8+i)*8+:8]});
@@ -60,9 +62,10 @@ module conv_array #(
           weight_q[o][i]<={{10{s_weights[(o*8+i)*8+7]}},s_weights[(o*8+i)*8+:8]};
       end
       for(int stage=1;stage<6;stage++)if(valid[stage-1])begin
-        bias_pipe[stage]<=bias_pipe[stage-1];tag_pipe[stage]<=tag_pipe[stage-1];
+        bias_pipe[stage]<=bias_pipe[stage-1];
+        tag_pipe[stage*TAG_WIDTH+:TAG_WIDTH]<=tag_pipe[(stage-1)*TAG_WIDTH+:TAG_WIDTH];
       end
-      if(valid[5]&&last[5])m_tag<=tag_pipe[5];
+      if(valid[5]&&last[5])m_tag<=tag_pipe[5*TAG_WIDTH+:TAG_WIDTH];
       if(valid[0])for(int p=0;p<P/2;p++)for(int o=0;o<8;o++)for(int i=0;i<8;i++)
         product[p][o][i]<=packed_a[p][i]*weight_q[o][i];
       if(valid[1])for(int p=0;p<P/2;p++)for(int o=0;o<8;o++)for(int i=0;i<8;i++)begin

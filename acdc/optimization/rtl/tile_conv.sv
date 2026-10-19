@@ -33,10 +33,13 @@ module tile_conv #(
   output logic m_first,m_last,m_valid,
   input logic m_ready
 );
-  typedef enum logic [1:0] {IDLE,SETUP,CHECK,RUN} state_t;
+  typedef enum logic [2:0] {IDLE,SETUP,PLANE,CAPACITY,CHECK,RUN} state_t;
   state_t state;
   logic [15:0] oh,ow,ih,iw,columns,plane_words,x,y,row_base,ci_base,tap_row;
   logic [7:0] ci,tap;
+  // Capacity validation is not a one-cycle cascaded multiply/compare path.
+  // Separate registered products keep tile launch independent of DSP cascades.
+  (* use_dsp="no" *) logic [31:0] capacity_words;
   logic [4:0] ci_group,ci_count;
   logic [3:0] co;
   logic [1:0] kx,ky;
@@ -47,6 +50,16 @@ module tile_conv #(
   logic [511:0] compute_weights;
   logic [P*64-1:0] bank_data,compute_input;
   logic [P*AW-1:0] bank_addr;
+  logic [P*AW-1:0] address_q;
+  logic [31:0] address_tag;
+  logic [7:0] address_tap,address_mask;
+  logic [1:0] address_kx;
+  logic address_valid,address_ready;
+  logic [P*64-1:0] input_q;
+  logic [511:0] weights_q;
+  logic [P*8-1:0] lane_mask_q;
+  logic [31:0] tag_q;
+  logic input_valid;
   logic [31:0] bank_tag,request_tag;
   logic bank_valid,bank_ready,request_valid,request_ready,bank_error,compute_ready;
   logic [7:0] ci_mask;
@@ -61,7 +74,11 @@ module tile_conv #(
   assign request_valid=state==RUN&&!issue_done;
   assign request_tag={14'd0,(ci_group==0&&kx==0&&ky==0),
                       (ci_group+1==ci_count&&kx==(kernel3?2:0)&&ky==(kernel3?2:0)),y[7:0],x[7:0]};
-  assign bank_ready=compute_ready;
+  // Elastic address and data boundaries preserve one request per cycle.
+  // Coordinates no longer drive BRAM enables through address checks, and
+  // the page/slot/rotation mux no longer feeds the DSP input directly.
+  assign request_ready=!address_valid||address_ready;
+  assign bank_ready=!input_valid||compute_ready;
   assign compute_weights=weight_read[wslot];
   always_comb begin
     bank_addr=0;compute_input=0;lane_mask=0;
@@ -80,32 +97,45 @@ module tile_conv #(
   tile_banks #(.P(P),.WORDS(WORDS)) input_banks(
     .aclk,.aresetn,.compute_active(busy),.compute_slot(input_slot),
     .load_slot,.load_bank,.load_addr,.load_data,.load_keep,.load_valid,.load_ready,
-    .s_addr(bank_addr),.s_tag(request_tag),.s_valid(request_valid),.s_ready(request_ready),
+    .s_addr(address_q),.s_tag(address_tag),.s_valid(address_valid),.s_ready(address_ready),
     .m_data(bank_data),.m_tag(bank_tag),.m_valid(bank_valid),.m_ready(bank_ready),.address_error(bank_error));
   for(genvar slot=0;slot<2;slot++)begin:weight_slots
     for(genvar bank=0;bank<8;bank++)begin:weight_banks
       (* ram_style="block" *) logic [63:0] mem[256];
       always_ff @(posedge aclk)begin
         if(weight_valid&&weight_ready&&weight_slot==slot&&weight_bank==bank)mem[weight_addr]<=weight_data;
-        if(request_valid&&request_ready&&wslot==slot)weight_read[slot][bank*64+:64]<=mem[tap];
+        if(address_valid&&address_ready&&wslot==slot)weight_read[slot][bank*64+:64]<=mem[address_tap];
       end
     end
   end
   conv_compute #(.P(P)) compute(.aclk,.aresetn,
-    .s_input(compute_input),.s_weights(compute_weights),.s_bias(biases[wslot]),.s_multiplier(multipliers[wslot]),
-    .s_lane_mask(lane_mask),.s_tag({16'd0,bank_tag[15:0]}),.s_relu(relu),
-    .s_first(bank_tag[17]),.s_last(bank_tag[16]),.s_valid(bank_valid),.s_ready(compute_ready),
+    .s_input(input_q),.s_weights(weights_q),.s_bias(biases[wslot]),.s_multiplier(multipliers[wslot]),
+    .s_lane_mask(lane_mask_q),.s_tag({16'd0,tag_q[15:0]}),.s_relu(relu),
+    .s_first(tag_q[17]),.s_last(tag_q[16]),.s_valid(input_valid),.s_ready(compute_ready),
     .m_data,.m_tag,.m_keep,.m_first,.m_last,.m_overflow(compute_overflow),.m_valid,.m_ready,.queued_groups);
   always_ff @(posedge aclk)begin
-    if(!aresetn)begin state<=IDLE;done<=0;error<=0;params_loaded<=0;end
+    if(!aresetn)begin state<=IDLE;done<=0;error<=0;params_loaded<=0;address_valid<=0;input_valid<=0;end
     else begin
       done<=0;
       if(param_valid&&param_ready)begin
         biases[param_slot]<=param_bias;multipliers[param_slot]<=param_multiplier;params_loaded[param_slot]<=1;
       end
-      if(request_valid&&request_ready)begin
-        response_kx<=kx;
-        for(int i=0;i<8;i++)ci_mask[i]<=(ci_group*8+i)<ci;
+      if(request_ready)begin
+        address_valid<=request_valid;
+        if(request_valid)begin
+          address_q<=bank_addr;address_tag<=request_tag;address_tap<=tap;address_kx<=kx;
+          for(int i=0;i<8;i++)address_mask[i]<=(ci_group*8+i)<ci;
+        end
+      end
+      if(address_valid&&address_ready)begin
+        response_kx<=address_kx;ci_mask<=address_mask;
+      end
+      if(bank_ready)begin
+        input_valid<=bank_valid;
+        if(bank_valid)begin
+          input_q<=compute_input;weights_q<=compute_weights;
+          lane_mask_q<=lane_mask;tag_q<=bank_tag;
+        end
       end
       if(m_valid&&m_ready&&compute_overflow)error<=2;
       case(state)
@@ -118,10 +148,11 @@ module tile_conv #(
             error<=1;done<=1;
           end else state<=SETUP;
         end
-        SETUP:begin columns<=(iw+P-1)/P;state<=CHECK;end
+        SETUP:begin columns<=(iw+P-1)/P;state<=PLANE;end
+        PLANE:begin plane_words<=ih*columns;state<=CAPACITY;end
+        CAPACITY:begin capacity_words<=plane_words*ci_count;state<=CHECK;end
         CHECK:begin
-          plane_words<=ih*columns;
-          if(ih*columns*ci_count>WORDS)begin error<=1;done<=1;state<=IDLE;end
+          if(capacity_words>WORDS)begin error<=1;done<=1;state<=IDLE;end
           else begin
             x<=0;y<=0;kx<=0;ky<=0;ci_group<=0;tap<=0;
             row_base<=0;ci_base<=0;tap_row<=0;issue_done<=0;state<=RUN;

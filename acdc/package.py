@@ -97,7 +97,9 @@ def runtime_package(output,build,model):
     executed=source_files()
     for rel,src in executed.items():
         dst=output/rel;dst.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(src,dst)
-    for src in model.root.rglob('*'):
+    model_members=model.spec.get('release_members')
+    candidates=(safe_member(model.root,n) for n in model_members) if model_members else model.root.rglob('*')
+    for src in candidates:
         if src.is_symlink():raise ContractError('symlink in model package')
         if src.is_file():
             dst=output/'model'/src.relative_to(model.root);dst.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(src,dst)

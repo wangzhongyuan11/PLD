@@ -1,6 +1,6 @@
 # ACDC内部模型交换格式 v1
 
-> 2026-10-19：A实际Release采用`acdc-int8-model-v1`，与下述B内部格式不同。包已取得且Axial独立整数head核对通过，但当前`load_bundle`仍拒绝其schema。请按[最终对齐计划第5～6节](FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)实现受审计适配、研究资格与21节点见证；不得将缺少A逐节点张量改写为已交付，也不得改原spec或绕过SHA检查。以下是B既有格式记录，不是A现有包布局。
+> 2026-10-19实施更新：`release.py`已适配A的`acdc-int8-model-v1`，通过固定manifest验证所需子集、重算40体验收门槛并保留原spec SHA。`load_bundle`可直接读取发布根目录或Axial int8目录；`import-release`生成65文件独立子集。A只交付输入/head，21节点由B独立INT64/Torch见证交叉验证，未伪称A已交付逐节点张量。当前软件复现和硬件限制见[实施状态](IMPLEMENTATION_STATUS.md)。以下是保留的B内部/合成格式说明。
 
 该格式是B侧已实现的内部规范化包；不声称等于A尚未提供的MODEL_CONTRACT/BOARD_EXCHANGE文件布局。保持ACDC25D-B16-P3-v1的固定拓扑、数值与类别，未来适配A实际导出时只转换文件描述，不改变数值。`create_synthetic_bundle`可生成一个完整可执行的非生产样例。
 
