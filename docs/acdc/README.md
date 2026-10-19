@@ -2,6 +2,8 @@
 
 本扩展使用 `ACDC25D-B16-P3-v1`，三个方向分别加载一套权重。新 MRI 分支与已有皮损、CAMUS 分支分开；正式部署指针 `delivery/current.json` 不因本扩展自动切换。
 
+首次试跑请先读 [最小运行示例](RUN_MINIMAL.md)：提供模型、一个真实ED/ES病例、预览、运行代码及依赖说明的轻量ZIP；无需下载完整训练数据集。
+
 规格见 [板端预适配规格](ACDC25D_B16_P3_v1.md)，机器可读合同见 [MODEL_CONTRACT.json](MODEL_CONTRACT.json)，完整体数据任务和head回传见 [PC/板端交换接口](BOARD_EXCHANGE.md)。A 的模型训练及完整 PC/板端适配运行源码保留在 `pld-medical/`，冻结权重、数据来源及运行闭包经 Release 交付；本目录只共享 B/C 对接必要资料。
 
 预处理、三方向轴定义、动态工作网格、ED/ES、21节点尺度连续性、整数参数、融合与评价的精确定义见 [生产数值接口补充](PRODUCTION_NUMERICS.md)、[PREPROCESSING_CONTRACT.json](PREPROCESSING_CONTRACT.json) 和 [患者名单/时相](PATIENT_SPLIT.json)。规则已绑定当前实现，三方向和融合的原生开发集软件验收已通过。冻结模型/spec SHA、真实head尺度、指标及模型与数据集总包入口见 [研究交付索引](RESEARCH_RELEASE.json)。物理板端验收仍待完成。
