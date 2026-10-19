@@ -91,7 +91,10 @@ class Manager:
         previous=[u for u in OLD_UNITS if self.props(u).get('ActiveState')=='active']
         state['previous_active']=previous;atomic_json(self.state_dir/'state.json',state)
         for u in OLD_UNITS:
-            self.invoke('stop',u);self.stopped(u)
+            self.invoke('stop',u)
+            stopped=self.stopped(u)
+            if stopped.get('Result')!='success' or stopped.get('ExecMainStatus')!='0':
+                raise ContractError(u+' did not exit cleanly; refuse to replace its FPGA state')
         self.invoke('start',UNIT)
         if self.props(UNIT).get('ActiveState')!='active':raise ContractError('ACDC did not become active')
         # Worker/overlay initialization can take time: actual /health must be checked by the operator/PC handshake.

@@ -9,6 +9,20 @@ from acdc.deploy.manage import Manager
 
 
 class DeployTest(unittest.TestCase):
+    def test_failed_legacy_exit_does_not_start_acdc(self):
+        with tempfile.TemporaryDirectory() as d:
+            calls=[]
+            def run(args):
+                calls.append(args)
+                failed=args[:3]==['systemctl','show','pld-web.service']
+                return SimpleNamespace(returncode=0,stderr='',stdout=
+                    'ActiveState=inactive\nMainPID=0\nControlGroup=\nResult='+('exit-code' if failed else 'success')+
+                    '\nExecMainStatus='+('1' if failed else '0')+'\n')
+            root=Path(d);manager=Manager(root/'state',root/'pld-acdc.service',run)
+            manager.install('/home/xilinx/jupyter_notebooks/pld/releases/acdc_test','a'*64)
+            with self.assertRaises(ContractError):manager.activate()
+            self.assertNotIn(['systemctl','start','pld-acdc.service'],calls)
+
     def test_managed_unit_only_and_explicit_restore(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d);calls=[];active={'pld-hub.service','pld-web.service'}
