@@ -1,7 +1,7 @@
 {
   "schema": "acdc-preprocessing-checks-v1",
   "status": "PASSED_SYNTHETIC_SOFTWARE_CONTRACT_CHECKS",
-  "contract_sha256": "54dfdaa59e403ce003199c71d19a9aba4237fa9bd7b85b4efef18c255e4e90b1",
+  "contract_sha256": "ac8707f093ac36b6f2d3056723c7abef59aa91f286f1c632e272a906a551d0a8",
   "split_sha256": "00deb8e9fe45bd77ebd31d2411ac3682688e92739305212b09e48214330ec78f",
   "checks": [
     {
