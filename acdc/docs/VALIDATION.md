@@ -1,5 +1,7 @@
 # ACDC Axial 离线实现验证
 
+> 2026-10-19新增证据见[真实Release对齐审计](evidence/release_alignment_20261019.json)和[最终计划](FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)：完整包校验、45层参数审计、一个真实Axial黄金head的B独立参考零差异、真实MRI几何/预处理定位已完成。本次未运行RTL/综合/板测。下文为10月18日历史验证，其“未取得模型/病例”限制不代表当前状态，也不被新证据改写成真实模型硬件验收。
+
 日期：2026-10-18。执行环境：Windows、Vivado 2026.1、XC7Z020-1目标；PC依赖见`../requirements-pc.lock`。本轮没有连接板卡，没有A合格生产模型，没有下载真实病例或训练模型。下列测试、仿真和实现不能替代真实板测。
 
 ## 已实现的链路

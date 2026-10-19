@@ -1,5 +1,7 @@
 # ACDC内部模型交换格式 v1
 
+> 2026-10-19：A实际Release采用`acdc-int8-model-v1`，与下述B内部格式不同。包已取得且Axial独立整数head核对通过，但当前`load_bundle`仍拒绝其schema。请按[最终对齐计划第5～6节](FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)实现受审计适配、研究资格与21节点见证；不得将缺少A逐节点张量改写为已交付，也不得改原spec或绕过SHA检查。以下是B既有格式记录，不是A现有包布局。
+
 该格式是B侧已实现的内部规范化包；不声称等于A尚未提供的MODEL_CONTRACT/BOARD_EXCHANGE文件布局。保持ACDC25D-B16-P3-v1的固定拓扑、数值与类别，未来适配A实际导出时只转换文件描述，不改变数值。`create_synthetic_bundle`可生成一个完整可执行的非生产样例。
 
 目录根为model_spec.json。所有张量为连续raw bytes，不使用pickle/npy对象；每个文件记录字段为path（相对根、禁止越界/符号链接）、bytes、sha256、dtype（`|i1`/`<i4`/`<f8`）、shape。生产spec SHA必须由外部参数固定。

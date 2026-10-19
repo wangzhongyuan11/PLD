@@ -1,6 +1,6 @@
 # ACDC 下一代计算与存储组件
 
-状态：实现中的实验架构。当前完成精确打包乘法、P256/P384连续乘加与四路Q24、输入空间bank双缓冲、Co8 tile卷积、CAT输入DMA与Pool分流写DMA，以及可逆布局和容量planner。**输入/参数/计算/写回的整任务控制、整网执行表和完整BD尚未完成，没有新完整位流，也没有新架构板测FPS。** 后续范围以[优化计划](../docs/OPTIMIZATION_4FPS_8FPS.md)为准。
+状态（2026-10-19）：实验架构已写出计算/存储组件、双任务预取、缓存复用、层屏障、DDR整网执行表、frame调度及ACD8 AXI-Lite控制。P4/P6全尺寸密集合成tile_executor历史RTL回归通过；最终packed-tag修改仅有局部/小网格RTL回归，综合后keep/tag常量化问题尚未证明解决。**厂商DataMover完整BD、ACD8 PS后端、新完整位流和板测FPS仍未完成。** 控制器等部分源文件目前尚未提交。真实模型对齐、验证范围和后续顺序见[最终计划](../docs/FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)；工作区尚未提交的`ABI.md`记录已写出的整网接口。下文组件结果保留历史范围。
 
 ## 当前可复现内容
 
@@ -76,7 +76,7 @@ $env:PROCESSOR_ARCHITECTURE='AMD64'
 & D:/vivado/2026.1/Vivado/bin/vivado.bat -mode batch -source acdc/optimization/vivado/synth_loaders.tcl -log out/acdc/optimization/loaders_p6_synth.log -tclargs 6
 ```
 
-所有成功标志同时要求退出码0。`synth_guard.py`在综合前后验证源码未漂移，并写组件证据；不签发生产运行包。完整IP/BD构建、AXI故障恢复、15层整网和实测4/8 FPS仍是后续任务。
+所有成功标志同时要求退出码0。`synth_guard.py`在综合前后验证源码未漂移，并写组件证据；不签发生产运行包。完整IP/BD构建、真实AXI故障恢复、实际A模型的RTL/板端整网验收和实测4/8 FPS仍是后续任务。
 
 ## 板卡当前检查
 
@@ -84,9 +84,9 @@ $env:PROCESSOR_ARCHITECTURE='AMD64'
 
 ## 紧接着的集成工作
 
-继续完成各路径的整任务集成、新DMA执行表及整网调度，完成完整BD布线，再按计划隔离切换板测。当前tile模块只处理一个Co8块，Co组切换/跨层调度仍需控制器；调试/状态恢复也不能继承旧整网证据。A参数尚缺，密集fixture的数值/性能始终标记synthetic。
+双任务控制、输入/参数/LUT读仲裁、层barrier、DDR描述符与AXI-Lite接口已经写出，后续先解决综合网表metadata故障并用A真实参数验证。A模型已取得且一个真实Axialhead通过B独立整数参考；生产格式适配和真实几何策略尚待接入。密集fixture的旧RTL结果保持synthetic身份，不继承为真实模型板测。
 
-当前组件之后的直接任务是：组合input/parameter/LUT读客户端与计算/写回，形成有界双任务预取与缓存所有权控制；再以层间barrier保证上一层写入完成后才预取下一层输入。缓存键须含输入生产者/帧generation与LUT来源，不能只按地址命中；参数缓存按模型/地址/形状绑定。随后连接DDR描述符执行表和AXI-Lite frame接口，完成全网络及完整BD。上述控制尚未落地，不能把单tile正确性扩大为整网已通过。
+随后完成厂商DMA/HP/复位wrapper、完整BD布线、ACD8 PS后端和隔离板测。缓存键保留输入生产者/帧epoch/LUT来源；跨帧参数缓存优化需独立model generation设计。具体依赖、容量与退出条件见最终计划第8～14节。
 
 `vivado/probe_datamover.tcl`已在Vivado2026.1实际创建并验证AXI DataMover5.1：Full MM2S/S2MM、64-bit数据、32-bit地址、23-bit BTT、16拍burst、DRE关闭。GUI配置枚举使用`Full`，不是数字1。该结果仅说明IP配置/实例化模板有效，尚未生成完整搬运系统或测量DDR带宽。
 

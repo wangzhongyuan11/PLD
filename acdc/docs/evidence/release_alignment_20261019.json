@@ -1,0 +1,1569 @@
+{
+  "schema": "pld-acdc-release-alignment-audit-v1",
+  "date": "2026-10-19",
+  "scope": "download, source review and host analysis only; not a production importer or hardware acceptance",
+  "source_commit": "21ff40d33cf4c4eb6b239c49bf7fea2df032b1bb",
+  "workspace_dirty": true,
+  "publication_commit": "0a2d841a4ee3cdf95b36632a0a2f15fcc240f2cd",
+  "release_url": "https://github.com/wangzhongyuan11/PLD/releases/tag/acdc-triplanar-b16-p3-v1-20261019",
+  "archive": {
+    "bytes": 138046731,
+    "sha256": "1998364295327c157c2ebfd52cca805d6933a992d700431abe955619c2feeaa0",
+    "checksum_asset_sha256": "04060c68da262ea31b051cfa9f095c7754fbfdd0761f49e462d4f5e6995f86f4",
+    "payload_files_verified": 832
+  },
+  "model_index": {
+    "schema": "acdc-research-release-index-v1",
+    "architecture": "ACDC25D-B16-P3-v1",
+    "candidate": "qat_mixed_v4",
+    "package_id": "ACDC_TriPlanar_B16_P3_v1_Models_and_Dataset_20261018",
+    "release_tag": "acdc-triplanar-b16-p3-v1-20261019",
+    "release_url": "https://github.com/wangzhongyuan11/PLD/releases/tag/acdc-triplanar-b16-p3-v1-20261019",
+    "archive_name": "ACDC_TriPlanar_B16_P3_v1_Models_and_Dataset_20261018.zip",
+    "software_development_accepted": true,
+    "physical_board_accepted": false,
+    "production_ready": false,
+    "profiles": {
+      "axial": {
+        "profile_id": "acdc_axial_v1",
+        "candidate_version": "qat_v2",
+        "fp32_sha256": "f841043165e9f34fb6c50fa293885bbf72231dfb3dd4f08fc732a563e7fbc868",
+        "spec_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+        "head_scale": 0.09448818897637795,
+        "selected_epoch": 25,
+        "input_shape": [
+          1,
+          3,
+          256,
+          256
+        ],
+        "output_shape": [
+          1,
+          4,
+          256,
+          256
+        ],
+        "fp32_path": "models/axial/model_state_fp32.pt",
+        "spec_path": "models/axial/int8/model_spec.json",
+        "native_fp32_dice": 0.8821665514033414,
+        "native_int8_dice": 0.8823042897748435,
+        "software_development_accepted": true,
+        "physical_board_accepted": false
+      },
+      "coronal": {
+        "profile_id": "acdc_coronal_v1",
+        "candidate_version": "qat_v4",
+        "fp32_sha256": "b57a09957b994649799b57510f642a7dce5da51783efc91bc6cabf2f6bde9524",
+        "spec_sha256": "6d315635e9aadd0f12874cca32cd3523640dd271c3ad2d497353a0c65ef94371",
+        "head_scale": 0.06122951954603195,
+        "selected_epoch": 60,
+        "input_shape": [
+          1,
+          3,
+          256,
+          256
+        ],
+        "output_shape": [
+          1,
+          4,
+          256,
+          256
+        ],
+        "fp32_path": "models/coronal/model_state_fp32.pt",
+        "spec_path": "models/coronal/int8/model_spec.json",
+        "native_fp32_dice": 0.7852580187339555,
+        "native_int8_dice": 0.7839613762976391,
+        "software_development_accepted": true,
+        "physical_board_accepted": false
+      },
+      "sagittal": {
+        "profile_id": "acdc_sagittal_v1",
+        "candidate_version": "qat_v4",
+        "fp32_sha256": "ca3e2f5e99d01a2738b59cd4e406c5998c91b1fc287ddb53269e706e1a5b99c3",
+        "spec_sha256": "c9b4699469c0052ac884f6293f71a82613da6bec7f3c0c0d30e581e8b8c2f6ca",
+        "head_scale": 0.06826238334178925,
+        "selected_epoch": 20,
+        "input_shape": [
+          1,
+          3,
+          256,
+          256
+        ],
+        "output_shape": [
+          1,
+          4,
+          256,
+          256
+        ],
+        "fp32_path": "models/sagittal/model_state_fp32.pt",
+        "spec_path": "models/sagittal/int8/model_spec.json",
+        "native_fp32_dice": 0.8075072854899168,
+        "native_int8_dice": 0.8111294203188216,
+        "software_development_accepted": true,
+        "physical_board_accepted": false
+      }
+    },
+    "dataset": {
+      "official_training_patients": 100,
+      "train_patients": 80,
+      "development_patients": 20,
+      "included_ed_es_files": 500,
+      "official_test_included": false,
+      "split_document": "PATIENT_SPLIT.json",
+      "split_source_sha256": "2798365d7c7747f92b67ca62ab1ac4a995f123ca8a9fa4d7c271d306fdc80697",
+      "source_manifest_sha256": "64ad815f13aaa2a0f392edfdff123b1ac283b26efcf1a704303712eff6d6b811",
+      "license": "CC BY-NC-SA 4.0 and supplied strictly non-commercial scientific research conditions"
+    },
+    "validation": {
+      "patients": 20,
+      "volumes": 40,
+      "role": "development, used for selection; not independent test",
+      "baseline2d_fp32_native_dice": 0.8892201327584542,
+      "fusion_fp32_native_dice": 0.8846932046104342,
+      "fusion_int8_native_dice": 0.8833833564578527,
+      "original_fusion_fp32_native_dice": 0.885236245477906,
+      "fusion_int8_vs_2d_fp32_delta": -0.005836776300601532,
+      "all_direction_and_fusion_gates_passed": true,
+      "integer_full_head_differences": 0,
+      "model_acceptance_sha256": "25b6049162d2a777e0682d657bf1fe998f0a5031e52fae796db88fe5e500a8fc",
+      "postprocessing": []
+    },
+    "examples": [
+      "examples/median_patient039/index.html",
+      "examples/worst_patient006/index.html"
+    ],
+    "viewer": {
+      "render_and_interaction_verified": true,
+      "png_preview_verified": true,
+      "native_in_app_download_event_verified": false
+    },
+    "deployment": "Independent CAM2 target; physical bit/HWH, DDR, numerical and performance acceptance pending. Keep delivery/current.json unchanged.",
+    "package_revision": 3,
+    "archive_integrity": {
+      "method": "SHA-256 of the complete ZIP",
+      "trust_anchor": "archive_sha256 in this Git-committed publication index; do not trust an unpinned Release checksum alone",
+      "checksum_asset": "SHA256SUMS.txt",
+      "publication_index_url": "https://github.com/wangzhongyuan11/PLD/blob/main/docs/acdc/RESEARCH_RELEASE.json",
+      "bundled_snapshot_omits": [
+        "archive_sha256",
+        "archive_bytes",
+        "checksum_asset_sha256"
+      ],
+      "snapshot_rule": "The bundled index is a canonical metadata snapshot. Only the external Git index contains the ZIP and checksum-asset digests, avoiding a self-referential archive hash."
+    },
+    "archive_sha256": "1998364295327c157c2ebfd52cca805d6933a992d700431abe955619c2feeaa0",
+    "archive_bytes": 138046731,
+    "checksum_asset_sha256": "04060c68da262ea31b051cfa9f095c7754fbfdd0761f49e462d4f5e6995f86f4"
+  },
+  "analysis": {
+    "scope": "host read-only analysis; no production importer, synthesis, RTL rerun or board execution",
+    "profiles": {
+      "axial": {
+        "spec_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+        "head_scale": 0.09448818897637795,
+        "layers": [
+          {
+            "id": "C01",
+            "source_name": "encoders.0.0",
+            "ci": 3,
+            "co": 16,
+            "h": 256,
+            "k": 3,
+            "mac": 28311552,
+            "weights": 432,
+            "input_scale": 0.007874015748031496,
+            "output_scale": 0.0056905666674215965,
+            "m_min": 36745,
+            "m_max": 54961,
+            "acc_bound": 244989,
+            "product_bound": 11082555884
+          },
+          {
+            "id": "C02",
+            "source_name": "encoders.0.2",
+            "ci": 16,
+            "co": 16,
+            "h": 256,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 2304,
+            "input_scale": 0.0056905666674215965,
+            "output_scale": 0.009163428479292262,
+            "m_min": 9517,
+            "m_max": 31345,
+            "acc_bound": 943562,
+            "product_bound": 20344944745
+          },
+          {
+            "id": "C03",
+            "source_name": "encoders.1.0",
+            "ci": 16,
+            "co": 32,
+            "h": 128,
+            "k": 3,
+            "mac": 75497472,
+            "weights": 4608,
+            "input_scale": 0.009163428479292262,
+            "output_scale": 0.008027782590370479,
+            "m_min": 14807,
+            "m_max": 60793,
+            "acc_bound": 973202,
+            "product_bound": 34477169332
+          },
+          {
+            "id": "C04",
+            "source_name": "encoders.1.2",
+            "ci": 32,
+            "co": 32,
+            "h": 128,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 9216,
+            "input_scale": 0.008027782590370479,
+            "output_scale": 0.012722877066905103,
+            "m_min": 12318,
+            "m_max": 30740,
+            "acc_bound": 1379135,
+            "product_bound": 26647432840
+          },
+          {
+            "id": "C05",
+            "source_name": "encoders.2.0",
+            "ci": 32,
+            "co": 64,
+            "h": 64,
+            "k": 3,
+            "mac": 75497472,
+            "weights": 18432,
+            "input_scale": 0.012722877066905103,
+            "output_scale": 0.010280323779489111,
+            "m_min": 16263,
+            "m_max": 70309,
+            "acc_bound": 1599015,
+            "product_bound": 61936955825
+          },
+          {
+            "id": "C06",
+            "source_name": "encoders.2.2",
+            "ci": 64,
+            "co": 64,
+            "h": 64,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 36864,
+            "input_scale": 0.010280323779489111,
+            "output_scale": 0.00949859619140625,
+            "m_min": 8140,
+            "m_max": 84478,
+            "acc_bound": 3740106,
+            "product_bound": 86700696485
+          },
+          {
+            "id": "C07",
+            "source_name": "encoders.3.0",
+            "ci": 64,
+            "co": 128,
+            "h": 32,
+            "k": 3,
+            "mac": 75497472,
+            "weights": 73728,
+            "input_scale": 0.00949859619140625,
+            "output_scale": 0.017227206643172135,
+            "m_min": 4502,
+            "m_max": 63290,
+            "acc_bound": 3177444,
+            "product_bound": 49410514752
+          },
+          {
+            "id": "C08",
+            "source_name": "encoders.3.2",
+            "ci": 128,
+            "co": 128,
+            "h": 32,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 147456,
+            "input_scale": 0.017227206643172135,
+            "output_scale": 0.11374404486708754,
+            "m_min": 1067,
+            "m_max": 20288,
+            "acc_bound": 6341734,
+            "product_bound": 33354466112
+          },
+          {
+            "id": "C09",
+            "source_name": "decoders.0.0",
+            "ci": 192,
+            "co": 64,
+            "h": 64,
+            "k": 3,
+            "mac": 452984832,
+            "weights": 110592,
+            "input_scale": 0.11374404486708754,
+            "output_scale": 0.422412511870617,
+            "m_min": 1510,
+            "m_max": 38557,
+            "acc_bound": 8905375,
+            "product_bound": 78661176739
+          },
+          {
+            "id": "C10",
+            "source_name": "decoders.0.2",
+            "ci": 64,
+            "co": 64,
+            "h": 64,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 36864,
+            "input_scale": 0.422412511870617,
+            "output_scale": 1.1214171882689468,
+            "m_min": 3647,
+            "m_max": 26302,
+            "acc_bound": 2947685,
+            "product_bound": 32744032617
+          },
+          {
+            "id": "C11",
+            "source_name": "decoders.1.0",
+            "ci": 96,
+            "co": 32,
+            "h": 128,
+            "k": 3,
+            "mac": 452984832,
+            "weights": 27648,
+            "input_scale": 1.1214171882689468,
+            "output_scale": 1.948336623785064,
+            "m_min": 4260,
+            "m_max": 80475,
+            "acc_bound": 4665825,
+            "product_bound": 104633994465
+          },
+          {
+            "id": "C12",
+            "source_name": "decoders.1.2",
+            "ci": 32,
+            "co": 32,
+            "h": 128,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 9216,
+            "input_scale": 1.948336623785064,
+            "output_scale": 2.1839301642470472,
+            "m_min": 13434,
+            "m_max": 63794,
+            "acc_bound": 1316529,
+            "product_bound": 43268755404
+          },
+          {
+            "id": "C13",
+            "source_name": "decoders.2.0",
+            "ci": 48,
+            "co": 16,
+            "h": 256,
+            "k": 3,
+            "mac": 452984832,
+            "weights": 6912,
+            "input_scale": 2.1839301642470472,
+            "output_scale": 3.6752953717089074,
+            "m_min": 5017,
+            "m_max": 55488,
+            "acc_bound": 2791748,
+            "product_bound": 57607437125
+          },
+          {
+            "id": "C14",
+            "source_name": "decoders.2.2",
+            "ci": 16,
+            "co": 16,
+            "h": 256,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 2304,
+            "input_scale": 3.6752953717089074,
+            "output_scale": 6.815112496924213,
+            "m_min": 7336,
+            "m_max": 30316,
+            "acc_bound": 937788,
+            "product_bound": 15408455222
+          },
+          {
+            "id": "C15",
+            "source_name": "head",
+            "ci": 16,
+            "co": 4,
+            "h": 256,
+            "k": 1,
+            "mac": 4194304,
+            "weights": 64,
+            "input_scale": 6.815112496924213,
+            "output_scale": 0.09448818897637795,
+            "m_min": 208859,
+            "m_max": 306198,
+            "acc_bound": 104672,
+            "product_bound": 27456826336
+          }
+        ],
+        "cats": [
+          {
+            "level": 2,
+            "skip_scale": 0.00949859619140625,
+            "deep_scale": 0.11374404486708754,
+            "common_scale": 0.11374404486708754,
+            "skip_multiplier_q24": 1401040,
+            "deep_multiplier_q24": 16777216,
+            "skip_first": true
+          },
+          {
+            "level": 1,
+            "skip_scale": 0.012722877066905103,
+            "deep_scale": 1.1214171882689468,
+            "common_scale": 1.1214171882689468,
+            "skip_multiplier_q24": 190343,
+            "deep_multiplier_q24": 16777216,
+            "skip_first": true
+          },
+          {
+            "level": 0,
+            "skip_scale": 0.009163428479292262,
+            "deep_scale": 2.1839301642470472,
+            "common_scale": 2.1839301642470472,
+            "skip_multiplier_q24": 70395,
+            "deep_multiplier_q24": 16777216,
+            "skip_first": true
+          }
+        ],
+        "mac": 2674917376,
+        "weight_bytes": 486640,
+        "bias_bytes": 2832,
+        "derived_parameter_bytes": 493120,
+        "derived_lut_bytes": 1536,
+        "current_loader_rejection": "unsupported model architecture/profile/labels/preprocessing",
+        "independent_B_reference": {
+          "seconds": 4.258996199991088,
+          "elements": 262144,
+          "mismatches": 0,
+          "max_abs_error": 0,
+          "input_sha256": "6322290be4249c871c4674bbaaa0c3f51844791495def44d3630fbada5bba7fe",
+          "head_sha256": "42e8d2e03d85a3eb8d35155cbadb6b409e9507f47c04c372c448b5f38fa8c032",
+          "captures_source": "B-derived, not A delivered goldens",
+          "nodes": {
+            "C01": "f368f0f120f939153ded9fd67d720df9de302b7f50c6bacb7682ed3b63f8d10e",
+            "C02": "5d8a1cb6627177ff4aa00a6e2f7986351145a5768a0c848d512820f6fcf757dd",
+            "P0": "9aa1b9c2376bf8ed1aca556df2ac7eb06a75c97d70dcb8cff46368b06c3a86a7",
+            "C03": "f0254ae6f3d5ae0d3f1de16906a690077162254b891e05247fdbda788c161128",
+            "C04": "a1d0aceac0877b04779c83d885d4ba4a63197e965ce18548e53903c384029452",
+            "P1": "42a61ef6045bb4f4c76235817dce26e2d3e94794077b5e58d1a55cf20382a617",
+            "C05": "bdedad7fc94469d0b9f9770787bf3b7203191bf42acf48be5552ff93c37dc2e1",
+            "C06": "8229cf2dbfb909dcc732fa788c82bf179c38ac178d2761d2092c4a330a4678d5",
+            "P2": "598049cd09b814a3773027928e68a081eb57132ec426f097478a7fc7886d4368",
+            "C07": "3e7f86aec406813361523d4d2be3be309861ea77ada71fc6de6f8c542b4442ee",
+            "C08": "a327b9293617287cef3544ffc09d82503199733433ee4482981dfc6262c1c58f",
+            "CAT1": "c0336ef8c67abb53527d42d211d182d422c0f35ee3a08dcc65a4facfd7419ea6",
+            "C09": "cb2cbde3f80e1165ec7a2e8c43e52184e9b4903d99a996009bec49ad7b2f640f",
+            "C10": "576a2945c5f0fc2bc809bbaaba3b10be9924ef7ede87b9d5eab2a16142a5f511",
+            "CAT2": "981f852398c0c4b6bf96a194d0963a900484b31c25c7d0a8725ad2077e11557c",
+            "C11": "a37e40a396a3768e1cc673aefd4c9ab30e886eaf3e9d1e5ace4685d486a8751b",
+            "C12": "7aef9347990c635ade1762ed7a3a94273e72a6a771812e62b31912289a6402f8",
+            "CAT3": "203bf88705f743c7320399ebdc3bd1d737806e47779cbe0f6065ad3e2de19484",
+            "C13": "63077f57c05e83300d7fa4dcbfff5baf2941372e82e23f460fb4dfcb3c8dff33",
+            "C14": "16f80ef2423df2c4923d1a6eb60eab3d8ffad27bec4f062e2aae66d9e168eb4c",
+            "C15": "42e8d2e03d85a3eb8d35155cbadb6b409e9507f47c04c372c448b5f38fa8c032"
+          }
+        },
+        "P256": {
+          "jobs": 1040,
+          "arena_bytes": 6005760,
+          "layers": [
+            {
+              "name": "C01",
+              "first_job": 0,
+              "jobs": 128,
+              "parameter_offset": 0,
+              "parameter_group_bytes": 640
+            },
+            {
+              "name": "C02",
+              "first_job": 128,
+              "jobs": 128,
+              "parameter_offset": 1280,
+              "parameter_group_bytes": 1216
+            },
+            {
+              "name": "C03",
+              "first_job": 256,
+              "jobs": 64,
+              "parameter_offset": 3712,
+              "parameter_group_bytes": 1216
+            },
+            {
+              "name": "C04",
+              "first_job": 320,
+              "jobs": 64,
+              "parameter_offset": 8576,
+              "parameter_group_bytes": 2368
+            },
+            {
+              "name": "C05",
+              "first_job": 384,
+              "jobs": 32,
+              "parameter_offset": 18048,
+              "parameter_group_bytes": 2368
+            },
+            {
+              "name": "C06",
+              "first_job": 416,
+              "jobs": 32,
+              "parameter_offset": 36992,
+              "parameter_group_bytes": 4672
+            },
+            {
+              "name": "C07",
+              "first_job": 448,
+              "jobs": 16,
+              "parameter_offset": 74368,
+              "parameter_group_bytes": 4672
+            },
+            {
+              "name": "C08",
+              "first_job": 464,
+              "jobs": 32,
+              "parameter_offset": 149120,
+              "parameter_group_bytes": 9280
+            },
+            {
+              "name": "C09",
+              "first_job": 496,
+              "jobs": 64,
+              "parameter_offset": 297600,
+              "parameter_group_bytes": 13888
+            },
+            {
+              "name": "C10",
+              "first_job": 560,
+              "jobs": 32,
+              "parameter_offset": 408704,
+              "parameter_group_bytes": 4672
+            },
+            {
+              "name": "C11",
+              "first_job": 592,
+              "jobs": 64,
+              "parameter_offset": 446080,
+              "parameter_group_bytes": 6976
+            },
+            {
+              "name": "C12",
+              "first_job": 656,
+              "jobs": 64,
+              "parameter_offset": 473984,
+              "parameter_group_bytes": 2368
+            },
+            {
+              "name": "C13",
+              "first_job": 720,
+              "jobs": 128,
+              "parameter_offset": 483456,
+              "parameter_group_bytes": 3520
+            },
+            {
+              "name": "C14",
+              "first_job": 848,
+              "jobs": 128,
+              "parameter_offset": 490496,
+              "parameter_group_bytes": 1216
+            },
+            {
+              "name": "C15",
+              "first_job": 976,
+              "jobs": 64,
+              "parameter_offset": 492928,
+              "parameter_group_bytes": 192
+            }
+          ]
+        },
+        "P384": {
+          "jobs": 1024,
+          "arena_bytes": 6004736,
+          "layers": [
+            {
+              "name": "C01",
+              "first_job": 0,
+              "jobs": 128,
+              "parameter_offset": 0,
+              "parameter_group_bytes": 640
+            },
+            {
+              "name": "C02",
+              "first_job": 128,
+              "jobs": 128,
+              "parameter_offset": 1280,
+              "parameter_group_bytes": 1216
+            },
+            {
+              "name": "C03",
+              "first_job": 256,
+              "jobs": 64,
+              "parameter_offset": 3712,
+              "parameter_group_bytes": 1216
+            },
+            {
+              "name": "C04",
+              "first_job": 320,
+              "jobs": 64,
+              "parameter_offset": 8576,
+              "parameter_group_bytes": 2368
+            },
+            {
+              "name": "C05",
+              "first_job": 384,
+              "jobs": 32,
+              "parameter_offset": 18048,
+              "parameter_group_bytes": 2368
+            },
+            {
+              "name": "C06",
+              "first_job": 416,
+              "jobs": 32,
+              "parameter_offset": 36992,
+              "parameter_group_bytes": 4672
+            },
+            {
+              "name": "C07",
+              "first_job": 448,
+              "jobs": 16,
+              "parameter_offset": 74368,
+              "parameter_group_bytes": 4672
+            },
+            {
+              "name": "C08",
+              "first_job": 464,
+              "jobs": 16,
+              "parameter_offset": 149120,
+              "parameter_group_bytes": 9280
+            },
+            {
+              "name": "C09",
+              "first_job": 480,
+              "jobs": 64,
+              "parameter_offset": 297600,
+              "parameter_group_bytes": 13888
+            },
+            {
+              "name": "C10",
+              "first_job": 544,
+              "jobs": 32,
+              "parameter_offset": 408704,
+              "parameter_group_bytes": 4672
+            },
+            {
+              "name": "C11",
+              "first_job": 576,
+              "jobs": 64,
+              "parameter_offset": 446080,
+              "parameter_group_bytes": 6976
+            },
+            {
+              "name": "C12",
+              "first_job": 640,
+              "jobs": 64,
+              "parameter_offset": 473984,
+              "parameter_group_bytes": 2368
+            },
+            {
+              "name": "C13",
+              "first_job": 704,
+              "jobs": 128,
+              "parameter_offset": 483456,
+              "parameter_group_bytes": 3520
+            },
+            {
+              "name": "C14",
+              "first_job": 832,
+              "jobs": 128,
+              "parameter_offset": 490496,
+              "parameter_group_bytes": 1216
+            },
+            {
+              "name": "C15",
+              "first_job": 960,
+              "jobs": 64,
+              "parameter_offset": 492928,
+              "parameter_group_bytes": 192
+            }
+          ]
+        }
+      },
+      "coronal": {
+        "spec_sha256": "6d315635e9aadd0f12874cca32cd3523640dd271c3ad2d497353a0c65ef94371",
+        "head_scale": 0.06122951954603195,
+        "layers": [
+          {
+            "id": "C01",
+            "source_name": "encoders.0.0",
+            "ci": 3,
+            "co": 16,
+            "h": 256,
+            "k": 3,
+            "mac": 28311552,
+            "weights": 432,
+            "input_scale": 0.007874015748031496,
+            "output_scale": 0.007445190567523241,
+            "m_min": 26581,
+            "m_max": 54642,
+            "acc_bound": 275252,
+            "product_bound": 9273179265
+          },
+          {
+            "id": "C02",
+            "source_name": "encoders.0.2",
+            "ci": 16,
+            "co": 16,
+            "h": 256,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 2304,
+            "input_scale": 0.007445190567523241,
+            "output_scale": 0.012252915650606155,
+            "m_min": 9664,
+            "m_max": 46258,
+            "acc_bound": 948863,
+            "product_bound": 19796064842
+          },
+          {
+            "id": "C03",
+            "source_name": "encoders.1.0",
+            "ci": 16,
+            "co": 32,
+            "h": 128,
+            "k": 3,
+            "mac": 75497472,
+            "weights": 4608,
+            "input_scale": 0.012252915650606155,
+            "output_scale": 0.01604735478758812,
+            "m_min": 10848,
+            "m_max": 51696,
+            "acc_bound": 982691,
+            "product_bound": 23375933343
+          },
+          {
+            "id": "C04",
+            "source_name": "encoders.1.2",
+            "ci": 32,
+            "co": 32,
+            "h": 128,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 9216,
+            "input_scale": 0.01604735478758812,
+            "output_scale": 0.021957628428936005,
+            "m_min": 9509,
+            "m_max": 50580,
+            "acc_bound": 1590978,
+            "product_bound": 37890027500
+          },
+          {
+            "id": "C05",
+            "source_name": "encoders.2.0",
+            "ci": 32,
+            "co": 64,
+            "h": 64,
+            "k": 3,
+            "mac": 75497472,
+            "weights": 18432,
+            "input_scale": 0.021957628428936005,
+            "output_scale": 0.019402960315346718,
+            "m_min": 16104,
+            "m_max": 93216,
+            "acc_bound": 1624140,
+            "product_bound": 67086371295
+          },
+          {
+            "id": "C06",
+            "source_name": "encoders.2.2",
+            "ci": 64,
+            "co": 64,
+            "h": 64,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 36864,
+            "input_scale": 0.019402960315346718,
+            "output_scale": 0.014286104589700699,
+            "m_min": 13461,
+            "m_max": 79987,
+            "acc_bound": 3436754,
+            "product_bound": 141924462716
+          },
+          {
+            "id": "C07",
+            "source_name": "encoders.3.0",
+            "ci": 64,
+            "co": 128,
+            "h": 32,
+            "k": 3,
+            "mac": 75497472,
+            "weights": 73728,
+            "input_scale": 0.014286104589700699,
+            "output_scale": 0.033047839999198914,
+            "m_min": 10972,
+            "m_max": 36931,
+            "acc_bound": 2044068,
+            "product_bound": 43669137243
+          },
+          {
+            "id": "C08",
+            "source_name": "encoders.3.2",
+            "ci": 128,
+            "co": 128,
+            "h": 32,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 147456,
+            "input_scale": 0.033047839999198914,
+            "output_scale": 0.06393113732337952,
+            "m_min": 2962,
+            "m_max": 57403,
+            "acc_bound": 6953695,
+            "product_bound": 130459702356
+          },
+          {
+            "id": "C09",
+            "source_name": "decoders.0.0",
+            "ci": 192,
+            "co": 64,
+            "h": 64,
+            "k": 3,
+            "mac": 452984832,
+            "weights": 110592,
+            "input_scale": 0.06393113732337952,
+            "output_scale": 0.3656083643436432,
+            "m_min": 1090,
+            "m_max": 15340,
+            "acc_bound": 7978567,
+            "product_bound": 44013005456
+          },
+          {
+            "id": "C10",
+            "source_name": "decoders.0.2",
+            "ci": 64,
+            "co": 64,
+            "h": 64,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 36864,
+            "input_scale": 0.3656083643436432,
+            "output_scale": 0.1277632713317871,
+            "m_min": 29849,
+            "m_max": 213977,
+            "acc_bound": 3000707,
+            "product_bound": 262778917324
+          },
+          {
+            "id": "C11",
+            "source_name": "decoders.1.0",
+            "ci": 96,
+            "co": 32,
+            "h": 128,
+            "k": 3,
+            "mac": 452984832,
+            "weights": 27648,
+            "input_scale": 0.1277632713317871,
+            "output_scale": 0.4003417491912842,
+            "m_min": 10146,
+            "m_max": 50586,
+            "acc_bound": 2912435,
+            "product_bound": 54266209056
+          },
+          {
+            "id": "C12",
+            "source_name": "decoders.1.2",
+            "ci": 32,
+            "co": 32,
+            "h": 128,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 9216,
+            "input_scale": 0.4003417491912842,
+            "output_scale": 0.36761337518692017,
+            "m_min": 32498,
+            "m_max": 84802,
+            "acc_bound": 1432398,
+            "product_bound": 65423346252
+          },
+          {
+            "id": "C13",
+            "source_name": "decoders.2.0",
+            "ci": 48,
+            "co": 16,
+            "h": 256,
+            "k": 3,
+            "mac": 452984832,
+            "weights": 6912,
+            "input_scale": 0.36761337518692017,
+            "output_scale": 0.8534765243530273,
+            "m_min": 4667,
+            "m_max": 87787,
+            "acc_bound": 2317108,
+            "product_bound": 45217687890
+          },
+          {
+            "id": "C14",
+            "source_name": "decoders.2.2",
+            "ci": 16,
+            "co": 16,
+            "h": 256,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 2304,
+            "input_scale": 0.8534765243530273,
+            "output_scale": 1.4831548929214478,
+            "m_min": 7379,
+            "m_max": 46715,
+            "acc_bound": 1038184,
+            "product_bound": 22686196142
+          },
+          {
+            "id": "C15",
+            "source_name": "head",
+            "ci": 16,
+            "co": 4,
+            "h": 256,
+            "k": 1,
+            "mac": 4194304,
+            "weights": 64,
+            "input_scale": 1.4831548929214478,
+            "output_scale": 0.06122951954603195,
+            "m_min": 123796,
+            "m_max": 152577,
+            "acc_bound": 101525,
+            "product_bound": 13912397226
+          }
+        ],
+        "cats": [
+          {
+            "level": 2,
+            "skip_scale": 0.014286104589700699,
+            "deep_scale": 0.06393113732337952,
+            "common_scale": 0.06393113732337952,
+            "skip_multiplier_q24": 3749051,
+            "deep_multiplier_q24": 16777216,
+            "skip_first": true
+          },
+          {
+            "level": 1,
+            "skip_scale": 0.021957628428936005,
+            "deep_scale": 0.1277632713317871,
+            "common_scale": 0.1277632713317871,
+            "skip_multiplier_q24": 2883363,
+            "deep_multiplier_q24": 16777216,
+            "skip_first": true
+          },
+          {
+            "level": 0,
+            "skip_scale": 0.012252915650606155,
+            "deep_scale": 0.36761337518692017,
+            "common_scale": 0.36761337518692017,
+            "skip_multiplier_q24": 559201,
+            "deep_multiplier_q24": 16777216,
+            "skip_first": true
+          }
+        ],
+        "mac": 2674917376,
+        "weight_bytes": 486640,
+        "bias_bytes": 2832,
+        "derived_parameter_bytes": 493120,
+        "derived_lut_bytes": 1536
+      },
+      "sagittal": {
+        "spec_sha256": "c9b4699469c0052ac884f6293f71a82613da6bec7f3c0c0d30e581e8b8c2f6ca",
+        "head_scale": 0.06826238334178925,
+        "layers": [
+          {
+            "id": "C01",
+            "source_name": "encoders.0.0",
+            "ci": 3,
+            "co": 16,
+            "h": 256,
+            "k": 3,
+            "mac": 28311552,
+            "weights": 432,
+            "input_scale": 0.007874015748031496,
+            "output_scale": 0.009423471055924892,
+            "m_min": 21192,
+            "m_max": 38243,
+            "acc_bound": 271672,
+            "product_bound": 6712195854
+          },
+          {
+            "id": "C02",
+            "source_name": "encoders.0.2",
+            "ci": 16,
+            "co": 16,
+            "h": 256,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 2304,
+            "input_scale": 0.009423471055924892,
+            "output_scale": 0.01211532298475504,
+            "m_min": 16948,
+            "m_max": 49741,
+            "acc_bound": 856872,
+            "product_bound": 25221820683
+          },
+          {
+            "id": "C03",
+            "source_name": "encoders.1.0",
+            "ci": 16,
+            "co": 32,
+            "h": 128,
+            "k": 3,
+            "mac": 75497472,
+            "weights": 4608,
+            "input_scale": 0.01211532298475504,
+            "output_scale": 0.012350206263363361,
+            "m_min": 12754,
+            "m_max": 103711,
+            "acc_bound": 972966,
+            "product_bound": 34482329000
+          },
+          {
+            "id": "C04",
+            "source_name": "encoders.1.2",
+            "ci": 32,
+            "co": 32,
+            "h": 128,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 9216,
+            "input_scale": 0.012350206263363361,
+            "output_scale": 0.019696185365319252,
+            "m_min": 7693,
+            "m_max": 32405,
+            "acc_bound": 1688932,
+            "product_bound": 30574634352
+          },
+          {
+            "id": "C05",
+            "source_name": "encoders.2.0",
+            "ci": 32,
+            "co": 64,
+            "h": 64,
+            "k": 3,
+            "mac": 75497472,
+            "weights": 18432,
+            "input_scale": 0.019696185365319252,
+            "output_scale": 0.0314750149846077,
+            "m_min": 7829,
+            "m_max": 46726,
+            "acc_bound": 1620701,
+            "product_bound": 39351903248
+          },
+          {
+            "id": "C06",
+            "source_name": "encoders.2.2",
+            "ci": 64,
+            "co": 64,
+            "h": 64,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 36864,
+            "input_scale": 0.0314750149846077,
+            "output_scale": 0.040223944932222366,
+            "m_min": 7026,
+            "m_max": 52950,
+            "acc_bound": 2975379,
+            "product_bound": 73025691120
+          },
+          {
+            "id": "C07",
+            "source_name": "encoders.3.0",
+            "ci": 64,
+            "co": 128,
+            "h": 32,
+            "k": 3,
+            "mac": 75497472,
+            "weights": 73728,
+            "input_scale": 0.040223944932222366,
+            "output_scale": 0.0534539557993412,
+            "m_min": 7646,
+            "m_max": 69295,
+            "acc_bound": 2921388,
+            "product_bound": 72239827347
+          },
+          {
+            "id": "C08",
+            "source_name": "encoders.3.2",
+            "ci": 128,
+            "co": 128,
+            "h": 32,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 147456,
+            "input_scale": 0.0534539557993412,
+            "output_scale": 0.10379859060049057,
+            "m_min": 4307,
+            "m_max": 52407,
+            "acc_bound": 4726872,
+            "product_bound": 99918994335
+          },
+          {
+            "id": "C09",
+            "source_name": "decoders.0.0",
+            "ci": 192,
+            "co": 64,
+            "h": 64,
+            "k": 3,
+            "mac": 452984832,
+            "weights": 110592,
+            "input_scale": 0.10379859060049057,
+            "output_scale": 0.32732048630714417,
+            "m_min": 2318,
+            "m_max": 31310,
+            "acc_bound": 7313175,
+            "product_bound": 81366485178
+          },
+          {
+            "id": "C10",
+            "source_name": "decoders.0.2",
+            "ci": 64,
+            "co": 64,
+            "h": 64,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 36864,
+            "input_scale": 0.32732048630714417,
+            "output_scale": 0.15907034277915955,
+            "m_min": 50492,
+            "m_max": 138345,
+            "acc_bound": 2408956,
+            "product_bound": 177159012248
+          },
+          {
+            "id": "C11",
+            "source_name": "decoders.1.0",
+            "ci": 96,
+            "co": 32,
+            "h": 128,
+            "k": 3,
+            "mac": 452984832,
+            "weights": 27648,
+            "input_scale": 0.15907034277915955,
+            "output_scale": 0.3306705951690674,
+            "m_min": 4033,
+            "m_max": 48694,
+            "acc_bound": 4774925,
+            "product_bound": 75246857838
+          },
+          {
+            "id": "C12",
+            "source_name": "decoders.1.2",
+            "ci": 32,
+            "co": 32,
+            "h": 128,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 9216,
+            "input_scale": 0.3306705951690674,
+            "output_scale": 0.2199510931968689,
+            "m_min": 37253,
+            "m_max": 99140,
+            "acc_bound": 1293790,
+            "product_bound": 79277089944
+          },
+          {
+            "id": "C13",
+            "source_name": "decoders.2.0",
+            "ci": 48,
+            "co": 16,
+            "h": 256,
+            "k": 3,
+            "mac": 452984832,
+            "weights": 6912,
+            "input_scale": 0.2199510931968689,
+            "output_scale": 0.6288050413131714,
+            "m_min": 11933,
+            "m_max": 37199,
+            "acc_bound": 1840069,
+            "product_bound": 37494322861
+          },
+          {
+            "id": "C14",
+            "source_name": "decoders.2.2",
+            "ci": 16,
+            "co": 16,
+            "h": 256,
+            "k": 3,
+            "mac": 150994944,
+            "weights": 2304,
+            "input_scale": 0.6288050413131714,
+            "output_scale": 0.8741583228111267,
+            "m_min": 11164,
+            "m_max": 49111,
+            "acc_bound": 888842,
+            "product_bound": 27205333116
+          },
+          {
+            "id": "C15",
+            "source_name": "head",
+            "ci": 16,
+            "co": 4,
+            "h": 256,
+            "k": 1,
+            "mac": 4194304,
+            "weights": 64,
+            "input_scale": 0.8741583228111267,
+            "output_scale": 0.06826238334178925,
+            "m_min": 72289,
+            "m_max": 171708,
+            "acc_bound": 112405,
+            "product_bound": 12635133180
+          }
+        ],
+        "cats": [
+          {
+            "level": 2,
+            "skip_scale": 0.040223944932222366,
+            "deep_scale": 0.10379859060049057,
+            "common_scale": 0.10379859060049057,
+            "skip_multiplier_q24": 6501493,
+            "deep_multiplier_q24": 16777216,
+            "skip_first": true
+          },
+          {
+            "level": 1,
+            "skip_scale": 0.019696185365319252,
+            "deep_scale": 0.15907034277915955,
+            "common_scale": 0.15907034277915955,
+            "skip_multiplier_q24": 2077365,
+            "deep_multiplier_q24": 16777216,
+            "skip_first": true
+          },
+          {
+            "level": 0,
+            "skip_scale": 0.01211532298475504,
+            "deep_scale": 0.2199510931968689,
+            "common_scale": 0.2199510931968689,
+            "skip_multiplier_q24": 924121,
+            "deep_multiplier_q24": 16777216,
+            "skip_first": true
+          }
+        ],
+        "mac": 2674917376,
+        "weight_bytes": 486640,
+        "bias_bytes": 2832,
+        "derived_parameter_bytes": 493120,
+        "derived_lut_bytes": 1536
+      }
+    },
+    "axial_report_recalculation": {
+      "volumes": 40,
+      "patients": 20,
+      "macro_drop": -0.0001377383715021922,
+      "class_drop": [
+        -0.0014822665558832022,
+        0.001458023004182335,
+        -0.0003889715628057094
+      ],
+      "worst_volume_drop": 0.02713167796425231,
+      "new_empty": []
+    },
+    "local_environment": {
+      "numpy": "2.3.5",
+      "scipy": "1.16.3",
+      "nibabel": "5.4.2",
+      "torch": "2.11.0"
+    },
+    "geometry_samples": [
+      {
+        "patient": "patient002",
+        "phase": "ED",
+        "native_shape": [
+          232,
+          256,
+          10
+        ],
+        "source_units": "unknown",
+        "working_shape": [
+          159,
+          176,
+          46
+        ],
+        "b_geometry_rejection": "explicit mm spatial units required; unknown units are not guessed",
+        "normalized_float_differences": 0,
+        "normalized_max_abs": 0.0,
+        "same_working_input_stack_differences": 0,
+        "axial_jobs": 46,
+        "all_direction_jobs": 381,
+        "raw_A_stack_vs_delivered_golden_differences": 1267
+      },
+      {
+        "patient": "patient002",
+        "phase": "ES",
+        "native_shape": [
+          232,
+          256,
+          10
+        ],
+        "source_units": "unknown",
+        "working_shape": [
+          159,
+          176,
+          46
+        ],
+        "b_geometry_rejection": "explicit mm spatial units required; unknown units are not guessed",
+        "normalized_float_differences": 0,
+        "normalized_max_abs": 0.0,
+        "same_working_input_stack_differences": 0,
+        "axial_jobs": 46,
+        "all_direction_jobs": 381
+      },
+      {
+        "patient": "patient039",
+        "phase": "ED",
+        "native_shape": [
+          208,
+          256,
+          9
+        ],
+        "source_units": "unknown",
+        "working_shape": [
+          171,
+          211,
+          41
+        ],
+        "b_geometry_rejection": "explicit mm spatial units required; unknown units are not guessed",
+        "normalized_float_differences": 0,
+        "normalized_max_abs": 0.0,
+        "same_working_input_stack_differences": 0,
+        "axial_jobs": 41,
+        "all_direction_jobs": 423
+      },
+      {
+        "patient": "patient039",
+        "phase": "ES",
+        "native_shape": [
+          208,
+          256,
+          9
+        ],
+        "source_units": "unknown",
+        "working_shape": [
+          171,
+          211,
+          41
+        ],
+        "b_geometry_rejection": "explicit mm spatial units required; unknown units are not guessed",
+        "normalized_float_differences": 0,
+        "normalized_max_abs": 0.0,
+        "same_working_input_stack_differences": 0,
+        "axial_jobs": 41,
+        "all_direction_jobs": 423
+      },
+      {
+        "patient": "patient006",
+        "phase": "ED",
+        "native_shape": [
+          232,
+          256,
+          11
+        ],
+        "source_units": "unknown",
+        "working_shape": [
+          205,
+          226,
+          51
+        ],
+        "b_geometry_rejection": "explicit mm spatial units required; unknown units are not guessed",
+        "normalized_float_differences": 0,
+        "normalized_max_abs": 0.0,
+        "same_working_input_stack_differences": 0,
+        "axial_jobs": 51,
+        "all_direction_jobs": 482
+      },
+      {
+        "patient": "patient006",
+        "phase": "ES",
+        "native_shape": [
+          232,
+          256,
+          11
+        ],
+        "source_units": "unknown",
+        "working_shape": [
+          205,
+          226,
+          51
+        ],
+        "b_geometry_rejection": "explicit mm spatial units required; unknown units are not guessed",
+        "normalized_float_differences": 0,
+        "normalized_max_abs": 0.0,
+        "same_working_input_stack_differences": 0,
+        "axial_jobs": 51,
+        "all_direction_jobs": 482
+      }
+    ],
+    "binding_hash_checks": {
+      "software/role_a_acdc/contract.py": true,
+      "software/role_a_acdc/geometry.py": true,
+      "software/role_a_acdc/inference.py": true,
+      "software/role_a_acdc/pipeline.py": true,
+      "software/role_a_acdc/board_jobs.py": true,
+      "software/role_a/quant_math.py": true
+    },
+    "split_file_sha256": "00deb8e9fe45bd77ebd31d2411ac3682688e92739305212b09e48214330ec78f"
+  },
+  "golden_input_probe": {
+    "float32": {
+      "mismatches": 1267,
+      "max_abs": 1,
+      "sha256": "1b03bec019accda5f217eed17587bbdd838eee399c4a17699d86887708dd087c"
+    },
+    "float16_cache": {
+      "mismatches": 0,
+      "max_abs": 0,
+      "sha256": "6322290be4249c871c4674bbaaa0c3f51844791495def44d3630fbada5bba7fe"
+    },
+    "float16_roundtrip": {
+      "mismatches": 0,
+      "max_abs": 0,
+      "sha256": "6322290be4249c871c4674bbaaa0c3f51844791495def44d3630fbada5bba7fe"
+    }
+  },
+  "dataset_geometry_summary": {
+    "volumes": 200,
+    "unknown_units": 200,
+    "dev_axial_slices": 1616,
+    "dev_all_direction_slices": 15530,
+    "axial_per_volume_range": [
+      24,
+      51
+    ],
+    "max_native_voxels": 1753088,
+    "max_working_voxels": 2362830
+  },
+  "local_analysis_files": {
+    "out/acdc/release_review_20261019/audit.py": "383ff8a6c1c489a7548bcdc9e728bcc80f199b01168e9e178e68f1eb18e6c2da",
+    "out/acdc/release_review_20261019/audit.json": "e9ad63a6e5cc787676126073ee30e917698b11cb28b8ecdbbafb04ec5e6748ca",
+    "out/acdc/release_review_20261019/dataset_geometry.json": "bf3f89243d491e7f9508565f77d850f2c57e78f281a67ba309479016e8567741",
+    "out/acdc/release_review_20261019/golden_input_probe.json": "aafc1608daec19df701410c43849164290463663a1aab0679806e194eabc7632",
+    "out/acdc/release_review_20261019/identity_crosschecks.json": "78953dd5efb57ec065d4bdc2051106266662672fe9f81b838d03f3cd1f078d86"
+  },
+  "source_bindings": {
+    "acdc/backend.py": "2b6f91927c61a1558555cc25d085601df2729b0af1e3582257495acf8858689e",
+    "acdc/board_verify.py": "f238ba7fa7b2dc169b24de1d61e1a0a948724cece4d07dd2c05f2c27ec9f00ec",
+    "acdc/cli.py": "3f94247a2a853a582df17de981fbfe6ca9acdc961262c6a98b1b8a02d5c9f06a",
+    "acdc/contract.py": "044a0d692ea67fdbe3f867b623ed71d2b4fab8e3de1a868eb807f906f9300c62",
+    "acdc/evaluate.py": "0b639b6aa7b7d111c79603df79728d6dd78da20c5873462ea0b54187a01a0e80",
+    "acdc/gen_vectors.py": "5cd75ef74c0d422f8cae9833618a726a3f6a3ce59a07712deedc560dd78026b5",
+    "acdc/graph.py": "07bbc0e461b40adb47c4a90da124a2c05f454d653918cdb5393c78659575a843",
+    "acdc/hardware.py": "145beeabb818d7a9625e96a616a41e199521bf778c24028d5ab3c022eba9ce68",
+    "acdc/integer.py": "27713579d4dca18c12434b9bfd8985b64ca5a0a5e00f660f7455700a71411b42",
+    "acdc/lifecycle.py": "15b15b79b66ef390910b0f6bd7250495caae83b070e5eb124dec2751f583d360",
+    "acdc/model.py": "6bf5db66246f173ee869d80b428b4ffb9b5f1c9b25456987f6473e7ac4aff7da",
+    "acdc/package.py": "b94f3e1716b16598604e9fdcd9c43e4a2202639d1d4f06ebd4b7e96ce9f31882",
+    "acdc/pipeline.py": "0a82d2db99ebadc103422dcab3987b105dd029b17663bec5915328eae5df05d2",
+    "acdc/planning.py": "3736bfb41039006ac734df67c8d8b3f1d694b720206321fffa78e708a5157ec1",
+    "acdc/protocol.py": "36b6430829d59ec0e4e26bb892a62cb9222c03308bd74841999aa73bbc1ab16b",
+    "acdc/reconstruct.py": "98adc6b8c11618ba2f24b8f647b47407cadc1867bdf926a4d6848ee8215abb71",
+    "acdc/statistics.py": "d991b0221d8ebd2cb8a9f3dc5a72b6bc93761cf13b8a317c07a824f3c8af693d",
+    "acdc/surface.py": "d8a3fb2133ce5f92ca0d2ba66c55c715541017bc0b4e671a4978f26fe1108c42",
+    "acdc/verify.py": "edf2d3a02b5b22ebccbd186be3f5444f9c7e713cfd9bec0575b110d396865c46",
+    "acdc/volume.py": "e06985d8f1943fa26f37ea8607747c75fc60ee6e171130a6f762f46c507dc8d0",
+    "acdc/web.py": "f7eb717e4917d7626d875c31111c8ad1c18ac1cbe65cabf739df556bd88fa1a1",
+    "acdc/worker.py": "fa61014f0f62b083c60cb2662f3ac8450dda4201c36ca83111c491f11cd8279a",
+    "acdc/__init__.py": "f8b50bec05ac6ee10fef74a4ef822d8412720316157bf6948e7cf97dce5fb0f3",
+    "acdc/__main__.py": "f38fd2f2c920c29c828645e87ed64743d567aaaef7fba7a15d2c7d7f8094f91f",
+    "acdc/optimization/board_inventory.py": "1d58b1d5c3ef8baa546433d3f750c9099ed31505b271fb57ccfb064de01cabe2",
+    "acdc/optimization/gen_compute_vectors.py": "1e493d8fa7021e42dff3e8e2778a0f5cb955fd1d284a8f417c107bdbe2bf1235",
+    "acdc/optimization/gen_executor_vectors.py": "07dcffe514b37eab28042704c31997154829f1e728ee6479d63ed2f70b472c07",
+    "acdc/optimization/gen_frame_vectors.py": "4f7a96d7147be41011e99b51c9dc8cf5fa06799c217ce80854124b5bedac7376",
+    "acdc/optimization/gen_input_vectors.py": "ddce1351293b50e8169e10058cb737560310eaef2eba56566e84b01c7e567e7f",
+    "acdc/optimization/gen_stream_vectors.py": "21cfba2f23daea14eb76b9ea47e219b8690a723707a955803cffa3ca98cd1541",
+    "acdc/optimization/gen_tile_vectors.py": "bdba2ad43545acf3bc0ea8fe92437de0dd3672162e37f7ced6e9b228243253c4",
+    "acdc/optimization/image.py": "77f077c8d48db1ae01a93ba65c98ec36cb828bb223718da8750af6b942265f04",
+    "acdc/optimization/layout.py": "bd4e1742e546dc2ba5126ae9e5c6f7927d246b50421967e46066c2f16ea491bc",
+    "acdc/optimization/planner.py": "e8e6926cf989f4a667aaeb0b23419aa5662a55d4bd530e54bce71aaf2aaafe15",
+    "acdc/optimization/program.py": "06f42fbf54aaa29b76be05b07c19228a36a43bcba558378dd92c560aea5999ce",
+    "acdc/optimization/synth_guard.py": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139",
+    "acdc/optimization/__init__.py": "a1f9ff13f628210077c9d036681c2af8558f7fc3c7ed728275133eb756892982",
+    "acdc/optimization/rtl/conv_array.sv": "2e2ea09d46412712f11b78389870d8b969875a069490dfcf14ed04281a27faf5",
+    "acdc/optimization/rtl/conv_compute.sv": "26b4f1a640b506e4305f95f1cb318419e14c59c20054c72205c43a6f29ddbed3",
+    "acdc/optimization/rtl/dma_read_arbiter.sv": "25d950727401a19d7123c23e51245058381a66f9ef1da07dc592f3dc26834db3",
+    "acdc/optimization/rtl/dma_transfer.sv": "f270798f9c26d94cacdf470b418b0967437a64c01171d2a492f81541f9e735ba",
+    "acdc/optimization/rtl/frame_control.sv": "256df4130604b8c3fa491e1d53a726ec5f79a2f1f7bf1e725ba7cd21b7f9aee2",
+    "acdc/optimization/rtl/frame_dispatch.sv": "ab8b52870ff0db3e44f8720b3845573dcce9b1948adbbc0fcb4f5ad62b1a01cc",
+    "acdc/optimization/rtl/frame_engine.sv": "d2168d51a18093a907f71e652bd73494c667cbd834d3bfe91c257b04adda957c",
+    "acdc/optimization/rtl/input_loader.sv": "eadf4b6a64880bb9272ece62095de8f944954d75293b16fee944189d547ca886",
+    "acdc/optimization/rtl/input_transform.sv": "a0c1120ca48eb28637b75a91c4fd22e90848febdf5bb0e74c9200f7278101a2a",
+    "acdc/optimization/rtl/int8_pair_mul.sv": "4496158989c531aa68a349c615ce6987c69708eb3a4d0c248c15a722bb61d1cf",
+    "acdc/optimization/rtl/lut_loader.sv": "3cc98bf907967a1280960c377e09f3902907a85a7834f0ebf9042a416df59337",
+    "acdc/optimization/rtl/parameter_loader.sv": "ae850aa6e4c742c15667e555a41f4e437e74e9dad0159b7603caaff7e62db26a",
+    "acdc/optimization/rtl/pool_stream.sv": "8e993ce2583a4422cb225503f49408d0ab8a294911df97ad3117c4561ab623af",
+    "acdc/optimization/rtl/spatial_accel.sv": "0e62c562d276ba414f3959ba43e17de027c6f836fad4c7a17a0129409c453520",
+    "acdc/optimization/rtl/stream_fork.sv": "20e08ca204d4e1f1ac1ef3a02fafb1648f3b89253b308853161aa40ae2b52548",
+    "acdc/optimization/rtl/tile_banks.sv": "0b798983b64914a4926aea19b9b4081ab39b95a9df2e0934a892279637a194b4",
+    "acdc/optimization/rtl/tile_conv.sv": "71372c9d86313873ac98fcdd796443fa2b0f59f4200c75a1098ccc71b80a4621",
+    "acdc/optimization/rtl/tile_executor.sv": "8d57a0e0f18ff55aa8914fa9a69d1a25d7cb7f1083896a99568c0befd61e5787",
+    "acdc/optimization/rtl/tile_job_queue.sv": "d94a1cff8db89ff8d567a600f7bc41450246a5c291c1ab2d2dee5e65e1345f8a",
+    "acdc/optimization/rtl/tile_writer.sv": "b4c06d1a346be787b06242d0cb9a71422d3b2e0a6e58efbd2f73cc126858d4b8"
+  },
+  "historical_logs": {
+    "out/acdc/optimization/executor_p4_d1_sim/simulation.log": {
+      "sha256": "1ae490488a9ec1f4433c4d322010d5ab623175d7a9f48fcec94872aaf275843b",
+      "markers": [
+        "TB_PASS tile_executor P=4 jobs=1040 conv=15 nodes=21 writes=1073152 reads=1492668 commands=36172/33536 cycles=11777085 input_hits=633 parameter_hits=567 overlap=3278184"
+      ]
+    },
+    "out/acdc/optimization/executor_p6_d1_sim/simulation.log": {
+      "sha256": "bdb967fc019658f886aab17e31521490b033bf0840cb4fa977d8ad8962b5051c",
+      "markers": [
+        "TB_PASS tile_executor P=6 jobs=1024 conv=15 nodes=21 writes=1073152 reads=1593940 commands=18200/16384 cycles=9461455 input_hits=618 parameter_hits=567 overlap=2438733"
+      ]
+    },
+    "out/acdc/optimization/top_p4_sim/simulation.log": {
+      "sha256": "87b7f43b33cf3584581dfefe43a3a3d67f7acbebeeaa71eb4514d71376d3753f",
+      "markers": [
+        "TB_PASS spatial_accel P=4 ABI=2.0 conv=15 nodes=21 jobs=272 writes=16768 cycles=314182"
+      ]
+    },
+    "out/acdc/optimization/executor_netlist_sim/simulation.log": {
+      "sha256": "5b02b05ab30f03d16116187fa244333bb1b00d9360181490ea654a136aaa7137",
+      "markers": [
+        "Fatal: first netlist metadata keep=0 tag=00000000 first=1"
+      ]
+    },
+    "out/acdc/optimization/compute_p4_sim/simulation.log": {
+      "sha256": "c1cc92aeff61c6868fd690af84efe00c16df6d28fc347e3c26e8fa956d006eff",
+      "markers": [
+        "TB_PASS conv_compute P=4 input_beats_per_pass=5976 output_beats_per_pass=768 passes=2 reset_inflight=1 cycles=22133 blocked=7534 full=8226"
+      ]
+    },
+    "out/acdc/optimization/compute_p6_sim/simulation.log": {
+      "sha256": "6c2a0b5fbbad8059b7cfafaf5231dd5028368423af4314a71e2a98903e288c38",
+      "markers": [
+        "TB_PASS conv_compute P=6 input_beats_per_pass=5976 output_beats_per_pass=1152 passes=2 reset_inflight=1 cycles=22138 blocked=7537 full=8359"
+      ]
+    }
+  },
+  "limits": [
+    "Only Axial one delivered full golden was independently executed this turn; coronal/sagittal parameter audits only.",
+    "40-volume metrics were recomputed from A reports, not new 40-volume inference.",
+    "Geometry samples use local SciPy1.16.3, not A-bound1.18.1.",
+    "Full-resolution RTL logs predate final packed-tag change.",
+    "Metadata netlist failure remains unresolved.",
+    "No synthesis, new RTL run, board access, deployment or FPS test this turn."
+  ],
+  "identity_crosschecks": {
+    "axial_spec": true,
+    "axial_fp32": true,
+    "coronal_spec": true,
+    "coronal_fp32": true,
+    "sagittal_spec": true,
+    "sagittal_fp32": true,
+    "model_acceptance": true,
+    "source_split": true,
+    "preprocessing_checks_contract_sha_matches_current_contract": true,
+    "current_preprocessing_contract_sha": "ac8707f093ac36b6f2d3056723c7abef59aa91f286f1c632e272a906a551d0a8",
+    "historical_checks_contract_sha": "ac8707f093ac36b6f2d3056723c7abef59aa91f286f1c632e272a906a551d0a8",
+    "split_document_binding": true
+  }
+}
