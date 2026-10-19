@@ -1,0 +1,47 @@
+{
+  "schema": "pld-acdc-model-admission-v1",
+  "date": "2026-10-19",
+  "model_spec_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+  "manifest_sha256": "f4dadde385b12d1d5639ae1085ccc92d22a61682240ccfc6a4db5a3c020fca11",
+  "integer_witness": {
+    "nodes_compared": 21,
+    "max_abs_error": 0,
+    "mismatches": 0,
+    "delivered_head_elements": 262144
+  },
+  "native_software_reproduction": {
+    "patients": 20,
+    "volumes": 40,
+    "axial_slices": 1616,
+    "macro_dice": 0.8823042897748437,
+    "max_abs_dice_delta": 0.0,
+    "max_abs_volume_delta_mL": 0.0,
+    "backend": "reference_torch",
+    "python": "3.12.5",
+    "numpy": "2.3.5",
+    "scipy": "1.18.1",
+    "nibabel": "5.4.2",
+    "torch": "2.11.0",
+    "note": "A declared Python3.12.14/cu128 differs; actual B run reproduced all 40 volumes"
+  },
+  "source_hashes": {
+    "acdc/release.py": "4d8ab0bc0bb7210e31177d619472a03f91caffad65b2f30600a0e34dee8ee401",
+    "acdc/model.py": "f04b2f10246d7450a6f2b4d8b7c40f16e0a3a1ce2b64e58e4e2c06d44c83b7b7",
+    "acdc/volume.py": "bf13a5588aa0ad5a7677f7378e5f75ddab5f1e09fe46d863112582b36674c686",
+    "acdc/witness.py": "0a1861874ec07ce37050bf4b3c0a3a5db4e8c675624dcb6a6462ab15a58558a3",
+    "acdc/verify.py": "6de99a25ff9454d1ceef48966c5e76a5474b45784d58f6637960014824646b15",
+    "acdc/tests/test_release.py": "203761ef8de5d11b8d56b23d83be46bfb7de362956515af038ca173d6efde19f",
+    "acdc/requirements-pc.txt": "86df656274218705e292205e6598ee3c8869694ec8b50beaabdfd0d651c05497",
+    "acdc/requirements-pc.lock": "eae54cabda1c7e6937a2d021bc949b35cd257e52245d7d21879946164e0a768e"
+  },
+  "artifact_hashes": {
+    "release_verify_full.log": "4885a6ad7b3b9cb9d83a4e6e9e40201efa520331c1569f5dea3dfb4fe4380089",
+    "development_reference_torch_v1/evaluation.json": "e70fe095c40c9ded46d170b9e3ba4a59aeb981f6912c424020bcf10feb3362a3",
+    "development_reference_torch_v1.log": "2a409df92d6359aff0939cee90ff65da92ad7e834c8e9c21fc1c2338c722b2eb",
+    "spatial_board_cases_v1/cases.json": "e5cc7ea2ddf011f9ed1158c3a61965544f3617e42defe9d2a8ee36c017f4fd22",
+    "spatial_board_cases_v1/nodes.npz": "2717f3415410ddb5e28c67122d71da996f4559c8e56433be28fe5c6727eb7d80"
+  },
+  "physical_board_accepted": false,
+  "G4_accepted": false,
+  "G8_accepted": false
+}

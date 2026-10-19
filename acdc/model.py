@@ -11,6 +11,10 @@ from .contract import (ARCHITECTURE, PREPROCESSING, SHAPES, LABELS, Concat, Laye
 
 def load_bundle(root, *, expected_sha=None, allow_synthetic=False):
     root = Path(root).resolve()
+    from .release import release_root, load_release
+    published = release_root(root)
+    if published is not None:
+        return load_release(published, expected_sha=expected_sha)
     spec_path = safe_member(root, 'model_spec.json')
     sha = file_sha(spec_path)
     if expected_sha is not None and (not is_sha(expected_sha) or sha != expected_sha):
@@ -107,7 +111,7 @@ def load_bundle(root, *, expected_sha=None, allow_synthetic=False):
         binding=json.loads(read(spec['implementation_binding']).read_text('utf-8'))
         versions=binding.get('versions',{})
         if (not all(isinstance(versions.get(k),str) for k in ('numpy','scipy','nibabel','torch'))
-                or versions.get('nibabel')!='5.4.2' or versions.get('torch')!='2.11.0'
+                or versions.get('nibabel')!='5.4.2' or versions.get('torch','').split('+')[0]!='2.11.0'
                 or binding.get('preprocessing_id')!=PREPROCESSING):
             raise ContractError('complete frozen preprocessing implementation binding required')
         golden = spec.get('golden', {})

@@ -26,7 +26,7 @@ def check_binding(binding=None):
         required.update(binding.get('versions', {}))
     for name, wanted in required.items():
         # +cpu is a wheel build suffix, not a different torch numerical release.
-        if actual.get(name, '').split('+')[0] != wanted:
+        if actual.get(name, '').split('+')[0] != wanted.split('+')[0]:
             raise ContractError(f'preprocessing version mismatch: {name} {actual.get(name)} != {wanted}')
     return actual
 
@@ -45,11 +45,11 @@ def normalize(data):
     return u, dict(low=float(lo),high=float(hi),method='nonzero-p1-p99-linear-native-phase')
 
 
-def adopt_geometry(image, policy='strict', *, recognized_acdc=False):
+def adopt_geometry(image, policy='strict', *, recognized_acdc=False, source_is_pinned=False):
     a = np.asarray(image.affine, np.float64).copy()
     pixdim = np.asarray(image.header.get_zooms()[:3], np.float64)
     units = image.header.get_xyzt_units()[0]
-    if units != 'mm':
+    if units != 'mm' and not (units == 'unknown' and source_is_pinned):
         raise ContractError('explicit mm spatial units required; unknown units are not guessed')
     if (not np.all(np.isfinite(a)) or not np.all(np.isfinite(pixdim)) or np.any(pixdim <= 0)
             or not np.allclose(a[3], [0,0,0,1]) or abs(np.linalg.det(a[:3,:3])) < 1e-10):
@@ -103,7 +103,9 @@ def load_volume(path, *, policy='strict', recognized_acdc=False, binding=None):
     image=nib.load(str(path))
     if len(image.shape)!=3 or min(image.shape)<1 or int(np.prod(image.shape,dtype=np.int64))>MAX_NATIVE_VOXELS:
         raise ContractError('only bounded, nonempty 3D NIfTI is accepted; 4D requires a new contract')
-    a,decision=adopt_geometry(image,policy,recognized_acdc=recognized_acdc)
+    source_sha=file_sha(path)
+    pinned=source_sha in (binding or {}).get('recognized_acdc_images',{})
+    a,decision=adopt_geometry(image,policy,recognized_acdc=recognized_acdc or pinned,source_is_pinned=pinned)
     native=image.get_fdata(dtype=np.float32,caching='unchanged')
     u,normalization=normalize(native)
     expected_shape,expected_affine=grid(native.shape,a)
@@ -112,11 +114,14 @@ def load_volume(path, *, policy='strict', recognized_acdc=False, binding=None):
     if result.shape!=expected_shape or not np.allclose(result.affine,expected_affine,rtol=0,atol=1e-8):
         raise ContractError('resampler disagrees with frozen center-corner grid')
     geom=dict(schema='pld-acdc-geometry-v1',preprocessing_id=PREPROCESSING,
-              input_sha256=file_sha(path),native_shape=list(native.shape),native_affine=a.tolist(),
+              input_sha256=source_sha,native_shape=list(native.shape),native_affine=a.tolist(),
               source_affine=np.asarray(image.affine).tolist(),source_pixdim=list(map(float,image.header.get_zooms()[:3])),
               source_qform_code=int(image.header['qform_code']),source_sform_code=int(image.header['sform_code']),
               working_shape=list(expected_shape),working_affine=expected_affine.tolist(),working_spacing_mm=[2,2,2],
               normalization=normalization,geometry_policy=policy,geometry_decision=decision,units='mm',
+              source_units=image.header.get_xyzt_units()[0],
+              unit_interpretation=('mm from pinned ACDC release acquisition metadata' if pinned else 'explicit source mm'),
+              source_release_member=(binding or {}).get('recognized_acdc_images',{}).get(source_sha),
               versions=versions,axial_plane='V[:,:,z].T',phase_independently_normalized=True)
     return Volume(path,native,a,np.asarray(result.dataobj,dtype=np.float32),geom)
 

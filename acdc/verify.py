@@ -31,10 +31,18 @@ def reference_case(model,first=None):
 
 def verify_model(model,device=None):
     first,oracle=reference_case(model)
+    if model.spec.get('golden_evidence_kind')=='A-delivered-input-head-only':
+        from .witness import forward
+        independent=forward(model,first)
+        for node in NODE_NAMES:
+            if not np.array_equal(independent[node],oracle['captures'][node]):
+                raise ContractError('independent Torch/INT64 node witness mismatch: '+node)
     actual=Graph(model,device or emulator()).forward(first,capture=True)
     for node in NODE_NAMES:
         a,b=oracle['captures'][node],actual['captures'][node]
         if not np.array_equal(a,b):
             idx=tuple(np.argwhere(a!=b)[0]);raise ContractError(f'{node}{idx}: {a[idx]} != {b[idx]}')
     return dict(synthetic=model.synthetic,shape=list(model.input_shape),nodes_compared=21,
-                mismatch_count=0,max_abs_error=0,scope='independent INT64 full tensor vs tiled device; A goldens also checked when production')
+                mismatch_count=0,max_abs_error=0,
+                independent_torch_witness=model.spec.get('golden_evidence_kind')=='A-delivered-input-head-only',
+                scope='independent INT64 full tensor vs tiled device; delivered A head checked for research release')
