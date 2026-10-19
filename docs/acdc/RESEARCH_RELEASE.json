@@ -124,7 +124,7 @@
     "native_in_app_download_event_verified": false
   },
   "deployment": "Independent CAM2 target; physical bit/HWH, DDR, numerical and performance acceptance pending. Keep delivery/current.json unchanged.",
-  "package_revision": 2,
+  "package_revision": 3,
   "archive_integrity": {
     "method": "SHA-256 of the complete ZIP",
     "trust_anchor": "archive_sha256 in this Git-committed publication index; do not trust an unpinned Release checksum alone",
@@ -137,7 +137,7 @@
     ],
     "snapshot_rule": "The bundled index is a canonical metadata snapshot. Only the external Git index contains the ZIP and checksum-asset digests, avoiding a self-referential archive hash."
   },
-  "archive_sha256": "bbd15aa8be82cab13ad467324c9e51a8ca94f9fb67a10fc8416bcc80b4f12956",
-  "archive_bytes": 139164492,
-  "checksum_asset_sha256": "e87b55daf4d077935d661e4c69a483f91930bf711603db84fb26015d66de5da6"
+  "archive_sha256": "1998364295327c157c2ebfd52cca805d6933a992d700431abe955619c2feeaa0",
+  "archive_bytes": 138046731,
+  "checksum_asset_sha256": "04060c68da262ea31b051cfa9f095c7754fbfdd0761f49e462d4f5e6995f86f4"
 }
