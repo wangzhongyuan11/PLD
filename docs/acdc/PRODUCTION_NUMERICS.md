@@ -126,7 +126,7 @@ CAT：`Mskip=RNE(Sskip/T*2^24)`、`Mdeep=RNE(Sdeep/T*2^24)`，分别进行同一
 
 每方向交付必须包含：FP32权重及SHA；15层INT8权重、Sw、int32 bias/M、输入/输出scale、边界证明和独立oracle；三组CAT两路scale/common/M及LUT生成规则；四通道共享head scale；参数文件字节数/SHA、完整图黄金输入/head及spec SHA。CAT LUT可由交付的两路M按相同Q24规则确定性生成。参数以当前包具体文件布局为准，不能只发一张尺度表。
 
-head 为 NCHW int8 `[1,4,256,256]`，262144 B，zero_point=0，共享正scale `S15`。类别0/1/2/3为背景/RV腔/LV心肌/LV腔，颜色黑/红/绿/蓝。**生产scale尚未冻结，训练中的固定fake-quant范围不作为最终参数承诺。**
+head 为 NCHW int8 `[1,4,256,256]`，262144 B，zero_point=0，共享正scale `S15`。类别0/1/2/3为背景/RV腔/LV心肌/LV腔，颜色黑/红/绿/蓝。**本研究候选的三方向S15及spec SHA已经冻结，见研究交付索引；逐边尺度和整数参数以对应spec为准。物理生产验收仍为false，训练中间fake-quant范围不能代替冻结参数。**
 
 ## 7. 概率恢复与融合
 
@@ -153,7 +153,7 @@ head 为 NCHW int8 `[1,4,256,256]`，262144 B，zero_point=0，共享正scale `S
 - 分别报告2D基线、三个方向、等权融合的真FP32与精确INT8。FP32关闭autocast/TF32；训练AMP选模分数单列。每份报告绑定患者划分、源权重/spec、运行代码SHA、后处理版本，指标缓存身份不符不得复用。
 - 冻结INT8门槛：总体Dice下降≤.01、任一类≤.02、任一ED/ES体三类宏平均下降≤.05；非空GT不得新增相对FP32的全空预测；15层独立整数oracle均零差异。融合也检查同样量化门槛；对2D基线只报告真实增减，不承诺必然改善。
 
-最终Release还须补齐验收模型注册表（每方向实际spec SHA/head_scale/参数SHA）、完整FP32/INT8/融合指标、实际黄金用例，以及中位与最差开发病例。**这些结果仍在产生，当前生产参数验收字段保持未通过，加载器必须拒绝将待验收状态当作生产链路完成。**
+本研究交付已补齐三方向验收注册表（实际spec SHA/head_scale/参数SHA）、完整FP32/INT8/融合指标、黄金输入/head及中位与最差开发病例。研究参数身份见 [RESEARCH_RELEASE.json](RESEARCH_RELEASE.json)，包内MODEL_REGISTRY.json提供可装载路径，software_development_accepted为true。**physical_board_accepted与production_ready仍为false；允许按冻结SHA装载研究模型，不允许把软件验收或参考CAM2源码宣称为物理生产链路完成。**
 
 请求wire字段为 `architecture_id`、`model_id`、`volume_id` 等既定键；请求输入散列位于 `input.sha256`，响应的 `input_sha256` 回填该值。内部模型spec的 `profile_id` 作为请求 `model_id` 的值，键名不混用。
 

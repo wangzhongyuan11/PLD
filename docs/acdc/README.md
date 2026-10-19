@@ -42,6 +42,6 @@
 
 ## 模型与数据集总包
 
-下载入口和完整文件名见 [研究交付索引](RESEARCH_RELEASE.json)。Release ZIP包含三方向FP32/INT8模型、500份官方ED/ES训练文件、原始FP32对照、PC/板端适配运行闭包、中位与最差病例、合同、许可及逐文件校验。下载后先用同Release的SHA256SUMS.txt核对ZIP，再独立解压并运行包内verify_package.py。Git只保留本目录必要资料。
+下载入口和完整文件名见 [研究交付索引](RESEARCH_RELEASE.json)。Release ZIP包含三方向FP32/INT8模型、500份官方ED/ES训练文件、原始FP32对照、PC/板端适配运行闭包、中位与最差病例、合同、许可及逐文件校验。下载后以本仓库Git提交固定的RESEARCH_RELEASE.json中archive_sha256及archive_bytes核对完整ZIP，同时核对checksum_asset_sha256绑定的SHA256SUMS.txt，再独立解压并运行包内verify_package.py。包内索引是省略这三个外部校验字段的元数据快照，避免ZIP自引用；其余字段与Git索引一致。Git只保留本目录必要资料。
 
 本候选INT8融合Dice为0.883383，低于2D FP32基线0.889220（下降0.005837）；量化相对候选FP32融合下降0.001310，符合冻结门槛。本扩展提供三方向与三维体数据链路，不声称精度优于2D基线。全部指标来自20名开发患者40体，官方50名测试患者未访问。
