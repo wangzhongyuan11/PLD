@@ -17,6 +17,12 @@ def evaluate(cases_path,expected_model_sha):
     if spec.get('schema')!='pld-acdc-evaluation-cases-v1' or not spec.get('cases'):
         raise ContractError('nonempty evaluation case list required')
     seen=set();rows=[];per_patient={}
+    source_records={}
+    if spec.get('release_manifest'):
+        from .release import MANIFEST_SHA
+        source_manifest=(cases_path.parent/spec['release_manifest']).resolve()
+        if file_sha(source_manifest)!=MANIFEST_SHA:raise ContractError('evaluation source manifest is not pinned A release')
+        source_records={r['path']:r['sha256'] for r in json.loads(source_manifest.read_text('utf-8'))['files']}
     for case in spec['cases']:
         patient,phase=case['patient'],case['phase']
         if not isinstance(patient,str) or not patient or phase not in ('ED','ES') or (patient,phase) in seen:
@@ -40,7 +46,10 @@ def evaluate(cases_path,expected_model_sha):
         if file_sha(geom_path)!=manifest['files'][f'geometry/{phase}.json']:
             raise ContractError('evaluation geometry hash mismatch')
         geom=json.loads(geom_path.read_text('utf-8'))
-        ga,_=adopt_geometry(gt_image,geom['geometry_policy'],recognized_acdc=geom['geometry_policy']=='acdc-direction-only-sform-v1')
+        image_member=geom.get('source_release_member','')
+        gt_member=image_member.removesuffix('.nii.gz')+'_gt.nii.gz'
+        pinned=bool(image_member) and source_records.get(gt_member)==case['gt_sha256']
+        ga,_=adopt_geometry(gt_image,geom['geometry_policy'],recognized_acdc=geom['geometry_policy']=='acdc-direction-only-sform-v1',source_is_pinned=pinned)
         if not np.allclose(pred_image.affine,ga,rtol=1e-4,atol=1e-5):raise ContractError('GT/prediction physical grids differ')
         metrics={LABELS[c]:class_metrics(pred,gt,pred_image.affine,c) for c in (1,2,3)}
         pv,gv=volumes(pred.astype(np.uint8),pred_image.affine),volumes(gt.astype(np.uint8),ga)

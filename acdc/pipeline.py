@@ -33,13 +33,14 @@ class Pipeline:
         self.backend=backend;self.policy=policy;self.recognized=recognized_acdc
         self.binding=binding if binding is not None else getattr(backend,'binding',None)
 
-    def run(self,ed,es,output,*,cancel=None,progress=None,save_heads=False,save_probabilities=False,resume_from=None,upload_seconds=0.):
+    def run(self,ed,es,output,*,cancel=None,progress=None,save_heads=False,save_probabilities=False,resume_from=None,oracle_from=None,upload_seconds=0.):
         import nibabel as nib
         output=Path(output)
         output.mkdir(parents=True,exist_ok=False)
         cancel=cancel or threading.Event()
         progress=progress or (lambda _:None)
         run_id=output.name;started=time.perf_counter();records=[];phase_stats={};phase_reports={}
+        fresh_started=None;fresh_finished=None
         status=dict(run_id=run_id,status='preparing',execution_profile=PROFILE,synthetic=self.backend.synthetic,
                     backend=self.backend.kind,completed_slices=0,total_slices=None)
 
@@ -97,11 +98,21 @@ class Pipeline:
                         else:
                             tick=time.perf_counter()
                             head,meta=self.backend.infer(x,request,cancel)
-                            seconds=time.perf_counter()-tick
+                            delivered=time.perf_counter();seconds=delivered-tick
                             reused=bool(meta.get('cached_response',False))
+                            if not reused:
+                                if fresh_started is None:fresh_started=tick
+                                fresh_finished=delivered
                         if restoring is not None:records[-1]['restore_plane_seconds']=restoring.result()
                         restoring=restore_pool.submit(restore_plane,head,meta)
                         head_sha=hashlib.sha256(head.tobytes()).hexdigest()
+                        if oracle_from is not None:
+                            oracle_path=Path(oracle_from)/'checkpoint'/phase/f'{z:04}.json'
+                            reference=json.loads(oracle_path.read_text('utf-8'))
+                            for field in ('phase','center_index','neighbor_indices','geometry_sha256','model_sha256'):
+                                if reference.get(field)!=request[field]:raise ValueError('integer oracle identity mismatch: '+field)
+                            if reference.get('input_sha256')!=input_sha or reference.get('head_sha256')!=head_sha:
+                                raise ValueError('actual inference differs from independent CPU head')
                         checkpoint=output/'checkpoint'/phase;checkpoint.mkdir(parents=True,exist_ok=True)
                         pending_head=checkpoint/f'{z:04}.bin.pending';pending_head.write_bytes(head.tobytes())
                         pending_head.replace(checkpoint/f'{z:04}.bin')
@@ -109,6 +120,7 @@ class Pipeline:
                             head_scale=meta['head_scale'],head_sha256=head_sha,input_sha256=input_sha,
                             source_run_id=meta.get('source_run_id')))
                         row=dict(phase=phase,center_index=z,seconds=seconds,input_sha256=input_sha,reused=reused,
+                                 integer_oracle_equal=True if oracle_from is not None else None,
                                  head_sha256=hashlib.sha256(head.tobytes()).hexdigest(),backend=meta['backend'],
                                  synthetic=meta['synthetic'],nodes=meta.get('nodes',[]),events=meta.get('events',[]),
                                  event_summary=meta.get('event_summary'),ps_slice_seconds=meta.get('slice_seconds'),rss_bytes=_memory())
@@ -148,14 +160,23 @@ class Pipeline:
                 writer=csv.writer(stream);writer.writerow(['phase','structure','voxels','volume_mL'])
                 for phase,report in phase_stats.items():
                     for name,row in report['classes'].items():writer.writerow([phase,name,row['voxels'],row['mL']])
+            with (output/'cardiac_function.csv').open('w',newline='',encoding='utf-8') as stream:
+                writer=csv.writer(stream);writer.writerow(['structure','EDV_mL','ESV_mL','SV_mL','EF_percent','valid','reason'])
+                for name,row in stats['cavities'].items():
+                    writer.writerow([name,*(row[k] for k in ('EDV_mL','ESV_mL','SV_mL','EF_percent','valid','reason'))])
             times=[r['seconds'] for r in records if not r['reused']]
             median=float(np.median(times)) if times else None
             p95=float(np.percentile(times,95)) if times else None
-            fps=len(times)/sum(times) if times else None
+            fresh_wall=fresh_finished-fresh_started if times else None
+            fps=len(times)/fresh_wall if times else None
             atomic_json(output/'performance.json',dict(schema='pld-acdc-performance-v1',backend=self.backend.kind,
                 synthetic=self.backend.synthetic,measured_on_this_host=True,board_validation=self.backend.kind=='pl',
                 slice_count=len(records),fresh_inference_count=len(times),resumed_count=len(records)-len(times),
+                fresh_physical_pl_responses=sum(not r['reused'] and r['backend']=='pl' and not r['synthetic'] for r in records),
                 slice_median_seconds=median,slice_p95_seconds=p95,measured_slice_throughput_fps=fps,
+                fresh_inference_wall_seconds=fresh_wall,
+                slice_service_rate_fps=len(times)/sum(times) if times else None,
+                throughput_scope='first fresh inference start to last owned head, including intervening scheduling/checkpoint/phase gaps',
                 target_4fps_passed=(self.backend.kind=='pl' and len(times)>=1000 and p95<=.25 and fps>=4),
                 slice_sample_meets_250ms=(self.backend.kind=='pl' and bool(times) and p95<=.25),
                 backend_initialization_seconds=getattr(self.backend,'initialization_seconds',None),upload_seconds=upload_seconds,

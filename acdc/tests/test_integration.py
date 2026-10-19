@@ -74,12 +74,16 @@ class IntegrationTest(unittest.TestCase):
                 self.assertTrue(set(np.unique(out.get_fdata()))<=set(range(4)))
                 meshes=json.loads((root/f'result/meshes/{phase}/meshes.json').read_text())
                 self.assertEqual(len(meshes),3);self.assertTrue(all(not m['smoothed'] for m in meshes))
+                for mesh in meshes:self.assertTrue((root/f'result/meshes/{phase}'/mesh['ply_file']).is_file())
             report=json.loads((root/'result/performance.json').read_text())
             self.assertFalse(report['target_4fps_passed']);self.assertFalse(report['board_validation'])
+            self.assertLessEqual(report['measured_slice_throughput_fps'],report['slice_service_rate_fps'])
+            self.assertGreaterEqual(report['fresh_inference_wall_seconds'],sum(r['seconds'] for r in report['records']))
             self.assertEqual(report['phases']['ED']['resized_planes'],29)
             with zipfile.ZipFile(root/'result/result.zip') as z:
                 self.assertIsNone(z.testzip());self.assertIn('labels/ED.nii.gz',z.namelist())
                 self.assertTrue(json.loads(z.read('manifest.json'))['synthetic'])
+                self.assertIn('cardiac_function.csv',z.namelist())
                 self.assertFalse(any(n.startswith('checkpoint/') for n in z.namelist()))
             # Resume reads byte- and model-bound heads; reused responses must not count as new inference/FPS.
             resumed=Pipeline(backend).run(root/'input/ED.nii.gz',root/'input/ES.nii.gz',root/'resumed',resume_from=root/'result')
