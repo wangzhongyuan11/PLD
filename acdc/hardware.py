@@ -33,9 +33,12 @@ class Lease:
                 r=subprocess.run(['systemctl','is-active',unit],capture_output=True,text=True,timeout=5)
                 if r.returncode not in (3,4) or r.stdout.strip() not in ('inactive','failed','unknown'):
                     raise RuntimeError(unit+' may own FPGA; stop it through the release manager first')
-            # Include the CAMUS legacy lease and a shared future lease, without changing its service.
-            for name in ('pld-fpga.lock','pld-camus-pl.lock'):
-                handle=open(Path(tempfile.gettempdir())/name,'a+b')
+            # The formal hub's launcher owns this lease for its entire backend
+            # lifetime. Service state checks alone leave a restart race.
+            paths=[Path('/run/pld-unified-fpga.lock'),
+                   *(Path(tempfile.gettempdir())/name for name in ('pld-fpga.lock','pld-camus-pl.lock'))]
+            for path in paths:
+                handle=open(path,'a+b')
                 self.handles.append(handle);fcntl.flock(handle,fcntl.LOCK_EX|fcntl.LOCK_NB)
         except BaseException:self.close();raise
 
