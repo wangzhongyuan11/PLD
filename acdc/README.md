@@ -2,9 +2,11 @@
 
 独立于 Skin/CAMUS 的 Axial-only 工程。输入显式 ED、ES 两个3D NIfTI；按A的生产数值文字合同预处理，逐Axial中心片执行15Conv/21节点，恢复原生概率与标签，提供三平面MPR、无平滑3D表面、LV/RV/MYO容积、LV/RV EF、异步网页与结果包。
 
-A真实研究Release已接入：原spec/参数身份保留，独立参考、Torch整数见证和tile模拟器的21节点精确一致。固定20名开发患者40体已实际复现Axial Dice 0.8823042898，与A逐体逐类Dice及容积差异均为0。现有`import-release`可导入必要材料子集；真实ACDC几何与SciPy依赖已对齐。当前事实、命令和硬件缺口见[实施状态](docs/IMPLEMENTATION_STATUS.md)，后续范围以[最终优化计划](docs/FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)为准。4/8 FPS尚无合格板测证据。
+A真实研究Release已接入：原spec/参数身份保留，独立参考、Torch整数见证和tile模拟器的21节点精确一致。固定20名开发患者40体的软件Axial Dice为0.8823042898，与A逐体逐类Dice及容积差异均为0。当前事实和证据见[实施状态](docs/IMPLEMENTATION_STATUS.md)，范围以[最终优化计划](docs/FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)为准。
 
-前版P256/P384真实模型完整256网格RTL已通过，packed-tag版P4 OOC功能网表小空间全网也已通过。厂商DataMover完整BD和ACD8驱动已写出；当前版本拆分容量检查并增加地址/计算输入弹性寄存器，完整尺寸仿真和布线尚待完成，未切换板卡。旧[性能计划](docs/OPTIMIZATION_4FPS_8FPS.md)与[组件记录](optimization/README.md)保留各版本证据范围。
+2026-10-20的P6@100MHz候选已完成真实1000帧、逐节点数值和3类恢复板测：持续8.151268 FPS、P95 106.257678ms；布线WNS +0.189ns。它达到性能门槛，最终40体PL、原系统恢复回归和交付仍未完成。P6完整功能网表受xsim BASIC实例数限制而未启动；不将其记为通过。旧[性能计划](docs/OPTIMIZATION_4FPS_8FPS.md)与[组件记录](optimization/README.md)保留历史版本范围。
+
+当前硬件路径为`optimization/rtl`、`optimization/vivado/build_spatial.tcl`、`optimization/device.py`和`optimization/board_verify.py`（ACD8）；运行时按配对证书选择。下文ACD3/ACD4构建命令属于历史兼容路径，不能继承ACD8板测结果。运行包、模型和病例在Release或被忽略的`out/acdc`中。
 
 ## PC安装与直接演示
 
