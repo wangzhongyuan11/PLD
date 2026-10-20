@@ -1,0 +1,77 @@
+{
+  "schema": "pld-acdc-spatial-board-audit-v1",
+  "date": "2026-10-20",
+  "runtime_manifest_sha256": "84676fdda80f92b67a6f5aaaf4c74c9ca91e200d49145fa1e7e972a923432f32",
+  "model_spec_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+  "reports": {
+    "short1": {
+      "path": "out/acdc/board_p4_v1/short1.json",
+      "sha256": "d3e0038900c42ba1fc414b6ab80f03ba7bfe4ae919437b7424cdfbd0b6a6985b",
+      "frames": 1,
+      "sustained_fps": 5.028017976531938,
+      "p95_seconds": 0.18658579099999884,
+      "max_seconds": 0.18658579099999884,
+      "faults": 0,
+      "physical_nodes": []
+    },
+    "short21_nodes_recovery": {
+      "path": "out/acdc/board_p4_v1/short21_nodes_recovery.json",
+      "sha256": "d814ca36430206fd5773ec59fdd7141efc354b580c978d02bdfd2f162d44b693",
+      "frames": 21,
+      "sustained_fps": 5.153412693395557,
+      "p95_seconds": 0.18263203100002556,
+      "max_seconds": 0.18289084299999558,
+      "faults": 3,
+      "physical_nodes": [
+        "C01",
+        "C02",
+        "P0",
+        "C03",
+        "C04",
+        "P1",
+        "C05",
+        "C06",
+        "P2",
+        "C07",
+        "C08",
+        "C09",
+        "C10",
+        "C11",
+        "C12",
+        "C13",
+        "C14",
+        "C15"
+      ]
+    },
+    "stability1000_retry": {
+      "path": "out/acdc/board_p4_v1/stability1000_retry.json",
+      "sha256": "b1206f6382febf800754c38b64d5aa7b581501a05829d72cd87fd9286bfd5ca9",
+      "frames": 1000,
+      "sustained_fps": 5.10769185907729,
+      "p95_seconds": 0.18108770085003698,
+      "max_seconds": 0.18854916899999807,
+      "faults": 3,
+      "physical_nodes": []
+    }
+  },
+  "G4_performance_met": true,
+  "G4_complete": false,
+  "G8_complete": false,
+  "remaining": [
+    "40-volume physical PL evaluation",
+    "physical UI/export demonstration",
+    "original system board regression",
+    "reproducible final delivery"
+  ],
+  "memory": {
+    "rss_min_bytes": 88805376,
+    "rss_max_bytes": 89067520,
+    "cma_free_min_bytes": 46530560,
+    "cma_free_max_bytes": 48054272,
+    "note": "report/frame records accumulate; no claim of zero allocator growth"
+  },
+  "rejected_attempt": {
+    "report_sha256": "f6084430a5647705e520080aa5ade8a398748e72f75d3f3d00bf977118220eea",
+    "reason": "formal hub active, Lease rejected before overlay download, zero frames"
+  }
+}
