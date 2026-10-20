@@ -98,6 +98,15 @@ sudo -E /usr/local/share/pynq-venv/bin/python3 -m acdc.deploy.manage rollback
 
 ## 尚未关闭的补充验证
 
-完整尺寸RTL与真实板测已通过。P6 OOC功能网表有59147实例，xsim BASIC限制50000，启动失败，不能记为网表数值通过。已用MSYS2官方仓库的Icarus 12.0作为补充；其不支持原DDR模型的SV关联数组，因此增加有界可移植存储。该存储在xsim上以同一A参数、272 job/16768写回/313888周期与原模型一致。Icarus网表运行结果仍待终态。
+完整尺寸RTL与真实板测已通过。P6 OOC功能网表有59147实例，xsim BASIC限制50000，启动失败，不能记为网表数值通过。已用MSYS2官方仓库的Icarus 12.0作为补充；其不支持原DDR模型的SV关联数组，因此增加有界可移植存储。该存储在xsim上以同一A参数、272 job/16768写回/313888周期与原模型一致。Icarus网表运行在首次读写前因未知控制状态失败；基础厂商LUT/FDRE/GSR探针通过，原因仍待定位，不以真实板测成功掩盖此失败。
 
 交付包及最终验收状态需在实际打包、SHA/CRC、源码/运行包身份和此补充验证结果核对后更新。工程教学与算法演示，不作为临床诊断依据；A数据/模型许可及引用随原Release保留。
+
+RC包复现（输入清单固定每个运行包/报告/结果的SHA；不上传、不部署）：
+
+```powershell
+& acdc/.venv/Scripts/python.exe -m acdc.package_delivery create --inputs acdc/delivery/inputs_rc1.json --output out/acdc/delivery/acdc_axial_p6_20261021_rc1
+& acdc/.venv/Scripts/python.exe -m acdc.package_delivery verify out/acdc/delivery/acdc_axial_p6_20261021_rc1
+```
+
+RC清单中的`acceptance_complete=false`保留网表缺口。包内含源码、冻结运行包、原始板测与40体评估报告、全部20例结果ZIP及浏览器示例；原始训练数据不重复分发，按原Release SHA取得。
