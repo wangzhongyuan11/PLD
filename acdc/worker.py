@@ -16,6 +16,9 @@ def make_worker(backend,port=8093):
     cache=OrderedDict()
     class Handler(BaseHTTPRequestHandler):
         protocol_version='HTTP/1.1'
+        # Headers and the binary tensor are separate writes. Nagle plus the
+        # peer's delayed ACK can otherwise add ~40 ms on every reused RPC.
+        disable_nagle_algorithm=True
         def setup(self):
             super().setup();self.connection.settimeout(30)
         def log_message(self,*args):pass
