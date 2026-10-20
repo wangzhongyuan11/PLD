@@ -39,6 +39,7 @@ module input_loader #(
   state_t state;
   logic [31:0] source1,group_address,plane_bytes,request_address;
   logic [15:0] image_h,image_w,tile_y,tile_x,oh,ow,ih,iw,columns,row,bank_row_base;
+  logic [8:0] column_numerator,column_count;
   logic [7:0] ci,split;
   logic [4:0] cg,cg_count,split_groups;
   logic pad,cat,slot,deep,cache_valid,row_zero;
@@ -71,6 +72,9 @@ module input_loader #(
   assign producer_ready=!load_valid||load_ready;
   assign producer_issue=state==EXPAND&&producer_ready;
   assign deep=cat&&cg>=split_groups;
+  // Width is validated before INITIALIZE; halo width is at most 258.
+  assign column_numerator=iw[8:0]+9'(P-1);
+  assign column_count=column_numerator/9'(P);
   always_comb begin
     gy=$signed({2'd0,tile_y})+$signed({2'd0,row})-$signed({17'd0,pad});
     gx=$signed({2'd0,tile_x})+$signed({9'd0,col})-$signed({17'd0,pad});
@@ -125,7 +129,7 @@ module input_loader #(
             state<=FAULT;error<=1;done<=1;
           end else state<=INITIALIZE;
         end
-        INITIALIZE:begin columns<=(iw+P-1)/P;plane_bytes<=32'd1<<(log_h+log_w+3);state<=CHECK_PLANE;end
+        INITIALIZE:begin columns<={7'd0,column_count};plane_bytes<=32'd1<<(log_h+log_w+3);state<=CHECK_PLANE;end
         CHECK_PLANE:begin plane_words<=ih*columns;state<=CHECK_CAPACITY;end
         CHECK_CAPACITY:begin capacity<=plane_words*cg_count;state<=PREPARE_ROW;end
         PREPARE_ROW:begin

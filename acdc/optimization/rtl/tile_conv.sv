@@ -36,6 +36,8 @@ module tile_conv #(
   typedef enum logic [2:0] {IDLE,SETUP,PLANE,CAPACITY,CHECK,RUN} state_t;
   state_t state;
   logic [15:0] oh,ow,ih,iw,columns,plane_words,x,y,row_base,ci_base,tap_row;
+  logic [7:0] x_group;
+  logic [8:0] column_numerator,column_count;
   logic [7:0] ci,tap;
   // Capacity validation is not a one-cycle cascaded multiply/compare path.
   // Separate registered products keep tile launch independent of DSP cascades.
@@ -67,7 +69,7 @@ module tile_conv #(
   logic [P*8-1:0] lane_mask;
   logic compute_overflow;
   logic [2:0] queued_groups;
-  integer base_bank,pixel_offset,local_x;
+  integer pixel_offset,read_bank;
   assign busy=state!=IDLE;
   assign weight_ready=aresetn&&(!busy||weight_slot!=wslot)&&weight_addr<216;
   assign param_ready=aresetn&&(!busy||param_slot!=wslot);
@@ -80,17 +82,23 @@ module tile_conv #(
   assign request_ready=!address_valid||address_ready;
   assign bank_ready=!input_valid||compute_ready;
   assign compute_weights=weight_read[wslot];
+  // Validated iw <= 258. Keep constant division narrow even when P is 6;
+  // a 32-bit expression here synthesizes a much longer reciprocal network.
+  assign column_numerator=iw[8:0]+9'(P-1);
+  assign column_count=column_numerator/9'(P);
   always_comb begin
     bank_addr=0;compute_input=0;lane_mask=0;
-    base_bank=(x+kx)%P;
+    // x always advances by P and starts at zero on each row. Track x/P
+    // explicitly so the per-tap address path contains no divide or modulo.
     for(int b=0;b<P;b++)begin
-      pixel_offset=(b+P-base_bank)%P;
-      local_x=x+kx+pixel_offset;
-      if(x+pixel_offset<ow)bank_addr[b*AW+:AW]=AW'(ci_base+tap_row+local_x/P);
+      pixel_offset=b>=kx?b-kx:b+P-kx;
+      if(x+pixel_offset<ow)
+        bank_addr[b*AW+:AW]=AW'(ci_base+tap_row+{8'd0,x_group}+(b<kx?16'd1:16'd0));
     end
     for(int p=0;p<P;p++)begin
+      read_bank=response_kx+p<P?response_kx+p:response_kx+p-P;
       for(int i=0;i<8;i++)if(ci_mask[i]&&bank_tag[7:0]+p<ow)
-        compute_input[(p*8+i)*8+:8]=bank_data[(((bank_tag[7:0]+response_kx+p)%P))*64+i*8+:8];
+        compute_input[(p*8+i)*8+:8]=bank_data[read_bank*64+i*8+:8];
       for(int o=0;o<8;o++)lane_mask[p*8+o]=(bank_tag[7:0]+p<ow)&&(o<co);
     end
   end
@@ -148,13 +156,13 @@ module tile_conv #(
             error<=1;done<=1;
           end else state<=SETUP;
         end
-        SETUP:begin columns<=(iw+P-1)/P;state<=PLANE;end
+        SETUP:begin columns<={7'd0,column_count};state<=PLANE;end
         PLANE:begin plane_words<=ih*columns;state<=CAPACITY;end
         CAPACITY:begin capacity_words<=plane_words*ci_count;state<=CHECK;end
         CHECK:begin
           if(capacity_words>WORDS)begin error<=1;done<=1;state<=IDLE;end
           else begin
-            x<=0;y<=0;kx<=0;ky<=0;ci_group<=0;tap<=0;
+            x<=0;x_group<=0;y<=0;kx<=0;ky<=0;ci_group<=0;tap<=0;
             row_base<=0;ci_base<=0;tap_row<=0;issue_done<=0;state<=RUN;
           end
         end
@@ -170,8 +178,8 @@ module tile_conv #(
                 if(ci_group+1<ci_count)begin ci_group<=ci_group+1;ci_base<=ci_base+plane_words;end
                 else begin
                   ci_group<=0;ci_base<=0;tap<=0;
-                  if(x+P<ow)x<=x+P;
-                  else if(y+1<oh)begin x<=0;y<=y+1;row_base<=row_base+columns;tap_row<=row_base+columns;end
+                  if(x+P<ow)begin x<=x+P;x_group<=x_group+1;end
+                  else if(y+1<oh)begin x<=0;x_group<=0;y<=y+1;row_base<=row_base+columns;tap_row<=row_base+columns;end
                   else issue_done<=1;
                 end
               end

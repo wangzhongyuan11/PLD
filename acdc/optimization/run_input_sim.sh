@@ -5,7 +5,7 @@ BIN="${VIVADO_BIN:-/d/vivado/2026.1/Vivado/bin}"
 PY="${ACDC_PYTHON:-$ROOT/acdc/.venv/Scripts/python.exe}"
 P="${1:-4}"
 case "$P" in 4|6) ;; *) echo "P must be 4 or 6" >&2; exit 2;; esac
-OUT="$ROOT/out/acdc/optimization/input_p${P}_sim"
+OUT="${ACDC_SIM_OUTPUT:-$ROOT/out/acdc/optimization/input_p${P}_sim}"
 mkdir -p "$OUT"
 cd "$ROOT"
 "$PY" -m acdc.optimization.gen_input_vectors "$OUT" --p "$P"
