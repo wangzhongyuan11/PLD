@@ -2,6 +2,7 @@ import json
 import tempfile
 import threading
 import unittest
+from unittest.mock import patch
 import zipfile
 from pathlib import Path
 
@@ -23,6 +24,31 @@ def request(backend):
 
 
 class IntegrationTest(unittest.TestCase):
+    def test_remote_idle_and_transport_failure_do_not_poison_next_job(self):
+        backend=DemoBackend();server=make_worker(backend,0)
+        thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
+        remote=None
+        try:
+            remote=RemoteBackend('http://127.0.0.1:'+str(server.server_port),model_sha=backend.model_sha,
+                                 head_scale=backend.head_scale,synthetic=True)
+            self.assertIsNone(remote.connection.sock,'health socket must not survive volume preparation')
+            q=np.zeros((1,3,256,256),np.int8)
+            remote.infer(q,request(backend))
+            old_socket=remote.connection.sock
+            remote._last_response-=31
+            remote.infer(q,dict(request(backend),run_id='after-idle'))
+            self.assertIsNot(remote.connection.sock,old_socket)
+            with patch.object(remote.connection,'send',side_effect=ConnectionAbortedError('peer closed')):
+                with self.assertRaises(ConnectionAbortedError):
+                    remote.infer(q,dict(request(backend),run_id='uncertain-delivery'))
+            self.assertIsNone(remote.connection.sock)
+            actual,_=remote.infer(q,dict(request(backend),run_id='new-user-job'))
+            expected,_=backend.infer(q,request(backend))
+            np.testing.assert_array_equal(actual,expected)
+        finally:
+            if remote is not None:remote.close()
+            server.shutdown();server.server_close();thread.join(2)
+
     def test_production_worker_must_have_certified_runtime_identity(self):
         class Uncertified(DemoBackend):synthetic=False;kind='pl'
         backend=Uncertified();server=make_worker(backend,0)

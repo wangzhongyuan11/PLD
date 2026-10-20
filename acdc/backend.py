@@ -150,12 +150,26 @@ class RemoteBackend:
         if not synthetic and (not is_sha(self.runtime_sha) or not isinstance(self.hardware_info,dict)
                 or (self.hardware_info.get('hardware_id'),self.hardware_info.get('abi')) not in supported):
             self.connection.close();raise ContractError('production worker lacks certified ACDC hardware/runtime provenance')
+        # Preparing/uploading a volume may exceed the worker's 30 s idle limit.
+        # Do not retain the health socket until the first actual slice.
+        self.connection.close()
+        self._last_response=None
 
     def infer(self,x,request,cancel=None):
         x=checked_int8(x,INPUT_SHAPE);validate_request(request)
-        self.connection.request('POST','/infer',encode(request,x.tobytes()),{'Content-Type':'application/octet-stream'})
-        response=self.connection.getresponse()
-        raw=response.read(HEAD_BYTES+65536+5)
+        if cancel is not None and cancel.is_set():raise InterruptedError('remote cancelled')
+        if self._last_response is not None and time.monotonic()-self._last_response>=20:
+            self.connection.close()
+        try:
+            self.connection.request('POST','/infer',encode(request,x.tobytes()),{'Content-Type':'application/octet-stream'})
+            response=self.connection.getresponse()
+            raw=response.read(HEAD_BYTES+65536+5)
+        except (OSError,http.client.HTTPException):
+            # Delivery is uncertain: report failure, never silently replay PL.
+            # A later user job must be able to establish a clean connection.
+            self.connection.close();self._last_response=None
+            raise
+        self._last_response=time.monotonic()
         if response.status!=200:
             raise RuntimeError(f'board refused inference: {response.status} {raw[:200]!r}')
         meta,payload=decode(raw,HEAD_BYTES)
