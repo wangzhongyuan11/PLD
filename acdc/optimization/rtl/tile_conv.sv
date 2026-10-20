@@ -58,6 +58,12 @@ module tile_conv #(
   logic [1:0] address_kx;
   logic address_valid,address_ready;
   logic [P*64-1:0] input_q;
+  logic [P*64-1:0] bank_data_q;
+  logic [511:0] bank_weights_q;
+  logic [31:0] bank_tag_q;
+  logic [7:0] bank_mask_q;
+  logic [1:0] bank_kx_q;
+  logic bank_valid_q,data_ready;
   logic [511:0] weights_q;
   logic [P*8-1:0] lane_mask_q;
   logic [31:0] tag_q;
@@ -78,9 +84,11 @@ module tile_conv #(
                       (ci_group+1==ci_count&&kx==(kernel3?2:0)&&ky==(kernel3?2:0)),y[7:0],x[7:0]};
   // Elastic address and data boundaries preserve one request per cycle.
   // Coordinates no longer drive BRAM enables through address checks, and
-  // the page/slot/rotation mux no longer feeds the DSP input directly.
+  // Register page/slot selection before the spatial rotation. P6 routed
+  // timing otherwise combines both muxes and the DSP input fanout.
   assign request_ready=!address_valid||address_ready;
-  assign bank_ready=!input_valid||compute_ready;
+  assign data_ready=!input_valid||compute_ready;
+  assign bank_ready=!bank_valid_q||data_ready;
   assign compute_weights=weight_read[wslot];
   // Validated iw <= 258. Keep constant division narrow even when P is 6;
   // a 32-bit expression here synthesizes a much longer reciprocal network.
@@ -96,10 +104,10 @@ module tile_conv #(
         bank_addr[b*AW+:AW]=AW'(ci_base+tap_row+{8'd0,x_group}+(b<kx?16'd1:16'd0));
     end
     for(int p=0;p<P;p++)begin
-      read_bank=response_kx+p<P?response_kx+p:response_kx+p-P;
-      for(int i=0;i<8;i++)if(ci_mask[i]&&bank_tag[7:0]+p<ow)
-        compute_input[(p*8+i)*8+:8]=bank_data[read_bank*64+i*8+:8];
-      for(int o=0;o<8;o++)lane_mask[p*8+o]=(bank_tag[7:0]+p<ow)&&(o<co);
+      read_bank=bank_kx_q+p<P?bank_kx_q+p:bank_kx_q+p-P;
+      for(int i=0;i<8;i++)if(bank_mask_q[i]&&bank_tag_q[7:0]+p<ow)
+        compute_input[(p*8+i)*8+:8]=bank_data_q[read_bank*64+i*8+:8];
+      for(int o=0;o<8;o++)lane_mask[p*8+o]=(bank_tag_q[7:0]+p<ow)&&(o<co);
     end
   end
   tile_banks #(.P(P),.WORDS(WORDS)) input_banks(
@@ -122,7 +130,7 @@ module tile_conv #(
     .s_first(tag_q[17]),.s_last(tag_q[16]),.s_valid(input_valid),.s_ready(compute_ready),
     .m_data,.m_tag,.m_keep,.m_first,.m_last,.m_overflow(compute_overflow),.m_valid,.m_ready,.queued_groups);
   always_ff @(posedge aclk)begin
-    if(!aresetn)begin state<=IDLE;done<=0;error<=0;params_loaded<=0;address_valid<=0;input_valid<=0;end
+    if(!aresetn)begin state<=IDLE;done<=0;error<=0;params_loaded<=0;address_valid<=0;bank_valid_q<=0;input_valid<=0;end
     else begin
       done<=0;
       if(param_valid&&param_ready)begin
@@ -139,10 +147,17 @@ module tile_conv #(
         response_kx<=address_kx;ci_mask<=address_mask;
       end
       if(bank_ready)begin
-        input_valid<=bank_valid;
+        bank_valid_q<=bank_valid;
         if(bank_valid)begin
-          input_q<=compute_input;weights_q<=compute_weights;
-          lane_mask_q<=lane_mask;tag_q<=bank_tag;
+          bank_data_q<=bank_data;bank_weights_q<=compute_weights;
+          bank_tag_q<=bank_tag;bank_mask_q<=ci_mask;bank_kx_q<=response_kx;
+        end
+      end
+      if(data_ready)begin
+        input_valid<=bank_valid_q;
+        if(bank_valid_q)begin
+          input_q<=compute_input;weights_q<=bank_weights_q;
+          lane_mask_q<=lane_mask;tag_q<=bank_tag_q;
         end
       end
       if(m_valid&&m_ready&&compute_overflow)error<=2;
