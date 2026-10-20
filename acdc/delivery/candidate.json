@@ -1,0 +1,11 @@
+{
+  "schema": "pld-acdc-delivery-pointer-v1",
+  "version": "acdc_axial_p6_20261021_rc1",
+  "status": "candidate: netlist verification gap retained",
+  "acceptance_complete": false,
+  "archive": "out/acdc/delivery/acdc_axial_p6_20261021_rc1.zip",
+  "archive_sha256": "6afcb1e1d1797ff3faa80d855c1e5c8c174f45b79b3cb60fcd610ca3bd97a396",
+  "manifest_sha256": "1f91aa94f22563d4f87124df9429860870cb53f373f1f691fa2e7d9d02f02c7b",
+  "model_spec_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+  "runtime_manifest_sha256": "1f0bdf8739980ea8e8e2a06ee349b57ed81d041d87515e4e9400cd30b7ae7747"
+}
