@@ -1,0 +1,318 @@
+{
+  "model": "skin",
+  "scope": "board loopback HTTP; original public dev images; golden equality, no quality/long-run/physical-screen acceptance",
+  "switch_wait_seconds": 4.5982000074218377e-05,
+  "switch": {
+    "seconds": 27.475079251999887,
+    "stages_seconds": {
+      "wait_idle": 0.26660705800009055,
+      "release": 0.7502262320001591,
+      "initialize": 26.457139524000013
+    },
+    "before": {
+      "MemAvailable": "366336 kB",
+      "CmaTotal": "131072 kB",
+      "CmaFree": "46844 kB"
+    },
+    "after_release": {
+      "MemAvailable": "366028 kB",
+      "CmaTotal": "131072 kB",
+      "CmaFree": "46844 kB"
+    },
+    "after_ready": {
+      "MemAvailable": "291884 kB",
+      "CmaTotal": "131072 kB",
+      "CmaFree": "11024 kB"
+    }
+  },
+  "frames": [
+    {
+      "source": "ISIC_0000003.jpg",
+      "input_sha256": "e3092bd47d1955c117a18acb1e236222cae99acfbd393d0c7f07b4e6b8978857",
+      "head_sha256": "1842db37a28ca1cf2108ded4a6c2b451ace44d500afae2c41955e95b43c36e49",
+      "golden_equal": true,
+      "job_id": "d2d953855ec34481b60e1df1150655bf",
+      "post_to_zip_ready_seconds": 4.858168041999988,
+      "post_to_download_seconds": 6.659477479000088,
+      "pngs": {
+        "original.png": {
+          "size": [
+            1022,
+            767
+          ],
+          "pixels_sha256": "90f2cd4a95aaf204bd402cf7c0ede0a2500c0e5c82d8da664c9f48e94830592b"
+        },
+        "mask.png": {
+          "size": [
+            1022,
+            767
+          ],
+          "pixels_sha256": "f2e76c6aae7fa09add3e3d488f7dbe539ff670608189227ca886cd4be94e1114"
+        },
+        "contour.png": {
+          "size": [
+            1022,
+            767
+          ],
+          "pixels_sha256": "28ac4af1ea75c27ea056b0f2aab0ff927936a30ddf447cd5a399b4f9499b4e99"
+        },
+        "outlined.png": {
+          "size": [
+            1022,
+            767
+          ],
+          "pixels_sha256": "88ddd6cc2258e67d27269e8979e03d50253e28e107b73e5e81b66ddb7af4579f"
+        },
+        "cutout.png": {
+          "size": [
+            1022,
+            767
+          ],
+          "pixels_sha256": "421754142650add5996763b6b71e1c354d11c1b4bc824029e3d1c4a43678a4ee"
+        },
+        "comparison.png": {
+          "size": [
+            1280,
+            480
+          ],
+          "pixels_sha256": "1dff21d0381ee2d9414d4f4337d4eff17b843fea2acd202c8f0c946c9724cf2b"
+        }
+      },
+      "stage_seconds": {
+        "request_receive_parse": 0.002188782000075662,
+        "upload_decode_validate": 0.2337952730001689,
+        "request_to_job_start": 0.24407758200004537,
+        "stop_hdmi": 4.646799993679451e-05,
+        "input_write": 0.0014616859998568543,
+        "runtime_check_kind": "metadata_unchanged",
+        "runtime_verify": 0.05603582200001256,
+        "model_reused": true,
+        "hardware_reused": true,
+        "persistent_worker_startup": 0.0,
+        "persistent_worker_request": 1.1926011859998198,
+        "persistent_worker_pid": 7542,
+        "persistent_worker_alive_after_reply": true,
+        "persistent_worker_total": 1.1965329580000343,
+        "inference_backend": "persistent_b_worker",
+        "result_load": 0.02821383299988156,
+        "mask_remap": 0.03881038700001227,
+        "contour_process": 0.23449535400004606,
+        "preview_build": 0.8761502080001264,
+        "request_to_preview_ready": 2.68355491300008,
+        "preview_images": {
+          "original": {
+            "resize": 0.15945539099993766,
+            "encode_write": 0.2507758519998333
+          },
+          "outlined": {
+            "resize": 0.14866142700020646,
+            "encode_write": 0.2604050519998964
+          },
+          "mask": {
+            "resize": 0.007760479999888048,
+            "encode_write": 0.03493223999998918
+          },
+          "contour": {
+            "resize": 0.007074725999927978,
+            "encode_write": 0.03402697799992893
+          },
+          "cutout": {
+            "resize": 0.15029219600000943,
+            "encode_write": 0.18554768600006355
+          }
+        },
+        "preview_remaining": 0.4852142210002057,
+        "view_composition": 0.3745741039999757,
+        "png_batch_wall": 0.9987582449998627,
+        "png_save": {
+          "original": 0.5249928609998733,
+          "mask": 0.1391538819998459,
+          "contour": 0.08602919999998448,
+          "outlined": 0.4472333900000649,
+          "cutout": 0.30654855900002076,
+          "comparison": 0.40759030100002747
+        },
+        "zip_payload": 0.07924429600006988,
+        "report_write": 0.003177040000082343,
+        "zip_report_append": 0.015669748000163963,
+        "zip_package": 0.09491404400023384,
+        "job_total": 4.398859721999997,
+        "request_to_job_complete": 4.642947723000134
+      },
+      "timing_details": null,
+      "job": {
+        "id": "d2d953855ec34481b60e1df1150655bf",
+        "state": "done",
+        "stage": "\u5b8c\u6574\u7ed3\u679c\u5305\u5df2\u5c31\u7eea",
+        "progress": 100,
+        "mode": "infer",
+        "name": "ISIC_0000003.jpg",
+        "thickness": 2,
+        "created": 1746614995.429566,
+        "preview_ready": true,
+        "package_ready": true,
+        "preview_views": [
+          "original",
+          "mask",
+          "contour",
+          "outlined",
+          "cutout"
+        ],
+        "views": [
+          "original",
+          "mask",
+          "contour",
+          "outlined",
+          "cutout",
+          "comparison"
+        ],
+        "statistics": {
+          "foreground_pixels": 17433,
+          "image_pixels": 49152,
+          "area_percent": 35.467529296875,
+          "boundary_pixels": 4996,
+          "connectivity": 8,
+          "inward_thickness_pixels": 2,
+          "original_rgb_supplied": true,
+          "cpu_postprocess_seconds": 0.23438638700008596,
+          "scope": "CPU raster boundary; includes holes; no inference, IO or display timing",
+          "area_scope": "\u6a21\u578b\u6709\u6548\u533a\u57df\uff08\u6392\u9664\u8865\u8fb9\uff09",
+          "b_seconds": 0.8538731799999368,
+          "historical_b_time": false,
+          "stage_seconds": {
+            "request_receive_parse": 0.002188782000075662,
+            "upload_decode_validate": 0.2337952730001689,
+            "request_to_job_start": 0.24407758200004537,
+            "stop_hdmi": 4.646799993679451e-05,
+            "input_write": 0.0014616859998568543,
+            "runtime_check_kind": "metadata_unchanged",
+            "runtime_verify": 0.05603582200001256,
+            "model_reused": true,
+            "hardware_reused": true,
+            "persistent_worker_startup": 0.0,
+            "persistent_worker_request": 1.1926011859998198,
+            "persistent_worker_pid": 7542,
+            "persistent_worker_alive_after_reply": true,
+            "persistent_worker_total": 1.1965329580000343,
+            "inference_backend": "persistent_b_worker",
+            "result_load": 0.02821383299988156,
+            "mask_remap": 0.03881038700001227,
+            "contour_process": 0.23449535400004606,
+            "preview_build": 0.8761502080001264,
+            "request_to_preview_ready": 2.68355491300008,
+            "preview_images": {
+              "original": {
+                "resize": 0.15945539099993766,
+                "encode_write": 0.2507758519998333
+              },
+              "outlined": {
+                "resize": 0.14866142700020646,
+                "encode_write": 0.2604050519998964
+              },
+              "mask": {
+                "resize": 0.007760479999888048,
+                "encode_write": 0.03493223999998918
+              },
+              "contour": {
+                "resize": 0.007074725999927978,
+                "encode_write": 0.03402697799992893
+              },
+              "cutout": {
+                "resize": 0.15029219600000943,
+                "encode_write": 0.18554768600006355
+              }
+            },
+            "preview_remaining": 0.4852142210002057,
+            "view_composition": 0.3745741039999757,
+            "png_batch_wall": 0.9987582449998627,
+            "png_save": {
+              "original": 0.5249928609998733,
+              "mask": 0.1391538819998459,
+              "contour": 0.08602919999998448,
+              "outlined": 0.4472333900000649,
+              "cutout": 0.30654855900002076,
+              "comparison": 0.40759030100002747
+            },
+            "zip_payload": 0.07924429600006988
+          },
+          "preview_ready_seconds": 2.68355491300008,
+          "data_source": "\u672c\u6b21\u677f\u7aef FPGA \u63a8\u7406",
+          "processing_seconds": 4.299433537999903,
+          "processing_scope": "\u65e7\u53e3\u5f84\uff1a\u4efb\u52a1\u7ebf\u7a0b\u542f\u52a8\u5230\u5168\u90e8 PNG \u5199\u51fa\uff1b\u4e0d\u542b\u4e0a\u4f20/\u6d4f\u89c8\u5668\u3001report/ZIP/\u5386\u53f2\u63d0\u4ea4\uff1b\u63a8\u7406\u6a21\u5f0f\u5305\u542b\u505c\u6b62HDMI\u3001\u6821\u9a8c\u548cB\u5b50\u8fdb\u7a0b",
+          "output_png_compress_level": 1,
+          "output_png_workers": 2,
+          "output_png_backend": "fast_sub",
+          "output_png_bytes": 2299913,
+          "output_zip_compression": "stored",
+          "stage_timing_scope": "report/ZIP snapshot at report serialization: request\u2192job start and stages through all PNG writes and ZIP PNG payload; excludes report_write, ZIP report append and final totals",
+          "final_stage_seconds": {
+            "request_receive_parse": 0.002188782000075662,
+            "upload_decode_validate": 0.2337952730001689,
+            "request_to_job_start": 0.24407758200004537,
+            "stop_hdmi": 4.646799993679451e-05,
+            "input_write": 0.0014616859998568543,
+            "runtime_check_kind": "metadata_unchanged",
+            "runtime_verify": 0.05603582200001256,
+            "model_reused": true,
+            "hardware_reused": true,
+            "persistent_worker_startup": 0.0,
+            "persistent_worker_request": 1.1926011859998198,
+            "persistent_worker_pid": 7542,
+            "persistent_worker_alive_after_reply": true,
+            "persistent_worker_total": 1.1965329580000343,
+            "inference_backend": "persistent_b_worker",
+            "result_load": 0.02821383299988156,
+            "mask_remap": 0.03881038700001227,
+            "contour_process": 0.23449535400004606,
+            "preview_build": 0.8761502080001264,
+            "request_to_preview_ready": 2.68355491300008,
+            "preview_images": {
+              "original": {
+                "resize": 0.15945539099993766,
+                "encode_write": 0.2507758519998333
+              },
+              "outlined": {
+                "resize": 0.14866142700020646,
+                "encode_write": 0.2604050519998964
+              },
+              "mask": {
+                "resize": 0.007760479999888048,
+                "encode_write": 0.03493223999998918
+              },
+              "contour": {
+                "resize": 0.007074725999927978,
+                "encode_write": 0.03402697799992893
+              },
+              "cutout": {
+                "resize": 0.15029219600000943,
+                "encode_write": 0.18554768600006355
+              }
+            },
+            "preview_remaining": 0.4852142210002057,
+            "view_composition": 0.3745741039999757,
+            "png_batch_wall": 0.9987582449998627,
+            "png_save": {
+              "original": 0.5249928609998733,
+              "mask": 0.1391538819998459,
+              "contour": 0.08602919999998448,
+              "outlined": 0.4472333900000649,
+              "cutout": 0.30654855900002076,
+              "comparison": 0.40759030100002747
+            },
+            "zip_payload": 0.07924429600006988,
+            "report_write": 0.003177040000082343,
+            "zip_report_append": 0.015669748000163963,
+            "zip_package": 0.09491404400023384,
+            "job_total": 4.398859721999997,
+            "request_to_job_complete": 4.642947723000134
+          },
+          "final_stage_timing_scope": "time.perf_counter wall seconds through ZIP close (report included); inference_subprocess overlaps its launch/wait components; history index commit is not included",
+          "job_total_seconds": 4.398859721999997,
+          "request_to_job_complete_seconds": 4.642947723000134
+        }
+      }
+    }
+  ],
+  "hdmi": [],
+  "complete": true
+}

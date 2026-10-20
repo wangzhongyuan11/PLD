@@ -1,0 +1,12 @@
+{
+  "host_time": "2026-10-20T23:17:56.462266+08:00",
+  "services_stopped": true,
+  "dma_lock_released": true,
+  "storage_sync_exit": 0,
+  "poweroff_request_exit": 0,
+  "ports": {
+    "22": "TimeoutError",
+    "8765": "TimeoutError"
+  },
+  "connections_closed": true
+}
