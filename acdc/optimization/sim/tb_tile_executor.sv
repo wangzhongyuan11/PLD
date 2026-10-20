@@ -14,7 +14,11 @@ module tb_tile_executor #(parameter integer P=4);
   int fd,rc,njobs,completed=0,cycles=0,barriers=0;
   int unsigned rng=32'hacdc9988;
   tile_executor #(.P(P)) dut(.*);
+`ifdef ACDC_PORTABLE_DDR
+  datamover_memory_portable ddr(.*);
+`else
   datamover_memory ddr(.*);
+`endif
   always #5 aclk=~aclk;
   function automatic int unsigned next_rng(input int unsigned v);
     v^=v<<13;v^=v>>17;v^=v<<5;return v;

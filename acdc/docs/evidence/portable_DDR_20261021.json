@@ -1,0 +1,16 @@
+{
+  "schema": "pld-acdc-portable-DDR-check-v1",
+  "passed": true,
+  "p": 6,
+  "grid_divisor": 8,
+  "jobs": 272,
+  "writes": 16768,
+  "cycles": 313888,
+  "source_hashes": {
+    "acdc/optimization/sim/datamover_memory_portable.sv": "91169a01077485e81f7083085fbf0c580906fd04e22acee15b0a90126443b61a",
+    "acdc/optimization/sim/tb_tile_executor.sv": "e25ad789253bf2555440f31dab9ec9c065c3ece3bf42cb5bed979f657e174c5c",
+    "acdc/optimization/run_executor_sim.sh": "001efefa4162b8ea92b0a1dfa1c0cc6d0f3127d59b2d7a03b269bc45765c9b68"
+  },
+  "simulation_log_sha256": "79819503c488a25ff93c144cb3b1afbd7c3eb8bd2c64b44e232a27ac73e959cd",
+  "scope": "xsim RTL with portable bounded DDR matches original associative DDR cycle/write checks; full synthesized netlist Icarus run pending"
+}

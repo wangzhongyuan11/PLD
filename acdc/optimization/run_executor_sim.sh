@@ -16,7 +16,13 @@ cd "$OUT"
 FILES=(conv_array conv_compute tile_banks tile_conv stream_fork pool_stream dma_transfer tile_writer parameter_loader input_transform input_loader lut_loader dma_read_arbiter tile_job_queue tile_executor)
 SOURCES=()
 for FILE in "${FILES[@]}"; do SOURCES+=("$ROOT/acdc/optimization/rtl/$FILE.sv"); done
-"$BIN/xvlog.bat" -sv -nolog "${SOURCES[@]}" "$ROOT/rtl/requant_q24.sv" "$ROOT/acdc/optimization/sim/datamover_memory.sv" "$ROOT/acdc/optimization/sim/tb_tile_executor.sv" > compile.log 2>&1
+DDR="$ROOT/acdc/optimization/sim/datamover_memory.sv"
+DEFINES=()
+if [[ "${ACDC_PORTABLE_DDR:-0}" == 1 ]]; then
+  DDR="$ROOT/acdc/optimization/sim/datamover_memory_portable.sv"
+  DEFINES=(-d ACDC_PORTABLE_DDR)
+fi
+"$BIN/xvlog.bat" -sv -nolog "${DEFINES[@]}" "${SOURCES[@]}" "$ROOT/rtl/requant_q24.sv" "$DDR" "$ROOT/acdc/optimization/sim/tb_tile_executor.sv" > compile.log 2>&1
 "$BIN/xelab.bat" -nolog "tb_tile_executor_p$P" -s executor -timescale 1ns/1ps >> compile.log 2>&1
 "$BIN/xsim.bat" executor -R > simulation.log 2>&1
 rg 'TB_PASS tile_executor' simulation.log

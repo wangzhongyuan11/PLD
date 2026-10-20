@@ -4,7 +4,7 @@
 
 A真实研究Release已接入：原spec/参数身份保留，独立参考、Torch整数见证和tile模拟器的21节点精确一致。固定20名开发患者40体的软件Axial Dice为0.8823042898，与A逐体逐类Dice及容积差异均为0。当前事实和证据见[实施状态](docs/IMPLEMENTATION_STATUS.md)，范围以[最终优化计划](docs/FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)为准。
 
-2026-10-20的P6@100MHz候选已完成真实1000帧、逐节点数值和3类恢复板测：持续8.151268 FPS、P95 106.257678ms；布线WNS +0.189ns。它达到性能门槛，最终40体PL、原系统恢复回归和交付仍未完成。P6完整功能网表受xsim BASIC实例数限制而未启动；不将其记为通过。旧[性能计划](docs/OPTIMIZATION_4FPS_8FPS.md)与[组件记录](optimization/README.md)保留历史版本范围。
+P6@100MHz已完成真实1000帧、逐节点数值和3类恢复板测：持续8.151268 FPS、P95 106.257678ms；布线WNS +0.189ns。2026-10-21又完成40体/1616片真实PL、15层实测、网页和原Skin/CAMUS恢复回归。当前P6网页为`http://127.0.0.1:8092/`，详细结果、固定身份和启停步骤见[验证与使用记录](docs/VALIDATION_P6_20261021.md)。交付包及补充Icarus网表结果待完成；xsim BASIC受实例数限制没有通过P6网表。旧[性能计划](docs/OPTIMIZATION_4FPS_8FPS.md)与[组件记录](optimization/README.md)保留历史版本范围。
 
 当前硬件路径为`optimization/rtl`、`optimization/vivado/build_spatial.tcl`、`optimization/device.py`和`optimization/board_verify.py`（ACD8）；运行时按配对证书选择。下文ACD3/ACD4构建命令属于历史兼容路径，不能继承ACD8板测结果。运行包、模型和病例在Release或被忽略的`out/acdc`中。
 

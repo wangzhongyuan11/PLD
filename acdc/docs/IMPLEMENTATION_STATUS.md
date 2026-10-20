@@ -1,6 +1,15 @@
 # ACDC Axial 实施状态
 
-更新：2026-10-20。后续目标仍为[最终计划](FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)的完整链路、真实 G4 验收及 G8 冲刺；本记录不表示目标完成。
+更新：2026-10-21。目标仍为[最终计划](FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)的完整链路；当前结果见[验证与使用记录](VALIDATION_P6_20261021.md)。交付包和补充网表验证尚待终态，不将目标标记完成。
+
+## 2026-10-21 完整PL链路与回退回归
+
+- 固定20患者/40体/1616片全部P6新鲜推理通过，逐片输入/head SHA对照独立CPU；原生标签、affine、容积/EF全等，20个ZIP SHA/CRC通过。Axial宏Dice 0.8823042897748437，与A逐体指标/容积差异0。[40体审计](evidence/development_PL_20261021.json)。
+- PC远程1616片中位174.748400ms、P95 219.439400ms、最大247.678500ms；逐例新鲜推理窗口合计5.164175 FPS。板内1000帧8.151268 FPS/P95 106.257678ms仍为PS-DMA-PL性能证据，两种口径分列。
+- `optimization/profile_layers.py`完成15层×3次真实孤立测量：输入由PL前缀产生，每层及融合Pool输出与独立oracle全等，没有中间golden注入。C09/C11/C13的PL中位分别13.774/14.028/16.258ms，完整分解见[板端回归证据](evidence/board_regression_20261021.json)。
+- 正常停ACDC→恢复原hub→Skin两张、CAMUS两张真实PL黄金head/PNG/ZIP回归通过→正常释放原系统→恢复P6 worker。原正式源文件、unit和交付指针未修改。恢复hub后必须等认证状态ready，再切换；首次启动期的两个交接失败记录保留。
+- 当前网页已恢复8092，使用P6 runtime。patient039网页82片新鲜推理、原生结果、实际浏览器ZIP/PNG导出、MPR/3D及ED/ES切换通过；服务器上传至ZIP就绪20.306547s，远程单片P95 227.7ms。[网页审计](evidence/web_P6_20261021.json)。
+- P6 xsim功能网表受50000实例许可限制。补充Icarus运行使用原厂公开UNISIM模型及同一综合网表，没有修改网表；替代DDR存储先在xsim上以相同272 job/16768写回/313888周期通过，[存储模型证据](evidence/portable_DDR_20261021.json)。Icarus综合网表仍在运行，尚未记通过。
 
 ## 2026-10-20 板测更新
 

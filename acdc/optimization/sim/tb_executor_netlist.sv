@@ -14,7 +14,11 @@ module tb_executor_netlist;
   integer checked_words,expected_words,read_words,read_commands,write_commands;
   int fd,rc,njobs,completed=0,cycles=0,core_beats=0;
   tile_executor dut(.*);
+`ifdef ACDC_PORTABLE_DDR
+  datamover_memory_portable ddr(.*);
+`else
   datamover_memory ddr(.*);
+`endif
   always #5 aclk=~aclk;
   always @(posedge aclk)if(aresetn)begin
     cycles++;
