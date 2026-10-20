@@ -28,6 +28,7 @@ python -m camus --plan
 | `vivado/`、`scripts/` | IP/BD 构建、校验、模型准备、部署与板测工具 |
 | `delivery/` | 当前版本指针、严格白名单 manifest、小型证据与部署模板 |
 | `docs/` | [架构](docs/IMPLEMENTATION.md)、[部署](docs/DEPLOYMENT.md)、[验证](docs/validation/CLEANUP_20261017.md)、历史与需求 |
+| `pld-medical/` | A 组的协作说明、接口契约与产物索引（不含模型、训练源码与环境）；[工作区对照](docs/A_WORKSPACE.md)、[数据说明](docs/A_DATASETS.md) |
 | `role_a_final/`、`role_a_handoff/`、`camus_candidate_hidden_histogram_int8_20261015/` | 准备命令恢复的模型与旧回归 fixture，忽略展开文件 |
 | `数据/` | 本地原始数据及迁入 `validation/` 的验证输入，不公开上传 |
 | `out/`、`ip_repo/` | 可再生成产物和本地下载缓存，不作为版本入口 |
@@ -57,6 +58,8 @@ D:\Git\bin\bash.exe camus/run_sim.sh
 
 协作采用任务分支、聚焦提交、普通 PR，见 [CONTRIBUTING](CONTRIBUTING.md)。不强推，不推送归档/恢复分支，不提交原始数据、访问码或历史任务。
 
+A 组工作位于 `pld-medical/` 子目录，B/C 组继续使用根目录结构，通过任务分支和 PR 协作。Git 只保留 A 的协作文档、接口、产物索引与小型还原工具；训练环境、模型权重和数据不随 clone 分发。**A 组模型与数据集已整合为一个总 ZIP**，在 [Release pld-dual-20261017](https://github.com/wangzhongyuan11/PLD/releases/tag/pld-dual-20261017) 以四个分卷传输；下载后按 [总包还原说明](docs/A_RELEASE_BUNDLE.md) 生成完整 ZIP。包内 `models/` 含三个模型的 FP32/INT8 原交付，`datasets/` 含 ISIC/CAMUS 数据。模型原包解压后，依其 README 自建环境；来源、冻结划分与许可见 [数据说明](docs/A_DATASETS.md)，大小、SHA256 和目录映射见 [产物索引](pld-medical/deliverables/GITHUB_ARTIFACTS.json)。B/C 原四个部署附件及其哈希保持，`delivery/current.json` 仍为正式板端指针。
+
 ## 可选离线性能评测
 
-[perf_eval 使用说明](perf_eval/README.md)提供CPU/PL延迟与吞吐、输出一致性、Dice/IoU变化、资源/功耗报告和DMA流量分析。先按本页准备唯一正式Release模型；`python -m unittest discover -s perf_eval/tests -q`可在不连接板子、未展开模型的干净克隆中执行。评测工具不修改正式发布产物，板端成绩需另行测量。
+[perf_eval 使用说明](perf_eval/README.md)提供 CPU/PL 延迟与吞吐、输出一致性、Dice/IoU 变化、资源/功耗报告和 DMA 流量分析。先按本页准备唯一正式 Release 模型；`python -m unittest discover -s perf_eval/tests -q`可在不连接板子、未展开模型的干净克隆中执行。评测工具不修改正式发布产物，板端成绩需另行测量。

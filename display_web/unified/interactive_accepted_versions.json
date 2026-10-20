@@ -11,7 +11,8 @@
   ],
   "hub/interactive_bridge.py": [
     null,
-    "26d631f6ff4157a8534c7844448ee2e4d926d29596a6d0f8bc6e582ca95bbcd6"
+    "26d631f6ff4157a8534c7844448ee2e4d926d29596a6d0f8bc6e582ca95bbcd6",
+    "d945dc55de39e787e363f3f77cc61050179bf58bd7d2e94c49a28ad59e965842"
   ],
   "hub/interactive.html": [
     null,
@@ -19,11 +20,13 @@
   ],
   "hub/interactive.js": [
     null,
-    "4e2b466ab4baa9617c2c5013edfe5751192029aec2a4de3972208b6ec4effe67"
+    "4e2b466ab4baa9617c2c5013edfe5751192029aec2a4de3972208b6ec4effe67",
+    "be34e5f00644c2e86e8820626384d3c07739686e4d2a29f142addf7bb92127bd"
   ],
   "hub/prompt_seg/__init__.py": [
     null,
-    "a2bb7903c14a7f0359f02dc1055a3733e47c6ddaab2b102cdccc95a75d6adcd9"
+    "a2bb7903c14a7f0359f02dc1055a3733e47c6ddaab2b102cdccc95a75d6adcd9",
+    "89d33d33814dfe68dbd3eb95b97b5e5e2c767e1b1f4c13f4c7a82409ed6b658c"
   ],
   "hub/prompt_seg/contracts.py": [
     null,
@@ -35,6 +38,7 @@
   ],
   "hub/prompt_seg/service.py": [
     null,
-    "0ac18687871eccbf1e4ae5ff0bcecc0083f8e1a9b7bd4865b758f18e96fabc07"
+    "0ac18687871eccbf1e4ae5ff0bcecc0083f8e1a9b7bd4865b758f18e96fabc07",
+    "1157fa543b042daa8176b3a4cd31bc1cb1952c1ac9cbee7ab4f8a2c5e830237e"
   ]
 }

@@ -1,4 +1,4 @@
-# ROI、点提示、框提示交互补丁（2026-10-16）
+# ROI、点提示、框提示交互补丁 v5（2026-10-17）
 
 适用于已安装双模型统一入口与四宫格的 PYNQ 系统。固定网址仍为 http://192.168.2.99:8765/ 。安装后主页新增“打开 ROI / 点提示 / 框提示交互工作台”。交互页在同一网站的新标签页打开，使用主页当前选中的模型和登录会话。
 
@@ -10,12 +10,12 @@
 
 ## 上传与安装
 
-只上传 PLD_Interactive_20261016_v4.zip 到 Jupyter 根目录。无需删除旧文件，也不要上传整个468MB的 Role A 包。
+本版为待板端验收候选。仓库根目录运行 `python scripts/package_interactive.py` 生成 `out/PLD_Interactive_20261017_v5.zip`；只需上传这个软件补丁到 Jupyter 根目录。
 
 ```bash
 cd /home/xilinx/jupyter_notebooks
-unzip -n PLD_Interactive_20261016_v4.zip
-cd PLD_Interactive_20261016_v4
+unzip -n PLD_Interactive_20261017_v5.zip
+cd PLD_Interactive_20261017_v5
 sudo /usr/local/share/pynq-venv/bin/python3 install_interactive.py --apply
 ```
 
@@ -30,11 +30,12 @@ sudo /usr/local/share/pynq-venv/bin/python3 install_interactive.py --apply
 3. 可先选 ROI，在原图拖动。更新 ROI 清空旧点和框，区域外标签为背景。
 4. 选择前景点/背景点后单击；选择目标框后拖动。点和框需在 ROI 内。CAMUS 可选择左室腔、心肌、左房。
 5. 点击“运行 / 更新分割”。同一图片/ROI/模型代次复用概率，修改点或阈值不会再次运行整网；更改 ROI 或模型后重新 FPGA 推理。
-6. 四宫格显示原图、增强、所选结构掩膜、叠加。下载交互 JSON（含原图、增强图、标签/掩膜/叠加 PNG 数据及参数）或单独掩膜 PNG。
+6. 四宫格显示原图、增强、所选结构掩膜、叠加；前后对照另列无提示基线与交互结果。可撤销类别、阈值、ROI 和提示；“恢复初始分割”保留 ROI/类别/阈值，只清除点与框。
+7. 下载可回放 JSON（含处理图、原图尺寸、参数及结果 PNG）或单独掩膜 PNG。导入 JSON 先验证模型/spec、参数、尺寸和像素哈希；点击运行后显示前后标签哈希是否与记录一致。
 
 ## 边界与内存
 
-- 只保留一个概率缓存和最近一次交互结果；切换模型清空它。交互执行中拒绝模型切换与普通页的新提交/HDMI控制。
+- 图像槽、概率、无提示基线、图割准备与静态预览各只保留一份；切换模型清空它们。交互执行中拒绝模型切换与普通页的新提交/HDMI控制。
 - 图割网格最长边256；近邻矛盾点会报错，建议缩小 ROI 或移动点。提示不保证提高 Dice。
 - 皮肤镜现有 FPGA 上传接口只接受 JPEG，ROI 会以 quality100、4:4:4 编码；这并非无损。因此不声称交互入口无提示时与原PNG输入逐像素一致。CAMUS ROI 转换为8位灰度后使用无损PNG；原图为灰度时保留相同像素，彩色输入会发生灰度转换。
 - 当前交互入口只接 JPG/PNG；原页面继续保留原医学文件格式。
@@ -94,3 +95,12 @@ sudo /usr/local/share/pynq-venv/bin/python3 install_interactive.py --rollback /h
 复测命令：将仓库`scripts/verify_interactive_board.py`上传至板端，以PYNQ Python执行`--model skin|camus --output <结果.json>`；跨模型加`--switch`，旧版对比加`--baseline`。脚本读取原服务依赖路径、复用现有访问码，只将计时与像素哈希写入记录，不导出图像或访问码。
 
 实际回退备份：`/home/xilinx/jupyter_notebooks/PLD_DualModel/backup_interactive_1746558739280287258`。使用v4安装器按上述回退命令执行。完整证据在仓库`docs/validation/interactive_20261016.json`，摘要见`TEST_REPORT.md`。
+
+
+## v5（2026-10-17）
+
+- 新增 `POST /interactive/images`：一次上传图像并返回 token；改点/框/阈值只提交 token 与参数，旧 `image` base64 仍兼容。
+- 新增 `POST /interactive/replay` 与导出 JSON：服务端解码处理图 PNG 校验尺寸和 RGB 像素哈希；浏览器有 WebCrypto 时再复核，没有则以服务端与上传回执哈希为准。
+- 结果新增 `baseline`（固定后处理、图割前的无提示结果）、`label_hashes`、`execution`（是否本次执行 FPGA、缓存命中）与分离的 `timings_ms`。
+- 网页新增前后并排对照、完整状态撤销、恢复初始分割、回放导入；换图与回放均为"校验并上传成功后才提交界面状态"。
+- 完整说明与未完成项见 `docs/validation/INTERACTIVE_WORKBENCH_20261017.md`。

@@ -1,0 +1,544 @@
+{
+  "schema": "acdc-board-contract-v1",
+  "architecture": "ACDC25D-B16-P3-v1",
+  "profiles": {
+    "axial": "acdc_axial_v1",
+    "coronal": "acdc_coronal_v1",
+    "sagittal": "acdc_sagittal_v1"
+  },
+  "required_device": {
+    "vlnv": "user:pld:axis_tensor_accel_camus:1.0",
+    "device_id": "0x43414D32",
+    "abi_version": "0x00020000",
+    "rtl": "camus/rtl/axis_tensor_accel_camus.sv",
+    "max_ci": 192,
+    "reject_skin_abi1": true
+  },
+  "convolution_layers": [
+    {
+      "id": "C01",
+      "name": "encoders.0.0",
+      "input_shape": [
+        1,
+        3,
+        256,
+        256
+      ],
+      "output_shape": [
+        1,
+        16,
+        256,
+        256
+      ],
+      "kernel": 3,
+      "stride": 1,
+      "padding": 1,
+      "dilation": 1,
+      "groups": 1,
+      "bias": true,
+      "relu": true,
+      "weight_layout": "OIHW",
+      "weight_bytes": 432,
+      "parameter_bytes": 560
+    },
+    {
+      "id": "C02",
+      "name": "encoders.0.2",
+      "input_shape": [
+        1,
+        16,
+        256,
+        256
+      ],
+      "output_shape": [
+        1,
+        16,
+        256,
+        256
+      ],
+      "kernel": 3,
+      "stride": 1,
+      "padding": 1,
+      "dilation": 1,
+      "groups": 1,
+      "bias": true,
+      "relu": true,
+      "weight_layout": "OIHW",
+      "weight_bytes": 2304,
+      "parameter_bytes": 2432
+    },
+    {
+      "id": "C03",
+      "name": "encoders.1.0",
+      "input_shape": [
+        1,
+        16,
+        128,
+        128
+      ],
+      "output_shape": [
+        1,
+        32,
+        128,
+        128
+      ],
+      "kernel": 3,
+      "stride": 1,
+      "padding": 1,
+      "dilation": 1,
+      "groups": 1,
+      "bias": true,
+      "relu": true,
+      "weight_layout": "OIHW",
+      "weight_bytes": 4608,
+      "parameter_bytes": 4864
+    },
+    {
+      "id": "C04",
+      "name": "encoders.1.2",
+      "input_shape": [
+        1,
+        32,
+        128,
+        128
+      ],
+      "output_shape": [
+        1,
+        32,
+        128,
+        128
+      ],
+      "kernel": 3,
+      "stride": 1,
+      "padding": 1,
+      "dilation": 1,
+      "groups": 1,
+      "bias": true,
+      "relu": true,
+      "weight_layout": "OIHW",
+      "weight_bytes": 9216,
+      "parameter_bytes": 9472
+    },
+    {
+      "id": "C05",
+      "name": "encoders.2.0",
+      "input_shape": [
+        1,
+        32,
+        64,
+        64
+      ],
+      "output_shape": [
+        1,
+        64,
+        64,
+        64
+      ],
+      "kernel": 3,
+      "stride": 1,
+      "padding": 1,
+      "dilation": 1,
+      "groups": 1,
+      "bias": true,
+      "relu": true,
+      "weight_layout": "OIHW",
+      "weight_bytes": 18432,
+      "parameter_bytes": 18944
+    },
+    {
+      "id": "C06",
+      "name": "encoders.2.2",
+      "input_shape": [
+        1,
+        64,
+        64,
+        64
+      ],
+      "output_shape": [
+        1,
+        64,
+        64,
+        64
+      ],
+      "kernel": 3,
+      "stride": 1,
+      "padding": 1,
+      "dilation": 1,
+      "groups": 1,
+      "bias": true,
+      "relu": true,
+      "weight_layout": "OIHW",
+      "weight_bytes": 36864,
+      "parameter_bytes": 37376
+    },
+    {
+      "id": "C07",
+      "name": "encoders.3.0",
+      "input_shape": [
+        1,
+        64,
+        32,
+        32
+      ],
+      "output_shape": [
+        1,
+        128,
+        32,
+        32
+      ],
+      "kernel": 3,
+      "stride": 1,
+      "padding": 1,
+      "dilation": 1,
+      "groups": 1,
+      "bias": true,
+      "relu": true,
+      "weight_layout": "OIHW",
+      "weight_bytes": 73728,
+      "parameter_bytes": 74752
+    },
+    {
+      "id": "C08",
+      "name": "encoders.3.2",
+      "input_shape": [
+        1,
+        128,
+        32,
+        32
+      ],
+      "output_shape": [
+        1,
+        128,
+        32,
+        32
+      ],
+      "kernel": 3,
+      "stride": 1,
+      "padding": 1,
+      "dilation": 1,
+      "groups": 1,
+      "bias": true,
+      "relu": true,
+      "weight_layout": "OIHW",
+      "weight_bytes": 147456,
+      "parameter_bytes": 148480
+    },
+    {
+      "id": "C09",
+      "name": "decoders.0.0",
+      "input_shape": [
+        1,
+        192,
+        64,
+        64
+      ],
+      "output_shape": [
+        1,
+        64,
+        64,
+        64
+      ],
+      "kernel": 3,
+      "stride": 1,
+      "padding": 1,
+      "dilation": 1,
+      "groups": 1,
+      "bias": true,
+      "relu": true,
+      "weight_layout": "OIHW",
+      "weight_bytes": 110592,
+      "parameter_bytes": 111104
+    },
+    {
+      "id": "C10",
+      "name": "decoders.0.2",
+      "input_shape": [
+        1,
+        64,
+        64,
+        64
+      ],
+      "output_shape": [
+        1,
+        64,
+        64,
+        64
+      ],
+      "kernel": 3,
+      "stride": 1,
+      "padding": 1,
+      "dilation": 1,
+      "groups": 1,
+      "bias": true,
+      "relu": true,
+      "weight_layout": "OIHW",
+      "weight_bytes": 36864,
+      "parameter_bytes": 37376
+    },
+    {
+      "id": "C11",
+      "name": "decoders.1.0",
+      "input_shape": [
+        1,
+        96,
+        128,
+        128
+      ],
+      "output_shape": [
+        1,
+        32,
+        128,
+        128
+      ],
+      "kernel": 3,
+      "stride": 1,
+      "padding": 1,
+      "dilation": 1,
+      "groups": 1,
+      "bias": true,
+      "relu": true,
+      "weight_layout": "OIHW",
+      "weight_bytes": 27648,
+      "parameter_bytes": 27904
+    },
+    {
+      "id": "C12",
+      "name": "decoders.1.2",
+      "input_shape": [
+        1,
+        32,
+        128,
+        128
+      ],
+      "output_shape": [
+        1,
+        32,
+        128,
+        128
+      ],
+      "kernel": 3,
+      "stride": 1,
+      "padding": 1,
+      "dilation": 1,
+      "groups": 1,
+      "bias": true,
+      "relu": true,
+      "weight_layout": "OIHW",
+      "weight_bytes": 9216,
+      "parameter_bytes": 9472
+    },
+    {
+      "id": "C13",
+      "name": "decoders.2.0",
+      "input_shape": [
+        1,
+        48,
+        256,
+        256
+      ],
+      "output_shape": [
+        1,
+        16,
+        256,
+        256
+      ],
+      "kernel": 3,
+      "stride": 1,
+      "padding": 1,
+      "dilation": 1,
+      "groups": 1,
+      "bias": true,
+      "relu": true,
+      "weight_layout": "OIHW",
+      "weight_bytes": 6912,
+      "parameter_bytes": 7040
+    },
+    {
+      "id": "C14",
+      "name": "decoders.2.2",
+      "input_shape": [
+        1,
+        16,
+        256,
+        256
+      ],
+      "output_shape": [
+        1,
+        16,
+        256,
+        256
+      ],
+      "kernel": 3,
+      "stride": 1,
+      "padding": 1,
+      "dilation": 1,
+      "groups": 1,
+      "bias": true,
+      "relu": true,
+      "weight_layout": "OIHW",
+      "weight_bytes": 2304,
+      "parameter_bytes": 2432
+    },
+    {
+      "id": "C15",
+      "name": "head",
+      "input_shape": [
+        1,
+        16,
+        256,
+        256
+      ],
+      "output_shape": [
+        1,
+        4,
+        256,
+        256
+      ],
+      "kernel": 1,
+      "stride": 1,
+      "padding": 0,
+      "dilation": 1,
+      "groups": 1,
+      "bias": true,
+      "relu": false,
+      "weight_layout": "OIHW",
+      "weight_bytes": 64,
+      "parameter_bytes": 96
+    }
+  ],
+  "conv_count": 15,
+  "logical_node_order": [
+    "C01",
+    "C02",
+    "P0",
+    "C03",
+    "C04",
+    "P1",
+    "C05",
+    "C06",
+    "P2",
+    "C07",
+    "C08",
+    "CAT1",
+    "C09",
+    "C10",
+    "CAT2",
+    "C11",
+    "C12",
+    "CAT3",
+    "C13",
+    "C14",
+    "C15"
+  ],
+  "conv_macs_per_stack": 2674917376,
+  "input": {
+    "shape": [
+      1,
+      3,
+      256,
+      256
+    ],
+    "dtype": "int8",
+    "layout": "NCHW",
+    "bytes": 196608,
+    "scale": 0.007874015748031496,
+    "zero_point": 0,
+    "channels": [
+      "previous",
+      "center",
+      "next"
+    ],
+    "boundary": "clamp",
+    "range": [
+      -127,
+      127
+    ]
+  },
+  "head": {
+    "shape": [
+      1,
+      4,
+      256,
+      256
+    ],
+    "dtype": "int8",
+    "layout": "NCHW",
+    "bytes": 262144,
+    "zero_point": 0,
+    "scale": "one positive shared scalar per frozen profile",
+    "activation": "none",
+    "classes": {
+      "0": "background",
+      "1": "RV_cavity",
+      "2": "LV_myocardium",
+      "3": "LV_cavity"
+    }
+  },
+  "cat": {
+    "mode": 4,
+    "channel_axis": 1,
+    "order": [
+      "skip",
+      "nearest2(deep)"
+    ],
+    "input_payload": "skip CHW then half-resolution deep CHW",
+    "lut_order": [
+      "skip 256 bytes",
+      "deep 256 bytes"
+    ],
+    "lut_index": "raw unsigned byte representation q & 255",
+    "splits": [
+      64,
+      32,
+      16
+    ],
+    "common_scale": "max(skip_scale,deep_scale)"
+  },
+  "normalization": "nonzero native-volume percentiles 1/99 mapped to [-1,1]; clip; no GT crop",
+  "geometry": "PC world RAS grid at 2 mm, linear MRI / nearest labels, full-FOV aspect-preserving 256 letterbox",
+  "quantization": {
+    "weights": "OIHW signed127 per output channel",
+    "bias": "little-endian int32",
+    "multiplier": "positive Q24 little-endian int32",
+    "round": "signed ties-to-even",
+    "accumulator": "int32 with per-channel proof",
+    "product": "int64"
+  },
+  "parameter_chunks": {
+    "C07": [
+      [
+        0,
+        64
+      ],
+      [
+        64,
+        64
+      ]
+    ],
+    "C08": [
+      [
+        0,
+        56
+      ],
+      [
+        56,
+        56
+      ],
+      [
+        112,
+        16
+      ]
+    ],
+    "C09": [
+      [
+        0,
+        32
+      ],
+      [
+        32,
+        32
+      ]
+    ]
+  },
+  "deployment_status": "contract and software only; real PYNQ bit/HWH/model-loader/latency not yet accepted"
+}
