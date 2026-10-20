@@ -1,6 +1,6 @@
 # ACDC Axial 实施状态
 
-更新：2026-10-19。后续目标仍为[最终计划](FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)的完整链路、真实 G4 验收及 G8 冲刺；本记录不表示目标完成。
+更新：2026-10-20。后续目标仍为[最终计划](FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)的完整链路、真实 G4 验收及 G8 冲刺；本记录不表示目标完成。
 
 ## 已完成的软件闭环
 
@@ -19,18 +19,22 @@
 
 ## 硬件进度与当前阻断项
 
-- packed-tag修改后，tile_executor P4/P6 OOC重新综合分别为148/212 DSP、92/104 BRAM36；异常量化裁剪没有再次出现。完整功能网表回归仍运行中，不能单凭DSP数量宣布网表数值通过。
+- packed-tag修改后，tile_executor P4/P6 OOC重新综合分别为148/212 DSP、92/104 BRAM36；异常量化裁剪没有再次出现。该版本P4功能网表回归已通过，适用范围见下文，不能单凭DSP数量宣布网表数值通过。
 - A真实参数的P4完整256×256 RTL已通过：1040 job、1073152次写回、11777085周期。该结果在后续容量控制流水修改之前产生，保留其源码范围。
 - 新增完整PS7/DataMover Full/HP0+HP2/ACD8 BD；GPIO提供共同复位、双向HALT及停止/错误状态。命令时钟端口已按厂商IP定义修正。
 - 首次完整100MHz布线的setup WNS为 **−4.359ns**。关键路径来自tile容量检查中两级DSP乘积加比较；候选已拒绝，报告保存在`out/acdc/optimization/rejected_capacity_p4_100/`，没有上板。
-- `tile_conv.sv` 将平面容量乘积、Ci容量乘积和比较拆成寄存器阶段。P4/P6的23 tile回归与P4真实参数小空间全网通过。新内核综合为146 DSP/92 BRAM36；新完整布线仍待结果。
+- `tile_conv.sv` 将平面容量乘积、Ci容量乘积和比较拆成寄存器阶段。P4/P6的23 tile回归与P4真实参数小空间全网通过。该内核综合为146 DSP/92 BRAM36；此后完整布线暴露的路径与修复如下。
 - 容量流水修改后的P6真实模型完整256×256 RTL通过：1024 job、1073152次写回、9465241周期。该周期只属于随机延迟DDR行为模型，不构成真实FPS。
-- 新P4布局报告仍有约−2.45ns违例，关键路径转移为坐标地址生成到BRAM使能、分页BRAM输出到DSP。正在保留完整报告并评估弹性寄存器边界，尚未上板。
-- 该候选中间布线WNS−2.826ns，已终止并归档，未生成可验收位流。两处弹性寄存器已实现并保持每周期吞吐；P4/P6各23 tile回归通过，P4真实参数小网格AXI顶层315256周期通过，P6真实参数小网格整帧及3种执行表故障通过。新完整构建输出为`spatial_p4_100_elastic_v3`；完整尺寸新流水仿真仍待结果。
-- 完整厂商SoC的配对bit/HWH、合格时序、实际PL数值、吞吐与稳定性尚未验收；4/8 FPS均未达成证明。
+- 中间P4布局报告仍有约−2.45ns违例，关键路径转移为坐标地址生成到BRAM使能、分页BRAM输出到DSP。其布线WNS−2.826ns，已终止并归档，未生成可验收位流。
+- 两处弹性寄存器已实现并保持每周期吞吐；P4/P6各23 tile回归通过，P4真实参数小网格AXI顶层315256周期通过，P6真实参数小网格整帧及3种执行表故障通过。
+- **当前P4完整256×256真实模型RTL通过**：1040 job、15 Conv、21节点、1073152次写回、11780473周期；输入缓存命中633次、参数缓存命中567次。日志`out/acdc/optimization/real_elastic_p4_d1_sim/simulation_resumed.log`。行为DDR模型下约117.8ms的周期预算不能当作PS-DMA-PL实测延迟。
+- **当前P4完整SoC 100MHz布线通过**：`out/acdc/optimization/spatial_p4_100_elastic_v3`，WNS **+0.023ns**、WHS **+0.016ns**、WPWS **+3.750ns**；17173 LUT、23154 FF、94.5 BRAM36等效、146 DSP。中断后从同次优化检查点继续完成，源码快照保持一致，bit/HWH/XSA配对及构建认证通过。
+- 当前P4 DRC报告267项：264 Warning、3 Advisory、0 Error、0 Critical Warning。248项为DSP输入/输出流水建议；其余为厂商AXI转换/FIFO/DataMover内的LUT项、异步RAM控制、无负载网络和WRITE_FIRST提示。未降低规则级别或屏蔽警告。正常HALT后共同复位是运行策略，异步RAM警告与真实故障恢复仍须板测，不能以静态时序通过替代。
+- P6弹性流水候选`spatial_p6_100_elastic_v1`的完整构建及完整尺寸真实模型RTL于2026-10-20启动，结果待定。P4时序裕量仅23ps，不在该产物上直接提频。
+- 实际PL数值、吞吐与稳定性尚未验收；4/8 FPS均未达成证明。机器可读证据见`evidence/spatial_implementation_20261019.json`，其中日期表示文件首次建立日期，内容记录当前状态。
 - packed-tag修复后的P4独立OOC网表小空间全网功能仿真已通过：272 job、16768次写回、312848周期；原keep/tag常量化问题在该版本关闭。网表早于容量/弹性流水变更，其通过不覆盖当前整机版本。
 
-板卡现已登录确认。原`pld-hub`、`pld-web` active，`pld-camus` inactive；尚未因本轮ACDC切换正式服务/overlay。板卡时钟仍不准确，以主机时间和monotonic计时记录证据。
+前次板卡登录确认原`pld-hub`、`pld-web` active，`pld-camus` inactive。2026-10-20 09:50（主机时间）复查192.168.2.99:22连接超时，尚未进入认证；本轮没有上传正式候选、停止服务或加载ACDC overlay。待上传独立运行包为`out/acdc/runtime_spatial_p4_20261020_v1.zip`。板卡时钟仍不准确，以主机时间和monotonic计时记录证据。
 
 ## 新PS运行路径
 
@@ -63,7 +67,7 @@ $AxialSha = 'fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be'
 ```powershell
 $env:PROCESSOR_ARCHITECTURE='AMD64'
 & D:/vivado/2026.1/Vivado/bin/vivado.bat -mode batch -source acdc/optimization/vivado/package_spatial.tcl -tclargs 4
-& D:/vivado/2026.1/Vivado/bin/vivado.bat -mode batch -source acdc/optimization/vivado/build_spatial.tcl -tclargs 4 capacity_v2
+& D:/vivado/2026.1/Vivado/bin/vivado.bat -mode batch -source acdc/optimization/vivado/build_spatial.tcl -tclargs 4 <新候选标签>
 & acdc/.venv/Scripts/python.exe scripts/extract_xsa.py <构建目录>/dma_top.xsa <构建目录>/dma_top
 & acdc/.venv/Scripts/python.exe -m acdc.optimization.package <构建目录> --p 4
 ```

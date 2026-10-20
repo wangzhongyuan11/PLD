@@ -90,7 +90,7 @@ $env:PROCESSOR_ARCHITECTURE='AMD64'
 
 packed-tag修改的P4 OOC综合网表小空间全网现已通过：272任务、16768次写回、312848周期，独立DDR oracle零差异。该网表早于容量/弹性流水修改，不继承为当前完整BD的时序或板测证据。A模型格式、真实几何策略与20患者40体软件复现已完成；密集合成fixture仍保持synthetic身份。
 
-下一步等待当前弹性流水的完整布线、完整尺寸真实参数RTL结果，再认证配对产物、隔离上板验证18个物理节点及head/恢复/性能、40体真实PL结果与原系统回归。缓存键保留输入生产者/帧epoch/LUT来源；跨帧参数缓存优化需独立model generation设计。具体依赖、容量与退出条件见最终计划第8～14节。
+2026-10-20更新：P4弹性流水完整真实模型RTL通过（11780473周期），完整SoC 100MHz布线通过（WNS +0.023ns、WHS +0.016ns），146 DSP、94.5 BRAM36等效，配对bit/HWH/XSA已认证。DRC仍有264项Warning和3项Advisory，详见`../docs/IMPLEMENTATION_STATUS.md`；尚无实际ACDC板测。P6弹性流水完整仿真/构建继续运行。下一步隔离上板验证18个物理节点及head/恢复/性能、40体真实PL结果与原系统回归。缓存键保留输入生产者/帧epoch/LUT来源；跨帧参数缓存优化需独立model generation设计。具体依赖、容量与退出条件见最终计划第8～14节。
 
 `vivado/probe_datamover.tcl`用于复现IP配置探测；`vivado/build_spatial.tcl`已集成PS7、HP2读/HP0写、Full MM2S/S2MM、64-bit数据、32-bit地址、23-bit BTT、16拍burst、DRE关闭及GPIO HALT/reset。GUI配置枚举使用`Full`，不是数字1。源码或构建启动均不等于DDR带宽/板卡验收。
 

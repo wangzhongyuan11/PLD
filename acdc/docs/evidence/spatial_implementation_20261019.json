@@ -71,9 +71,111 @@
     "log": "out/acdc/integrated_regression_v4.log",
     "log_sha256": "b5911dea0275126d13db7a7687342935f1253effc44f3e95dc8f106df3f0c2cc"
   },
-  "current_full_resolution_RTL": "interrupted without completion; resumed from compiled snapshot",
-  "current_full_soc": "elastic_v3 placement interrupted; resumed from saved checkpoint",
+  "current_full_resolution_RTL": {
+    "passed": true,
+    "scope": "elastic P4 actual-model original 256x256 grid, behavioral DDR",
+    "log": "out/acdc/optimization/real_elastic_p4_d1_sim/simulation_resumed.log",
+    "log_sha256": "3e0decea721210584a53491f128eeb60047b1db453191f1babadea02df9860fd",
+    "result": "TB_PASS tile_executor P=4 jobs=1040 conv=15 nodes=21 writes=1073152 reads=1492668 commands=36172/33536 cycles=11780473 input_hits=633 parameter_hits=567 overlap=3279773",
+    "physical_board": false
+  },
+  "current_full_soc": {
+    "scope": "P4 100 MHz elastic_v3 full routed PS7/DataMover SoC",
+    "build_directory": "out/acdc/optimization/spatial_p4_100_elastic_v3",
+    "build_manifest_sha256": "a6d506d48cd5e881f51c3a5287a016f7e6ccfed3bdb967468ffb7990e2d07d0e",
+    "source_snapshot_unchanged": true,
+    "artifacts": {
+      "dma_top.bit": "9e8fbe6b995fdb11e262fbd7656f9d4e68b0441af4a6ffb3b0c1aac88f4d66f5",
+      "dma_top.hwh": "521b428bcb64f78d6e3c4a490d154f69aa5f1a5b32c80717b8a1425e21bf925b",
+      "dma_top.xsa": "1bbbd08d8d40d00e8b98a56338d12f4e7f0012365800f7b03082c4d99a72ed3f",
+      "timing_summary.rpt": "06021e1fb604a0266c20e78c4e1f46f2a79777e318d2cf4700adb1a94a864371",
+      "utilization.rpt": "8d1a0d16b39bdbd12d5a1b43248d80ad7b1a217c6160ab4336426e7ee4add454",
+      "drc.rpt": "571b494835362dc53571554df188de3c99128d955d6661e2781b266ee2fb50e7",
+      "source_start.json": "21c6c1d9c847446d27a7c15b6c097e33e5d79d39182b39b5abbb38d143076c25"
+    },
+    "resources": {
+      "LUT": 17173.0,
+      "FF": 23154.0,
+      "BRAM36_equivalent": 94.5,
+      "DSP": 146.0
+    },
+    "routed_timing": {
+      "WNS_ns": 0.023,
+      "WHS_ns": 0.016,
+      "WPWS_ns": 3.75
+    },
+    "drc": {
+      "counts": {
+        "Error": 0,
+        "Critical Warning": 0,
+        "Warning": 264,
+        "Advisory": 3
+      },
+      "rules": [
+        {
+          "rule": "DPIP-1",
+          "severity": "Warning",
+          "count": 106
+        },
+        {
+          "rule": "DPOP-1",
+          "severity": "Warning",
+          "count": 1
+        },
+        {
+          "rule": "DPOP-2",
+          "severity": "Warning",
+          "count": 141
+        },
+        {
+          "rule": "PDCN-1569",
+          "severity": "Warning",
+          "count": 3
+        },
+        {
+          "rule": "REQP-1839",
+          "severity": "Warning",
+          "count": 8
+        },
+        {
+          "rule": "REQP-1840",
+          "severity": "Warning",
+          "count": 4
+        },
+        {
+          "rule": "RTSTAT-10",
+          "severity": "Warning",
+          "count": 1
+        },
+        {
+          "rule": "REQP-165",
+          "severity": "Advisory",
+          "count": 1
+        },
+        {
+          "rule": "REQP-181",
+          "severity": "Advisory",
+          "count": 2
+        }
+      ],
+      "warning_disposition": "DSP pipelining suggestions and vendor IP LUT/RAM/reset/FIFO warnings retained; actual fault recovery remains unverified"
+    },
+    "board_validation": false
+  },
   "physical_board_accepted": false,
   "G4_accepted": false,
-  "G8_accepted": false
+  "G8_accepted": false,
+  "updated_date": "2026-10-20",
+  "board_connection": {
+    "host_time": "2026-10-20T09:50:40+08:00",
+    "address": "192.168.2.99:22",
+    "result": "TCP timeout before authentication",
+    "formal_services_changed": false,
+    "overlay_loaded": false
+  },
+  "p6_candidate": {
+    "build_directory": "out/acdc/optimization/spatial_p6_100_elastic_v1",
+    "full_resolution_rtl": "out/acdc/optimization/real_elastic_p6_d1_sim",
+    "status": "running"
+  }
 }
