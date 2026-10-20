@@ -5,10 +5,13 @@ param(
     [Parameter(Mandatory=$true)][string]$ModelSha,
     [Parameter(Mandatory=$true)][string]$Output,
     [ValidateSet(4,6)][int]$P=6,
+    [string]$RuntimeBin='',
     [string]$VivadoRoot='D:/vivado/2026.1/Vivado'
 )
 $ErrorActionPreference='Stop'
 $repo=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
+$IcarusBin=(Resolve-Path -LiteralPath $IcarusBin).Path
+if($RuntimeBin){$RuntimeBin=(Resolve-Path -LiteralPath $RuntimeBin).Path}
 $outputPath=[IO.Path]::GetFullPath($Output)
 if(Test-Path -LiteralPath $outputPath){throw 'Choose a new simulation output directory'}
 $ivl=[IO.Path]::GetFullPath((Join-Path $IcarusBin '../lib/ivl'))
@@ -25,7 +28,9 @@ foreach($path in @($compiler,$simulator,$netlistPath,$ddr,$tb,$global)){
 }
 $priorPath=$env:PATH
 try{
-    $env:PATH="$IcarusBin;$priorPath"
+    # Isolated MSYS2 packages need their matching UCRT DLL directory ahead
+    # of unrelated Conda/MinGW DLLs. A normal complete MSYS2 bin needs no override.
+    $env:PATH=if($RuntimeBin){"$IcarusBin;$RuntimeBin;$priorPath"}else{"$IcarusBin;$priorPath"}
     Push-Location $repo
     try{
         & $python -m acdc.optimization.gen_executor_vectors $outputPath --p $P --divisor 8 --model $Model --model-spec-sha $ModelSha
