@@ -91,8 +91,10 @@ def run(args):
                          wall_clock_note='board calendar clock is untrusted; elapsed time is monotonic'))
     device=None
     try:
-        tick=time.perf_counter();device=SpatialDevice(args.runtime,model,timeout=args.timeout)
+        tick=time.perf_counter();device=SpatialDevice(args.runtime,model,timeout=args.timeout,
+            native_layout=not getattr(args,'numpy_layout',False))
         report['initialization_seconds']=time.perf_counter()-tick
+        report['native_layout']=device.layout.info if device.layout is not None else None
         report['hardware']=json.loads((args.runtime/'overlay/build_manifest.json').read_text('utf-8'))
         if args.node_oracle:
             if file_sha(args.node_oracle)!=args.node_oracle_sha:raise ContractError('node oracle SHA mismatch')
@@ -154,6 +156,7 @@ if __name__=='__main__':
     p.add_argument('--node-oracle',type=Path);p.add_argument('--node-oracle-sha')
     p.add_argument('--output',type=Path,required=True);p.add_argument('--repeat',type=int,default=5)
     p.add_argument('--warmup',type=int,default=0);p.add_argument('--timeout',type=float,default=5)
+    p.add_argument('--numpy-layout',action='store_true',help='use the explicit NumPy boundary-copy baseline')
     p.add_argument('--recovery-checks',action='store_true');a=p.parse_args()
     if not 1<=a.repeat<=10000 or not 0<=a.warmup<=100:p.error('invalid repeat/warmup')
     print(json.dumps({k:v for k,v in run(a).items() if k not in ('frames','hardware')}))

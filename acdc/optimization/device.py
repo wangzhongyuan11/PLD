@@ -36,13 +36,19 @@ def validate_overlay(core,gpio):
 
 
 class SpatialDevice:
-    def __init__(self,runtime,model,*,timeout=5.):
+    def __init__(self,runtime,model,*,timeout=5.,native_layout=True):
         if not math.isfinite(timeout) or timeout<=0:raise ValueError('positive finite timeout required')
         from acdc.package import verify_runtime
         runtime=verify_runtime(runtime,model)
         record=json.loads((runtime/'overlay/build_manifest.json').read_text('utf-8'))
         if record.get('hardware_id')!=DEVICE_ID or record.get('abi')!=ABI:
             raise ContractError('runtime is not ACD8')
+        # Prepare the checked PS copies before taking hardware ownership.
+        # Failure is explicit; it never selects a CPU inference fallback.
+        self.layout=None
+        if native_layout:
+            from .native_layout import load_native_layout
+            self.layout=load_native_layout()
         self.timeout=timeout;self.model=model;self.arena=None;self.unsafe=False;self.closed=False
         self.epoch=0;self.last_timing={};self.lease=Lease()
         try:
@@ -64,10 +70,16 @@ class SpatialDevice:
             self.clock_mhz=float(Clocks.fclk0_mhz)
             if abs(self.clock_mhz-record['clock_mhz'])>.1 or self.core.read(0x3c)!=round(self.clock_mhz*1e6):
                 raise ContractError('FCLK/build/core clock mismatch')
-            self.arena=allocate(shape=(16*1024*1024,),dtype=np.uint8,cacheable=True)
+            # Request only the page-rounded live arena. A 16 MiB reservation
+            # can fail after display/model switching despite enough total CMA.
+            layout=compile_program(self.profile)
+            arena_bytes=(layout['arena'].used+4095)//4096*4096
+            self.arena=allocate(shape=(arena_bytes,),dtype=np.uint8,cacheable=True)
             self.base=int(self.arena.device_address)
             if self.base+self.arena.nbytes>0x20000000:raise ContractError('CMA outside declared HP DDR aperture')
             self.program=compile_program(self.profile,base=self.base,epoch=1)
+            if self.program['arena'].used>self.arena.nbytes:
+                raise ContractError('compiled graph exceeds allocated CMA')
             self.view=np.asarray(self.arena)
             # Eliminate dirty initialization cachelines before PL owns workspace.
             self.arena.flush()
@@ -135,7 +147,8 @@ class SpatialDevice:
         if self.epoch==0xffffffff:self.core.write(0x0c,2);self.epoch=0
         self.epoch+=1
         stage=time.perf_counter()
-        self._write('input',pack_feature(x[0]).tobytes())
+        if self.layout is None:self._write('input',pack_feature(x[0]).tobytes())
+        else:self.layout.pack(self._region('input'),np.ascontiguousarray(x))
         self.program_words[:,15]=self.epoch
         converted=time.perf_counter()
         self._sync('input',self.to_device);self._sync('program',self.to_device)
@@ -160,7 +173,8 @@ class SpatialDevice:
             if counts!=((n<<16)|n):raise RuntimeError('ACD8 incomplete task counts')
             if debug_layer is None:
                 self._sync('head',self.from_device)
-                head=decode_head(self._region('head').tobytes())
+                head=(decode_head(self._region('head').tobytes()) if self.layout is None
+                      else self.layout.head(self._region('head')))
             else:
                 from acdc.contract import SHAPES
                 target=['work_a','skip0','work_a','skip1','work_a','skip2','work_a','work_b',
