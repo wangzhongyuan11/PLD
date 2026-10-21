@@ -1,0 +1,22 @@
+{
+  "A_geometry_sha256": "4040571ba642cbfffeab98f3d659e08263be2ef422978ee51e7b62dacbad2e33",
+  "auditor": {
+    "path": "acdc/validate_preprocessing.py",
+    "sha256": "defa15bb99bd18bccd4a6a1bd73d15d3e8d7a038725583291a31001462e534ac"
+  },
+  "complete": true,
+  "fresh_inference_count": 0,
+  "input_mismatches": 0,
+  "manifest_sha256": "f4dadde385b12d1d5639ae1085ccc92d22a61682240ccfc6a4db5a3c020fca11",
+  "model_spec_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+  "patients": 20,
+  "schema": "pld-acdc-input-audit-v1",
+  "scope": "direct frozen A preprocessing/quantization versus B and actual recorded inference input hashes",
+  "slices": 1616,
+  "source_report": {
+    "path": "out/acdc/development_input_A_comparison_20261021.json",
+    "sha256": "96994da8f51bc7f8d86dd0ef8fb4201d954e4904092f1e0cd83f591ca602b10e"
+  },
+  "torch_threads": 4,
+  "volumes": 40
+}

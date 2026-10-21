@@ -41,6 +41,8 @@ PC远程请求的1616片中位174.748400ms、P95 219.439400ms、最大247.678500
 
 独立恢复审计调用A冻结`geometry.py`和Torch softmax，对照B NumPy/Collector，覆盖40体/1616片。原生概率最大误差1.7881393432617188e-7，平面最大误差2.384185791015625e-7；标签差异0。没有把已保存head重算恢复计为新鲜PL样本。
 
+`validate_preprocessing.py`另行直接调用固定Release中的A几何实现，逐体比较采用的原生/工作affine及全部float32工作体，逐片比较相邻三层的INT8量化输入，并核对真实PL checkpoint的输入SHA。40体/1616片全部精确一致；这项只审计预处理，不增加新鲜PL推理数。[独立输入证据](evidence/preprocessing_A_20261021.json)。
+
 ## 单层、资源与数据流
 
 `optimization/profile_layers.py`先由真实PL前缀产生该层输入，再独立执行该层的job；输出与独立整数oracle比较，未注入中间golden。每层3次，含本层DMA、虚拟CAT和融合Pool；调试输出复制/比较单列。由于单层边界、缓存/重叠条件与整网不同，不能把这些数相加冒充整网延迟。
@@ -101,6 +103,8 @@ sudo -E /usr/local/share/pynq-venv/bin/python3 -m acdc.deploy.manage rollback
 完整尺寸RTL与真实板测已通过。P6 OOC功能网表有59147实例，xsim BASIC限制50000，启动失败，不能记为网表数值通过。已用MSYS2官方仓库的Icarus 12.0作为补充；其不支持原DDR模型的SV关联数组，因此增加有界可移植存储。该存储在xsim上以同一A参数、272 job/16768写回/313888周期与原模型一致。Icarus网表运行在首次读写前因未知控制状态失败；基础厂商LUT/FDRE/GSR探针通过，原因仍待定位，不以真实板测成功掩盖此失败。
 
 交付包及最终验收状态需在实际打包、SHA/CRC、源码/运行包身份和此补充验证结果核对后更新。工程教学与算法演示，不作为临床诊断依据；A数据/模型许可及引用随原Release保留。
+
+补充定位：相同问题在全展平网表下仍出现；VPI只读观察表明复位释放后状态最初正确，首次descriptor握手时才变成X。最小`sim/tb_unisim_initialization.sv`复现Icarus对声明初值的事件调度差异：原厂LUT6的显式输入敏感进程可能漏掉时刻0的声明赋值。网表TB现改为时刻1ns、仍保持复位时驱动静态输入，未修改RTL、综合网表、原厂模型或期望数据。完整自校验重跑结果尚待完成，最小用例通过不替代整网通过。
 
 RC包复现（输入清单固定每个运行包/报告/结果的SHA；不上传、不部署）：
 

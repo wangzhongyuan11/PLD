@@ -1,10 +1,10 @@
 `timescale 1ns/1ps
 // Same evolving DDR oracle as RTL simulation, no access to internal RTL state.
 module tb_executor_netlist;
-  logic aclk=0,aresetn=0,clear_cache=0,s_valid=0,s_ready;
-  logic [511:0] s_descriptor=0;
+  logic aclk=0,aresetn,clear_cache,s_valid,s_ready;
+  logic [511:0] s_descriptor;
   logic [31:0] completion_tag,error_tag,input_hits,parameter_hits,overlap_cycles;
-  logic completion_valid,completion_ready=1,busy,fault;logic [15:0] error;
+  logic completion_valid,completion_ready,busy,fault;logic [15:0] error;
   logic [71:0] read_cmd_data,write_cmd_data;
   logic read_cmd_valid,read_cmd_ready,write_cmd_valid,write_cmd_ready;
   logic [63:0] read_data,write_data;
@@ -33,6 +33,12 @@ module tb_executor_netlist;
     if(cycles>2000000)$fatal(1,"netlist deadlock");
   end
   initial begin
+    // UNISIM LUT models use explicit input event sensitivity. In Icarus,
+    // declaration-initialized registers can be collapsed onto primitive ports
+    // before those processes wait for events, leaving a constant input cone X.
+    // Drive every static input after time zero, while synchronous reset is held.
+    // This changes stimulus scheduling only; no force or primitive substitution.
+    #1;aresetn=0;clear_cache=0;s_valid=0;s_descriptor=0;completion_ready=1;
     fd=$fopen("jobs.txt","r");if(!fd)$fatal(1,"missing jobs");rc=$fscanf(fd,"%d\n",njobs);
     // Let the vendor primitive GSR (100ns) settle before releasing reset.
     repeat(25)@(negedge aclk);aresetn=1;

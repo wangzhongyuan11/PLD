@@ -4,6 +4,7 @@
 
 ## 2026-10-21 完整PL链路与回退回归
 
+- `validate_preprocessing.py`直接调用固定SHA的A几何实现，覆盖20患者/40体/1616片：采用的原生/工作affine、float32工作体、相邻三层量化INT8均全等，并与实际PL输入checkpoint SHA逐片一致。此项不执行新推理，不增加板测样本数。[预处理审计](evidence/preprocessing_A_20261021.json)。
 - 固定20患者/40体/1616片全部P6新鲜推理通过，逐片输入/head SHA对照独立CPU；原生标签、affine、容积/EF全等，20个ZIP SHA/CRC通过。Axial宏Dice 0.8823042897748437，与A逐体指标/容积差异0。[40体审计](evidence/development_PL_20261021.json)。
 - PC远程1616片中位174.748400ms、P95 219.439400ms、最大247.678500ms；逐例新鲜推理窗口合计5.164175 FPS。板内1000帧8.151268 FPS/P95 106.257678ms仍为PS-DMA-PL性能证据，两种口径分列。
 - `optimization/profile_layers.py`完成15层×3次真实孤立测量：输入由PL前缀产生，每层及融合Pool输出与独立oracle全等，没有中间golden注入。C09/C11/C13的PL中位分别13.774/14.028/16.258ms，完整分解见[板端回归证据](evidence/board_regression_20261021.json)。
