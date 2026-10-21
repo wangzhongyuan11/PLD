@@ -1,0 +1,673 @@
+{
+  "schema": "acdc-shared-patient-split-v1",
+  "source_split_sha256": "2798365d7c7747f92b67ca62ab1ac4a995f123ca8a9fa4d7c271d306fdc80697",
+  "seed": 20261017,
+  "train": [
+    "patient002",
+    "patient003",
+    "patient004",
+    "patient005",
+    "patient007",
+    "patient008",
+    "patient010",
+    "patient011",
+    "patient012",
+    "patient013",
+    "patient014",
+    "patient016",
+    "patient017",
+    "patient018",
+    "patient019",
+    "patient020",
+    "patient021",
+    "patient022",
+    "patient023",
+    "patient024",
+    "patient025",
+    "patient027",
+    "patient028",
+    "patient030",
+    "patient031",
+    "patient032",
+    "patient033",
+    "patient034",
+    "patient035",
+    "patient036",
+    "patient037",
+    "patient038",
+    "patient041",
+    "patient042",
+    "patient043",
+    "patient044",
+    "patient045",
+    "patient046",
+    "patient047",
+    "patient048",
+    "patient049",
+    "patient050",
+    "patient052",
+    "patient054",
+    "patient055",
+    "patient058",
+    "patient059",
+    "patient060",
+    "patient061",
+    "patient062",
+    "patient063",
+    "patient064",
+    "patient065",
+    "patient066",
+    "patient067",
+    "patient068",
+    "patient069",
+    "patient070",
+    "patient071",
+    "patient075",
+    "patient076",
+    "patient077",
+    "patient078",
+    "patient080",
+    "patient081",
+    "patient082",
+    "patient084",
+    "patient086",
+    "patient087",
+    "patient088",
+    "patient089",
+    "patient090",
+    "patient091",
+    "patient093",
+    "patient094",
+    "patient095",
+    "patient097",
+    "patient098",
+    "patient099",
+    "patient100"
+  ],
+  "dev": [
+    "patient001",
+    "patient006",
+    "patient009",
+    "patient015",
+    "patient026",
+    "patient029",
+    "patient039",
+    "patient040",
+    "patient051",
+    "patient053",
+    "patient056",
+    "patient057",
+    "patient072",
+    "patient073",
+    "patient074",
+    "patient079",
+    "patient083",
+    "patient085",
+    "patient092",
+    "patient096"
+  ],
+  "groups": {
+    "DCM": [
+      "patient001",
+      "patient002",
+      "patient003",
+      "patient004",
+      "patient005",
+      "patient006",
+      "patient007",
+      "patient008",
+      "patient009",
+      "patient010",
+      "patient011",
+      "patient012",
+      "patient013",
+      "patient014",
+      "patient015",
+      "patient016",
+      "patient017",
+      "patient018",
+      "patient019",
+      "patient020"
+    ],
+    "HCM": [
+      "patient021",
+      "patient022",
+      "patient023",
+      "patient024",
+      "patient025",
+      "patient026",
+      "patient027",
+      "patient028",
+      "patient029",
+      "patient030",
+      "patient031",
+      "patient032",
+      "patient033",
+      "patient034",
+      "patient035",
+      "patient036",
+      "patient037",
+      "patient038",
+      "patient039",
+      "patient040"
+    ],
+    "MINF": [
+      "patient041",
+      "patient042",
+      "patient043",
+      "patient044",
+      "patient045",
+      "patient046",
+      "patient047",
+      "patient048",
+      "patient049",
+      "patient050",
+      "patient051",
+      "patient052",
+      "patient053",
+      "patient054",
+      "patient055",
+      "patient056",
+      "patient057",
+      "patient058",
+      "patient059",
+      "patient060"
+    ],
+    "NOR": [
+      "patient061",
+      "patient062",
+      "patient063",
+      "patient064",
+      "patient065",
+      "patient066",
+      "patient067",
+      "patient068",
+      "patient069",
+      "patient070",
+      "patient071",
+      "patient072",
+      "patient073",
+      "patient074",
+      "patient075",
+      "patient076",
+      "patient077",
+      "patient078",
+      "patient079",
+      "patient080"
+    ],
+    "RV": [
+      "patient081",
+      "patient082",
+      "patient083",
+      "patient084",
+      "patient085",
+      "patient086",
+      "patient087",
+      "patient088",
+      "patient089",
+      "patient090",
+      "patient091",
+      "patient092",
+      "patient093",
+      "patient094",
+      "patient095",
+      "patient096",
+      "patient097",
+      "patient098",
+      "patient099",
+      "patient100"
+    ]
+  },
+  "phase_frames": {
+    "patient001": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient002": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient003": {
+      "ED": 1,
+      "ES": 15
+    },
+    "patient004": {
+      "ED": 1,
+      "ES": 15
+    },
+    "patient005": {
+      "ED": 1,
+      "ES": 13
+    },
+    "patient006": {
+      "ED": 1,
+      "ES": 16
+    },
+    "patient007": {
+      "ED": 1,
+      "ES": 7
+    },
+    "patient008": {
+      "ED": 1,
+      "ES": 13
+    },
+    "patient009": {
+      "ED": 1,
+      "ES": 13
+    },
+    "patient010": {
+      "ED": 1,
+      "ES": 13
+    },
+    "patient011": {
+      "ED": 1,
+      "ES": 8
+    },
+    "patient012": {
+      "ED": 1,
+      "ES": 13
+    },
+    "patient013": {
+      "ED": 1,
+      "ES": 14
+    },
+    "patient014": {
+      "ED": 1,
+      "ES": 13
+    },
+    "patient015": {
+      "ED": 1,
+      "ES": 10
+    },
+    "patient016": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient017": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient018": {
+      "ED": 1,
+      "ES": 10
+    },
+    "patient019": {
+      "ED": 1,
+      "ES": 11
+    },
+    "patient020": {
+      "ED": 1,
+      "ES": 11
+    },
+    "patient021": {
+      "ED": 1,
+      "ES": 13
+    },
+    "patient022": {
+      "ED": 1,
+      "ES": 11
+    },
+    "patient023": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient024": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient025": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient026": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient027": {
+      "ED": 1,
+      "ES": 11
+    },
+    "patient028": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient029": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient030": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient031": {
+      "ED": 1,
+      "ES": 10
+    },
+    "patient032": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient033": {
+      "ED": 1,
+      "ES": 14
+    },
+    "patient034": {
+      "ED": 1,
+      "ES": 16
+    },
+    "patient035": {
+      "ED": 1,
+      "ES": 11
+    },
+    "patient036": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient037": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient038": {
+      "ED": 1,
+      "ES": 11
+    },
+    "patient039": {
+      "ED": 1,
+      "ES": 10
+    },
+    "patient040": {
+      "ED": 1,
+      "ES": 13
+    },
+    "patient041": {
+      "ED": 1,
+      "ES": 11
+    },
+    "patient042": {
+      "ED": 1,
+      "ES": 16
+    },
+    "patient043": {
+      "ED": 1,
+      "ES": 7
+    },
+    "patient044": {
+      "ED": 1,
+      "ES": 11
+    },
+    "patient045": {
+      "ED": 1,
+      "ES": 13
+    },
+    "patient046": {
+      "ED": 1,
+      "ES": 10
+    },
+    "patient047": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient048": {
+      "ED": 1,
+      "ES": 8
+    },
+    "patient049": {
+      "ED": 1,
+      "ES": 11
+    },
+    "patient050": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient051": {
+      "ED": 1,
+      "ES": 11
+    },
+    "patient052": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient053": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient054": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient055": {
+      "ED": 1,
+      "ES": 10
+    },
+    "patient056": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient057": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient058": {
+      "ED": 1,
+      "ES": 14
+    },
+    "patient059": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient060": {
+      "ED": 1,
+      "ES": 14
+    },
+    "patient061": {
+      "ED": 1,
+      "ES": 10
+    },
+    "patient062": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient063": {
+      "ED": 1,
+      "ES": 16
+    },
+    "patient064": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient065": {
+      "ED": 1,
+      "ES": 14
+    },
+    "patient066": {
+      "ED": 1,
+      "ES": 11
+    },
+    "patient067": {
+      "ED": 1,
+      "ES": 10
+    },
+    "patient068": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient069": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient070": {
+      "ED": 1,
+      "ES": 10
+    },
+    "patient071": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient072": {
+      "ED": 1,
+      "ES": 11
+    },
+    "patient073": {
+      "ED": 1,
+      "ES": 10
+    },
+    "patient074": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient075": {
+      "ED": 1,
+      "ES": 6
+    },
+    "patient076": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient077": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient078": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient079": {
+      "ED": 1,
+      "ES": 11
+    },
+    "patient080": {
+      "ED": 1,
+      "ES": 10
+    },
+    "patient081": {
+      "ED": 1,
+      "ES": 7
+    },
+    "patient082": {
+      "ED": 1,
+      "ES": 7
+    },
+    "patient083": {
+      "ED": 1,
+      "ES": 8
+    },
+    "patient084": {
+      "ED": 1,
+      "ES": 10
+    },
+    "patient085": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient086": {
+      "ED": 1,
+      "ES": 8
+    },
+    "patient087": {
+      "ED": 1,
+      "ES": 10
+    },
+    "patient088": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient089": {
+      "ED": 1,
+      "ES": 10
+    },
+    "patient090": {
+      "ED": 4,
+      "ES": 11
+    },
+    "patient091": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient092": {
+      "ED": 1,
+      "ES": 6
+    },
+    "patient093": {
+      "ED": 1,
+      "ES": 14
+    },
+    "patient094": {
+      "ED": 1,
+      "ES": 7
+    },
+    "patient095": {
+      "ED": 1,
+      "ES": 12
+    },
+    "patient096": {
+      "ED": 1,
+      "ES": 8
+    },
+    "patient097": {
+      "ED": 1,
+      "ES": 11
+    },
+    "patient098": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient099": {
+      "ED": 1,
+      "ES": 9
+    },
+    "patient100": {
+      "ED": 1,
+      "ES": 13
+    }
+  },
+  "frame_convention": "literal one-based filename frameNN identifiers; only independent3D files accepted",
+  "calibration": {
+    "patients": [
+      "patient002",
+      "patient003",
+      "patient004",
+      "patient005",
+      "patient007",
+      "patient008",
+      "patient021",
+      "patient022",
+      "patient023",
+      "patient024",
+      "patient025",
+      "patient027",
+      "patient041",
+      "patient042",
+      "patient043",
+      "patient044",
+      "patient045",
+      "patient046",
+      "patient061",
+      "patient062",
+      "patient063",
+      "patient064",
+      "patient065",
+      "patient066",
+      "patient081",
+      "patient082",
+      "patient084",
+      "patient086",
+      "patient087",
+      "patient088",
+      "patient010",
+      "patient011"
+    ],
+    "phase_order": [
+      "ED",
+      "ES"
+    ],
+    "center_fractions": [
+      0.35,
+      0.65
+    ],
+    "center_rule": "Python ties-even round((working_axis_length-1)*fraction), zero based",
+    "stacks": 128,
+    "ground_truth_used": false
+  },
+  "official_test_access": false,
+  "selection_role": "development, not independent test"
+}

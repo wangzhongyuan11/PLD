@@ -1,0 +1,143 @@
+{
+  "schema": "acdc-research-release-index-v1",
+  "architecture": "ACDC25D-B16-P3-v1",
+  "candidate": "qat_mixed_v4",
+  "package_id": "ACDC_TriPlanar_B16_P3_v1_Models_and_Dataset_20261018",
+  "release_tag": "acdc-triplanar-b16-p3-v1-20261019",
+  "release_url": "https://github.com/wangzhongyuan11/PLD/releases/tag/acdc-triplanar-b16-p3-v1-20261019",
+  "archive_name": "ACDC_TriPlanar_B16_P3_v1_Models_and_Dataset_20261018.zip",
+  "software_development_accepted": true,
+  "physical_board_accepted": false,
+  "production_ready": false,
+  "profiles": {
+    "axial": {
+      "profile_id": "acdc_axial_v1",
+      "candidate_version": "qat_v2",
+      "fp32_sha256": "f841043165e9f34fb6c50fa293885bbf72231dfb3dd4f08fc732a563e7fbc868",
+      "spec_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+      "head_scale": 0.09448818897637795,
+      "selected_epoch": 25,
+      "input_shape": [
+        1,
+        3,
+        256,
+        256
+      ],
+      "output_shape": [
+        1,
+        4,
+        256,
+        256
+      ],
+      "fp32_path": "models/axial/model_state_fp32.pt",
+      "spec_path": "models/axial/int8/model_spec.json",
+      "native_fp32_dice": 0.8821665514033414,
+      "native_int8_dice": 0.8823042897748435,
+      "software_development_accepted": true,
+      "physical_board_accepted": false
+    },
+    "coronal": {
+      "profile_id": "acdc_coronal_v1",
+      "candidate_version": "qat_v4",
+      "fp32_sha256": "b57a09957b994649799b57510f642a7dce5da51783efc91bc6cabf2f6bde9524",
+      "spec_sha256": "6d315635e9aadd0f12874cca32cd3523640dd271c3ad2d497353a0c65ef94371",
+      "head_scale": 0.06122951954603195,
+      "selected_epoch": 60,
+      "input_shape": [
+        1,
+        3,
+        256,
+        256
+      ],
+      "output_shape": [
+        1,
+        4,
+        256,
+        256
+      ],
+      "fp32_path": "models/coronal/model_state_fp32.pt",
+      "spec_path": "models/coronal/int8/model_spec.json",
+      "native_fp32_dice": 0.7852580187339555,
+      "native_int8_dice": 0.7839613762976391,
+      "software_development_accepted": true,
+      "physical_board_accepted": false
+    },
+    "sagittal": {
+      "profile_id": "acdc_sagittal_v1",
+      "candidate_version": "qat_v4",
+      "fp32_sha256": "ca3e2f5e99d01a2738b59cd4e406c5998c91b1fc287ddb53269e706e1a5b99c3",
+      "spec_sha256": "c9b4699469c0052ac884f6293f71a82613da6bec7f3c0c0d30e581e8b8c2f6ca",
+      "head_scale": 0.06826238334178925,
+      "selected_epoch": 20,
+      "input_shape": [
+        1,
+        3,
+        256,
+        256
+      ],
+      "output_shape": [
+        1,
+        4,
+        256,
+        256
+      ],
+      "fp32_path": "models/sagittal/model_state_fp32.pt",
+      "spec_path": "models/sagittal/int8/model_spec.json",
+      "native_fp32_dice": 0.8075072854899168,
+      "native_int8_dice": 0.8111294203188216,
+      "software_development_accepted": true,
+      "physical_board_accepted": false
+    }
+  },
+  "dataset": {
+    "official_training_patients": 100,
+    "train_patients": 80,
+    "development_patients": 20,
+    "included_ed_es_files": 500,
+    "official_test_included": false,
+    "split_document": "PATIENT_SPLIT.json",
+    "split_source_sha256": "2798365d7c7747f92b67ca62ab1ac4a995f123ca8a9fa4d7c271d306fdc80697",
+    "source_manifest_sha256": "64ad815f13aaa2a0f392edfdff123b1ac283b26efcf1a704303712eff6d6b811",
+    "license": "CC BY-NC-SA 4.0 and supplied strictly non-commercial scientific research conditions"
+  },
+  "validation": {
+    "patients": 20,
+    "volumes": 40,
+    "role": "development, used for selection; not independent test",
+    "baseline2d_fp32_native_dice": 0.8892201327584542,
+    "fusion_fp32_native_dice": 0.8846932046104342,
+    "fusion_int8_native_dice": 0.8833833564578527,
+    "original_fusion_fp32_native_dice": 0.885236245477906,
+    "fusion_int8_vs_2d_fp32_delta": -0.005836776300601532,
+    "all_direction_and_fusion_gates_passed": true,
+    "integer_full_head_differences": 0,
+    "model_acceptance_sha256": "25b6049162d2a777e0682d657bf1fe998f0a5031e52fae796db88fe5e500a8fc",
+    "postprocessing": []
+  },
+  "examples": [
+    "examples/median_patient039/index.html",
+    "examples/worst_patient006/index.html"
+  ],
+  "viewer": {
+    "render_and_interaction_verified": true,
+    "png_preview_verified": true,
+    "native_in_app_download_event_verified": false
+  },
+  "deployment": "Independent CAM2 target; physical bit/HWH, DDR, numerical and performance acceptance pending. Keep delivery/current.json unchanged.",
+  "package_revision": 3,
+  "archive_integrity": {
+    "method": "SHA-256 of the complete ZIP",
+    "trust_anchor": "archive_sha256 in this Git-committed publication index; do not trust an unpinned Release checksum alone",
+    "checksum_asset": "SHA256SUMS.txt",
+    "publication_index_url": "https://github.com/wangzhongyuan11/PLD/blob/main/docs/acdc/RESEARCH_RELEASE.json",
+    "bundled_snapshot_omits": [
+      "archive_sha256",
+      "archive_bytes",
+      "checksum_asset_sha256"
+    ],
+    "snapshot_rule": "The bundled index is a canonical metadata snapshot. Only the external Git index contains the ZIP and checksum-asset digests, avoiding a self-referential archive hash."
+  },
+  "archive_sha256": "1998364295327c157c2ebfd52cca805d6933a992d700431abe955619c2feeaa0",
+  "archive_bytes": 138046731,
+  "checksum_asset_sha256": "04060c68da262ea31b051cfa9f095c7754fbfdd0761f49e462d4f5e6995f86f4"
+}
