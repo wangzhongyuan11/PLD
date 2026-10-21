@@ -1,6 +1,6 @@
 # ACDC Axial 2.5D
 
-新版本规划：[Board Standalone V2 独立板端实现与小于 40 秒优化计划](docs/BOARD_STANDALONE_V2_PLAN_20261021.md)。计划保留当前 PC 协同版，新增板端预处理、后处理、MPR、平滑网格与网页服务；**尚未实施，不改变下文当前运行入口**。
+新版本规划：[Board Standalone V2 独立板端实现与小于 40 秒优化计划](docs/BOARD_STANDALONE_V2_PLAN_20261021.md)。V2 已开始实现原生预后处理和数值流水，进度见[独立应用说明](appliance/README.md)；完整板端网页及40秒验收尚未完成。下文仍为保留的PC协同版运行入口。
 
 独立于 Skin/CAMUS 的 Axial-only 工程。输入显式 ED、ES 两个3D NIfTI；按A的生产数值文字合同预处理，逐Axial中心片执行15Conv/21节点，恢复原生概率与标签，提供三平面MPR、原始/平滑3D表面、LV/RV/MYO容积、LV/RV EF、异步网页与结果包。平滑表面由电脑端生成，仅用于展示；定量依据仍为原空间标签。
 
