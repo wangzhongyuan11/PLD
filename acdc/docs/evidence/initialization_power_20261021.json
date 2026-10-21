@@ -1,0 +1,59 @@
+{
+  "device_initialization": {
+    "scope": "SpatialDevice constructor after model/cases loaded; not full worker/process startup",
+    "seconds": 51.33978748000004,
+    "sha256": "70663249b9a85331c2e266f87b803f233e11102ff1a313b482466010ff3391ac",
+    "source": "out/acdc/board_p6_rpc_v1/stability1000_nodes.json"
+  },
+  "model_spec_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+  "power_estimate": {
+    "activity": "vectorless/default, no SAIF",
+    "build_manifest_sha256": "028abba8dd687e7b8770bca2806e6733118710eadddfb99df3d547d1f8d5f39f",
+    "checkpoint": {
+      "path": "out/acdc/optimization/spatial_p6_100_bankstage_v1/project/spatial.runs/impl_1/dma_top_wrapper_postroute_physopt.dcp",
+      "sha256": "c249d192a15b6e9b707ded7ef9fe288da74e5d6b39eaa9277146bce552a3c119"
+    },
+    "confidence": "Medium",
+    "design_state": "routed",
+    "device_static_watts": 0.146,
+    "dynamic_watts": 1.365,
+    "limits": [
+      "Tool estimate includes PS7 model and is not measured PYNQ-Z2 input power",
+      "No energy-per-inference or thermal/long-duration certification follows from this report"
+    ],
+    "measured_board_power": false,
+    "ps7_dynamic_model_watts": 1.266,
+    "report": {
+      "path": "out/acdc/optimization/spatial_p6_100_bankstage_v1/power_postroute_vectorless.rpt",
+      "sha256": "0d46445fc189b7982c3df8f82c8f05dcf0d319febb86ad9d82286222da36d626"
+    },
+    "script": {
+      "path": "out/acdc/optimization/report_p6_power.tcl",
+      "sha256": "43b404ebbe4a7a85abde6bad3d8fc3f4e7ad74f38c730ac3943fd33567fb1717"
+    },
+    "total_on_chip_watts": 1.512
+  },
+  "readiness_source": {
+    "path": "out/acdc/worker_readiness_20261021.json",
+    "sha256": "502426556d12f24ad5ca601d12301ec88709967f599933b4169a592531ba68c0"
+  },
+  "runtime_manifest_sha256": "1f0bdf8739980ea8e8e2a06ee349b57ed81d041d87515e4e9400cd30b7ae7747",
+  "schema": "pld-acdc-initialization-power-audit-v1",
+  "worker_readiness": {
+    "auditor_sha256": "5cd173f478d2a473cc78fd9d0bbe1f822789cf3c997ef9d595cfed894a128d26",
+    "invocation_id": "5fc338ec04f347f694bf6f3055918943",
+    "limits": [
+      "Full PL was preloaded during controlled recovery before this worker startup",
+      "Includes this worker Python/model/runtime/overlay/CMA/parameter initialization; OS file caches and native layout cache may be warm",
+      "One startup observation, not a readiness distribution"
+    ],
+    "pid": 3807,
+    "process_start_monotonic_us": 1685430526,
+    "process_start_to_listening_seconds": 47.708273,
+    "readiness_message": "ACDC worker loopback port 8093; backend=pl; synthetic=False",
+    "ready_monotonic_us": 1733138799,
+    "schema": "pld-acdc-worker-readiness-v1",
+    "scope": "single current worker process start to server bound/backend ready; journal monotonic timestamps; not first power-on or cold disk cache",
+    "unit": "pld-acdc.service"
+  }
+}

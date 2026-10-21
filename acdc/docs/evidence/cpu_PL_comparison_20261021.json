@@ -1,0 +1,40 @@
+{
+  "complete": true,
+  "fresh_inference_count_this_audit": 0,
+  "input_and_head_hash_mismatches": 0,
+  "limits": [
+    "CPU is a PC reference implementation, not an optimized INT8/FP32 library or PYNQ ARM baseline",
+    "Runs occurred at different times; host load and cold/warm conditions were not controlled",
+    "Ratio describes these recorded pipeline windows, not isolated FPGA/CPU hardware speedup",
+    "PS-DMA-PL 1000-frame 8-FPS acceptance is a separate measurement"
+  ],
+  "metrics": {
+    "cpu": {
+      "fresh_slices": 1616,
+      "fresh_window_fps": 2.1414818904566504,
+      "slice_max_seconds": 0.8665595000056783,
+      "slice_p50_seconds": 0.455486299993936,
+      "slice_p95_seconds": 0.5199591749951651,
+      "sum_fresh_window_seconds": 754.6176351999893
+    },
+    "pl": {
+      "fresh_slices": 1616,
+      "fresh_window_fps": 5.164174582533576,
+      "slice_max_seconds": 0.24767849998897873,
+      "slice_p50_seconds": 0.17474839999340475,
+      "slice_p95_seconds": 0.21943939999619033,
+      "sum_fresh_window_seconds": 312.925129500014
+    }
+  },
+  "model_spec_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+  "observed_window_throughput_ratio": 2.4114957990293187,
+  "paired_slices": 1616,
+  "patients": 20,
+  "runtime_manifest_sha256": "1f0bdf8739980ea8e8e2a06ee349b57ed81d041d87515e4e9400cd30b7ae7747",
+  "schema": "pld-acdc-matched-reference-performance-v1",
+  "scope": "historical pipeline windows on identical recorded INT8 inputs/heads; CPU exact-integer FP64 witness vs remote physical PL; includes scheduling/checkpoints, not full process wall",
+  "source_report": {
+    "path": "out/acdc/cpu_pl_matched_comparison_20261021.json",
+    "sha256": "9245d2007a1d28df67e359e3e92e48785fd73c937287b626e5fc14f60802019b"
+  }
+}
