@@ -1,0 +1,57 @@
+{
+  "schema": "pld-acdc-netlist-tool-status-v1",
+  "host_utc": "2026-10-21T04:54:07.239685+00:00",
+  "acceptance_complete": false,
+  "netlist": "out/acdc/optimization/executor_p6_synth_bankstage_v1/netlist.v",
+  "netlist_sha256": "842726d9bd730cedd3ff2471d009710e47e45e28fb0ac3b765f0a163cd26a751",
+  "icarus": {
+    "status": "running; no final TB_PASS",
+    "pid": 111964,
+    "clock_observation": {
+      "pid": 111964,
+      "executable_sha256": "2395488db00dd46ad4bdca0405e641cbe72085ed3d17f8b1912e1bdc47f828fe",
+      "getter_rva": "0x46760",
+      "clock_rva": "0xe6638",
+      "scope": "read-only simulation clock accessed by vpi_get_time; global precision is 1ps",
+      "rows": [
+        {
+          "host_monotonic": 264229.534169,
+          "simulation_ticks": 213525100
+        },
+        {
+          "host_monotonic": 264234.5342939,
+          "simulation_ticks": 213555000
+        },
+        {
+          "host_monotonic": 264239.5346558,
+          "simulation_ticks": 213585100
+        }
+      ]
+    },
+    "clock_scope": "Read-only process memory observation; progress is not numerical acceptance."
+  },
+  "alternate_attempts": {
+    "verilator_5_008": "Cannot parse unchanged UNISIM UDP; did not run numerical simulation.",
+    "cvc": {
+      "source": "https://github.com/cambridgehackers/open-src-cvc",
+      "source_commit": "1c5e043ec33ef6f1fdbf38565501c944893a83cf",
+      "local_tool_changes": "Localparam override-index bounds guards; DT_NONE zero-delay handling. Tool changes and syntax-adapted TB were diagnostic only; not production source or approved replacement simulator.",
+      "default_compilation": "linker undefined WIRE_EV references; no executable",
+      "Ogate_compilation": "stopped after optimizer progress stalled at module 31; no simulation",
+      "interpretation": "internal runtime error in v_ex.c(2678); no successful full run",
+      "passed_netlist_acceptance": false
+    }
+  },
+  "diagnostic_sources": {
+    "out/acdc/optimization/cvc_probe_20261021/compile6.log": "6ff4a6765d6d6ec156a00bf7e9df5928cf45fcb0f6641cfe0543c0a2edd523bb",
+    "out/acdc/optimization/cvc_probe_20261021/compile_ogate.log": "c5e25bec1390ea0202c3b83e84b542816ae997a01c2cf20053fa540a20909885",
+    "out/acdc/optimization/cvc_probe_20261021/delay_gdb.log": "b34a84c5f349d8a29628c5bf64b8ff56e09fda3cfd439eedd45b3070af521857",
+    "out/acdc/optimization/cvc_probe_20261021/gdb3.log": "322352f25d56a9b526244723e75ac6b0d4c1b617c35e29e71361414288f49950",
+    "out/acdc/optimization/cvc_probe_20261021/installtest.log": "a6844cb81c32bc7237a6bab78118b99627f7b1a4d497a6b92df6460f08e48b46",
+    "out/acdc/optimization/cvc_probe_20261021/interp_delay_fixed.log": "251b4ec11a23e5b5b3ddb706ff8a563f3c7de0c7f344ad8fda3873c454cc4e16",
+    "out/acdc/optimization/cvc_probe_20261021/interp_static.log": "511332beac84e8ba2e0311864cba51359655297083afa802953d47a93a369851",
+    "out/acdc/optimization/cvc_probe_20261021/tool_changes.diff": "eeee156aa2ef083b458dbfc9dac89bbbf2ac1199103bbfd6e2ca31efdb29003e",
+    "out/acdc/optimization/cvc_probe_20261021/tool_commit.txt": "e58beb69c048b41e5ce45d6964f76c3e664fbeda6e6f7bfd1e70eed8e1a0d60a"
+  },
+  "production_impact": "No model, production RTL, vendor source, synthesized netlist, or expected tensors modified by these attempts."
+}

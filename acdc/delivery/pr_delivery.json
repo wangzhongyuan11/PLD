@@ -1,0 +1,32 @@
+{
+  "schema": "pld-acdc-pr-delivery-v1",
+  "pull_request": "https://github.com/wangzhongyuan11/PLD/pull/12",
+  "source_branch": "codex/acdc25d-plan",
+  "base_commit": "5a061c4c7c75049a815a87a82773bf1347119ab2",
+  "new_archive_generated": false,
+  "acceptance_complete": false,
+  "remaining": [
+    "P6 original synthesized executor full self-check terminal result"
+  ],
+  "runtime_manifest_sha256": "1f0bdf8739980ea8e8e2a06ee349b57ed81d041d87515e4e9400cd30b7ae7747",
+  "runtime_snapshot_files": 219,
+  "snapshot_paths_changed_since_deployment": [
+    "acdc/README.md",
+    "acdc/docs/FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md",
+    "acdc/docs/IMPLEMENTATION_STATUS.md",
+    "acdc/docs/VALIDATION.md",
+    "acdc/optimization/README.md",
+    "acdc/optimization/run_executor_sim.sh",
+    "acdc/optimization/run_netlist_sim.sh",
+    "acdc/optimization/sim/tb_executor_netlist.sv",
+    "acdc/optimization/sim/tb_tile_executor.sv"
+  ],
+  "snapshot_difference_scope": "Documentation and simulation scripts/testbenches only; deployed production Python/C/RTL files match current source. Diagnostic additions after freeze are not represented as board-executed code.",
+  "evidence": [
+    "acdc/docs/evidence/p6_board_20261020.json",
+    "acdc/docs/evidence/development_PL_20261021.json",
+    "acdc/docs/evidence/reconnect_20261021.json",
+    "acdc/docs/evidence/netlist_tools_20261021.json"
+  ],
+  "formal_delivery_pointer_unchanged": true
+}

@@ -12,5 +12,6 @@
   "delivery_mode": "github_pull_request",
   "source_branch": "codex/acdc25d-plan",
   "archive_is_historical": true,
-  "new_archive_requested": false
+  "new_archive_requested": false,
+  "pull_request": "https://github.com/wangzhongyuan11/PLD/pull/12"
 }

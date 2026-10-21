@@ -149,3 +149,14 @@ sudo -E /usr/local/share/pynq-venv/bin/python3 -m acdc.deploy.manage rollback
 RC清单中的`acceptance_complete=false`保留网表缺口。包内含源码、冻结运行包、原始板测与40体评估报告、全部20例结果ZIP及浏览器示例；原始训练数据不重复分发，按原Release SHA取得。
 
 PR复核入口：`git diff origin/main -- acdc`。仅提交`acdc/`中的任务源码与小型证据；正式指针`delivery/current.json`不变。两个用户原始附件、`out/`、依赖、训练数据和位流不进入PR。主线更新已无冲突合入任务分支。
+
+当前源码及交付PR：[PR #12](https://github.com/wangzhongyuan11/PLD/pull/12)，状态Draft；[交付记录](../delivery/pr_delivery.json)列明冻结运行包与当前源码的差异仅为文档/仿真诊断。补充尝试Verilator/CVC未得到可接受结果，详细失败及源码/日志SHA见[工具记录](evidence/netlist_tools_20261021.json)；CVC本地工具修补不作为通过依据，未将它带入生产工程。原Icarus运行保留。
+
+Icarus复现（安装匹配的MSYS2 UCRT64 Icarus 12.0及DLL依赖，原厂UNISIM来自本机Vivado；每次使用新的输出路径）：
+
+```powershell
+$env:PROCESSOR_ARCHITECTURE='AMD64'
+& acdc/optimization/run_netlist_icarus.ps1 -IcarusBin out/acdc/tools/iverilog_12_ucrt/ucrt64/bin -RuntimeBin D:/Dev/ucrt64/bin -Netlist out/acdc/optimization/executor_p6_synth_bankstage_v1/netlist.v -Model out/acdc/axial_release_v2 -ModelSha fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be -Output out/acdc/optimization/new_p6_netlist_sim
+```
+
+工具来源：[MSYS2 Icarus包](https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-iverilog)。运行不得修改其绑定的TB/DDR/网表/厂商源；最终以退出码0、`TB_PASS executor_functional_netlist`以及生成的`simulation_manifest.json`为准。上面的复现命令未在本轮重复执行。
