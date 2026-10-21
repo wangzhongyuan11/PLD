@@ -1,8 +1,10 @@
 # ACDC Axial 实施状态
 
-更新：2026-10-21。目标仍为[最终计划](FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)的完整链路；当前结果见[验证与使用记录](VALIDATION_P6_20261021.md)。交付包和补充网表验证尚待终态，不将目标标记完成。
+更新：2026-10-21。目标仍为[最终计划](FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)的完整链路；当前结果见[验证与使用记录](VALIDATION_P6_20261021.md)。本轮改为GitHub PR交付，不再生成交付压缩包；补充网表验证尚待终态，不将目标标记完成。
 
 ## 2026-10-21 完整PL链路与回退回归
+
+- 最新重启后已校验并恢复同一P6 worker/隧道，一片新鲜A输入head全等，完整推理106.322388ms。54项Python测试、JS语法及异步viewer回归通过。本轮改为源码及小型证据PR；历史RC保留，不重复计入1000帧验收。[重连复核](evidence/reconnect_20261021.json)。
 
 - 新增`validate_performance_comparison.py`按结果manifest认证并逐片配对20患者/1616片CPU参考与远程PL输入/head SHA。历史新鲜窗口为2.141482与5.164175 FPS，均为各患者窗口合计；不是控制负载/冷热状态的孤立硬件速度实验。3项输入身份/缓存缺片/backend回归通过。[软件基线对照](evidence/cpu_PL_comparison_20261021.json)。
 - 用户选择暂时停`pld-perf10.service`并切回ACDC。该外部服务停止时SIGBUS，保留异常，未按干净交接放行；在无残留进程/独占锁条件下，受控全量重配置P6并确认新DMA共同复位，再恢复原P6 worker。新增一片A固定整数向量head全等，网页远程通路可用。[恢复审计](evidence/manual_handoff_20261021.json)。未改perf10源码、unit或开机设置。
@@ -13,7 +15,7 @@
 - `optimization/profile_layers.py`完成15层×3次真实孤立测量：输入由PL前缀产生，每层及融合Pool输出与独立oracle全等，没有中间golden注入。C09/C11/C13的PL中位分别13.774/14.028/16.258ms，完整分解见[板端回归证据](evidence/board_regression_20261021.json)。
 - 正常停ACDC→恢复原hub→Skin两张、CAMUS两张真实PL黄金head/PNG/ZIP回归通过→正常释放原系统→恢复P6 worker。原正式源文件、unit和交付指针未修改。恢复hub后必须等认证状态ready，再切换；首次启动期的两个交接失败记录保留。
 - 当前网页已恢复8092，使用P6 runtime。patient039网页82片新鲜推理、原生结果、实际浏览器ZIP/PNG导出、MPR/3D及ED/ES切换通过；服务器上传至ZIP就绪20.306547s，远程单片P95 227.7ms。[网页审计](evidence/web_P6_20261021.json)。
-- P6 xsim功能网表受50000实例许可限制。补充Icarus运行使用原厂公开UNISIM模型及同一综合网表，没有修改网表；替代DDR存储先在xsim上以相同272 job/16768写回/313888周期通过，[存储模型证据](evidence/portable_DDR_20261021.json)。Icarus综合网表在首次DDR读写前因未知控制状态失败，LUT/FDRE/GSR基础探针通过，原因待查，未记通过。
+- P6 xsim功能网表受50000实例许可限制。补充Icarus运行使用原厂公开UNISIM模型及同一综合网表，没有修改网表；替代DDR存储先在xsim上以相同272 job/16768写回/313888周期通过，[存储模型证据](evidence/portable_DDR_20261021.json)。Icarus综合网表在首次DDR读写前因未知控制状态失败，LUT/FDRE/GSR基础探针通过，已定位静态输入初始化调度；1ns复位期间驱动输入后已越过首写门禁，完整自校验仍运行，未记通过。
 
 ## 2026-10-20 板测更新
 

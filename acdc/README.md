@@ -108,7 +108,7 @@ sudo -E python3 -m acdc.deploy.manage stop
 sudo -E python3 -m acdc.optimization.board_verify --runtime <runtime> --model <runtime>/model --model-spec-sha <sha> --cases <cases.json> --node-oracle <nodes.npz> --node-oracle-sha <nodes_sha> --warmup 20 --repeat 1000 --recovery-checks --output <new_report.json>
 ```
 
-## 输出、测试、打包
+## 输出、测试与PR交付
 
 结果目录包含labels/ED.nii.gz和ES.nii.gz、各期geometry、statistics.json/csv、performance.json、quality.json、VTK表面与浏览器二进制、manifest和ZIP。completion.json记录服务端上传读取至ZIP就绪的完整时间；ZIP中performance的pre_export_seconds不冒充最终导出时间。浏览器渲染及实际下载另报。
 
@@ -116,9 +116,8 @@ sudo -E python3 -m acdc.optimization.board_verify --runtime <runtime> --model <r
 & acdc/.venv/Scripts/python.exe -m pytest acdc/tests -q
 node --check acdc/web_assets/app.js
 node acdc/tests/test_viewer.cjs
-& acdc/.venv/Scripts/python.exe -m acdc package out/acdc/source_package.zip
 ```
 
-源码包包含只读复用组件及hash清单，不带虚拟环境、模型、病例或生成位流；完整候选包另含冻结runtime及真实报告。PC浏览器使用自带Canvas MPR与WebGL表面显示，无CDN依赖；VTK生成无平滑VTP/PLY表面。真实模型开发集质量、板端性能/内存/1000帧稳定性和浏览器导出已有证据；物理HDMI目视不在本ACDC网页验收范围，P6功能网表尚待终态，候选包不冒充最终验收。
+本轮通过GitHub PR交付源码、测试、脚本、文档与小型证据，不再生成压缩包。只读复用组件及hash清单保留；虚拟环境、模型、病例或生成位流不进入PR。历史RC保留原路径及SHA，不替代当前PR状态。PC浏览器使用自带Canvas MPR与WebGL表面显示，无CDN依赖；VTK生成无平滑VTP/PLY表面。真实模型开发集质量、板端性能/内存/1000帧稳定性和浏览器导出已有证据；物理HDMI目视不在本ACDC网页验收范围，P6功能网表尚待终态，候选包不冒充最终验收。
 
 有真实GT后，使用`python -m acdc evaluate --help`。病例清单schema为`pld-acdc-evaluation-cases-v1`，`cases`每项包含`patient`、`phase`、`result_dir`、`gt`、`gt_sha256`；每患者必须ED/ES配对，路径相对清单目录。预测标签按结果manifest核验hash，GT也必须固定hash，原生物理网格必须一致。输出逐类Dice、HD95/ASSD、容积和EF误差；该命令不替代A的FP32/INT8量化质量验收。

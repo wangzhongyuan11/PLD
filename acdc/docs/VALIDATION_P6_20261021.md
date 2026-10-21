@@ -4,13 +4,17 @@
 
 ## 当前可用实现
 
+**本轮交付方式**：按用户最新要求，不再生成压缩包，将独立任务分支的源码、测试、部署脚本、文档和小型证据提交GitHub PR。模型、病例、bit/HWH/XSA及历史结果保留已记录的路径和SHA。RC1/RC2仅为历史记录。P6功能网表终态尚待完成，暂不标记最终验收。
+
+**12:36重连复核**：再次开机后五个FPGA服务均为干净停止，核验冻结runtime后激活同一P6，健康检查确认真实PL/model/runtime身份。本机隧道已重建；一片新鲜A输入head逐字节一致，完整PS-DMA-PL 106.322388ms、PL 95.553120ms、PC往返235.383600ms。54项Python回归、JS语法及网页异步切换测试通过。[重连证据](evidence/reconnect_20261021.json)。
+
 输入同患者 ED/ES 两个3D NIfTI。PC按冻结几何与归一化规则建立RAS 2mm工作体，给每个Axial中心层准备相邻三层INT8堆栈，经SSH隧道交给PYNQ-Z2。PS一次提交整网执行表，PL执行15个Conv、3个Pool及3个虚拟CAT，共21个逻辑节点；head为四类有符号INT8。
 
 PC将head转换为概率，裁letterbox、恢复工作平面并回原生物理网格，最后argmax。体积来自原生标签计数和affine行列式，LV/RV EF来自两期容积；MYO不计算EF。网页提供三个MPR、三维表面、窗宽窗位、联动光标、类别/轮廓/透明度、裁切、ED/ES和导出。查看已有结果不触发新推理。
 
 当前隔离运行根：`/home/xilinx/jupyter_notebooks/pld/releases/acdc_spatial_20261020_p6_rpc_v1`。受管单元为`pld-acdc.service`，worker仅监听板端loopback 8093。PC测试页为`http://127.0.0.1:8092/`，通过本机18093转发板端8093。原`delivery/current.json`保持Skin/CAMUS正式交付指针。
 
-**11:39当前运行状态**：经用户明确选择“切换到ACDC手测，暂时停止perf10”，已恢复同一P6 worker及本机SSH隧道。真实PL/model/runtime身份和空闲状态通过；重新执行A固定整数输入一片，全部head字节一致，完整PS-DMA-PL 106.665ms、远程往返229.795ms。该一片用于确认恢复后的可用性，不替代或重复累计1000帧性能验收。[交接证据](evidence/manual_handoff_20261021.json)。
+**11:39交接记录（历史）**：经用户明确选择“切换到ACDC手测，暂时停止perf10”，已恢复同一P6 worker及本机SSH隧道。真实PL/model/runtime身份和空闲状态通过；重新执行A固定整数输入一片，全部head字节一致，完整PS-DMA-PL 106.665ms、远程往返229.795ms。该一片用于确认恢复后的可用性，不替代或重复累计1000帧性能验收。[交接证据](evidence/manual_handoff_20261021.json)。
 
 交接历史：11:29发现本次开机后独占锁由`pld-perf10.service`持有（PID531，目录`/home/xilinx/jupyter_notebooks/pld/releases/pld_perf10_20261020`），首次ACDC启动被安全拒绝。该新服务不在ACDC管理器原Skin/CAMUS清单中，取得用户选择后才停止。停止结果为SIGBUS/core-dump（状态7），未冒充干净退出或perf10回归通过。确认全部进程/cgroup退出、独占锁空闲后，对已校验的P6位流做独占全量重配置，验证新DMA保持共同复位且恢复步骤没有申请CMA，再启动worker。异常记录保留；perf10源码、unit及数据没有改写。
 
@@ -127,15 +131,15 @@ sudo -E /usr/local/share/pynq-venv/bin/python3 -m acdc.deploy.manage rollback
 
 ## 尚未关闭的补充验证
 
-完整尺寸RTL与真实板测已通过。P6 OOC功能网表有59147实例，xsim BASIC限制50000，启动失败，不能记为网表数值通过。已用MSYS2官方仓库的Icarus 12.0作为补充；其不支持原DDR模型的SV关联数组，因此增加有界可移植存储。该存储在xsim上以同一A参数、272 job/16768写回/313888周期与原模型一致。Icarus网表运行在首次读写前因未知控制状态失败；基础厂商LUT/FDRE/GSR探针通过，原因仍待定位，不以真实板测成功掩盖此失败。
+完整尺寸RTL与真实板测已通过。P6 OOC功能网表有59147实例，xsim BASIC限制50000，启动失败，不能记为网表数值通过。已用MSYS2官方仓库的Icarus 12.0作为补充；其不支持原DDR模型的SV关联数组，因此增加有界可移植存储。该存储在xsim上以同一A参数、272 job/16768写回/313888周期与原模型一致。Icarus网表运行在首次读写前因未知控制状态失败；基础厂商LUT/FDRE/GSR探针通过，旧运行的初始化原因见下文；不以真实板测成功掩盖此失败。
 
-交付包及最终验收状态需在实际打包、SHA/CRC、源码/运行包身份和此补充验证结果核对后更新。工程教学与算法演示，不作为临床诊断依据；A数据/模型许可及引用随原Release保留。
+最终PR验收状态需在源码/冻结运行包身份和此补充验证终态核对后更新；本轮不重新打包。工程教学与算法演示，不作为临床诊断依据；A数据/模型许可及引用随原Release保留。
 
 补充定位：相同问题在全展平网表下仍出现；VPI只读观察表明复位释放后状态最初正确，首次descriptor握手时才变成X。最小`sim/tb_unisim_initialization.sv`复现Icarus对声明初值的事件调度差异：原厂LUT6的显式输入敏感进程可能漏掉时刻0的声明赋值。网表TB现改为时刻1ns、仍保持复位时驱动静态输入，未修改RTL、综合网表、原厂模型或期望数据。完整自校验重跑结果尚待完成，最小用例通过不替代整网通过。
 
 修正后的完整自校验已越过旧故障点：第9周期读取参数、第113周期读取输入，后续读命令持续出现；尚未输出最终`TB_PASS`，因此仍保留网表验收缺口。此次新增PC审计模块后，本地51项pytest回归通过（33.84秒），没有重新执行或重复计入既有1000帧及40体板测。
 
-RC包复现（输入清单固定每个运行包/报告/结果的SHA；不上传、不部署）：
+历史RC包复现（本轮不执行、不新增；输入清单保留原有报告SHA）：
 
 ```powershell
 & acdc/.venv/Scripts/python.exe -m acdc.package_delivery create --inputs acdc/delivery/inputs_rc1.json --output out/acdc/delivery/acdc_axial_p6_20261021_rc1
@@ -143,3 +147,5 @@ RC包复现（输入清单固定每个运行包/报告/结果的SHA；不上传�
 ```
 
 RC清单中的`acceptance_complete=false`保留网表缺口。包内含源码、冻结运行包、原始板测与40体评估报告、全部20例结果ZIP及浏览器示例；原始训练数据不重复分发，按原Release SHA取得。
+
+PR复核入口：`git diff origin/main -- acdc`。仅提交`acdc/`中的任务源码与小型证据；正式指针`delivery/current.json`不变。两个用户原始附件、`out/`、依赖、训练数据和位流不进入PR。主线更新已无冲突合入任务分支。
