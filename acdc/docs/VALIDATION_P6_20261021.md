@@ -10,6 +10,8 @@ PC将head转换为概率，裁letterbox、恢复工作平面并回原生物理�
 
 当前隔离运行根：`/home/xilinx/jupyter_notebooks/pld/releases/acdc_spatial_20261020_p6_rpc_v1`。受管单元为`pld-acdc.service`，worker仅监听板端loopback 8093。PC测试页为`http://127.0.0.1:8092/`，通过本机18093转发板端8093。原`delivery/current.json`保持Skin/CAMUS正式交付指针。
 
+**11:29运行状态补充**：板卡本次开机后，FPGA独占锁由`pld-perf10.service`持有（PID531，目录`/home/xilinx/jupyter_notebooks/pld/releases/pld_perf10_20261020`）。原受管服务均inactive；恢复ACDC时被独占锁安全拒绝，ACDC未重载位流，当前8093 worker不可用。SSH隧道已重新连接，PC8092可浏览已有结果；新推理需先由用户确认选择运行哪一路。该外部服务不在ACDC管理器的既有Skin/CAMUS清单中，本轮没有擅自停止它。下面板测数值为先前已完成且绑定固定运行包的证据，不表示当前FPGA仍由ACDC拥有。
+
 | 身份 | 值 |
 |---|---|
 | Axial模型spec SHA256 | `fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be` |
