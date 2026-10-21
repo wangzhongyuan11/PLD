@@ -1,0 +1,21 @@
+{
+  "board_bit_sha256": "232954378f8c7a42c36589031d9588f50ea2c370f3a29edd40500bab877dc1df",
+  "build": "spatial_p6_100_bankstage_v1",
+  "log_sha256": "7932743ec682284375f4a037e1a9ec8afa193c621d978bdd6813c01a702bbb9e",
+  "notice": "Functional vendor IP integration; AXI RAM is behavioral, not physical PS7/DDR timing. Does not replace pending P6 compute netlist verification.",
+  "passed": true,
+  "raw_manifest": {
+    "path": "out/acdc/optimization/vendor_datamover_p6_v1_sim/simulation_manifest.json",
+    "sha256": "0551ca75ea7c85a20705f3cc5c00f76d2454ce286197aadc0710c9827c55be72"
+  },
+  "result": "TB_PASS vendor_datamover pairs=5 read_bursts=74 write_bursts=73 read_stalls=5482 write_stalls=361 AXI_errors=2 timeout=1 active_reset=1 halt=1",
+  "schema": "pld-acdc-vendor-datamover-simulation-v1",
+  "scope": "actual generated AMD DataMover functional netlist and B DMA monitors with stalled AXI RAM; not PS7/DDR physical timing",
+  "sources": {
+    "D:\\PLD\\acdc\\optimization\\rtl\\dma_transfer.sv": "f270798f9c26d94cacdf470b418b0967437a64c01171d2a492f81541f9e735ba",
+    "D:\\PLD\\acdc\\optimization\\sim\\tb_vendor_datamover.sv": "99e83941c11fb8c17905cae89e419feb7392dc9834cdcb5fa0bb0a75096b14e7",
+    "D:\\PLD\\out\\acdc\\optimization\\spatial_p6_100_bankstage_v1\\project\\spatial.gen\\sources_1\\bd\\dma_top\\ip\\dma_top_datamover_0\\dma_top_datamover_0_sim_netlist.v": "950f77c54d39c14bd63352a2c6304f58a57f4465854750771bf6dfd79d6638cc",
+    "D:\\PLD\\out\\acdc\\optimization\\spatial_p6_100_bankstage_v1\\project\\spatial.srcs\\sources_1\\bd\\dma_top\\ip\\dma_top_datamover_0\\dma_top_datamover_0.xci": "d49944f6c4493f65ae8e6bf7096df926aaaeead386c3b841535301c2a987500a",
+    "D:\\vivado\\2026.1\\Vivado\\bin\\..\\data\\verilog\\src\\glbl.v": "6270251cf35e1fce3119fc79f8fb968912f7983027e43cf030409ba68f048936"
+  }
+}

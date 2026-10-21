@@ -70,6 +70,13 @@ PC远程请求的1616片中位174.748400ms、P95 219.439400ms、最大247.678500
 
 ## 原系统与服务切换
 
+厂商IP集成检查直接使用本次P6构建生成的`dma_top_datamover_0_sim_netlist.v`，连接B的双向`dma_transfer`监视器与有随机背压的AXI RAM。5组完整写后读回（8/72/200/8192/256字节，包含跨4KiB）均精确；共74个读burst、73个写burst，每个burst的地址、大小、边界及写入字节均检查。读/写SLVERR、监视器超时、活动传输中共同复位后新事务和HALT完成均通过。[源文件及日志SHA证据](evidence/vendor_datamover_20261021.json)。这是实际厂商功能网表的命令/数据/status集成验证，RAM为行为模型，不宣称物理PS7/DDR时序验证。
+
+```powershell
+$env:PROCESSOR_ARCHITECTURE='AMD64'
+& acdc/optimization/run_vendor_datamover_sim.ps1 -Build out/acdc/optimization/spatial_p6_100_bankstage_v1 -Output out/acdc/optimization/vendor_datamover_new_sim
+```
+
 已正常停止ACDC、恢复正式hub，并分别通过Skin两张原JPEG、CAMUS两张原NIfTI的真实PL黄金head、PNG像素/尺寸和ZIP CRC检查；随后正常停止原系统并恢复P6 worker。正式unit、模型、位流和数据未覆盖。本次不声明物理HDMI目视正确。
 
 恢复原hub后必须等待认证`/hub/status`的`phase=ready`，再停止或重新激活ACDC。`systemctl active`和HTTP首页可访问都不足以说明后台模型就绪：本轮曾因此被安全门禁拦下，记录保留，未放宽干净退出条件。所有等待有界，DMA状态不确定时保留拥有者与CMA，不用强杀恢复。
@@ -105,6 +112,8 @@ sudo -E /usr/local/share/pynq-venv/bin/python3 -m acdc.deploy.manage rollback
 交付包及最终验收状态需在实际打包、SHA/CRC、源码/运行包身份和此补充验证结果核对后更新。工程教学与算法演示，不作为临床诊断依据；A数据/模型许可及引用随原Release保留。
 
 补充定位：相同问题在全展平网表下仍出现；VPI只读观察表明复位释放后状态最初正确，首次descriptor握手时才变成X。最小`sim/tb_unisim_initialization.sv`复现Icarus对声明初值的事件调度差异：原厂LUT6的显式输入敏感进程可能漏掉时刻0的声明赋值。网表TB现改为时刻1ns、仍保持复位时驱动静态输入，未修改RTL、综合网表、原厂模型或期望数据。完整自校验重跑结果尚待完成，最小用例通过不替代整网通过。
+
+修正后的完整自校验已越过旧故障点：第9周期读取参数、第113周期读取输入，后续读命令持续出现；尚未输出最终`TB_PASS`，因此仍保留网表验收缺口。此次新增PC审计模块后，本地51项pytest回归通过（33.84秒），没有重新执行或重复计入既有1000帧及40体板测。
 
 RC包复现（输入清单固定每个运行包/报告/结果的SHA；不上传、不部署）：
 
