@@ -1,0 +1,44 @@
+{
+  "controlled_reconfiguration": {
+    "bitfile": "/home/xilinx/jupyter_notebooks/pld/releases/acdc_spatial_20261020_p6_rpc_v1/overlay/dma_top.bit",
+    "gpio_control": 0,
+    "method": "certified full PL reconfiguration, new DataMover held in common reset",
+    "new_CMA_allocated": false
+  },
+  "external_exit": {
+    "ActiveState": "failed",
+    "ControlGroup": "",
+    "ExecMainStatus": "7",
+    "MainPID": "0",
+    "Result": "core-dump"
+  },
+  "external_unit": "pld-perf10.service",
+  "full_ps_dma_pl_seconds": 0.10666478099983578,
+  "head_mismatches": 0,
+  "head_sha256": "42e8d2e03d85a3eb8d35155cbadb6b409e9507f47c04c372c448b5f38fa8c032",
+  "health": {
+    "backend": "pl",
+    "busy": false,
+    "model_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+    "runtime_sha256": "1f0bdf8739980ea8e8e2a06ee349b57ed81d041d87515e4e9400cd30b7ae7747",
+    "synthetic": false
+  },
+  "host_utc": "2026-10-21T03:39:05.491083+00:00",
+  "input_sha256": "6322290be4249c871c4674bbaaa0c3f51844791495def44d3630fbada5bba7fe",
+  "notice": "External perf10 abnormal stop is preserved, not accepted as a clean handoff or regression pass. Exclusive full PL reconfiguration established common reset before ACDC worker allocation. One fresh inference is not another stability/performance acceptance.",
+  "pl_seconds": 0.0955412,
+  "post_handoff_fresh_frames": 1,
+  "remote_roundtrip_seconds": 0.22979510002187453,
+  "schema": "pld-acdc-manual-service-handoff-audit-v1",
+  "sources": [
+    {
+      "path": "out/acdc/manual_perf10_pause_20261021.json",
+      "sha256": "dc6747162f8a8b52e7fe5a0262aab978c1161885522a9485a167d82b4702366e"
+    },
+    {
+      "path": "out/acdc/manual_handoff_check_20261021.json",
+      "sha256": "d1f7e5a81a08bbecdfd6fc31e542b888c239dda451f2ecde152f748ccfa388a4"
+    }
+  ],
+  "user_authorized_temporary_pause": true
+}

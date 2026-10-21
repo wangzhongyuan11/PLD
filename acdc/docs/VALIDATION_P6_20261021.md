@@ -10,7 +10,9 @@ PC将head转换为概率，裁letterbox、恢复工作平面并回原生物理�
 
 当前隔离运行根：`/home/xilinx/jupyter_notebooks/pld/releases/acdc_spatial_20261020_p6_rpc_v1`。受管单元为`pld-acdc.service`，worker仅监听板端loopback 8093。PC测试页为`http://127.0.0.1:8092/`，通过本机18093转发板端8093。原`delivery/current.json`保持Skin/CAMUS正式交付指针。
 
-**11:29运行状态补充**：板卡本次开机后，FPGA独占锁由`pld-perf10.service`持有（PID531，目录`/home/xilinx/jupyter_notebooks/pld/releases/pld_perf10_20261020`）。原受管服务均inactive；恢复ACDC时被独占锁安全拒绝，ACDC未重载位流，当前8093 worker不可用。SSH隧道已重新连接，PC8092可浏览已有结果；新推理需先由用户确认选择运行哪一路。该外部服务不在ACDC管理器的既有Skin/CAMUS清单中，本轮没有擅自停止它。下面板测数值为先前已完成且绑定固定运行包的证据，不表示当前FPGA仍由ACDC拥有。
+**11:39当前运行状态**：经用户明确选择“切换到ACDC手测，暂时停止perf10”，已恢复同一P6 worker及本机SSH隧道。真实PL/model/runtime身份和空闲状态通过；重新执行A固定整数输入一片，全部head字节一致，完整PS-DMA-PL 106.665ms、远程往返229.795ms。该一片用于确认恢复后的可用性，不替代或重复累计1000帧性能验收。[交接证据](evidence/manual_handoff_20261021.json)。
+
+交接历史：11:29发现本次开机后独占锁由`pld-perf10.service`持有（PID531，目录`/home/xilinx/jupyter_notebooks/pld/releases/pld_perf10_20261020`），首次ACDC启动被安全拒绝。该新服务不在ACDC管理器原Skin/CAMUS清单中，取得用户选择后才停止。停止结果为SIGBUS/core-dump（状态7），未冒充干净退出或perf10回归通过。确认全部进程/cgroup退出、独占锁空闲后，对已校验的P6位流做独占全量重配置，验证新DMA保持共同复位且恢复步骤没有申请CMA，再启动worker。异常记录保留；perf10源码、unit及数据没有改写。
 
 | 身份 | 值 |
 |---|---|
@@ -82,6 +84,8 @@ $env:PROCESSOR_ARCHITECTURE='AMD64'
 已正常停止ACDC、恢复正式hub，并分别通过Skin两张原JPEG、CAMUS两张原NIfTI的真实PL黄金head、PNG像素/尺寸和ZIP CRC检查；随后正常停止原系统并恢复P6 worker。正式unit、模型、位流和数据未覆盖。本次不声明物理HDMI目视正确。
 
 恢复原hub后必须等待认证`/hub/status`的`phase=ready`，再停止或重新激活ACDC。`systemctl active`和HTTP首页可访问都不足以说明后台模型就绪：本轮曾因此被安全门禁拦下，记录保留，未放宽干净退出条件。所有等待有界，DMA状态不确定时保留拥有者与CMA，不用强杀恢复。
+
+本次临时暂停的`pld-perf10.service`不在管理器自动恢复清单中；需要切回时，先让`python -m acdc.deploy.manage stop`成功完成并确认ACDC及子进程退出，再由操作者`sudo systemctl start pld-perf10.service`。本轮没有更改任何服务的开机启用设置；重启后应重新检查实际FPGA拥有者。perf10的SIGBUS原因属于该新运行包的待查事项，不由旧Skin/CAMUS回归结果代替。
 
 ## 复现与使用
 

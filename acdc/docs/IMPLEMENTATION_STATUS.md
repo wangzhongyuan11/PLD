@@ -4,6 +4,7 @@
 
 ## 2026-10-21 完整PL链路与回退回归
 
+- 用户选择暂时停`pld-perf10.service`并切回ACDC。该外部服务停止时SIGBUS，保留异常，未按干净交接放行；在无残留进程/独占锁条件下，受控全量重配置P6并确认新DMA共同复位，再恢复原P6 worker。新增一片A固定整数向量head全等，网页远程通路可用。[恢复审计](evidence/manual_handoff_20261021.json)。未改perf10源码、unit或开机设置。
 - `validate_preprocessing.py`直接调用固定SHA的A几何实现，覆盖20患者/40体/1616片：采用的原生/工作affine、float32工作体、相邻三层量化INT8均全等，并与实际PL输入checkpoint SHA逐片一致。此项不执行新推理，不增加板测样本数。[预处理审计](evidence/preprocessing_A_20261021.json)。
 - `run_vendor_datamover_sim.ps1`将B的`dma_transfer`接入当前P6构建生成的AMD DataMover功能网表和带背压的AXI RAM：5组读写回环逐字节正确，包含跨4KiB，74读burst/73写burst；读/写SLVERR、超时、活动复位后的新事务及HALT完成检查通过。[厂商IP证据](evidence/vendor_datamover_20261021.json)。此项不等于PS7/物理DDR时序仿真，也不替代尚在运行的P6计算网表检查。
 - 固定20患者/40体/1616片全部P6新鲜推理通过，逐片输入/head SHA对照独立CPU；原生标签、affine、容积/EF全等，20个ZIP SHA/CRC通过。Axial宏Dice 0.8823042897748437，与A逐体指标/容积差异0。[40体审计](evidence/development_PL_20261021.json)。
