@@ -21,8 +21,10 @@ class JobManager:
         self.root=Path(root).resolve();self.root.mkdir(parents=True,exist_ok=True)
         self.pipeline=pipeline;self.lock=threading.Lock();self.active=None;self.jobs={}
         self.thread=None
+        self.presentation_lock=threading.Lock()
 
     def create(self,ed,es,job_id,upload_seconds=0.):
+        if self.pipeline is None:raise ContractError('saved-results viewer does not execute inference')
         with self.lock:
             if self.active is not None:raise ContractError('another volume job is active')
             cancel=threading.Event()
@@ -51,6 +53,12 @@ class JobManager:
         with self.lock:
             if self.active and self.active[0]==job_id:self.active[1].set();return
         raise ContractError('job is not active')
+
+    def presentation(self,job_id,phase):
+        from .surface import prepare_presentation
+        with self.presentation_lock:
+            key,report=prepare_presentation(self.root/job_id,self.root/'_presentations'/job_id,phase)
+        return dict(report,base_url=f'/presentations/{job_id}/{key}/{phase}/')
 
 
 def handler(manager):
@@ -86,13 +94,21 @@ def handler(manager):
             try:
                 path=urlsplit(self.path).path
                 if path=='/api/capabilities':
-                    self.send(200,dict(profile='axial_only_v1',backend=manager.pipeline.backend.kind,
-                        synthetic=manager.pipeline.backend.synthetic,model_sha256=manager.pipeline.backend.model_sha,
-                        head_scale=manager.pipeline.backend.head_scale,max_upload_bytes=MAX_UPLOAD));return
-                if path in ('/','/app.js','/style.css'):
+                    backend=manager.pipeline.backend if manager.pipeline is not None else None
+                    self.send(200,dict(profile='axial_only_v1',backend=backend.kind if backend else 'viewer',
+                        synthetic=backend.synthetic if backend else False,model_sha256=backend.model_sha if backend else None,
+                        head_scale=backend.head_scale if backend else None,max_upload_bytes=MAX_UPLOAD,
+                        read_only=backend is None));return
+                if path in ('/','/app.js','/surface_view.js','/style.css'):
                     self.asset(static/('index.html' if path=='/' else path[1:]));return
                 match=re.fullmatch(r'/api/jobs/([0-9a-f]{32})',path)
                 if match:self.send(200,manager.status(match[1]));return
+                match=re.fullmatch(r'/presentations/([0-9a-f]{32})/([0-9a-f]{64})/(ED|ES)/([^/]+)',path)
+                if match:
+                    job,key,phase,name=match.groups()
+                    if name not in {n+s for n in ('RV','MYO','LV') for s in ('.vertices.f32','.normals.f32','.vtp','.ply')}:
+                        raise FileNotFoundError('unknown presentation asset')
+                    self.asset(manager.root/'_presentations'/job/key/phase/name);return
                 match=re.fullmatch(r'/results/([0-9a-f]{32})/(.+)',path)
                 if match:
                     root=manager.root/match[1];candidate=(root/match[2]).resolve()
@@ -110,10 +126,13 @@ def handler(manager):
                 if origin is not None and urlsplit(origin).netloc!=self.headers.get('Host'):
                     raise ContractError('cross-origin requests are not accepted')
                 path=urlsplit(self.path).path
+                match=re.fullmatch(r'/api/jobs/([0-9a-f]{32})/presentation/(ED|ES)',path)
+                if match:self.send(200,manager.presentation(*match.groups()));return
                 match=re.fullmatch(r'/api/jobs/([0-9a-f]{32})/cancel',path)
                 if match:
                     manager.cancel(match[1]);self.send(200,dict(status='cancelling'));return
                 if path!='/api/jobs':raise FileNotFoundError('unknown endpoint')
+                if manager.pipeline is None:raise ContractError('saved-results viewer does not execute inference')
                 if self.headers.get('Transfer-Encoding'):raise ContractError('chunked upload not supported')
                 total=int(self.headers.get('Content-Length','0'));ed_bytes=int(self.headers.get('X-ED-Bytes','0'))
                 if not 0<ed_bytes<total<=MAX_UPLOAD:raise ContractError('invalid ED/ES upload lengths')
@@ -146,11 +165,11 @@ def handler(manager):
 
 
 def serve(backend,output,*,port=8092,policy='strict',recognized_acdc=False):
-    manager=JobManager(output,Pipeline(backend,policy=policy,recognized_acdc=recognized_acdc))
+    manager=JobManager(output,Pipeline(backend,policy=policy,recognized_acdc=recognized_acdc) if backend is not None else None)
     server=ThreadingHTTPServer(('127.0.0.1',port),handler(manager))
     from .lifecycle import graceful_signals
     graceful_signals(server)
-    print(f'ACDC Axial UI: http://127.0.0.1:{server.server_port} ; backend={backend.kind} ; synthetic={backend.synthetic}',flush=True)
+    print(f'ACDC Axial UI: http://127.0.0.1:{server.server_port} ; backend={backend.kind if backend else "saved-results"}',flush=True)
     try:server.serve_forever()
     finally:
         with manager.lock:
@@ -159,4 +178,4 @@ def serve(backend,output,*,port=8092,policy='strict',recognized_acdc=False):
         if manager.thread is not None:
             manager.thread.join(90)
             if manager.thread.is_alive():raise RuntimeError('job did not stop: backend buffers deliberately remain owned')
-        backend.close()
+        if backend is not None:backend.close()

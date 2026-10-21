@@ -9,6 +9,9 @@ def parser():
     p=argparse.ArgumentParser(prog='python -m acdc',description='Independent Axial-only ACDC system')
     sub=p.add_subparsers(dest='command',required=True)
     sub.add_parser('plan',help='static 15-layer/tile/cycle budget; no model or PYNQ required')
+    q=sub.add_parser('view',help='browse saved results and generate PC presentation meshes; no model or board required')
+    q.add_argument('--output',type=Path,required=True,help='existing result jobs root')
+    q.add_argument('--port',type=int,default=8092)
     for name in ('run','web','worker'):
         q=sub.add_parser(name)
         q.add_argument('--backend',choices=('reference','reference_torch','emulator','pl','remote','demo'),required=True)
@@ -60,6 +63,9 @@ def backend(args):
 
 def main(argv=None):
     args=parser().parse_args(argv)
+    if args.command=='view':
+        from .web import serve
+        serve(None,args.output,port=args.port);return
     if args.command=='plan':
         from .planning import workload
         print(json.dumps(workload(),indent=2));return

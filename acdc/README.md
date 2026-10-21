@@ -1,6 +1,6 @@
 # ACDC Axial 2.5D
 
-独立于 Skin/CAMUS 的 Axial-only 工程。输入显式 ED、ES 两个3D NIfTI；按A的生产数值文字合同预处理，逐Axial中心片执行15Conv/21节点，恢复原生概率与标签，提供三平面MPR、无平滑3D表面、LV/RV/MYO容积、LV/RV EF、异步网页与结果包。
+独立于 Skin/CAMUS 的 Axial-only 工程。输入显式 ED、ES 两个3D NIfTI；按A的生产数值文字合同预处理，逐Axial中心片执行15Conv/21节点，恢复原生概率与标签，提供三平面MPR、原始/平滑3D表面、LV/RV/MYO容积、LV/RV EF、异步网页与结果包。平滑表面由电脑端生成，仅用于展示；定量依据仍为原空间标签。
 
 A真实研究Release已接入：原spec/参数身份保留，独立参考、Torch整数见证和tile模拟器的21节点精确一致。固定20名开发患者40体的软件Axial Dice为0.8823042898，与A逐体逐类Dice及容积差异均为0。当前事实和证据见[实施状态](docs/IMPLEMENTATION_STATUS.md)，范围以[最终优化计划](docs/FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)为准。
 
@@ -11,6 +11,20 @@ P6@100MHz已完成真实1000帧、逐节点数值和3类恢复板测：持续8.1
 当前手测：打开`http://127.0.0.1:8092/`，在ED选择`out/acdc/manual_test/patient039/patient039_frame01.nii.gz`，在ES选择同目录`patient039_frame10.nii.gz`，点击“开始完整分析”。右上角应为REMOTE/AXIAL，表示通过本机18093隧道调用板端真实PL。已有任务可继续浏览；模型与服务身份、恢复后的单片检查和临时暂停perf10的记录见上方验证文档。重启后必须重新确认实际FPGA拥有者，不要同时启动另一路推理。
 
 ## PC安装与直接演示
+
+已有任务无需重新推理即可查看。没有板卡或模型连接时，在独立PC环境运行：
+
+```powershell
+& acdc/.venv/Scripts/python.exe -m acdc view --output out/acdc/manual_pl_jobs_20261020 --port 8092
+```
+
+打开 `http://127.0.0.1:8092/?job=<已有任务编号>`。右上角显示“历史结果 / 不执行推理”，上传与开始按钮禁用；这与调用板端的REMOTE模式不同。已有服务占用8092时可选择其他端口。
+
+三维区标注“电脑端生成”，支持原始/平滑几何、表面/线框/半透明、三维透明度与RAS方向。平滑采用物理空间一次线性细分、80次Windowed Sinc（pass band 0.005）和重新计算法线；透明模式按观察方向排序各类别三角形。RV红、MYO绿、LV蓝对应不变。算法说明见[VTK官方文档](https://vtk.org/doc/nightly/html/classvtkWindowedSincPolyDataFilter.html)。
+
+平滑副本先核对源标签与结果manifest的SHA，再写入`_presentations/<job>/<source+settings SHA>/<phase>/`缓存。原任务的标签、统计、计时、原始网格、manifest与ZIP均不修改；完整结果ZIP仍保留原始表面。截图附带“电脑端生成”、所用几何和截断提示。首次生成可能包含VTK导入耗时，之后同一标签与设置复用缓存，不执行PL。
+
+9层、10mm层间距的数据可以改善外观，但平滑不能恢复未采集细节或证明解剖准确。触及视野边界仍提示截断。后续目标是板端独立任务服务和跨设备浏览；预处理/统计迁移及板端表面重建资源评估尚未实现。
 
 在仓库根目录执行。PC依赖放入独立 `acdc/.venv`，不改变原工程环境。需要uv和Python3.13；安装脚本可以通过`-PythonPath`指定解释器。
 
