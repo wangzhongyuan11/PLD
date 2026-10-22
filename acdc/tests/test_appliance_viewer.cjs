@@ -24,6 +24,7 @@ vm.runInContext(fs.readFileSync(path.join(__dirname,'../appliance/web_assets/app
 (async()=>{
  await context.api.loadJob('c'.repeat(32));
  assert.equal(buffers,6);assert.equal(context.api.state.phases.ES.meshes.smooth[0].indices.length,3);
+ assert.equal(JSON.stringify(context.api.state.phases.ED.surface_bounds),'[[0,0,0],[1,1,0]]');
  context.api.selectPhase('ES');assert.equal(context.api.state.phase,'ES');assert.equal(buffers,6);
  holdA=true;const a=context.api.loadJob('a'.repeat(32));await new Promise(resolve=>setImmediate(resolve));
  const b=context.api.loadJob('b'.repeat(32));await b;const before=buffers;releaseA();await a;

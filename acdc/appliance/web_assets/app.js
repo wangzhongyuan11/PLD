@@ -22,6 +22,11 @@ function clearJobDisplay(){
  $('timing').textContent='上传到完整可交互：测量中';history.replaceState(null,'',location.pathname);
 }
 function uploadMesh(result){if(gl&&!result.p){result.p=uploadBuffer(result.points,gl.ARRAY_BUFFER);result.n=uploadBuffer(result.normals,gl.ARRAY_BUFFER);if(result.indices)result.indexBuffer=uploadBuffer(result.indices,gl.ELEMENT_ARRAY_BUFFER);}return result;}
+function surfaceBounds(meshes,fallback){
+ const low=[Infinity,Infinity,Infinity],high=[-Infinity,-Infinity,-Infinity];
+ for(const mesh of meshes)for(let i=0;i<mesh.points.length;i+=3)for(let a=0;a<3;a++){low[a]=Math.min(low[a],mesh.points[i+a]);high[a]=Math.max(high[a],mesh.points[i+a]);}
+ return low[0]===Infinity?fallback:[low,high];
+}
 async function mesh(phase,row,kind,job){
  const meta=row[kind],base='meshes/'+phase+'/';
  const buffers=await Promise.all([meta.points,meta.normals,meta.indices].map(async name=>(await request(asset(base+name,job))).arrayBuffer()));
@@ -35,7 +40,7 @@ async function mesh(phase,row,kind,job){
 function draw3D(){
  const phase=state.phases[state.phase];if(!phase)return;
  const begin=performance.now(),kind=phase.meshes[$('surfaceGeometry').value]?$('surfaceGeometry').value:'smooth',meshes=phase.meshes[kind];
- renderer.render(meshes.filter(m=>enabled(m.label)),{bounds:phase.volume.bounds,yaw:state.yaw,pitch:state.pitch,zoom:state.zoom,clip:+$('clip').value,mode:$('surfaceMode').value,opacity:+$('surfaceOpacity').value});
+ renderer.render(meshes.filter(m=>enabled(m.label)),{bounds:phase.surface_bounds,yaw:state.yaw,pitch:state.pitch,zoom:state.zoom,clip:+$('clip').value,mode:$('surfaceMode').value,opacity:+$('surfaceOpacity').value});
  $('renderfps').textContent=(performance.now()-begin).toFixed(0)+' ms / 绘制';
  $('meshstatus').textContent=gl?'板卡 ARM 生成 / '+state.phase+' / RAS mm / '+(kind==='smooth'?'平滑展示':'原始表面')+(phase.volume.meshes.some(m=>m.fov_truncated)?' / 含视野截断':''):'WebGL 不可用；MPR 和结果下载仍可使用';
 }
@@ -52,7 +57,9 @@ function selectPhase(phase){
  if(!state.phases[phase])return;state.phase=phase;const volume=state.phases[phase].volume;
  state.pos=[...volume.position];$('level').value=volume.window[0];$('width').value=volume.window[1];
  for(let i=0;i<3;i++){const e=$('pos'+i);e.min=volume.bounds[0][i];e.max=volume.bounds[1][i];e.value=state.pos[i];}
- $('clip').min=volume.bounds[0][2];$('clip').max=volume.bounds[1][2];$('clip').value=volume.bounds[1][2];
+ const b=state.phases[phase].surface_bounds,halfZ=volume.affine?volume.affine[2].slice(0,3).reduce((s,x)=>s+Math.abs(x),0)*.5:0;
+ $('clip').min=Math.floor(Math.min(b[0][2],volume.bounds[0][2]-halfZ)*10)/10;
+ $('clip').max=Math.ceil(Math.max(b[1][2],volume.bounds[1][2]+halfZ)*10)/10;$('clip').value=$('clip').max;
  for(const p of ['ED','ES'])$('phase'+p).classList.toggle('selected',p===phase);
  redraw();
  if($('surfaceGeometry').value==='raw'&&!state.phases[phase].meshes.raw)$('surfaceGeometry').onchange();
@@ -84,7 +91,7 @@ async function loadJob(job){
   const volume=await json(asset('viewer/'+phase+'/volume.json',job));
   const meshes=await Promise.all(volume.meshes.map(row=>mesh(phase,row,'smooth',job)));
   const images=await Promise.all(planes.map(async plane=>({image:await createImageBitmap(await (await request(asset('mpr/'+phase+'/'+plane+'.png',job))).blob()),meta:volume.initial_mpr[plane]})));
-  loaded[phase]={volume,meshes:{smooth:meshes},images};
+  loaded[phase]={volume,surface_bounds:surfaceBounds(meshes,volume.bounds),meshes:{smooth:meshes},images};
  }));
  const statistics=await json(asset('statistics.json',job));
  if(generation!==state.generation){for(const phase of Object.values(loaded))for(const item of phase.images)item.image.close();return;}

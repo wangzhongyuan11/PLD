@@ -39,11 +39,12 @@ def test_assets_ready_requires_both_phases_mpr_and_zip(tmp_path):
             for phase in ('ED','ES'):
                 assert (out/'viewer'/phase/'volume.json').is_file()
                 assert all((out/'mpr'/phase/(plane+'.png')).is_file() for plane in ('axial','coronal','sagittal'))
-    result=FullPipeline(numerical,MeshFixture()).run(*paths,out,progress=progress,upload_seconds=.25)
+    result=FullPipeline(numerical,MeshFixture(),application_sha='a'*64).run(*paths,out,progress=progress,upload_seconds=.25)
     assert events[-1]=='assets_ready' and result['server_upload_to_assets_seconds']>=.25
     assert result['browser_interactive_seconds'] is None
     manifest=json.loads((out/'manifest.json').read_text())
     assert manifest['synthetic'] is True and manifest['backend']=='demo'
+    assert manifest['application_sha256']==result['application_sha256']=='a'*64
     with zipfile.ZipFile(out/'result.zip') as archive:
         assert archive.testzip() is None
         names=set(archive.namelist())

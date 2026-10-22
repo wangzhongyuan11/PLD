@@ -44,7 +44,7 @@ class NumericalPipeline:
                 volume=load_volume(path,self.kernel,policy=self.policy,binding=self.binding)
                 inputs=AxialInputs(volume,self.kernel);nz=volume.working.shape[2]
                 collector=Collector(volume,self.kernel,self.table)
-                prepare=time.perf_counter()-tick;inference_started=time.perf_counter()
+                prepare_begin=tick;prepare=time.perf_counter()-tick;inference_started=time.perf_counter()
                 atomic_json(output/'geometry'/f'{phase}.json',dict(volume.geometry,letterbox=inputs.spec))
 
                 def prepare_input(z):
@@ -104,6 +104,8 @@ class NumericalPipeline:
                 atomic_json(viewer/'geometry.json',dict(shape=list(labels.shape),affine=volume.affine.tolist()))
                 stats[phase]=volumes(labels,volume.affine)
                 reports[phase]=dict(slices=nz,prepare_seconds=prepare,inference_restore_window_seconds=inference_window,
+                    prepare_begin_monotonic=prepare_begin,inference_begin_monotonic=inference_started,
+                    native_restore_begin_monotonic=tick,
                     final_restore_seconds=finish,restore_stages=collector.timings,resized_planes=inputs.resized_planes,
                     native_shape=list(volume.native.shape),working_shape=list(volume.working.shape))
                 del collector,volume,inputs,labels
@@ -112,6 +114,7 @@ class NumericalPipeline:
                 job_id=run_id,overlap=overlap,model_sha256=self.backend.model_sha,runtime_sha256=self.backend.runtime_sha,
                 backend=self.backend.kind,synthetic=self.backend.synthetic,phases=reports,records=records,
                 numerical_seconds=time.perf_counter()-began,native_build=self.kernel.info,
+                numerical_begin_monotonic=began,
                 scope='ED/ES numerical path only; no mesh, upload, ZIP or browser readiness')
             atomic_json(output/'numerics.json',report)
             update('numerics_completed',completed_slices=len(records),total_slices=len(records))

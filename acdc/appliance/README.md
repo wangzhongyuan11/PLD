@@ -69,6 +69,8 @@ ZIP包括原空间NIfTI标签、几何/数值记录、统计CSV/JSON、原始和
 
 `assets_ready`只在两期全部资源及ZIP完成后发布；网页以`performance.now()`从上传开始测至两期资源接收、GPU上传和首帧绘制。启动预载另列，初始化期间禁用开始。每期原始体素≤2,000,000、工作体素≤4,000,000，两期上传硬限制32MiB；性能包络见计划。结果限额4GiB，不自动删除旧任务。
 
+存储用量在Web启动时盘点，之后只更新刚结束/中断的任务及客户端计时文件，避免每次上传扫描全部历史。手工移动或清理V2结果后重启Web以重新盘点。验证客户端显式直连LAN，避免系统代理干扰。默认MPR光标定位于分割区域，三维镜头按分割网格适配；默认裁切范围覆盖完整体素表面，不改变标签与定量。
+
 部署复制认证P6核心到`/home/xilinx/acdc_board_v2/releases/<版本>`，添加appliance、`v2_assets`、隔离Nibabel5.2.1的`v2_deps`、网格二进制和配置。保持原runtime manifest，新增应用manifest。使用PYNQ venv Python和登录shell初始化XRT：
 
 ```text

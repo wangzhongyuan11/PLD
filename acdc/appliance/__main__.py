@@ -88,7 +88,7 @@ def production(args):
             meshes.generate(label,np.eye(4),Path(temporary)/'meshes',cancel=threading.Event())
         numerical=NumericalPipeline(backend,kernel,table,binding=model.implementation_binding,
                                     policy=config.get('geometry_policy','strict'))
-        manager=JobManager(FullPipeline(numerical,meshes),data,initialization=dict(
+        manager=JobManager(FullPipeline(numerical,meshes,application_sha=args.app_sha),data,initialization=dict(
             ready_seconds=time.monotonic()-began,pl_selftest=warm,application_sha256=args.app_sha))
         print(json.dumps(dict(status='ready',initialization=manager.initialization)),flush=True)
         def notify_ready():

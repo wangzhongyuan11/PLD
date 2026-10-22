@@ -81,6 +81,8 @@ def main():
             statistics=json.loads(asset('statistics.json'))
             transfer_seconds=time.perf_counter()-began
             numerical=json.loads(asset('numerics.json'));completion=json.loads(asset('completion.json'))
+            app_sha=health['initialization']['application_sha256']
+            if completion.get('application_sha256')!=app_sha:raise AssertionError('application identity changed or missing')
             expected_stats=json.loads((Path(pair['ED']['result_dir'])/'statistics.json').read_text())
             if statistics!=expected_stats:raise AssertionError('native statistics differ: '+patient)
             for row in numerical['records']:
