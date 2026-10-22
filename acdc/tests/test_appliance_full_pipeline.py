@@ -16,7 +16,12 @@ from acdc.appliance.reconstruct import make_exp_table
 class MeshFixture:
     """A test double only; it makes no geometry or board-readiness claim."""
     info={'test_double':True}
+    def __init__(self):
+        self.ed_started=threading.Event();self.es_inference=threading.Event()
     def generate(self,labels,affine,directory,*,cancel):
+        if directory.name=='ED':
+            self.ed_started.set()
+            assert self.es_inference.wait(5),'ED display must overlap ES inference'
         directory.mkdir(parents=True)
         (directory/'fixture.json').write_text('{"test_double":true}')
         return []
@@ -30,6 +35,13 @@ def test_assets_ready_requires_both_phases_mpr_and_zip(tmp_path):
         p=tmp_path/(phase+'.nii.gz')
         image=nib.Nifti1Image(rng.integers(1,250,(9,11,5)).astype(np.float32),np.diag([2.,2.,2.,1.]))
         image.header.set_xyzt_units('mm');nib.save(image,p);paths.append(p)
+    mesh=MeshFixture();infer=backend.infer
+    def observed_infer(x,request,cancel):
+        if request['phase']=='ES':
+            assert mesh.ed_started.wait(5),'ED display was not scheduled before ES inference'
+            mesh.es_inference.set()
+        return infer(x,request,cancel)
+    backend.infer=observed_infer
     numerical=NumericalPipeline(backend,kernel,make_exp_table(backend.head_scale),binding={})
     out=tmp_path/'job';events=[]
     def progress(row):
@@ -39,7 +51,7 @@ def test_assets_ready_requires_both_phases_mpr_and_zip(tmp_path):
             for phase in ('ED','ES'):
                 assert (out/'viewer'/phase/'volume.json').is_file()
                 assert all((out/'mpr'/phase/(plane+'.png')).is_file() for plane in ('axial','coronal','sagittal'))
-    result=FullPipeline(numerical,MeshFixture(),application_sha='a'*64).run(*paths,out,progress=progress,upload_seconds=.25)
+    result=FullPipeline(numerical,mesh,application_sha='a'*64).run(*paths,out,progress=progress,upload_seconds=.25)
     assert events[-1]=='assets_ready' and result['server_upload_to_assets_seconds']>=.25
     assert result['browser_interactive_seconds'] is None
     manifest=json.loads((out/'manifest.json').read_text())

@@ -24,7 +24,7 @@ class NumericalPipeline:
         self.backend=backend;self.kernel=kernel;self.table=exp_table
         self.binding=binding;self.policy=policy
 
-    def run(self,ed,es,output,*,cancel=None,progress=None,overlap=True,save_heads=False):
+    def run(self,ed,es,output,*,cancel=None,progress=None,overlap=True,save_heads=False,phase_ready=None):
         import nibabel as nib
         output=Path(output);output.mkdir(parents=True,exist_ok=False)
         cancel=cancel or threading.Event();progress=progress or (lambda _:None)
@@ -37,14 +37,24 @@ class NumericalPipeline:
         def check_cancel():
             if cancel.is_set():raise InterruptedError('V2 job cancelled')
 
+        phase_pool=ThreadPoolExecutor(max_workers=1,thread_name_prefix='v2-phase-input')
+        next_volume=None
+        def prepare_volume(path):
+            tick=time.perf_counter()
+            value=load_volume(path,self.kernel,policy=self.policy,binding=self.binding)
+            return value,tick,time.perf_counter()-tick
+
         try:
             for phase,path in (('ED',ed),('ES',es)):
                 check_cancel();update('preparing',phase=phase)
-                tick=time.perf_counter()
-                volume=load_volume(path,self.kernel,policy=self.policy,binding=self.binding)
+                volume,prepare_begin,prepare=next_volume.result() if next_volume is not None else prepare_volume(path)
+                next_volume=None
                 inputs=AxialInputs(volume,self.kernel);nz=volume.working.shape[2]
                 collector=Collector(volume,self.kernel,self.table)
-                prepare_begin=tick;prepare=time.perf_counter()-tick;inference_started=time.perf_counter()
+                # One additional gray/working volume only; never preallocate a
+                # second four-channel collector while ED restoration is alive.
+                if overlap and phase=='ED':next_volume=phase_pool.submit(prepare_volume,es)
+                inference_started=time.perf_counter()
                 atomic_json(output/'geometry'/f'{phase}.json',dict(volume.geometry,letterbox=inputs.spec))
 
                 def prepare_input(z):
@@ -109,6 +119,7 @@ class NumericalPipeline:
                     final_restore_seconds=finish,restore_stages=collector.timings,resized_planes=inputs.resized_planes,
                     native_shape=list(volume.native.shape),working_shape=list(volume.working.shape))
                 del collector,volume,inputs,labels
+                if phase_ready is not None:phase_ready(phase)
             atomic_json(output/'statistics.json',paired(stats['ED'],stats['ES']))
             report=dict(schema='pld-acdc-appliance-numerics-v2',status='numerics_completed',
                 job_id=run_id,overlap=overlap,model_sha256=self.backend.model_sha,runtime_sha256=self.backend.runtime_sha,
@@ -123,3 +134,5 @@ class NumericalPipeline:
             update('cancelled');raise
         except Exception as exc:
             update('failed',error=f'{type(exc).__name__}: {exc}');raise
+        finally:
+            phase_pool.shutdown(wait=True,cancel_futures=True)

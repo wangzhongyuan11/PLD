@@ -149,11 +149,54 @@ API int acdc_softmax(const int8_t *src,float *dst,size_t pixels,const float *exp
 /* C-contiguous (X,Y,Z), scipy order=1, mode=constant (not grid-constant).
  * matrix maps an output voxel to an input voxel. Offset includes block origin.
  * scipy multiplies each coefficient by axis weights in axis order, in double. */
+typedef struct { int64_t index; double w0,w1; } Sample;
+
+static void affine_diagonal(const float *src,float *dst,const int64_t *in,const int64_t *out,
+                            Sample *const maps[3],float fill,int channels) {
+    size_t iy=(size_t)in[1],iz=(size_t)in[2],oy=(size_t)out[1],oz=(size_t)out[2];
+    size_t source_stride=(size_t)in[0]*iy*iz,target_stride=(size_t)out[0]*oy*oz;
+    for(size_t x=0;x<(size_t)out[0];++x) for(size_t y=0;y<oy;++y) {
+        const Sample *mx=&maps[0][x],*my=&maps[1][y];
+        size_t row=(x*oy+y)*oz;
+        if(mx->index<0 || my->index<0) {
+            for(int channel=0;channel<channels;++channel)
+                for(size_t z=0;z<oz;++z) dst[channel*target_stride+row+z]=fill;
+            continue;
+        }
+        size_t x0=(size_t)mx->index,x1=x0+1<(size_t)in[0]?x0+1:x0;
+        size_t y0=(size_t)my->index,y1=y0+1<iy?y0+1:y0;
+        size_t b00=(x0*iy+y0)*iz,b01=(x0*iy+y1)*iz;
+        size_t b10=(x1*iy+y0)*iz,b11=(x1*iy+y1)*iz;
+        double wx0=mx->w0,wx1=mx->w1,wy0=my->w0,wy1=my->w1;
+        for(size_t z=0;z<oz;++z) {
+            const Sample *mz=&maps[2][z];
+            if(mz->index<0) {
+                for(int channel=0;channel<channels;++channel) dst[channel*target_stride+row+z]=fill;
+                continue;
+            }
+            size_t z0=(size_t)mz->index,z1=z0+1<iz?z0+1:z0;
+            double wz0=mz->w0,wz1=mz->w1;
+            for(int channel=0;channel<channels;++channel) {
+                const float *s=src+channel*source_stride;double value=0.;
+                // Unroll the eight corners, keeping each multiply/add in the
+                // same order as SciPy. Only integer addressing is hoisted.
+#define ADD_CORNER(P,WX,WY,WZ) do { if((WX)!=0. && (WY)!=0. && (WZ)!=0.) { \
+    double v=(double)s[(P)];v*=(WX);v*=(WY);v*=(WZ);value+=v; } } while(0)
+                ADD_CORNER(b00+z0,wx0,wy0,wz0);ADD_CORNER(b00+z1,wx0,wy0,wz1);
+                ADD_CORNER(b01+z0,wx0,wy1,wz0);ADD_CORNER(b01+z1,wx0,wy1,wz1);
+                ADD_CORNER(b10+z0,wx1,wy0,wz0);ADD_CORNER(b10+z1,wx1,wy0,wz1);
+                ADD_CORNER(b11+z0,wx1,wy1,wz0);ADD_CORNER(b11+z1,wx1,wy1,wz1);
+#undef ADD_CORNER
+                dst[channel*target_stride+row+z]=(float)value;
+            }
+        }
+    }
+}
+
 static int affine_channels(const float *src,float *dst,const int64_t *in,const int64_t *out,
                     const double *matrix,const double *offset,float fill,int channels) {
     if(!src || !dst || !in || !out || !matrix || !offset) return 1;
     for(int j=0;j<3;++j) if(in[j]<1 || out[j]<1) return 2;
-    typedef struct { int64_t index; double w0,w1; } Sample;
     Sample *maps[3]={NULL,NULL,NULL};
     int diagonal=matrix[1]==0. && matrix[2]==0. && matrix[3]==0.
                  && matrix[5]==0. && matrix[6]==0. && matrix[7]==0.;
@@ -165,9 +208,12 @@ static int affine_channels(const float *src,float *dst,const int64_t *in,const i
                 double p=(double)i*matrix[a*3+a]+offset[a];
                 Sample *s=&maps[a][i];
                 if(p<0. || p>(double)(in[a]-1)) {s->index=-1;continue;}
-                s->index=(int64_t)p;s->w1=p-(double)s->index;s->w0=1.-s->w1;
+                s->index=(int64_t)p;s->w0=1.-(p-(double)s->index);s->w1=1.-s->w0;
             }
         }
+        affine_diagonal(src,dst,in,out,maps,fill,channels);
+        for(int a=0;a<3;++a) free(maps[a]);
+        return 0;
     }
     size_t source_stride=(size_t)in[0]*in[1]*in[2],target_stride=(size_t)out[0]*out[1]*out[2];
     for(int64_t x=0;x<out[0];++x) for(int64_t y=0;y<out[1];++y)
@@ -175,18 +221,12 @@ static int affine_channels(const float *src,float *dst,const int64_t *in,const i
         const int64_t coord[3]={x,y,z};
         int64_t index[3]; double weights[3][2]; int outside=0;
         for(int a=0;a<3;++a) {
-            if(diagonal) {
-                Sample *s=&maps[a][coord[a]];
-                if(s->index<0) {outside=1;break;}
-                index[a]=s->index;weights[a][0]=s->w0;weights[a][1]=s->w1;
-                continue;
-            }
-            double p=0.;
+            double p=offset[a];
             for(int b=0;b<3;++b) p+=(double)coord[b]*matrix[a*3+b];
-            p+=offset[a];
             if(p<0. || p>(double)(in[a]-1)) {outside=1;break;}
             index[a]=(int64_t)p;
-            weights[a][1]=p-(double)index[a]; weights[a][0]=1.-weights[a][1];
+            // SciPy ni_splines computes the last weight as 1 - weight[0].
+            weights[a][0]=1.-(p-(double)index[a]);weights[a][1]=1.-weights[a][0];
         }
         size_t d=((size_t)x*out[1]+y)*out[2]+z;
         if(outside) {for(int channel=0;channel<channels;++channel) dst[d+channel*target_stride]=fill;continue;}
@@ -219,6 +259,27 @@ API int acdc_affine(const float *src,float *dst,const int64_t *in,const int64_t 
 API int acdc_affine4(const float *src,float *dst,const int64_t *in,const int64_t *out,
                     const double *matrix,const double *offset,float fill) {
     return affine_channels(src,dst,in,out,matrix,offset,fill,4);
+}
+
+API int acdc_bbox(const uint8_t *labels,const int64_t *shape,int64_t *bounds) {
+    if(!labels || !shape || !bounds) return 1;
+    uint64_t size=1;
+    for(int a=0;a<3;++a) {
+        if(shape[a]<1 || (uint64_t)shape[a]>2000000/size) return 2;
+        size*=shape[a];bounds[a]=shape[a];bounds[a+3]=-1;
+    }
+    size_t i=0;
+    for(int64_t x=0;x<shape[0];++x) for(int64_t y=0;y<shape[1];++y)
+    for(int64_t z=0;z<shape[2];++z,++i) {
+        if(labels[i]>3) return 3;
+        if(!labels[i]) continue;
+        const int64_t point[3]={x,y,z};
+        for(int a=0;a<3;++a) {
+            if(point[a]<bounds[a]) bounds[a]=point[a];
+            if(point[a]>bounds[a+3]) bounds[a+3]=point[a];
+        }
+    }
+    return 0;
 }
 
 static uint8_t clamped_byte(double v) {

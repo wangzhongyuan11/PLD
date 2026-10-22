@@ -58,9 +58,9 @@ python -m acdc.appliance.benchmark_replay --fixture <fixture目录> --output <�
 |---|---|
 | `__main__.py`、`assets.py`、`identity.py` | 预载、真实PL启动自检、派生常量与独立应用身份 |
 | `engine.py`、`web.py` | 单硬件拥有者、上传预约/取消/状态、LAN网页、板端MPR API |
-| `pipeline.py`、`reconstruct.py` | 一个预取、一个平面恢复、单PL调用者；原空间双核有界slab |
+| `pipeline.py`、`reconstruct.py` | 一个预取、一个平面恢复、单PL调用者；原空间双核有界slab、ES预处理预取 |
 | `surface.py`、`native/mesh/` | 物理ROI、原始/平滑PLY/VTP及索引网格 |
-| `full_pipeline.py`、`archive.py` | 两期完整性、统计、公共资产、双核有界ZIP压缩 |
+| `full_pipeline.py`、`archive.py` | 两期完整性、ED展示与ES推理重叠、统计、公共资产、流式ZIP、CRC与内联SHA |
 | `web_assets/` | ED/ES切换、MPR参数、类别、三维样式、截图及客户端计时 |
 | `deploy.py` | 独立V2服务、保留前次unit及旧部署 |
 | `validate_http.py`、`monitor.py` | 真实LAN任务和板端资源证据 |
@@ -84,4 +84,4 @@ python acdc/appliance/validate_http.py --results <参考结果> --output <新板
 
 ## 尚待完成
 
-大尺寸病例进一步优化；最终候选20例各3次新鲜任务、资源/取消/故障恢复、开机readiness、V1/Skin/CAMUS回归及实际回退。最终按浏览器上传开始到两期完整结果、平滑展示、ZIP和首帧全部可用验收 `<40 s`。
+2026-10-22：跨期预处理/展示重叠和ZIP_STORED已实现。容量边界两期112片单次完整资源下载39.32s，输入/head/原空间标签/几何/统计一致；这不是连续验收结论。ZIP保留全部文件，较DEFLATE版本更大，采用256KiB流式复制、CRC和同步SHA，避免二次全文件读取。最终候选20例各3次新鲜任务、资源/取消/故障恢复、开机readiness、V1/Skin/CAMUS回归及实际回退。最终按浏览器上传开始到两期完整结果、平滑展示、ZIP和首帧全部可用验收 `<40 s`。

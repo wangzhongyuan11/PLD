@@ -55,6 +55,7 @@ class NativeImage:
                         acdc_resize=[pointer,pointer,*([ct.c_int]*5)],
                         acdc_quantize=[pointer,pointer,ct.c_size_t],
                         acdc_softmax=[pointer,pointer,ct.c_size_t,pointer],
+                        acdc_bbox=[pointer,pointer,pointer],
                         acdc_mpr=[pointer,pointer,pointer,pointer,pointer,pointer,pointer,ct.c_int,ct.c_int,
                                   ct.c_double,ct.c_double,ct.c_double,ct.c_int,ct.c_int],
                         acdc_affine=[pointer,pointer,pointer,pointer,pointer,pointer,ct.c_float],
@@ -77,6 +78,14 @@ class NativeImage:
         a=self.floats(value,3);b=np.empty_like(a);limits=np.empty(2,np.float64)
         self.check(self.library.acdc_normalize(a.ctypes.data,b.ctypes.data,a.size,limits.ctypes.data))
         return b,dict(low=float(limits[0]),high=float(limits[1]),method='nonzero-p1-p99-linear-native-phase')
+
+    def foreground_bounds(self,labels):
+        labels=np.ascontiguousarray(labels)
+        if labels.dtype!=np.uint8 or labels.ndim!=3 or not 0<labels.size<=2_000_000:
+            raise ContractError('invalid foreground label volume')
+        shape=np.array(labels.shape,np.int64);bounds=np.empty((2,3),np.int64)
+        self.check(self.library.acdc_bbox(labels.ctypes.data,shape.ctypes.data,bounds.ctypes.data))
+        return None if bounds[1,0]<0 else bounds
 
     def resize(self,value,shape):
         a=self.floats(value)

@@ -11,14 +11,25 @@ def kernel():return load_native()
 
 
 def test_four_channel_affine_retains_each_channel_order(kernel):
+    from scipy.ndimage import affine_transform
     rng=np.random.default_rng(2381)
     source=rng.random((4,19,17,13),dtype=np.float32)
     sampler=kernel.prepare_affine4(source)
     for matrix,offset in ((np.diag([.7,1.3,.9]),[-.3,.5,.2]),
                           (np.array([[.7,.1,0],[-.1,.8,.1],[.1,0,.9]]),[.2,.1,-.2])):
         actual=sampler.apply((15,14,12),matrix,offset)
-        expected=np.stack([kernel.affine(c,(15,14,12),matrix,offset) for c in source])
+        expected=np.stack([affine_transform(c,matrix,offset,output_shape=(15,14,12),order=1,mode='constant',cval=0) for c in source])
         np.testing.assert_array_equal(actual,expected)
+
+
+def test_foreground_bounds_and_empty_volume(kernel):
+    labels=np.zeros((17,21,9),np.uint8)
+    assert kernel.foreground_bounds(labels) is None
+    labels[2:8,4:19,1:6]=2;labels[12,3,7]=3
+    points=np.argwhere(labels!=0)
+    np.testing.assert_array_equal(kernel.foreground_bounds(labels),[points.min(axis=0),points.max(axis=0)])
+    labels[0,0,0]=4
+    with pytest.raises(ContractError):kernel.foreground_bounds(labels)
 
 
 def test_normalize_and_quantization(kernel):

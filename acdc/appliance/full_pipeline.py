@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import csv
+from concurrent.futures import ThreadPoolExecutor
 import json
 from pathlib import Path
 import threading
@@ -31,37 +32,49 @@ class FullPipeline:
         def check_cancel():
             if cancel.is_set():raise InterruptedError('full job cancelled')
 
+        def prepare_display(phase):
+            # Only the main numerical thread publishes job status. ED
+            # display generation may overlap ES inference, with one display
+            # future and no access to the FPGA owner or probability arrays.
+            check_cancel()
+            viewer=output/'viewer'/phase
+            labels=np.load(viewer/'labels.npy',allow_pickle=False,mmap_mode='r')
+            geometry=json.loads((viewer/'geometry.json').read_text('utf-8'))
+            tick=time.perf_counter()
+            meshes=self.surfaces.generate(labels,geometry['affine'],output/'meshes'/phase,cancel=cancel)
+            mesh_seconds=time.perf_counter()-tick
+            mesh_begin=tick
+            check_cancel()
+            tick=time.perf_counter();volume=MPRVolume(viewer,self.numerics.kernel)
+            low,high=np.percentile(volume.gray,[1,99]);window=max(1.,float(high-low));level=float((low+high)/2)
+            occupied=self.numerics.kernel.foreground_bounds(labels)
+            if occupied is not None:
+                center=occupied.mean(axis=0)
+                position=(volume.affine[:3,:3]@center+volume.affine[:3,3]).tolist()
+            else:position=volume.bounds.mean(axis=0).tolist()
+            initial={}
+            for plane in ('axial','coronal','sagittal'):
+                check_cancel()
+                png,meta=volume.render(plane,position,level=level,window=window)
+                destination=output/'mpr'/phase;destination.mkdir(parents=True,exist_ok=True)
+                (destination/(plane+'.png')).write_bytes(png);initial[plane]=meta
+            atomic_json(viewer/'volume.json',dict(phase=phase,shape=geometry['shape'],affine=geometry['affine'],
+                bounds=volume.bounds.tolist(),position=position,window=[level,window],meshes=meshes,
+                initial_mpr=initial,coordinate_system='RAS',generator='pynq_ps'))
+            result=dict(mesh_seconds=mesh_seconds,mpr_seconds=time.perf_counter()-tick,
+                mesh_begin_monotonic=mesh_begin,mpr_begin_monotonic=tick)
+            del volume,labels
+            return result
+
         try:
-            report=self.numerics.run(ed,es,output,cancel=cancel,progress=progress)
-            for phase in ('ED','ES'):
-                check_cancel();update('meshing',phase=phase)
-                viewer=output/'viewer'/phase
-                labels=np.load(viewer/'labels.npy',allow_pickle=False,mmap_mode='r')
-                geometry=json.loads((viewer/'geometry.json').read_text('utf-8'))
-                tick=time.perf_counter()
-                meshes=self.surfaces.generate(labels,geometry['affine'],output/'meshes'/phase,cancel=cancel)
-                mesh_seconds=time.perf_counter()-tick
-                mesh_begin=tick
-                check_cancel();update('mpr',phase=phase)
-                tick=time.perf_counter();volume=MPRVolume(viewer,self.numerics.kernel)
-                low,high=np.percentile(volume.gray,[1,99]);window=max(1.,float(high-low));level=float((low+high)/2)
-                occupied=[np.flatnonzero(np.any(labels,axis=tuple(j for j in range(3) if j!=a))) for a in range(3)]
-                if all(axis.size for axis in occupied):
-                    center=np.array([(axis[0]+axis[-1])*.5 for axis in occupied])
-                    position=(volume.affine[:3,:3]@center+volume.affine[:3,3]).tolist()
-                else:position=volume.bounds.mean(axis=0).tolist()
-                initial={}
-                for plane in ('axial','coronal','sagittal'):
-                    check_cancel()
-                    png,meta=volume.render(plane,position,level=level,window=window)
-                    destination=output/'mpr'/phase;destination.mkdir(parents=True,exist_ok=True)
-                    (destination/(plane+'.png')).write_bytes(png);initial[plane]=meta
-                atomic_json(viewer/'volume.json',dict(phase=phase,shape=geometry['shape'],affine=geometry['affine'],
-                    bounds=volume.bounds.tolist(),position=position,window=[level,window],meshes=meshes,
-                    initial_mpr=initial,coordinate_system='RAS',generator='pynq_ps'))
-                phase_reports[phase]=dict(mesh_seconds=mesh_seconds,mpr_seconds=time.perf_counter()-tick,
-                    mesh_begin_monotonic=mesh_begin,mpr_begin_monotonic=tick)
-                del volume,labels
+            with ThreadPoolExecutor(max_workers=1,thread_name_prefix='v2-display') as displays:
+                futures={}
+                def phase_ready(phase):
+                    futures[phase]=displays.submit(prepare_display,phase)
+                report=self.numerics.run(ed,es,output,cancel=cancel,progress=progress,phase_ready=phase_ready)
+                for phase in ('ED','ES'):
+                    update('meshing',phase=phase)
+                    phase_reports[phase]=futures[phase].result()
             check_cancel();update('exporting')
             statistics=json.loads((output/'statistics.json').read_text('utf-8'))
             with (output/'statistics.csv').open('w',newline='',encoding='utf-8') as stream:
@@ -95,8 +108,7 @@ class FullPipeline:
                 backend=self.backend.kind,synthetic=self.backend.synthetic,files=assets,
                 generator='pynq_ps',inference='pynq_pl' if self.backend.kind=='pl' else self.backend.kind))
             tick=time.perf_counter()
-            write_zip(output,sorted([*assets,'manifest.json']),output/'result.zip',check_cancel)
-            zip_sha=file_sha(output/'result.zip')
+            zip_sha=write_zip(output,sorted([*assets,'manifest.json']),output/'result.zip',check_cancel)
             server_seconds=upload_seconds+time.perf_counter()-began
             completion=dict(application_sha256=self.application_sha,server_upload_to_assets_seconds=server_seconds,zip_seconds=time.perf_counter()-tick,zip_begin_monotonic=tick,
                 zip_sha256=zip_sha,browser_interactive_seconds=None,
