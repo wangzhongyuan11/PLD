@@ -13,13 +13,13 @@
 
 API int acdc_image_abi(void) { return 1; }
 
-static double select_rank(double *a, size_t n, size_t k) {
+static double select_rank(float *a, size_t n, size_t k) {
     size_t lo=0, hi=n;
     while (hi-lo>1) {
-        double pivot=a[lo+(hi-lo)/2];
+        float pivot=a[lo+(hi-lo)/2];
         size_t lt=lo, i=lo, gt=hi;
         while (i<gt) {
-            double v=a[i];
+            float v=a[i];
             if (v<pivot) { a[i]=a[lt]; a[lt++]=v; ++i; }
             else if (v>pivot) { a[i]=a[--gt]; a[gt]=v; }
             else ++i;
@@ -31,7 +31,7 @@ static double select_rank(double *a, size_t n, size_t k) {
     return a[lo];
 }
 
-static double percentile(double *a,size_t n,double percent) {
+static double percentile(float *a,size_t n,double percent) {
     double index=(double)(n-1)*percent;
     size_t k=(size_t)floor(index);
     double t=index-(double)k;
@@ -44,12 +44,14 @@ static double percentile(double *a,size_t n,double percent) {
 
 API int acdc_normalize(const float *src,float *dst,size_t count,double *limits) {
     if (!src || !dst || !limits || count==0 || count>SIZE_MAX/sizeof(double)) return 1;
-    double *values=(double*)malloc(count*sizeof(double));
+    /* Source values are already exact float32. Rank comparisons need no
+     * double copy; interpolate the selected endpoints in double as before. */
+    float *values=(float*)malloc(count*sizeof(float));
     if (!values) return 2;
     size_t n=0;
     for(size_t i=0;i<count;++i) {
         if (!isfinite(src[i])) { free(values); return 3; }
-        if(src[i]!=0.f) values[n++]=(double)src[i];
+        if(src[i]!=0.f) values[n++]=src[i];
     }
     if(n<8) { free(values); return 4; }
     double low=percentile(values,n,.01), high=percentile(values,n,.99);
@@ -147,8 +149,8 @@ API int acdc_softmax(const int8_t *src,float *dst,size_t pixels,const float *exp
 /* C-contiguous (X,Y,Z), scipy order=1, mode=constant (not grid-constant).
  * matrix maps an output voxel to an input voxel. Offset includes block origin.
  * scipy multiplies each coefficient by axis weights in axis order, in double. */
-API int acdc_affine(const float *src,float *dst,const int64_t *in,const int64_t *out,
-                    const double *matrix,const double *offset,float fill) {
+static int affine_channels(const float *src,float *dst,const int64_t *in,const int64_t *out,
+                    const double *matrix,const double *offset,float fill,int channels) {
     if(!src || !dst || !in || !out || !matrix || !offset) return 1;
     for(int j=0;j<3;++j) if(in[j]<1 || out[j]<1) return 2;
     typedef struct { int64_t index; double w0,w1; } Sample;
@@ -167,6 +169,7 @@ API int acdc_affine(const float *src,float *dst,const int64_t *in,const int64_t 
             }
         }
     }
+    size_t source_stride=(size_t)in[0]*in[1]*in[2],target_stride=(size_t)out[0]*out[1]*out[2];
     for(int64_t x=0;x<out[0];++x) for(int64_t y=0;y<out[1];++y)
     for(int64_t z=0;z<out[2];++z) {
         const int64_t coord[3]={x,y,z};
@@ -186,22 +189,36 @@ API int acdc_affine(const float *src,float *dst,const int64_t *in,const int64_t 
             weights[a][1]=p-(double)index[a]; weights[a][0]=1.-weights[a][1];
         }
         size_t d=((size_t)x*out[1]+y)*out[2]+z;
-        if(outside) {dst[d]=fill;continue;}
-        double value=0.;
+        if(outside) {for(int channel=0;channel<channels;++channel) dst[d+channel*target_stride]=fill;continue;}
+        double value[4]={0.,0.,0.,0.};
         for(int a=0;a<2;++a) for(int b=0;b<2;++b) for(int c=0;c<2;++c) {
             if(weights[0][a]==0. || weights[1][b]==0. || weights[2][c]==0.) continue;
             int64_t xx=index[0]+a, yy=index[1]+b, zz=index[2]+c;
             if(xx==in[0]) xx=in[0]-1;
             if(yy==in[1]) yy=in[1]-1;
             if(zz==in[2]) zz=in[2]-1;
-            double v=(double)src[((size_t)xx*in[1]+yy)*in[2]+zz];
-            v*=weights[0][a]; v*=weights[1][b]; v*=weights[2][c];
-            value+=v;
+            size_t source=((size_t)xx*in[1]+yy)*in[2]+zz;
+            for(int channel=0;channel<channels;++channel) {
+                double v=(double)src[source+channel*source_stride];
+                // Preserve SciPy's multiply and corner accumulation order.
+                v*=weights[0][a];v*=weights[1][b];v*=weights[2][c];
+                value[channel]+=v;
+            }
         }
-        dst[d]=(float)value;
+        for(int channel=0;channel<channels;++channel) dst[d+channel*target_stride]=(float)value[channel];
     }
     for(int a=0;a<3;++a) free(maps[a]);
     return 0;
+}
+
+API int acdc_affine(const float *src,float *dst,const int64_t *in,const int64_t *out,
+                    const double *matrix,const double *offset,float fill) {
+    return affine_channels(src,dst,in,out,matrix,offset,fill,1);
+}
+
+API int acdc_affine4(const float *src,float *dst,const int64_t *in,const int64_t *out,
+                    const double *matrix,const double *offset,float fill) {
+    return affine_channels(src,dst,in,out,matrix,offset,fill,4);
 }
 
 static uint8_t clamped_byte(double v) {

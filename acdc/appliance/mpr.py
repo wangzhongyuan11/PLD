@@ -50,4 +50,5 @@ class MPRVolume:
         from PIL import Image
         stream=io.BytesIO();Image.fromarray(pixels).save(stream,format='PNG',compress_level=1)
         return stream.getvalue(),dict(bounds=self.bounds.tolist(),position=position.tolist(),plane=plane,
-            normal_axis=n,scale=scale,ox=ox,oy=oy,u=u,v=v,width=w,height=h,generator='pynq_ps')
+            normal_axis=n,scale=scale,ox=ox,oy=oy,u=u,v=v,width=w,height=h,generator='pynq_ps',
+            level=float(level),window=float(window),alpha=float(alpha),visible=int(visible),outline=bool(outline))

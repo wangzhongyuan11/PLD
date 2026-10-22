@@ -10,6 +10,17 @@ from acdc.contract import ContractError
 def kernel():return load_native()
 
 
+def test_four_channel_affine_retains_each_channel_order(kernel):
+    rng=np.random.default_rng(2381)
+    source=rng.random((4,19,17,13),dtype=np.float32)
+    sampler=kernel.prepare_affine4(source)
+    for matrix,offset in ((np.diag([.7,1.3,.9]),[-.3,.5,.2]),
+                          (np.array([[.7,.1,0],[-.1,.8,.1],[.1,0,.9]]),[.2,.1,-.2])):
+        actual=sampler.apply((15,14,12),matrix,offset)
+        expected=np.stack([kernel.affine(c,(15,14,12),matrix,offset) for c in source])
+        np.testing.assert_array_equal(actual,expected)
+
+
 def test_normalize_and_quantization(kernel):
     from acdc.volume import normalize
     rng=np.random.default_rng(20261021)

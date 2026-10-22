@@ -1,6 +1,6 @@
 # ACDC Board Standalone V2（实施中）
 
-目标和完整验收范围见[独立板端计划](../docs/BOARD_STANDALONE_V2_PLAN_20261021.md)。V1 保留在提交 `69e18ec`，V2 工作位于独立任务分支。当前还没有完整 V2 Web/网格/导出交付，不能把本目录的数值验证时间称为上传到显示时间。
+目标和完整验收范围见[独立板端计划](../docs/BOARD_STANDALONE_V2_PLAN_20261021.md)。V1 保留在提交 `69e18ec`，V2 工作位于独立任务分支。现已实现独立板端 Web、真实 PL、网格、MPR、统计和导出，正在优化并进行完整验收。首例真实浏览器为 30.72 s；首轮 20 例中 patient057 约 54 s，触发后续优化，不能声称全部输入均已低于40秒。
 
 ## 已实现
 
@@ -8,7 +8,7 @@
 - 三切片 LRU；经过参考环境生成的 Softmax 查表；单期概率体与分块原空间恢复，不提前 argmax。
 - 轴对齐坐标缓存、一次检查后复用的采样器，避免分块反复扫描完整概率体。
 - `NumericalPipeline` 提供 ED/ES 数值链路、单硬件执行者、输入预取/输出恢复重叠、有界 future、取消和失败状态。当前输出状态为 `numerics_completed`，明确不等于最终完整任务完成。
-- 新增板端MPR采样、窗宽窗位、标签叠加/轮廓与PNG生成模块，已通过开发机像素/方向/几何测试；Web接入与ARM交互耗时仍待验证。
+- 板端MPR采样、窗宽窗位、标签叠加/轮廓与PNG生成已接入LAN网页。浏览器仅显示PNG、绘制十字线及渲染三维网格，不执行医学空间采样。
 - 全20例/40体/1616片开发机输入/标签对照；板端ARM首期46片核对。证据见[原生模块记录](../docs/evidence/appliance_native_20261021.json)。这里使用保存的head验证后处理，新增PL推理次数为0。
 - 已在独立候选完成真实P6两期92片：输入/head逐片与独立参考一致，原空间标签/affine/统计一致，数值链路19.483 s，单片P95 119.363 ms。见[两期PL记录](../docs/evidence/appliance_numerical_PL_20261021.json)；不包含初始化/上传/网格/导出/浏览器，尚非40秒整体验收。
 
@@ -34,8 +34,52 @@ python -m acdc.appliance.benchmark_replay --fixture <fixture目录> --output <�
 
 编译器默认 `gcc`，可设 `ACDC_IMAGE_CC`；首次构建在系统临时目录生成按源码、编译器、flags和机器身份绑定的共享库，以后核验并复用。禁用fast-math/FMA收缩；ARM使用Cortex-A9/NEON hard-float选项。编译缓存准备时间单列，不纳入已就绪数值阶段。
 
-精简VTK的隔离构建入口为 `native/mesh/build_vtk.sh`，需要VTK9.6.0官方源码、CMake和C++工具链；不会安装系统Python VTK或修改全局PYNQ环境。编译完成、网格程序和质量/耗时核验均仍待完成，不能将正在构建记为成功。
+精简VTK已在真实ARM运行，无GUI/Python VTK。展示参数为不细分、40次Windowed Sinc、passband 0.02、Nuttall；全40体与V1展示表面对照通过，标签与统计不变。[几何证据](../docs/evidence/appliance_surface_profile_20261021.json)。
 
-## 下一阶段
+隔离构建入口 `native/mesh/build_vtk.sh` 可在板卡编译，但内存和时间开销较大。实际采用 Linux/WSL、GCC11 armhf 和板端实际sysroot交叉构建：`snapshot_sysroot.py`读取板端头文件/libc/C++库，`build_cross.sh`重建headless VTK与网格程序。工具链排除交叉发行版的新libc头，避免GLIBC2.39符号混入。host-tools package仅解除主机工具位数比较，不改变ARM ABI。构建后必须在板上运行`--version`和几何对照。不会修改系统PYNQ/NumPy。
 
-真实P6串行/流水配对对照；完整40体ARM/PL验证；精简VTK表面和平滑；板端MPR、LAN Web、完整导出、开机readiness和第二台电脑访问。最终按同一浏览器从上传开始到两期结果、平滑展示、ZIP和首帧全部可用验收 `<40 s`。
+## 板端使用与数据流
+
+同一局域网的任意电脑访问 `http://192.168.2.99:8092/`，输入本板访问码，选择同一患者的ED/ES三维NIfTI。待顶部显示PL就绪后开始分析；电脑无需Python、模型或SSH隧道。访问码仅在板卡`data/access_code.txt`，不随源码共享。网络用于上传、下载展示资源及MPR交互。
+
+```text
+浏览器 ED/ES 上传
+ → ARM：校验几何、分期归一化、RAS 2mm重采样
+ → ARM：相邻三片缓存、letterbox、INT8量化
+ → DDR/DMA → PL：冻结P6完整Axial网络
+ → ARM：Softmax、撤销补边、概率恢复到原空间、argmax
+ → ARM：原空间标签、体积/EF、原始/平滑表面、MPR、CSV/JSON/ZIP
+ → 浏览器：两期资源预取、PNG显示、GPU网格旋转/缩放/裁切
+```
+
+三幅MPR来自同一个Axial分割体，不代表三方向模型。冠状/矢状厚度受原始短轴采集覆盖限制，显示插值不能补造视野之外的结构。平滑仅改变展示表面；定量使用原空间标签。
+
+| 文件 | 职责 |
+|---|---|
+| `__main__.py`、`assets.py`、`identity.py` | 预载、真实PL启动自检、派生常量与独立应用身份 |
+| `engine.py`、`web.py` | 单硬件拥有者、上传预约/取消/状态、LAN网页、板端MPR API |
+| `pipeline.py`、`reconstruct.py` | 一个预取、一个平面恢复、单PL调用者；原空间双核有界slab |
+| `surface.py`、`native/mesh/` | 物理ROI、原始/平滑PLY/VTP及索引网格 |
+| `full_pipeline.py`、`archive.py` | 两期完整性、统计、公共资产、双核有界ZIP压缩 |
+| `web_assets/` | ED/ES切换、MPR参数、类别、三维样式、截图及客户端计时 |
+| `deploy.py` | 独立V2服务、保留前次unit及旧部署 |
+| `validate_http.py`、`monitor.py` | 真实LAN任务和板端资源证据 |
+
+ZIP包括原空间NIfTI标签、几何/数值记录、统计CSV/JSON、原始和平滑PLY/VTP、索引网格、初始MPR及SHA清单。灰度/标签NPY仅留在板端供交互，不公开下载。失败或取消不会发布完整结果。
+
+`assets_ready`只在两期全部资源及ZIP完成后发布；网页以`performance.now()`从上传开始测至两期资源接收、GPU上传和首帧绘制。启动预载另列，初始化期间禁用开始。每期原始体素≤2,000,000、工作体素≤4,000,000，两期上传硬限制32MiB；性能包络见计划。结果限额4GiB，不自动删除旧任务。
+
+部署复制认证P6核心到`/home/xilinx/acdc_board_v2/releases/<版本>`，添加appliance、`v2_assets`、隔离Nibabel5.2.1的`v2_deps`、网格二进制和配置。保持原runtime manifest，新增应用manifest。使用PYNQ venv Python和登录shell初始化XRT：
+
+```text
+python -m acdc.appliance.identity <新release>
+sudo -E python -m acdc.appliance.deploy --release <新release> --app-sha <应用SHA>
+sudo systemctl start pld-acdc-v2-engine.service pld-acdc-v2-web.service
+python acdc/appliance/validate_http.py --results <参考结果> --output <新板测目录> --repeat 3
+```
+
+回退先停止V2两个服务并确认进程和DMA退出，再通过V1原管理器激活旧release。`/var/lib/acdc-board-v2/deployment.json`保留前次unit；旧核心、原服务文件及历史数据均保留。不可并发启动两个FPGA服务。
+
+## 尚待完成
+
+大尺寸病例进一步优化；最终候选20例各3次新鲜任务、资源/取消/故障恢复、开机readiness、V1/Skin/CAMUS回归及实际回退。最终按浏览器上传开始到两期完整结果、平滑展示、ZIP和首帧全部可用验收 `<40 s`。

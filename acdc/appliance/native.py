@@ -26,7 +26,8 @@ def load_native():
     identity=dict(source_sha256=file_sha(source),wrapper_sha256=file_sha(Path(__file__)),
                   compiler=compiler,compiler_version=version,flags=flags,machine=platform.machine())
     key=hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).hexdigest()
-    folder=Path(tempfile.gettempdir())/'pld-acdc-image'/key
+    owner=str(os.getuid()) if hasattr(os,'getuid') else 'desktop'
+    folder=Path(tempfile.gettempdir())/('pld-acdc-image-'+owner)/key
     folder.mkdir(parents=True,exist_ok=True)
     library=folder/('image.dll' if os.name=='nt' else 'image.so')
     manifest=folder/'build.json'
@@ -56,7 +57,8 @@ class NativeImage:
                         acdc_softmax=[pointer,pointer,ct.c_size_t,pointer],
                         acdc_mpr=[pointer,pointer,pointer,pointer,pointer,pointer,pointer,ct.c_int,ct.c_int,
                                   ct.c_double,ct.c_double,ct.c_double,ct.c_int,ct.c_int],
-                        acdc_affine=[pointer,pointer,pointer,pointer,pointer,pointer,ct.c_float])
+                        acdc_affine=[pointer,pointer,pointer,pointer,pointer,pointer,ct.c_float],
+                        acdc_affine4=[pointer,pointer,pointer,pointer,pointer,pointer,ct.c_float])
         for name,types in signatures.items():
             fn=getattr(self.library,name);fn.argtypes=types;fn.restype=ct.c_int
 
@@ -113,6 +115,11 @@ class NativeImage:
         """
         return AffineSource(self,self.floats(value,3))
 
+    def prepare_affine4(self,value):
+        array=self.floats(value,4)
+        if array.shape[0]!=4:raise ContractError('four probability channels required')
+        return AffineSource(self,array,channels=4)
+
     def mpr(self,gray,labels,origin,dx,dy,shape,*,level,window,alpha=.5,visible=14,outline=False):
         a=self.floats(gray,3)
         labels=np.ascontiguousarray(labels)
@@ -132,9 +139,9 @@ class NativeImage:
 
 
 class AffineSource:
-    def __init__(self,kernel,array):
+    def __init__(self,kernel,array,channels=1):
         self.kernel=kernel;self.array=array.view();self.array.flags.writeable=False
-        self.ins=np.array(array.shape,np.int64)
+        self.channels=channels;self.ins=np.array(array.shape[-3:],np.int64)
 
     def apply(self,shape,matrix,offset,fill=0.):
         a=self.array
@@ -145,7 +152,8 @@ class AffineSource:
         if m.shape!=(3,3) or o.shape!=(3,) or not np.all(np.isfinite(m)) or not np.all(np.isfinite(o)):
             raise ContractError('invalid affine mapping')
         if not np.isfinite(fill):raise ContractError('nonfinite fill')
-        b=np.empty(shape,np.float32);outs=np.array(shape,np.int64)
-        self.kernel.check(self.kernel.library.acdc_affine(a.ctypes.data,b.ctypes.data,self.ins.ctypes.data,outs.ctypes.data,
+        b=np.empty(shape if self.channels==1 else (4,*shape),np.float32);outs=np.array(shape,np.int64)
+        function=self.kernel.library.acdc_affine if self.channels==1 else self.kernel.library.acdc_affine4
+        self.kernel.check(function(a.ctypes.data,b.ctypes.data,self.ins.ctypes.data,outs.ctypes.data,
                                                          m.ctypes.data,o.ctypes.data,float(fill)))
         return b
