@@ -18,6 +18,7 @@ import uuid
 from acdc.contract import ContractError,canonical,atomic_json
 from .engine import checked_job
 from .mpr import MPRVolume
+from .storage import ResultUsage
 
 MAX_UPLOAD=32*1024*1024
 
@@ -28,6 +29,9 @@ class WebApplication:
         self.client=client;self.root=Path(root).resolve();self.root.mkdir(parents=True,exist_ok=True)
         self.kernel=kernel;self.access_code=access_code;self.sessions=OrderedDict();self.lock=threading.Lock()
         self.mpr_lock=threading.Lock();self.volumes=OrderedDict();self.images=OrderedDict()
+        try:active=self.client.request(op='health').get('active_job')
+        except (OSError,TimeoutError):active=None
+        self.storage=ResultUsage(self.root,active_job=active)
 
     def login(self,code):
         if not isinstance(code,str) or not secrets.compare_digest(code,self.access_code):
@@ -81,6 +85,7 @@ def handler(app):
     static=Path(__file__).with_name('web_assets')
     class Handler(BaseHTTPRequestHandler):
         protocol_version='HTTP/1.1'
+        disable_nagle_algorithm=True
         def setup(self):super().setup();self.connection.settimeout(60)
         def log_message(self,*args):pass
 
@@ -165,10 +170,9 @@ def handler(app):
                         else:raise ContractError('upload explicit ED and ES NIfTI files')
                     if shutil.disk_usage(app.root).free<MAX_UPLOAD*2+256*1024*1024:
                         raise ContractError('insufficient board storage')
-                    used=sum(p.stat().st_size for sub in ('inputs','jobs') for p in (app.root/sub).rglob('*') if p.is_file())
-                    if used+length>4*1024**3:raise ContractError('V2 result storage reached 4 GiB; export and clear old V2 jobs')
                     job=uuid.uuid4().hex
                     reservation=app.client.request(op='reserve',job=job)['reservation']
+                    app.storage.admit(job,length)
                     folder=app.root/'inputs'/job;folder.mkdir(parents=True,exist_ok=False)
                     for phase,count,suffix in zip(('ED','ES'),(ed_bytes,length-ed_bytes),suffixes):
                         with (folder/(phase+suffix)).open('wb') as stream:
@@ -194,6 +198,7 @@ def handler(app):
                         raise ContractError('invalid client duration')
                     if not isinstance(client,str) or not re.fullmatch(r'[0-9a-f]{32}',client):raise ContractError('invalid client ID')
                     atomic_json(root/'client_timings'/(client+'.json'),dict(data,scope='browser reported upload-to-interactive duration'))
+                    app.storage.refresh(match[1])
                     self.send(200,dict(recorded=True));return
                 raise FileNotFoundError('unknown endpoint')
             except (BrokenPipeError,ConnectionResetError):return

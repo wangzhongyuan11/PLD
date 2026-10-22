@@ -15,7 +15,7 @@ def numbers(path, wanted):
             if key in wanted:
                 result[key] = int(value.strip().split()[0])
     except (FileNotFoundError, ProcessLookupError):
-        result['exited'] = True
+        result['unavailable'] = True
     return result
 
 
@@ -25,6 +25,7 @@ def sample(pids):
     for pid in pids:
         proc = Path('/proc') / str(pid)
         row['processes'][str(pid)] = dict(
+            alive=proc.exists(),
             status_kib=numbers(proc/'status', {'VmRSS', 'VmHWM', 'VmSwap', 'Threads'}),
             smaps_kib=numbers(proc/'smaps_rollup', {'Rss', 'Pss', 'Swap'}),
             io_bytes=numbers(proc/'io', {'read_bytes', 'write_bytes'}))
@@ -39,6 +40,15 @@ def sample(pids):
     # physical SD counters separately, without inventing process I/O evidence.
     row['sd_diskstats'] = [line.split() for line in Path('/proc/diskstats').read_text().splitlines()
                            if line.split()[2] == 'mmcblk0']
+    # Kernel cgroup counters include native mesh child processes. memory.peak
+    # also includes reclaimable file cache; it is not the same as process RSS.
+    row['services']={}
+    for unit in ('pld-acdc-v2-engine.service','pld-acdc-v2-web.service'):
+        group=Path('/sys/fs/cgroup/system.slice')/unit;values={}
+        for name in ('memory.current','memory.peak','memory.stat','memory.events','cpu.stat','io.stat'):
+            try:values[name]=(group/name).read_text()
+            except FileNotFoundError:values[name]=None
+        row['services'][unit]=values
     return row
 
 
