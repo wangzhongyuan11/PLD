@@ -52,7 +52,9 @@ def main():
         for patient,pair in selected:
             images=[]
             for phase in ('ED','ES'):
-                gt=Path(pair[phase]['gt']);path=gt.with_name(gt.name.replace('_gt.nii','.nii'));images.append(path.read_bytes())
+                case=pair[phase]
+                path=Path(case['input']) if 'input' in case else Path(case['gt']).with_name(Path(case['gt']).name.replace('_gt.nii','.nii'))
+                images.append(path.read_bytes())
             began=time.perf_counter()
             created=json.loads(request('/api/v2/jobs?ed=ED.nii.gz&es=ES.nii.gz',b''.join(images),
                 {'Content-Type':'application/octet-stream','X-ED-Bytes':str(len(images[0]))}))

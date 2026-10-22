@@ -48,8 +48,9 @@ class NumericalPipeline:
                 atomic_json(output/'geometry'/f'{phase}.json',dict(volume.geometry,letterbox=inputs.spec))
 
                 def prepare_input(z):
+                    prepared=time.perf_counter()
                     x,neighbors=inputs.get(z)
-                    return x,neighbors,hashlib.sha256(x.tobytes()).hexdigest()
+                    return x,neighbors,hashlib.sha256(x.tobytes()).hexdigest(),time.perf_counter()-prepared
 
                 with ThreadPoolExecutor(max_workers=1,thread_name_prefix='v2-input') as prefetch, \
                      ThreadPoolExecutor(max_workers=1,thread_name_prefix='v2-restore') as restoring:
@@ -57,7 +58,7 @@ class NumericalPipeline:
                     previous=None
                     for z in range(nz):
                         check_cancel()
-                        x,neighbors,input_sha=pending.result() if overlap else prepare_input(z)
+                        x,neighbors,input_sha,input_seconds=pending.result() if overlap else prepare_input(z)
                         if overlap and z+1<nz:pending=prefetch.submit(prepare_input,z+1)
                         request=dict(architecture_id=ARCHITECTURE,execution_profile=PROFILE,preprocessing_id=PREPROCESSING,
                             run_id=run_id,phase=phase,orientation='axial',center_index=z,neighbor_indices=neighbors,
@@ -79,6 +80,10 @@ class NumericalPipeline:
                         else:collector.add(head,z,inputs.spec)
                         records.append(dict(phase=phase,center_index=z,input_sha256=input_sha,
                             head_sha256=hashlib.sha256(head.tobytes()).hexdigest(),seconds=seconds,
+                            input_prepare_seconds=input_seconds,inference_begin_seconds=tick-began,
+                            inference_end_seconds=tick+seconds-began,
+                            device_timing={k:meta[k] for k in ('input_validation_seconds','input_layout_seconds',
+                                'flush_seconds','submit_wait_seconds','head_seconds','pl_cycles','jobs','epoch') if k in meta},
                             pl_seconds=meta.get('pl_seconds'),backend=meta['backend'],synthetic=meta['synthetic']))
                         if save_heads:
                             folder=output/'heads'/phase;folder.mkdir(parents=True,exist_ok=True)
