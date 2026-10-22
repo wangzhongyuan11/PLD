@@ -34,7 +34,10 @@ def main():
         with client.open_sftp() as sftp:
             with sftp.open(args.access_file) as stream:code=stream.read().decode().strip()
     del password
-    opener=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+    # This is a direct LAN benchmark. Windows/system proxy settings can route
+    # 192.168.x.x through a local proxy and inject unrelated 502/connect faults.
+    opener=urllib.request.build_opener(urllib.request.ProxyHandler({}),
+        urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
     base=f'http://{args.host}:{args.port}'
     def request(path,body=None,headers=None):
         r=urllib.request.Request(base+path,data=body,headers=headers or {})
@@ -98,7 +101,7 @@ def main():
                 all_input_and_head_hashes_equal=True,statistics_equal=True,zip_sha_crc_members_equal=True,
                 browser_gpu_readiness_verified=False)
             rows.append(summary)
-            report=dict(schema='pld-acdc-appliance-http-validation-v2',complete=False,rows=rows,
+            report=dict(schema='pld-acdc-appliance-http-validation-v2',complete=False,rows=rows,transport='direct LAN HTTP; system proxies disabled in this client only',
                         scope='real LAN upload, fresh board computation and initial asset download; no browser GPU claim')
             (args.output/'audit.json').write_text(json.dumps(report,indent=2)+'\n')
             print(patient,repeat,job,'server',round(server_ready,3),'assets',round(transfer_seconds,3),flush=True)
