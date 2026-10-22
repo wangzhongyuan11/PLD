@@ -35,6 +35,10 @@ def sample(pids):
             vm[key] = int(value)
     row['vmstat'] = vm
     row['cpu'] = Path('/proc/stat').read_text().splitlines()[0]
+    # Some PYNQ kernels omit per-process /proc/<pid>/io. Preserve the global
+    # physical SD counters separately, without inventing process I/O evidence.
+    row['sd_diskstats'] = [line.split() for line in Path('/proc/diskstats').read_text().splitlines()
+                           if line.split()[2] == 'mmcblk0']
     return row
 
 

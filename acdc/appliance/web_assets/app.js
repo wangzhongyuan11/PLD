@@ -12,6 +12,15 @@ function error(e){$('status').textContent=e.message||String(e);}
 function enabled(c){return $('class'+c).checked;}
 function uploadBuffer(data,target){const b=gl.createBuffer();gl.bindBuffer(target,b);gl.bufferData(target,data,gl.STATIC_DRAW);return b;}
 function freeMeshes(){for(const phase of Object.values(state.phases)){for(const item of phase.images||[])item.image.close();if(gl)for(const meshes of Object.values(phase.meshes||{}))for(const m of meshes)for(const key of ['p','n','indexBuffer','wire'])if(m[key])gl.deleteBuffer(m[key]);}}
+function clearJobDisplay(){
+ ++state.generation;for(const c of state.controllers)c?.abort();freeMeshes();state.phases={};state.job=null;
+ for(let i=0;i<3;i++){const c=$('mpr'+i);c.getContext('2d').clearRect(0,0,c.width,c.height);$('slice'+i).textContent='—';}
+ if(gl){gl.depthMask(true);gl.clearColor(.025,.039,.055,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);}
+ $('orientation').getContext('2d').clearRect(0,0,88,80);$('meshstatus').textContent='等待本次完整结果';$('renderfps').textContent='—';
+ $('metrics').textContent='等待本次体积与 EF';$('coordinates').textContent='RAS / mm';$('job').textContent='';
+ $('download').classList.add('disabled');$('download').removeAttribute('href');
+ $('timing').textContent='上传到完整可交互：测量中';history.replaceState(null,'',location.pathname);
+}
 function uploadMesh(result){if(gl&&!result.p){result.p=uploadBuffer(result.points,gl.ARRAY_BUFFER);result.n=uploadBuffer(result.normals,gl.ARRAY_BUFFER);if(result.indices)result.indexBuffer=uploadBuffer(result.indices,gl.ELEMENT_ARRAY_BUFFER);}return result;}
 async function mesh(phase,row,kind,job){
  const meta=row[kind],base='meshes/'+phase+'/';
@@ -111,6 +120,7 @@ $('login').onclick=async()=>{try{await post('/api/v2/session',{code:$('accessCod
 $('start').onclick=async()=>{
  const ed=$('ed').files[0],es=$('es').files[0];if(!ed||!es){error(Error('请选择 ED 和 ES'));return;}
  if(ed.size+es.size>(state.health?.max_upload_bytes||0)){error(Error('上传文件超过板卡限制'));return;}
+ clearJobDisplay();
  state.busy=true;$('start').disabled=true;$('cancel').disabled=true;$('progress').value=0;$('status').textContent='上传到板卡';
  state.clientId=Array.from(crypto.getRandomValues(new Uint8Array(16)),x=>x.toString(16).padStart(2,'0')).join('');state.started=performance.now();
  try{const result=await json('/api/v2/jobs?ed='+encodeURIComponent(ed.name)+'&es='+encodeURIComponent(es.name),{method:'POST',headers:{'Content-Type':'application/octet-stream','X-ED-Bytes':String(ed.size)},body:new Blob([ed,es])});state.job=result.run_id;history.replaceState(null,'','?job='+state.job);$('cancel').disabled=false;$('job').textContent=state.job;await poll(state.job);}
