@@ -58,6 +58,8 @@ class NativeImage:
                         acdc_bbox=[pointer,pointer,pointer],
                         acdc_mpr=[pointer,pointer,pointer,pointer,pointer,pointer,pointer,ct.c_int,ct.c_int,
                                   ct.c_double,ct.c_double,ct.c_double,ct.c_int,ct.c_int],
+                        acdc_mpr_fast=[pointer,pointer,pointer,pointer,pointer,pointer,pointer,ct.c_int,ct.c_int,
+                                  ct.c_double,ct.c_double,ct.c_double,ct.c_int,ct.c_int],
                         acdc_affine=[pointer,pointer,pointer,pointer,pointer,pointer,ct.c_float],
                         acdc_affine4=[pointer,pointer,pointer,pointer,pointer,pointer,ct.c_float])
         for name,types in signatures.items():
@@ -130,10 +132,25 @@ class NativeImage:
         return AffineSource(self,array,channels=4)
 
     def mpr(self,gray,labels,origin,dx,dy,shape,*,level,window,alpha=.5,visible=14,outline=False):
+        return self.prepare_mpr(gray,labels).render(origin,dx,dy,shape,level=level,window=window,
+            alpha=alpha,visible=visible,outline=outline)
+
+    def prepare_mpr(self,gray,labels):
+        """Validate immutable result arrays once for repeated cursor requests."""
         a=self.floats(gray,3)
         labels=np.ascontiguousarray(labels)
-        if labels.dtype!=np.uint8 or labels.shape!=a.shape or np.any(labels>3):
+        if a.size>2_000_000 or labels.dtype!=np.uint8 or labels.shape!=a.shape or np.any(labels>3):
             raise ContractError('invalid MPR label volume')
+        return MPRSource(self,a,labels)
+
+
+class MPRSource:
+    def __init__(self,kernel,gray,labels):
+        self.kernel=kernel;self.gray=gray.view();self.labels=labels.view()
+        self.gray.flags.writeable=False;self.labels.flags.writeable=False
+        self.size=np.array(gray.shape,np.int64)
+
+    def render(self,origin,dx,dy,shape,*,level,window,alpha=.5,visible=14,outline=False):
         h,w=map(int,shape)
         if min(h,w)<1 or max(h,w)>768:raise ContractError('invalid MPR raster size')
         vectors=[np.ascontiguousarray(v,np.float64) for v in (origin,dx,dy)]
@@ -141,8 +158,8 @@ class NativeImage:
             raise ContractError('invalid MPR coordinate mapping')
         if not all(np.isfinite(v) for v in (level,window,alpha)) or window<=0 or not 0<=alpha<=1 or not 0<=visible<=14:
             raise ContractError('invalid MPR display parameters')
-        result=np.empty((h,w,4),np.uint8);size=np.array(a.shape,np.int64)
-        self.check(self.library.acdc_mpr(a.ctypes.data,labels.ctypes.data,result.ctypes.data,size.ctypes.data,
+        result=np.empty((h,w,4),np.uint8)
+        self.kernel.check(self.kernel.library.acdc_mpr_fast(self.gray.ctypes.data,self.labels.ctypes.data,result.ctypes.data,self.size.ctypes.data,
             *(v.ctypes.data for v in vectors),h,w,float(level),float(window),float(alpha),int(visible),int(outline)))
         return result
 

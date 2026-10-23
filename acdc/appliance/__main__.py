@@ -70,7 +70,6 @@ def production(args):
     from .surface import SurfaceGenerator
     from .engine import JobManager,serve
     import nibabel
-    from PIL import Image
     began=time.monotonic()
     model=load_bundle(root/config['model'],expected_sha=config['model_sha256'])
     table=load(model,root/config['assets'],config['assets_sha256'])

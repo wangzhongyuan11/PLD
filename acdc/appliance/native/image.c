@@ -330,3 +330,64 @@ API int acdc_mpr(const float *gray,const uint8_t *labels,uint8_t *rgba,const int
     }
     return 0;
 }
+
+typedef struct { size_t low,high,nearest; double w0,w1; int inside; } MPRSample;
+
+/* Orthogonal source axes: cache conversion/weights by row or column. Keep
+ * incremental X coordinates and the original separable interpolation order.
+ * A genuinely oblique source retains the original general sampler above. */
+API int acdc_mpr_fast(const float *gray,const uint8_t *labels,uint8_t *rgba,const int64_t *shape,
+                 const double *origin,const double *dx,const double *dy,int height,int width,
+                 double level,double window,double alpha,int visible,int outline) {
+    if(!gray || !labels || !rgba || !shape || !origin || !dx || !dy || height<1 || width<1 || window<=0.) return 1;
+    for(int a=0;a<3;++a) if(dx[a]!=0. && dy[a]!=0.)
+        return acdc_mpr(gray,labels,rgba,shape,origin,dx,dy,height,width,level,window,alpha,visible,outline);
+    MPRSample *maps[3]={NULL,NULL,NULL};int along_x[3],result=0;
+    for(int a=0;a<3;++a) {
+        along_x[a]=dx[a]!=0.;int count=along_x[a]?width:height;
+        maps[a]=malloc((size_t)count*sizeof(MPRSample));
+        if(!maps[a]) {result=3;goto done;}
+        double px=origin[a]+0.;
+        for(int i=0;i<count;++i) {
+            double p=along_x[a]?px:origin[a]+i*dy[a];MPRSample *s=&maps[a][i];
+            s->inside=p>=0. && p<=shape[a]-1;
+            if(s->inside) {
+                s->low=(size_t)p;s->high=s->low<(size_t)shape[a]-1?s->low+1:s->low;
+                s->nearest=(size_t)(p+.5);s->w1=p-(double)s->low;s->w0=1.-s->w1;
+            }
+            if(along_x[a]) px+=dx[a];
+        }
+    }
+    size_t sx=(size_t)shape[1]*shape[2],sy=(size_t)shape[2];
+    for(int y=0;y<height;++y) for(int x=0;x<width;++x) {
+        const MPRSample *mx=&maps[0][along_x[0]?x:y],*my=&maps[1][along_x[1]?x:y],*mz=&maps[2][along_x[2]?x:y];
+        double intensity=0.;int c=0;
+        if(mx->inside && my->inside && mz->inside) {
+            size_t b00=mx->low*sx+my->low*sy,b10=mx->high*sx+my->low*sy;
+            size_t b01=mx->low*sx+my->high*sy,b11=mx->high*sx+my->high*sy;
+            double a0=(double)gray[b00+mz->low]*mx->w0+(double)gray[b10+mz->low]*mx->w1;
+            double b0=(double)gray[b01+mz->low]*mx->w0+(double)gray[b11+mz->low]*mx->w1;
+            double a1=(double)gray[b00+mz->high]*mx->w0+(double)gray[b10+mz->high]*mx->w1;
+            double b1=(double)gray[b01+mz->high]*mx->w0+(double)gray[b11+mz->high]*mx->w1;
+            double layer0=a0*my->w0+b0*my->w1,layer1=a1*my->w0+b1*my->w1;
+            intensity=layer0*mz->w0+layer1*mz->w1;
+            size_t xx=mx->nearest,yy=my->nearest,zz=mz->nearest,index=xx*sx+yy*sy+zz;
+            c=labels[index];if(c>3) {result=2;goto done;}
+            if(outline && c && xx>0 && xx<(size_t)shape[0]-1 && yy>0 && yy<(size_t)shape[1]-1 && zz>0 && zz<(size_t)shape[2]-1
+               && labels[index-sx]==c && labels[index+sx]==c && labels[index-sy]==c && labels[index+sy]==c
+               && labels[index-1]==c && labels[index+1]==c) c=0;
+        }
+        double val=(intensity-level+window/2.)/window*255.;
+        if(val<0.) val=0.;if(val>255.) val=255.;
+        size_t d=((size_t)y*width+x)*4;
+        if(c && (visible&(1<<c))) {
+            double base=val*(1.-alpha);
+            uint8_t off=clamped_byte(base+0.*alpha),on=clamped_byte(base+255.*alpha);
+            rgba[d]=c==1?on:off;rgba[d+1]=c==2?on:off;rgba[d+2]=c==3?on:off;
+        } else {uint8_t v=clamped_byte(val);rgba[d]=rgba[d+1]=rgba[d+2]=v;}
+        rgba[d+3]=255;
+    }
+done:
+    for(int a=0;a<3;++a) free(maps[a]);
+    return result;
+}

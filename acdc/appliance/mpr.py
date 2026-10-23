@@ -2,13 +2,13 @@
 from __future__ import annotations
 
 from itertools import product
-import io
 import json
 from pathlib import Path
 
 import numpy as np
 
 from acdc.contract import ContractError
+from .png import rgba_png
 
 
 class MPRVolume:
@@ -24,6 +24,7 @@ class MPRVolume:
         if self.affine.shape!=(4,4) or not np.all(np.isfinite(self.affine)):
             raise ContractError('invalid MPR affine')
         self.inverse=np.linalg.inv(self.affine)
+        self.sampler=kernel.prepare_mpr(self.gray,self.labels)
         corners=np.array(list(product(*[(0,n-1) for n in self.gray.shape])),np.float64)
         world=corners@self.affine[:3,:3].T+self.affine[:3,3]
         self.bounds=np.array([world.min(axis=0),world.max(axis=0)])
@@ -45,10 +46,8 @@ class MPRVolume:
         world[v]=self.bounds[1,v]-(.5-oy)/scale
         origin=self.inverse[:3,:3]@world+self.inverse[:3,3]
         dx=self.inverse[:3,u]/scale;dy=-self.inverse[:3,v]/scale
-        pixels=self.kernel.mpr(self.gray,self.labels,origin,dx,dy,(h,w),level=level,window=window,
+        pixels=self.sampler.render(origin,dx,dy,(h,w),level=level,window=window,
                                alpha=alpha,visible=visible,outline=outline)
-        from PIL import Image
-        stream=io.BytesIO();Image.fromarray(pixels).save(stream,format='PNG',compress_level=1)
-        return stream.getvalue(),dict(bounds=self.bounds.tolist(),position=position.tolist(),plane=plane,
+        return rgba_png(pixels),dict(bounds=self.bounds.tolist(),position=position.tolist(),plane=plane,
             normal_axis=n,scale=scale,ox=ox,oy=oy,u=u,v=v,width=w,height=h,generator='pynq_ps',
             level=float(level),window=float(window),alpha=float(alpha),visible=int(visible),outline=bool(outline))
