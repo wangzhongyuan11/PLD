@@ -1,14 +1,10 @@
 """Measure uncached board MPR HTTP responses, with explicit idle/busy buckets.
 
-This client performs no medical processing. SSH is used only to obtain the
-existing LAN access code; credentials are neither printed nor persisted.
+This client performs no medical processing and requires no login.
 """
 import argparse
-import getpass
 import hashlib
-import http.cookiejar
 import json
-import os
 from pathlib import Path
 import re
 import time
@@ -22,27 +18,16 @@ def main():
     p.add_argument('--host',default='192.168.2.99');p.add_argument('--port',type=int,default=8092)
     p.add_argument('--job',required=True);p.add_argument('--samples',type=int,default=30)
     p.add_argument('--wait-busy',action='store_true');p.add_argument('--output',type=Path,required=True)
-    p.add_argument('--access-file',default='/home/xilinx/acdc_board_v2/data/access_code.txt')
     a=p.parse_args()
     if not re.fullmatch('[0-9a-f]{32}',a.job) or not 1<=a.samples<=120:p.error('bounded samples and valid job ID required')
     if a.output.exists():raise FileExistsError(a.output)
-    import paramiko
-    password=os.environ.get('PLD_BOARD_PASS') or getpass.getpass('Board password: ')
-    with paramiko.SSHClient() as c:
-        c.load_system_host_keys();c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        c.connect(a.host,username='xilinx',password=password,timeout=10,allow_agent=False,look_for_keys=False)
-        with c.open_sftp() as s:
-            with s.open(a.access_file) as f:code=f.read().decode().strip()
-    del password
-    opener=urllib.request.build_opener(urllib.request.ProxyHandler({}),
-        urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+    opener=urllib.request.build_opener(urllib.request.ProxyHandler({}))
     base=f'http://{a.host}:{a.port}'
     def request(path,value=None):
         body=None if value is None else json.dumps(value).encode()
         req=urllib.request.Request(base+path,body,headers={'Content-Type':'application/json'})
         with opener.open(req,timeout=15) as r:return r.read(),r.headers
     def health():return json.loads(request('/api/v2/health')[0])
-    request('/api/v2/session',{'code':code});del code
     volumes={phase:json.loads(request(f'/api/v2/jobs/{a.job}/assets/viewer/{phase}/volume.json')[0])
              for phase in ('ED','ES')}
     if a.wait_busy:

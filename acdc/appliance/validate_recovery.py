@@ -10,20 +10,16 @@ import time
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--pair-root',type=Path,required=True)
-    parser.add_argument('--access-file',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
-    args=parser.parse_args();cookie=None
+    args=parser.parse_args()
     def request(method,path,data=None,headers=None):
         connection=http.client.HTTPConnection('127.0.0.1',8092,timeout=15)
         head=dict(headers or {})
-        if cookie:head['Cookie']=cookie
         try:
             connection.request(method,path,data,head);response=connection.getresponse()
             return response.status,response.read(),dict(response.getheaders())
         finally:connection.close()
     def post(path,data):return request('POST',path,json.dumps(data).encode(),{'Content-Type':'application/json'})
-    status,_,headers=post('/api/v2/session',{'code':args.access_file.read_text().strip()})
-    assert status==200;cookie=headers['Set-Cookie'].split(';')[0]
     def health():
         status,data,_=request('GET','/api/v2/health');assert status==200;return json.loads(data)
     assert health()['ready'] and not health()['active_job']

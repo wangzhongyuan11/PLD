@@ -5,7 +5,6 @@ import argparse
 import json
 import os
 from pathlib import Path
-import secrets
 import tempfile
 import threading
 import time
@@ -55,12 +54,7 @@ def production(args):
     if args.command=='web':
         from .engine import Client
         from .web import WebApplication,serve
-        access=Path(config['access_file'])
-        if not access.exists():
-            access.parent.mkdir(parents=True,exist_ok=True)
-            fd=os.open(access,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
-            with os.fdopen(fd,'w') as stream:stream.write(secrets.token_urlsafe(18)+'\n')
-        app=WebApplication(Client(config['socket']),data,kernel,access.read_text().strip())
+        app=WebApplication(Client(config['socket']),data,kernel)
         serve(app,config.get('host','0.0.0.0'),config.get('port',8092));return
     from acdc.model import load_bundle
     from acdc.backend import SpatialBackend

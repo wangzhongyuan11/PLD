@@ -36,7 +36,7 @@ def setup(tmp_path):
     backend=DemoBackend();backend.runtime_sha=None;kernel=load_native()
     pipeline=FullPipeline(NumericalPipeline(backend,kernel,make_exp_table(backend.head_scale),binding={}),MeshFixture())
     manager=JobManager(pipeline,tmp_path)
-    return manager,WebApplication(DirectClient(manager),tmp_path,kernel,'test-only-access-code')
+    return manager,WebApplication(DirectClient(manager),tmp_path,kernel)
 
 
 def test_reservation_is_exclusive_and_releases_on_abort(tmp_path):
@@ -55,20 +55,17 @@ def test_http_upload_mpr_export_and_client_timing(tmp_path):
     manager,app=setup(tmp_path)
     server=ThreadingHTTPServer(('127.0.0.1',0),handler(app))
     thread=threading.Thread(target=server.serve_forever);thread.start()
-    cookie=None
     def call(method,path,body=None,headers=None):
         connection=http.client.HTTPConnection('127.0.0.1',server.server_port,timeout=15)
         head=dict(headers or {})
-        if cookie:head['Cookie']=cookie
         connection.request(method,path,body=body,headers=head)
         response=connection.getresponse();raw=response.read();status=response.status;result_headers=dict(response.getheaders())
         connection.close();return status,raw,result_headers
     try:
-        assert call('GET','/api/v2/health')[0]==401
-        status,_,headers=call('POST','/api/v2/session',json.dumps({'code':'test-only-access-code'}))
-        assert status==200 and 'HttpOnly' in headers['Set-Cookie']
-        cookie=headers['Set-Cookie'].split(';')[0]
+        # Fresh requests have no login, cookie or access-code dependency.
         assert call('GET','/api/v2/health')[0]==200
+        assert call('POST','/api/v2/session',json.dumps({'code':'unused'}))[0]==404
+        assert call('POST','/api/v2/jobs',b'x',{'Origin':'http://other.example','Host':'127.0.0.1'})[0]==401
         rng=np.random.default_rng(500)
         image=nib.Nifti1Image(rng.integers(1,250,(9,11,5)).astype(np.float32),np.diag([2.,2.,2.,1.]))
         image.header.set_xyzt_units('mm');raw=image.to_bytes()

@@ -2,13 +2,11 @@
 from __future__ import annotations
 
 from collections import OrderedDict
-from http.cookies import SimpleCookie
 from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
 import json
 import math
 from pathlib import Path
 import re
-import secrets
 import shutil
 import threading
 import time
@@ -24,31 +22,13 @@ MAX_UPLOAD=32*1024*1024
 
 
 class WebApplication:
-    def __init__(self,client,root,kernel,access_code):
-        if not isinstance(access_code,str) or len(access_code)<12:raise ContractError('access code too short')
+    def __init__(self,client,root,kernel):
         self.client=client;self.root=Path(root).resolve();self.root.mkdir(parents=True,exist_ok=True)
-        self.kernel=kernel;self.access_code=access_code;self.sessions=OrderedDict();self.lock=threading.Lock()
+        self.kernel=kernel
         self.mpr_lock=threading.Lock();self.volumes=OrderedDict();self.images=OrderedDict()
         try:active=self.client.request(op='health').get('active_job')
         except (OSError,TimeoutError):active=None
         self.storage=ResultUsage(self.root,active_job=active)
-
-    def login(self,code):
-        if not isinstance(code,str) or not secrets.compare_digest(code,self.access_code):
-            raise PermissionError('incorrect access code')
-        token=secrets.token_urlsafe(32)
-        with self.lock:
-            self.sessions[token]=time.monotonic()+8*3600
-            while len(self.sessions)>32:self.sessions.popitem(last=False)
-        return token
-
-    def authorized(self,cookie):
-        try:
-            parsed=SimpleCookie(cookie or '');token=parsed['acdc_v2'].value
-        except (KeyError,ValueError):return False
-        with self.lock:
-            expires=self.sessions.get(token)
-            return expires is not None and expires>time.monotonic()
 
     def health(self):
         try:return self.client.request(op='health')
@@ -112,9 +92,6 @@ def handler(app):
             code=401 if isinstance(exc,PermissionError) else 404 if isinstance(exc,FileNotFoundError) else 400 if isinstance(exc,ValueError) else 503 if isinstance(exc,OSError) else 500
             self.send(code,dict(error=f'{type(exc).__name__}: {exc}'))
 
-        def auth(self):
-            if not app.authorized(self.headers.get('Cookie')):raise PermissionError('login required')
-
         def body(self,maximum=16384):
             n=int(self.headers.get('Content-Length','0'))
             if not 0<n<=maximum:raise ContractError('invalid request length')
@@ -140,7 +117,6 @@ def handler(app):
                 path=urlsplit(self.path).path
                 if path in ('/','/app.js','/style.css','/surface_view.js'):
                     self.file(static/('index.html' if path=='/' else path[1:]));return
-                self.auth()
                 if path=='/api/v2/health':self.send(200,dict(app.health(),max_upload_bytes=MAX_UPLOAD));return
                 match=re.fullmatch(r'/api/v2/jobs/([0-9a-f]{32})',path)
                 if match:self.send(200,app.client.request(op='status',job=match[1]));return
@@ -165,11 +141,6 @@ def handler(app):
                 if origin is not None and urlsplit(origin).netloc!=self.headers.get('Host'):
                     raise PermissionError('cross-origin request refused')
                 path=urlsplit(self.path).path
-                if path=='/api/v2/session':
-                    token=app.login(self.body().get('code'))
-                    self.send(200,dict(authenticated=True),headers={'Set-Cookie':f'acdc_v2={token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800'})
-                    return
-                self.auth()
                 if path=='/api/v2/jobs':
                     length=int(self.headers.get('Content-Length','0'));ed_bytes=int(self.headers.get('X-ED-Bytes','0'))
                     if not 0<ed_bytes<length<=MAX_UPLOAD:raise ContractError('invalid ED/ES upload length')

@@ -1,15 +1,11 @@
 """Fresh board HTTP jobs + asset transfer/oracle audit. Does not claim GPU readiness.
 
-The SSH credential is used only to retrieve the board's access code, never
-printed or written to a report. Medical preprocessing/inference remains remote.
+Medical preprocessing/inference remains on the board; no login is required.
 """
 from __future__ import annotations
 import argparse
-import getpass
 import hashlib
-import http.cookiejar
 import json
-import os
 from pathlib import Path
 import time
 import urllib.parse
@@ -23,27 +19,15 @@ def main():
     parser.add_argument('--host',default='192.168.2.99');parser.add_argument('--port',type=int,default=8092)
     parser.add_argument('--repeat',type=int,default=1);parser.add_argument('--limit',type=int)
     parser.add_argument('--patient',action='append',help='select named development patients for a bounded candidate test')
-    parser.add_argument('--access-file',default='/home/xilinx/acdc_board_v2/data/access_code.txt')
     args=parser.parse_args()
     args.output.mkdir(parents=True,exist_ok=False)
-    import paramiko
-    password=os.environ.get('PLD_BOARD_PASS') or getpass.getpass('Board password: ')
-    with paramiko.SSHClient() as client:
-        client.load_system_host_keys();client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(args.host,username='xilinx',password=password,timeout=10,allow_agent=False,look_for_keys=False)
-        with client.open_sftp() as sftp:
-            with sftp.open(args.access_file) as stream:code=stream.read().decode().strip()
-    del password
     # This is a direct LAN benchmark. Windows/system proxy settings can route
     # 192.168.x.x through a local proxy and inject unrelated 502/connect faults.
-    opener=urllib.request.build_opener(urllib.request.ProxyHandler({}),
-        urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
+    opener=urllib.request.build_opener(urllib.request.ProxyHandler({}))
     base=f'http://{args.host}:{args.port}'
     def request(path,body=None,headers=None):
         r=urllib.request.Request(base+path,data=body,headers=headers or {})
         with opener.open(r,timeout=120) as response:return response.read()
-    def post(path,body):return json.loads(request(path,json.dumps(body).encode(),{'Content-Type':'application/json'}))
-    post('/api/v2/session',{'code':code});del code
     health=json.loads(request('/api/v2/health'))
     if not health.get('ready') or health.get('backend')!='pl' or health.get('synthetic'):
         raise RuntimeError('board engine is not ready for real PL jobs: '+str(health))

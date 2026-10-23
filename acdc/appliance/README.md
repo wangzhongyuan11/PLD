@@ -1,4 +1,6 @@
-# ACDC Board Standalone V2（实施中）
+# ACDC Board Standalone V2
+
+当前部署与最终验证见[最终记录](../docs/VALIDATION_BOARD_V2_20261023.md)。用户已取消跨设备验收，使用本机浏览器测试；V2 不需要访问码。
 
 目标和完整验收范围见[独立板端计划](../docs/BOARD_STANDALONE_V2_PLAN_20261021.md)。V1 保留在提交 `69e18ec`，V2 工作位于独立任务分支。现已实现独立板端 Web、真实 PL、网格、MPR、统计和导出，正在优化并进行完整验收。首例真实浏览器为 30.72 s；首轮 20 例中 patient057 约 54 s，触发后续优化，不能声称全部输入均已低于40秒。
 
@@ -40,7 +42,7 @@ python -m acdc.appliance.benchmark_replay --fixture <fixture目录> --output <�
 
 ## 板端使用与数据流
 
-同一局域网的任意电脑访问 `http://192.168.2.99:8092/`，输入本板访问码，选择同一患者的ED/ES三维NIfTI。待顶部显示PL就绪后开始分析；电脑无需Python、模型或SSH隧道。访问码仅在板卡`data/access_code.txt`，不随源码共享。网络用于上传、下载展示资源及MPR交互。
+同一局域网的任意电脑访问 `http://192.168.2.99:8092/`，无需访问码，直接选择同一患者的ED/ES三维NIfTI。待顶部显示PL就绪后开始分析；电脑无需Python、模型或SSH隧道。V2 不创建或读取访问码；历史 V1 和原系统设置保持原样。网络用于上传、下载展示资源及MPR交互。
 
 ```text
 浏览器 ED/ES 上传

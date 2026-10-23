@@ -117,13 +117,12 @@ async function poll(job){
  }
 }
 async function refreshHealth(){
- try{const health=await json('/api/v2/health');state.health=health;$('loginPanel').hidden=true;
+ try{const health=await json('/api/v2/health');state.health=health;
   $('backend').textContent=health.status==='ready'?'PYNQ-Z2 / PL 就绪':health.status==='busy'?'PYNQ-Z2 / 正在处理':health.status==='fault'?'板卡会话故障':'板卡初始化中';
   $('start').disabled=state.busy||!health.ready||health.backend!=='pl'||health.synthetic||!!health.active_job;
- }catch(e){if(e.status===401){$('loginPanel').hidden=false;$('backend').textContent='需要访问码';}else $('backend').textContent='连接中';}
+ }catch(e){$('backend').textContent='连接中';}
 }
 async function resume(job){state.job=job;state.busy=true;$('cancel').disabled=false;try{await poll(job);}finally{state.busy=false;$('cancel').disabled=true;await refreshHealth();}}
-$('login').onclick=async()=>{try{await post('/api/v2/session',{code:$('accessCode').value});$('accessCode').value='';await refreshHealth();const job=new URLSearchParams(location.search).get('job')||state.health?.active_job;if(job&&/^[0-9a-f]{32}$/.test(job))await resume(job);}catch(e){$('loginStatus').textContent=e.message;}};
 $('start').onclick=async()=>{
  const ed=$('ed').files[0],es=$('es').files[0];if(!ed||!es){error(Error('请选择 ED 和 ES'));return;}
  if(ed.size+es.size>(state.health?.max_upload_bytes||0)){error(Error('上传文件超过板卡限制'));return;}
@@ -146,4 +145,4 @@ $('surfaceGeometry').onchange=async()=>{const kind=$('surfaceGeometry').value,ph
 let drag=null;$('surface').onpointerdown=event=>{drag=[event.clientX,event.clientY];$('surface').setPointerCapture(event.pointerId);};$('surface').onpointerup=()=>drag=null;$('surface').onpointermove=event=>{if(!drag)return;state.yaw+=(event.clientX-drag[0])*.008;state.pitch+=(event.clientY-drag[1])*.008;drag=[event.clientX,event.clientY];draw3D();};$('surface').addEventListener('wheel',event=>{event.preventDefault();state.zoom=Math.max(.3,Math.min(4,state.zoom*Math.exp(-event.deltaY*.001)));draw3D();},{passive:false});
 $('reset').onclick=()=>{state.yaw=.55;state.pitch=-1.05;state.zoom=1;selectPhase(state.phase);};
 $('snapshot').onclick=()=>{if(!state.phases[state.phase])return;const canvas=document.createElement('canvas');canvas.width=720;canvas.height=680;const ctx=canvas.getContext('2d');ctx.fillStyle='#071018';ctx.fillRect(0,0,720,680);ctx.drawImage($('surface'),0,0);ctx.fillStyle='#a9e5ee';ctx.font='14px sans-serif';ctx.fillText('板卡 ARM 生成 / 浏览器渲染 / '+state.phase+' / '+$('surfaceGeometry').value+' / '+state.job,12,665);const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='ACDC-'+state.phase+'-3D.png';a.click();};
-refreshHealth().then(async()=>{const job=new URLSearchParams(location.search).get('job')||state.health?.active_job;if($('loginPanel').hidden&&job&&/^[0-9a-f]{32}$/.test(job))try{await resume(job);}catch(e){error(e);}});setInterval(refreshHealth,1500);
+refreshHealth().then(async()=>{const job=new URLSearchParams(location.search).get('job')||state.health?.active_job;if(state.health&&job&&/^[0-9a-f]{32}$/.test(job))try{await resume(job);}catch(e){error(e);}});setInterval(refreshHealth,1500);
