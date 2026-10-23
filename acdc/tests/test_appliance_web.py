@@ -83,8 +83,11 @@ def test_http_upload_mpr_export_and_client_timing(tmp_path):
         assert call('GET',base+'/assets/result.zip')[0]==200
         assert call('GET',base+'/assets/viewer/ED/gray.npy')[0]==404
         volume=json.loads(call('GET',base+'/assets/viewer/ED/volume.json')[1])
+        assert (job,'ED') in app.volumes
+        prepared=app.volumes[(job,'ED')]
         status,png,headers=call('POST',base+'/mpr/ED/axial',json.dumps({'position':volume['position'],'shape':[80,100]}))
         assert status==200 and png.startswith(b'\x89PNG')
+        assert app.volumes[(job,'ED')] is prepared
         assert json.loads(headers['X-MPR-Metadata'])['generator']=='pynq_ps'
         assert call('POST',base+'/client-timing',json.dumps({'client_id':'f'*32,'interactive_seconds':1.25}))[0]==200
         assert (tmp_path/'jobs'/job/'client_timings'/('f'*32+'.json')).is_file()

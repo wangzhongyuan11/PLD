@@ -60,6 +60,20 @@ class WebApplication:
         if state['status']!='assets_ready':raise ContractError('complete results are not ready')
         return root,json.loads((root/'manifest.json').read_text('utf-8'))
 
+    def _volume(self,root,job,phase):
+        """Caller holds mpr_lock; both preload and rendering share the same LRU."""
+        identity=(job,phase)
+        if identity not in self.volumes:self.volumes[identity]=MPRVolume(root/'viewer'/phase,self.kernel)
+        self.volumes.move_to_end(identity)
+        while len(self.volumes)>2:self.volumes.popitem(last=False)
+        return self.volumes[identity]
+
+    def preload_mpr(self,root,job,phase):
+        # The browser always reads both volume manifests before enabling the
+        # viewer. Charge mmap/validation to that measured result-loading stage,
+        # so the first cursor movement need not initialize the medical volume.
+        with self.mpr_lock:self._volume(root,job,phase)
+
     def mpr(self,job,phase,plane,values):
         values=dict(values)
         root,_=self.result(job)
@@ -70,12 +84,8 @@ class WebApplication:
         with self.mpr_lock:
             if key in self.images:
                 self.images.move_to_end(key);return self.images[key]
-            identity=(job,phase)
-            if identity not in self.volumes:self.volumes[identity]=MPRVolume(root/'viewer'/phase,self.kernel)
-            self.volumes.move_to_end(identity)
-            while len(self.volumes)>2:self.volumes.popitem(last=False)
             position=values.pop('position',None)
-            result=self.volumes[identity].render(plane,position,**values)
+            result=self._volume(root,job,phase).render(plane,position,**values)
             self.images[key]=result
             while len(self.images)>12:self.images.popitem(last=False)
             return result
@@ -141,6 +151,8 @@ def handler(app):
                         raise FileNotFoundError('asset is not public')
                     target=(root/name).resolve()
                     if not target.is_relative_to(root.resolve()):raise ContractError('invalid asset path')
+                    volume=re.fullmatch(r'viewer/(ED|ES)/volume.json',name)
+                    if volume:app.preload_mpr(root,match[1],volume[1])
                     self.file(target);return
                 raise FileNotFoundError('unknown endpoint')
             except (BrokenPipeError,ConnectionResetError):return

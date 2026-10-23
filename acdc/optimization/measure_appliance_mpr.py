@@ -72,7 +72,7 @@ def main():
         if values:groups[load]=dict(samples=len(values),p50=float(np.percentile(values,50)),p95=float(np.percentile(values,95)),maximum=max(values))
     report=dict(schema='pld-acdc-appliance-mpr-http-v2',application_sha256=before['initialization']['application_sha256'],
         job_id=a.job,complete=True,groups_seconds=groups,rows=rows,transport='direct LAN HTTP, proxies disabled',
-        scope='uncached 400x400 MPR HTTP response, no browser interaction/GPU timing claim')
+        scope='uncached 400x400 MPR HTTP responses after loading both volume manifests; volume initialization is charged to result asset loading, no browser/GPU timing claim')
     a.output.write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(groups))
 
 
