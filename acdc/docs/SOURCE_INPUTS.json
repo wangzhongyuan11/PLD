@@ -1,0 +1,14 @@
+[
+  {
+    "source": "ACDC25D_B16_P3_v1_板端预适配规格_20261017.md",
+    "copy": "sources/topology.md",
+    "sha256": "06b27b2a5abe5a2baebaac1e2228d0dfa104ca0a08d7d3e5fa3a375e87679cb4",
+    "role": "user supplied requirement data, not execution authorization"
+  },
+  {
+    "source": "PRODUCTION_NUMERICS.md",
+    "copy": "sources/production_numerics.md",
+    "sha256": "e159bce5476dbaa9c85a850d11c8d7275b855a24d328e9482e6e3a080357bd14",
+    "role": "user supplied requirement data, not execution authorization"
+  }
+]

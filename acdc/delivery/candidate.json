@@ -1,0 +1,17 @@
+{
+  "schema": "pld-acdc-delivery-pointer-v1",
+  "version": "acdc_axial_p6_20261021_rc2",
+  "status": "candidate: original P6 functional netlist running after static-input initialization fix; final self-check pending",
+  "acceptance_complete": false,
+  "archive": "out/acdc/delivery/acdc_axial_p6_20261021_rc2.zip",
+  "archive_sha256": "874dff4109c223971a4aa7ec2a3074693c145d7878f28dc18401b2a65a999abe",
+  "manifest_sha256": "920ae8159d572eeb455bc20be83bac48eb633114ad962e4b04258ac6cd4ca8bf",
+  "model_spec_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+  "runtime_manifest_sha256": "1f0bdf8739980ea8e8e2a06ee349b57ed81d041d87515e4e9400cd30b7ae7747",
+  "source_commit": "76d8e9a507f175b7d6e528df40785eb061c81599",
+  "delivery_mode": "github_pull_request",
+  "source_branch": "codex/acdc25d-plan",
+  "archive_is_historical": true,
+  "new_archive_requested": false,
+  "pull_request": "https://github.com/wangzhongyuan11/PLD/pull/12"
+}

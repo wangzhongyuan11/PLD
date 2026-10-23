@@ -1,0 +1,18 @@
+{
+  "A_geometry_sha256": "4040571ba642cbfffeab98f3d659e08263be2ef422978ee51e7b62dacbad2e33",
+  "complete": true,
+  "fresh_inference_count": 0,
+  "label_differences": 0,
+  "max_native_probability_error": 1.7881393432617188e-07,
+  "max_plane_probability_error": 2.384185791015625e-07,
+  "model_spec_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+  "release_manifest_sha256": "f4dadde385b12d1d5639ae1085ccc92d22a61682240ccfc6a4db5a3c020fca11",
+  "schema": "pld-acdc-restoration-audit-v1",
+  "scope": "frozen A Torch softmax/geometry versus B NumPy softmax/Collector using saved integer heads",
+  "slices": 1616,
+  "volumes": 40,
+  "source_report": {
+    "path": "out/acdc/development_restore_A_comparison_20261020.json",
+    "sha256": "d8cf527b0ffa6e8929648fcfc65db6f1d93bd49a7e650be8d45d39c7909615dd"
+  }
+}

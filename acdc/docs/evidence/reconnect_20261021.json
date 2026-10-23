@@ -1,0 +1,28 @@
+{
+  "schema": "pld-acdc-reconnect-check-v1",
+  "host_utc": "2026-10-21T04:36:59.358264+00:00",
+  "release": "/home/xilinx/jupyter_notebooks/pld/releases/acdc_spatial_20261020_p6_rpc_v1",
+  "startup": "all five FPGA service units cleanly stopped after reboot; certified runtime verified before Manager.activate; /health verified backend=pl, synthetic=false and model/runtime SHA",
+  "fresh_frames": 1,
+  "head_mismatches": 0,
+  "input_sha256": "6322290be4249c871c4674bbaaa0c3f51844791495def44d3630fbada5bba7fe",
+  "head_sha256": "42e8d2e03d85a3eb8d35155cbadb6b409e9507f47c04c372c448b5f38fa8c032",
+  "model_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+  "runtime_sha256": "1f0bdf8739980ea8e8e2a06ee349b57ed81d041d87515e4e9400cd30b7ae7747",
+  "slice_seconds": 0.10632238800008054,
+  "pl_seconds": 0.09555312,
+  "remote_roundtrip_seconds": 0.23538359999656677,
+  "raw": {
+    "path": "out/acdc/board_reconnect_final_20261021.json",
+    "sha256": "b7f3f937fca11ce2e7b885fc7b0e002d3d7d9e104a17065d590b7fb1d9990371"
+  },
+  "local_regression": {
+    "pytest_acdc": {
+      "passed": 54,
+      "seconds": 29.54
+    },
+    "viewer_async_test": "passed",
+    "javascript_syntax": "passed"
+  },
+  "scope": "One fresh post-reboot smoke; does not add another stability acceptance. P6 functional netlist self-check still running."
+}

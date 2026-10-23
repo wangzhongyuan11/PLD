@@ -1,0 +1,109 @@
+{
+  "schema": "pld-acdc-optimization-components-v1",
+  "scope": "component simulations and OOC only; full-network hardware and board performance pending",
+  "board_inference_validated": false,
+  "components": {
+    "compute_p4_synth": {
+      "manifest_sha256": "9a15a865eed2772b13f1936292c953ff3b6d90ccdf310a9eb385aa96b90215b9",
+      "schema": "pld-acdc-ooc-synthesis-v1",
+      "board_validated": false,
+      "full_system_timing": false,
+      "expected_dsp_checked_by_tcl": 144,
+      "sources": {
+        "acdc/optimization/rtl/conv_array.sv": "a3cacc2fb9b2b05e4de025fd0252029787cf13840358a2e475063b9beb390dc9",
+        "acdc/optimization/rtl/conv_compute.sv": "26b4f1a640b506e4305f95f1cb318419e14c59c20054c72205c43a6f29ddbed3",
+        "rtl/requant_q24.sv": "0b5c6920bda9c85026355c13ad5fe824cdfe236c6b88f0883121e2057e65d6a8",
+        "acdc/optimization/vivado/synth_compute.tcl": "a257cbfa1877d8ff8ccf2fab49c59b70ee8752738fa155649fbc98a1a7d0b364",
+        "acdc/optimization/synth_guard.py": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139"
+      },
+      "artifacts": {
+        "utilization.rpt": "808f71600e9d3b9daeba8c0262a35755000df7e7342100622d341437d6b4d2bf",
+        "timing.rpt": "d45b6bfbd048cd1e395123e9bbbccf81039269a381d298abc9941969d6caa4bb",
+        "core.dcp": "c03001d1098178a73924379b1536e19a4d2076d8b8abef3193b1dba89e10d170"
+      }
+    },
+    "compute_p6_synth": {
+      "manifest_sha256": "fa41a91bff5c7aee1a3a822c07a23c065a4658be83dc3f2690f2d3ef1f870163",
+      "schema": "pld-acdc-ooc-synthesis-v1",
+      "board_validated": false,
+      "full_system_timing": false,
+      "expected_dsp_checked_by_tcl": 208,
+      "sources": {
+        "acdc/optimization/rtl/conv_array.sv": "a3cacc2fb9b2b05e4de025fd0252029787cf13840358a2e475063b9beb390dc9",
+        "acdc/optimization/rtl/conv_compute.sv": "26b4f1a640b506e4305f95f1cb318419e14c59c20054c72205c43a6f29ddbed3",
+        "rtl/requant_q24.sv": "0b5c6920bda9c85026355c13ad5fe824cdfe236c6b88f0883121e2057e65d6a8",
+        "acdc/optimization/vivado/synth_compute.tcl": "a257cbfa1877d8ff8ccf2fab49c59b70ee8752738fa155649fbc98a1a7d0b364",
+        "acdc/optimization/synth_guard.py": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139"
+      },
+      "artifacts": {
+        "utilization.rpt": "ad6bfe01c279d293d2b32f9085a180b8534a2fbc1e7235bf4b1d34f9d7474ab7",
+        "timing.rpt": "57d86d6bb21f02f7edbaf7008d841b4fed5f2befa6a38fd19392f483f246efeb",
+        "core.dcp": "cbe46e43ef7750724c2918467368679ebbbd9f924864a0b1e6abc7bfa307ccf3"
+      }
+    },
+    "banks_p4_synth": {
+      "manifest_sha256": "5405e4be24209bcd40bea7ceec9848c2492cfeea399c3f7a58c427830c5ca2eb",
+      "schema": "pld-acdc-ooc-synthesis-v1",
+      "board_validated": false,
+      "full_system_timing": false,
+      "expected_dsp_checked_by_tcl": 0,
+      "sources": {
+        "acdc/optimization/rtl/tile_banks.sv": "0b798983b64914a4926aea19b9b4081ab39b95a9df2e0934a892279637a194b4",
+        "acdc/optimization/vivado/synth_banks.tcl": "b6c849119586a43ca5702d8c69b1242fbe6fbfa98bc0576b8de37f90f9edb7e4",
+        "acdc/optimization/synth_guard.py": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139"
+      },
+      "artifacts": {
+        "utilization.rpt": "4f5b2158799d1ed025eb435b75bcaf076c38baf5cd7dccd20d666e4b21e28903",
+        "timing.rpt": "d40341289e5f2f8165119353f1e91df52909bb9bfe7d88f822e2ae2667c8f1c6",
+        "core.dcp": "7f6647f5d76ece1e57e282d181f15666d69f518d7a53442b2309f90216d0249e"
+      }
+    },
+    "banks_p6_synth": {
+      "manifest_sha256": "892cfd7720a506ce183e75fd93ecf2188306434cf33560e20125eaa3cf02d0e7",
+      "schema": "pld-acdc-ooc-synthesis-v1",
+      "board_validated": false,
+      "full_system_timing": false,
+      "expected_dsp_checked_by_tcl": 0,
+      "sources": {
+        "acdc/optimization/rtl/tile_banks.sv": "0b798983b64914a4926aea19b9b4081ab39b95a9df2e0934a892279637a194b4",
+        "acdc/optimization/vivado/synth_banks.tcl": "b6c849119586a43ca5702d8c69b1242fbe6fbfa98bc0576b8de37f90f9edb7e4",
+        "acdc/optimization/synth_guard.py": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139"
+      },
+      "artifacts": {
+        "utilization.rpt": "84f12bcec0b227cb084ce7e8e1ec8586eb03aa649a17f4ece6a8b79f133f50af",
+        "timing.rpt": "bff95d13c8bd15f7010cad0d16adc2006509ddc121cce2e2cb41577d55de3ac5",
+        "core.dcp": "7b165303ef75a3ff85d637a8c45768fc930938c9773ea543d6279ba7a14819a1"
+      }
+    }
+  },
+  "simulations": {
+    "pair_sim": {
+      "sha256": "f1f8b92c098ece8ffa9a4434215718ec204fd4b177d72bc313108bbb2bc16f49",
+      "pass_line": "TB_PASS int8_pair_mul directed=343 random=20000 reset_recovery=2"
+    },
+    "array_p4_sim": {
+      "sha256": "4639404194abf3b41225c51413494b46a3242205056d66f4a3a503e82358a2f2",
+      "pass_line": "TB_PASS conv_array P=4 pre_reset_transactions=157 recovery=2"
+    },
+    "array_p6_sim": {
+      "sha256": "c831cf85be399d0139e6c2f5c753a336e2017faa938c0437515e2d16359364ef",
+      "pass_line": "TB_PASS conv_array P=6 pre_reset_transactions=157 recovery=2"
+    },
+    "compute_p4_sim": {
+      "sha256": "71debb98a30b8820e2cadc8a712428660df07fe73c4d4d151932b1042ae9d599",
+      "pass_line": "TB_PASS conv_compute P=4 input_beats_per_pass=5976 output_beats_per_pass=768 passes=2 reset_inflight=1 cycles=22133 blocked=7534 full=8226"
+    },
+    "compute_p6_sim": {
+      "sha256": "de889b250aa57cd603b9ee0ca2eb95a6234858ffdcc2e63f63b29d0532fabb18",
+      "pass_line": "TB_PASS conv_compute P=6 input_beats_per_pass=5976 output_beats_per_pass=1152 passes=2 reset_inflight=1 cycles=22138 blocked=7537 full=8359"
+    },
+    "banks_p4_sim": {
+      "sha256": "1ac8eac552c895872db3c5d1eb6f9c9b5a5ec5bf8eaf7f3a98d500c566026dff",
+      "pass_line": "TB_PASS tile_banks P=4 reads=520 concurrent=53 blocked_owner=8"
+    },
+    "banks_p6_sim": {
+      "sha256": "7b42082eaba266ce4c967b856f258361820c303895b495da49faf292a21051af",
+      "pass_line": "TB_PASS tile_banks P=6 reads=520 concurrent=85 blocked_owner=8"
+    }
+  }
+}

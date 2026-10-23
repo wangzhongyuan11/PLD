@@ -1,0 +1,78 @@
+{
+  "schema": "pld-acdc-web-pl-pair-audit-v1",
+  "date": "2026-10-20",
+  "run_id": "08cffded91014daf8c01143ad8243e98",
+  "patient": "patient039",
+  "runtime_manifest_sha256": "642181a2877c63628620dcaa76491e4a80f31d4a093fcfc5c50233d0db291671",
+  "model_spec_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+  "source_audit": {
+    "path": "out/acdc/manual_web_pair_audit_20261020.json",
+    "sha256": "81ebbfa79d9f7837770f6fda3c53c28410275469e6306430807fa4149e5711d8"
+  },
+  "fresh_physical_pl_heads": 82,
+  "all_heads_equal_independent_CPU": true,
+  "statistics_equal_CPU": true,
+  "completion": {
+    "end_to_end_seconds": 24.4127267000149,
+    "job_to_zip_seconds": 24.359872000000905,
+    "timing_scope": "server upload body read start to ZIP ready; browser rendering/download reported separately",
+    "upload_seconds": 0.05285470001399517,
+    "zip_sha256": "1585e2b3082b25cff2229f08a5db2afba5a773b80cfe3760c4d416d56afe489d"
+  },
+  "download_zip_sha256": "1585e2b3082b25cff2229f08a5db2afba5a773b80cfe3760c4d416d56afe489d",
+  "zip_CRC_passed": true,
+  "performance": {
+    "slice_median_seconds": 0.20765099998970982,
+    "slice_p95_seconds": 0.2520292449989938,
+    "measured_slice_throughput_fps": 4.155659637707541,
+    "fresh_inference_wall_seconds": 19.732126100017922
+  },
+  "browser_checked": [
+    "MPR gray and label overlay",
+    "ED ES switching",
+    "3D phase metadata",
+    "LV RV MYO volumes and LV RV EF",
+    "actual PNG download from PL ES surface"
+  ],
+  "limitations": [
+    "one patient pair only; full 40-volume PL validation pending",
+    "remote slice P95 exceeds 250 ms",
+    "native runtime 1000-frame acceptance pending"
+  ],
+  "artifacts": {
+    "status.json": {
+      "path": "out/acdc/manual_pl_jobs_20261020/08cffded91014daf8c01143ad8243e98/status.json",
+      "sha256": "c72018a370211ed61a0f6e1f6c175d478415472f72fcffdb08a683206406631e"
+    },
+    "performance.json": {
+      "path": "out/acdc/manual_pl_jobs_20261020/08cffded91014daf8c01143ad8243e98/performance.json",
+      "sha256": "1ee5f831e68f90ba55726d59c0000bf6afc803c6b0a5996576f344eff2c13d77"
+    },
+    "statistics.json": {
+      "path": "out/acdc/manual_pl_jobs_20261020/08cffded91014daf8c01143ad8243e98/statistics.json",
+      "sha256": "e68af004fafbc5d9b3984d551808eb541d6aee7ccd734e9e4a7477acda4959d2"
+    },
+    "completion.json": {
+      "path": "out/acdc/manual_pl_jobs_20261020/08cffded91014daf8c01143ad8243e98/completion.json",
+      "sha256": "f7edd8a17617ea27024653f404d3d96db49cd71638af4ef7cbe3866c94408ef7"
+    },
+    "manifest.json": {
+      "path": "out/acdc/manual_pl_jobs_20261020/08cffded91014daf8c01143ad8243e98/manifest.json",
+      "sha256": "1b1293cc5edfd96ae4c939a8146cfa3d86d2b5b984fef0a3e15da19b257f577f"
+    },
+    "result.zip": {
+      "path": "out/acdc/manual_pl_jobs_20261020/08cffded91014daf8c01143ad8243e98/result.zip",
+      "sha256": "1585e2b3082b25cff2229f08a5db2afba5a773b80cfe3760c4d416d56afe489d"
+    }
+  },
+  "browser_ES_PNG": {
+    "path": "out/acdc/manual_pl_jobs_20261020/08cffded91014daf8c01143ad8243e98/ES-3D-browser.png",
+    "sha256": "0162a8e7997d68775fdfb44be1614333927f4bc741cb6db0d32784c964ae698e"
+  },
+  "local_tests": {
+    "command": "python -m pytest acdc/tests -q",
+    "passed": 49,
+    "seconds": 29.15,
+    "viewer_node_test": "passed"
+  }
+}

@@ -1,0 +1,273 @@
+{
+  "schema": "pld-acdc-stream-dma-components-v1",
+  "scope": "component OOC and behavioral DMA simulation; not vendor-IP/full-network/board acceptance",
+  "board_inference_validated": false,
+  "python_regression": {
+    "passed": 31
+  },
+  "sources": {
+    "acdc/optimization/board_inventory.py": "1d58b1d5c3ef8baa546433d3f750c9099ed31505b271fb57ccfb064de01cabe2",
+    "acdc/optimization/gen_compute_vectors.py": "1e493d8fa7021e42dff3e8e2778a0f5cb955fd1d284a8f417c107bdbe2bf1235",
+    "acdc/optimization/gen_input_vectors.py": "ddce1351293b50e8169e10058cb737560310eaef2eba56566e84b01c7e567e7f",
+    "acdc/optimization/gen_stream_vectors.py": "21cfba2f23daea14eb76b9ea47e219b8690a723707a955803cffa3ca98cd1541",
+    "acdc/optimization/gen_tile_vectors.py": "bdba2ad43545acf3bc0ea8fe92437de0dd3672162e37f7ced6e9b228243253c4",
+    "acdc/optimization/layout.py": "bd4e1742e546dc2ba5126ae9e5c6f7927d246b50421967e46066c2f16ea491bc",
+    "acdc/optimization/planner.py": "e8e6926cf989f4a667aaeb0b23419aa5662a55d4bd530e54bce71aaf2aaafe15",
+    "acdc/optimization/run_arbiter_sim.sh": "fa52caa4fa54a69dfe5b94522984e7df8d63719fdda26cd5e1c8e79adfb35158",
+    "acdc/optimization/run_array_sim.sh": "9970cb18ef899bf70b8c1dfa35d2352f7c9b946dfbe8aa5a05a5a081c5d67804",
+    "acdc/optimization/run_banks_sim.sh": "5b9e1a368f14502482c2a6421b1603f7be650e8e626e7515d2c625b0cc9021a3",
+    "acdc/optimization/run_compute_sim.sh": "c7c4767c8ec2bb254ba3e7e1038ff9f7466adeb103158710e974352257339587",
+    "acdc/optimization/run_dma_sim.sh": "a1277bc2ef7ddbaf022785e281a0b7522ce4a78673c25b6949796d54855a3779",
+    "acdc/optimization/run_input_sim.sh": "ef6f8829abbcd71f69f41e30d29814612a0a18c72818912c1cb0251b5f310892",
+    "acdc/optimization/run_pair_sim.sh": "d7380db9ee28562edb71e80c13c4db5d3c0cb1a07a3a7211670cacbe243998e4",
+    "acdc/optimization/run_parameter_sim.sh": "cc901bf2a60917ba026b24b27cbfb204d58ca2be15178c4d1d32e4d6e1d02cd5",
+    "acdc/optimization/run_stream_sim.sh": "2453ce2505960ddaae0fcf539ce2e2e53205b6c50a6ecfbeabaff4d2b667f90c",
+    "acdc/optimization/run_tile_sim.sh": "0e1a1d949d7c0c0d83c7a74b41e7f75e1ca4dfab88f82993f8141bebd9da4e3f",
+    "acdc/optimization/run_writer_sim.sh": "3d577c2df609573db8967bca89627c76cb833aabd80686c378dbfee09a5a9b4c",
+    "acdc/optimization/synth_guard.py": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139",
+    "acdc/optimization/__init__.py": "a1f9ff13f628210077c9d036681c2af8558f7fc3c7ed728275133eb756892982",
+    "acdc/optimization/rtl/conv_array.sv": "a3cacc2fb9b2b05e4de025fd0252029787cf13840358a2e475063b9beb390dc9",
+    "acdc/optimization/rtl/conv_compute.sv": "26b4f1a640b506e4305f95f1cb318419e14c59c20054c72205c43a6f29ddbed3",
+    "acdc/optimization/rtl/dma_read_arbiter.sv": "25d950727401a19d7123c23e51245058381a66f9ef1da07dc592f3dc26834db3",
+    "acdc/optimization/rtl/dma_transfer.sv": "f270798f9c26d94cacdf470b418b0967437a64c01171d2a492f81541f9e735ba",
+    "acdc/optimization/rtl/input_loader.sv": "eadf4b6a64880bb9272ece62095de8f944954d75293b16fee944189d547ca886",
+    "acdc/optimization/rtl/input_transform.sv": "a0c1120ca48eb28637b75a91c4fd22e90848febdf5bb0e74c9200f7278101a2a",
+    "acdc/optimization/rtl/int8_pair_mul.sv": "4496158989c531aa68a349c615ce6987c69708eb3a4d0c248c15a722bb61d1cf",
+    "acdc/optimization/rtl/lut_loader.sv": "3cc98bf907967a1280960c377e09f3902907a85a7834f0ebf9042a416df59337",
+    "acdc/optimization/rtl/parameter_loader.sv": "ae850aa6e4c742c15667e555a41f4e437e74e9dad0159b7603caaff7e62db26a",
+    "acdc/optimization/rtl/pool_stream.sv": "8e993ce2583a4422cb225503f49408d0ab8a294911df97ad3117c4561ab623af",
+    "acdc/optimization/rtl/stream_fork.sv": "20e08ca204d4e1f1ac1ef3a02fafb1648f3b89253b308853161aa40ae2b52548",
+    "acdc/optimization/rtl/tile_banks.sv": "0b798983b64914a4926aea19b9b4081ab39b95a9df2e0934a892279637a194b4",
+    "acdc/optimization/rtl/tile_conv.sv": "71372c9d86313873ac98fcdd796443fa2b0f59f4200c75a1098ccc71b80a4621",
+    "acdc/optimization/rtl/tile_writer.sv": "b4c06d1a346be787b06242d0cb9a71422d3b2e0a6e58efbd2f73cc126858d4b8",
+    "acdc/optimization/sim/datamover_sink.sv": "0d97c2cfad6db09e3e19442c9621a7c93bf775079ca3ec290b4db4700ef336e4",
+    "acdc/optimization/sim/datamover_source.sv": "5d395b96c116537d24c42e70f8b18616a29075cb062a7ec2132c2826cb4fe274",
+    "acdc/optimization/sim/tb_conv_array.sv": "48da8ac97ec0cd4eadc84a9ac270abe5ac56160fa8accae599759c18e3108f27",
+    "acdc/optimization/sim/tb_conv_compute.sv": "e3bfc0a464fe3792c6cca2c99a00ecdabcc863fdf95d044187858a302a5bf558",
+    "acdc/optimization/sim/tb_dma_read_arbiter.sv": "49aa3bd421cbb997350c9529218055ce6e7cce3a8578bbc9166fa6eb5fff89e9",
+    "acdc/optimization/sim/tb_dma_transfer.sv": "01d940a52e567e771f6b16d415df8ac98c82a8029f51b7a356eb3a1c9ccd15e0",
+    "acdc/optimization/sim/tb_input_loader.sv": "0a515dceb945cd5eb607008c86d16b68a716b5c8d211a4b01adcc9f5362f986f",
+    "acdc/optimization/sim/tb_input_transform.sv": "4fe61bff67496a186771243b0c2103a8029e52d86c88a2f9a622263bba15ee53",
+    "acdc/optimization/sim/tb_int8_pair_mul.sv": "345629f774955b3554324895a1400266787d2a0e009840befb9d3eba801be2f3",
+    "acdc/optimization/sim/tb_pool_stream.sv": "25520c6cb6ae6d87d235c6275a56c085cd5ae72e2089263fccec99474ca09f0a",
+    "acdc/optimization/sim/tb_tile_banks.sv": "e690735886e77bc03f21927b23ee08be9d0cbb567405d2416ea503dfea7daabe",
+    "acdc/optimization/sim/tb_tile_conv.sv": "f6a8ac397dbd5298b24e66455c4df901a4d3f4f32e2a880adafcd38652cee7cf",
+    "acdc/optimization/vivado/probe_datamover.tcl": "6a932a47c862ec129065f6335cd98eead2b28f0ea2f212cae165546f8ed061c4",
+    "acdc/optimization/vivado/synth_array.tcl": "b0a0f261e6a42d5f42897a0cf05909adb1b6e33b1ff213a57f9d107df08c2def",
+    "acdc/optimization/vivado/synth_banks.tcl": "b6c849119586a43ca5702d8c69b1242fbe6fbfa98bc0576b8de37f90f9edb7e4",
+    "acdc/optimization/vivado/synth_compute.tcl": "a257cbfa1877d8ff8ccf2fab49c59b70ee8752738fa155649fbc98a1a7d0b364",
+    "acdc/optimization/vivado/synth_loaders.tcl": "147a11ad78a09042f9611100da0946622b49b361deaa9334895cb15dfe62bba7",
+    "acdc/optimization/vivado/synth_pair.tcl": "8ec419d2c165ceabe84933597b543a41773ce72d18fb2f1b41021706228ef492",
+    "acdc/optimization/vivado/synth_stream.tcl": "9cd63b9b28caf70470c1379336855ca24b118e9fb3db26937a9cd7964751af17",
+    "acdc/optimization/vivado/synth_tile.tcl": "1964fde06b72041ee4562d53a2af2eaa8cd97e69808a9a2071b088c24fc2fd63",
+    "acdc/optimization/vivado/synth_writer.tcl": "013cfe67d7962a31be603e0ba2eda3e762dfc546c12fa97963a8e764f5137160"
+  },
+  "components": {
+    "pool_stream_synth": {
+      "manifest_sha256": "6f5467c825b685d1290f339f7b6931c4b6aad448ec47e434946be5c9d9f47bc6",
+      "schema": "pld-acdc-ooc-synthesis-v1",
+      "board_validated": false,
+      "full_system_timing": false,
+      "expected_dsp_checked_by_tcl": 0,
+      "sources": {
+        "acdc/optimization/rtl/pool_stream.sv": "8e993ce2583a4422cb225503f49408d0ab8a294911df97ad3117c4561ab623af",
+        "acdc/optimization/vivado/synth_stream.tcl": "9cd63b9b28caf70470c1379336855ca24b118e9fb3db26937a9cd7964751af17",
+        "acdc/optimization/synth_guard.py": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139"
+      },
+      "artifacts": {
+        "utilization.rpt": "7f330fad5da14acb9c751d9a017d0c45fbb6ed834c05cbcc7601565c6c0b1d10",
+        "timing.rpt": "d75da0f4c28b1364cf1a283104e7e16548aa766fe7e665d6bf8316f97ed2bfc9",
+        "core.dcp": "8a3a3967d04db9be31a074716764b76fb9a86c020682c1cc558da45f83018b22"
+      }
+    },
+    "input_transform_synth": {
+      "manifest_sha256": "a8e788346925fe3662e681c8640c849b2237e10cf6d5ff27bbc72a1e7fd00343",
+      "schema": "pld-acdc-ooc-synthesis-v1",
+      "board_validated": false,
+      "full_system_timing": false,
+      "expected_dsp_checked_by_tcl": 0,
+      "sources": {
+        "acdc/optimization/rtl/input_transform.sv": "a0c1120ca48eb28637b75a91c4fd22e90848febdf5bb0e74c9200f7278101a2a",
+        "acdc/optimization/vivado/synth_stream.tcl": "9cd63b9b28caf70470c1379336855ca24b118e9fb3db26937a9cd7964751af17",
+        "acdc/optimization/synth_guard.py": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139"
+      },
+      "artifacts": {
+        "utilization.rpt": "8e891a66163a63e55467890f22d57f13a6e26fda49f80b96f0f5b4502c7d66a4",
+        "timing.rpt": "f6ec188aabbf645b89c3cd487110dfa05a1259d02aa7f0de7bb43bb88b00636d",
+        "core.dcp": "f21bd96e64c5840f84a11b569956801b04585f6157286c80d38cfdbd7534248b"
+      }
+    },
+    "writer_p4_synth": {
+      "manifest_sha256": "fdd38131e4dfa9a0f98dec97f1481ec4a69e838cb3ce7a8d70f61c43bad45ac4",
+      "schema": "pld-acdc-ooc-synthesis-v1",
+      "board_validated": false,
+      "full_system_timing": false,
+      "expected_dsp_checked_by_tcl": 0,
+      "sources": {
+        "acdc/optimization/rtl/tile_writer.sv": "b4c06d1a346be787b06242d0cb9a71422d3b2e0a6e58efbd2f73cc126858d4b8",
+        "acdc/optimization/rtl/stream_fork.sv": "20e08ca204d4e1f1ac1ef3a02fafb1648f3b89253b308853161aa40ae2b52548",
+        "acdc/optimization/rtl/pool_stream.sv": "8e993ce2583a4422cb225503f49408d0ab8a294911df97ad3117c4561ab623af",
+        "acdc/optimization/rtl/dma_transfer.sv": "f270798f9c26d94cacdf470b418b0967437a64c01171d2a492f81541f9e735ba",
+        "acdc/optimization/vivado/synth_writer.tcl": "013cfe67d7962a31be603e0ba2eda3e762dfc546c12fa97963a8e764f5137160",
+        "acdc/optimization/synth_guard.py": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139"
+      },
+      "artifacts": {
+        "utilization.rpt": "d3ca4610deefc1d8034c768a6fef4647d38d5f81f1351bb2ccb1c7a57585ebcc",
+        "timing.rpt": "b49f6a6eba2c06d93741934de6b9b5d094409c24b8e7563428d8f1591dde9d28",
+        "core.dcp": "a0771e6194547ed69df654612fec1055295c6ab21d2f9a8700bf17d5cb982e32"
+      }
+    },
+    "parameter_loader_p4_synth": {
+      "manifest_sha256": "593bf2f9e1d16e36bef8e68aeb984f3931c27cd044e1319b8488ec42e65f1360",
+      "schema": "pld-acdc-ooc-synthesis-v1",
+      "board_validated": false,
+      "full_system_timing": false,
+      "expected_dsp_checked_by_tcl": 0,
+      "sources": {
+        "acdc/optimization/rtl/dma_transfer.sv": "f270798f9c26d94cacdf470b418b0967437a64c01171d2a492f81541f9e735ba",
+        "acdc/optimization/rtl/parameter_loader.sv": "ae850aa6e4c742c15667e555a41f4e437e74e9dad0159b7603caaff7e62db26a",
+        "acdc/optimization/vivado/synth_loaders.tcl": "147a11ad78a09042f9611100da0946622b49b361deaa9334895cb15dfe62bba7",
+        "acdc/optimization/synth_guard.py": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139"
+      },
+      "artifacts": {
+        "utilization.rpt": "86d03bd44d6a29cc88684e317e1ae281206fb6ba0c0f070e589e83978e7e320c",
+        "timing.rpt": "0016ef9992375e2cd72b51ab16b2da6774cdcf328f95e04f67995029464d254a",
+        "core.dcp": "3bca0e6b3f3e350471e08bd5603cc7cb3e6d49c653f956fe67244cfacd180751"
+      }
+    },
+    "input_loader_p4_synth": {
+      "manifest_sha256": "8fd6f55ef6705dbfae2c5dd9edc4f7b15dddcc5556b93c52e2537764ed249d2f",
+      "schema": "pld-acdc-ooc-synthesis-v1",
+      "board_validated": false,
+      "full_system_timing": false,
+      "expected_dsp_checked_by_tcl": 0,
+      "sources": {
+        "acdc/optimization/rtl/dma_transfer.sv": "f270798f9c26d94cacdf470b418b0967437a64c01171d2a492f81541f9e735ba",
+        "acdc/optimization/rtl/input_loader.sv": "eadf4b6a64880bb9272ece62095de8f944954d75293b16fee944189d547ca886",
+        "acdc/optimization/rtl/input_transform.sv": "a0c1120ca48eb28637b75a91c4fd22e90848febdf5bb0e74c9200f7278101a2a",
+        "acdc/optimization/vivado/synth_loaders.tcl": "147a11ad78a09042f9611100da0946622b49b361deaa9334895cb15dfe62bba7",
+        "acdc/optimization/synth_guard.py": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139"
+      },
+      "artifacts": {
+        "utilization.rpt": "04b615701676baab22efdc42444d90bc148bc0d05bf865205122fb1427a0bfa9",
+        "timing.rpt": "e19c5cd45a013470a568114e97308633dc6629b84f192c690011252b6ddbb1cd",
+        "core.dcp": "a90a4528e2afcdbf8b4874f3bec07b13a82520c371ae6bfa88e4b04a36e2dfdf"
+      }
+    },
+    "parameter_loader_p6_synth": {
+      "manifest_sha256": "14f7239aab180b0eeb2a835cbc1905a57105f6a33d0523a81caee66c9ada42b6",
+      "schema": "pld-acdc-ooc-synthesis-v1",
+      "board_validated": false,
+      "full_system_timing": false,
+      "expected_dsp_checked_by_tcl": 0,
+      "sources": {
+        "acdc/optimization/rtl/dma_transfer.sv": "f270798f9c26d94cacdf470b418b0967437a64c01171d2a492f81541f9e735ba",
+        "acdc/optimization/rtl/parameter_loader.sv": "ae850aa6e4c742c15667e555a41f4e437e74e9dad0159b7603caaff7e62db26a",
+        "acdc/optimization/vivado/synth_loaders.tcl": "147a11ad78a09042f9611100da0946622b49b361deaa9334895cb15dfe62bba7",
+        "acdc/optimization/synth_guard.py": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139"
+      },
+      "artifacts": {
+        "utilization.rpt": "49a2162eea18295495c4a21e3fa4299e2b3fa9e752c3b06fe4ce5fbcfb8fa835",
+        "timing.rpt": "7c8676fd0a08223dd6c59441eacd18cbe29d6f5a90f1bc2a67e93491394e86e7",
+        "core.dcp": "da22aee24fc47f54769d6d74e099ebffe2bc4d29440ead9181c4add031f9de07"
+      }
+    },
+    "input_loader_p6_synth": {
+      "manifest_sha256": "45e3be122b790b4556f9a3f369becd44444e70a52108d5819cf49737e6f3daef",
+      "schema": "pld-acdc-ooc-synthesis-v1",
+      "board_validated": false,
+      "full_system_timing": false,
+      "expected_dsp_checked_by_tcl": 0,
+      "sources": {
+        "acdc/optimization/rtl/dma_transfer.sv": "f270798f9c26d94cacdf470b418b0967437a64c01171d2a492f81541f9e735ba",
+        "acdc/optimization/rtl/input_loader.sv": "eadf4b6a64880bb9272ece62095de8f944954d75293b16fee944189d547ca886",
+        "acdc/optimization/rtl/input_transform.sv": "a0c1120ca48eb28637b75a91c4fd22e90848febdf5bb0e74c9200f7278101a2a",
+        "acdc/optimization/vivado/synth_loaders.tcl": "147a11ad78a09042f9611100da0946622b49b361deaa9334895cb15dfe62bba7",
+        "acdc/optimization/synth_guard.py": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139"
+      },
+      "artifacts": {
+        "utilization.rpt": "f0d3cfa36050ff2157d814c8b4160bb9204ec298c33f904338fe744e07d439df",
+        "timing.rpt": "b6c3b2ca8a1fa60e338f260c3475f582b7a3a3d6bdaa51d92808fd5652d5848f",
+        "core.dcp": "2c4498cba7d11d82877e8950dbe85c67085c6f943ee94f8151abc53169869aed"
+      }
+    }
+  },
+  "simulations": {
+    "pool": {
+      "path": "streams_sim/pool_stream.log",
+      "sha256": "211816b5deea61e2ba59c2e27055bf777ffc8d6bea1783322b71a999610ea749",
+      "pass_lines": [
+        "TB_PASS pool_stream cases=7 raw=3656 pooled=912 blocked=3788"
+      ]
+    },
+    "transform": {
+      "path": "streams_sim/input_transform.log",
+      "sha256": "97e5260cca22bdecc59b569f28c77c28b733b2e0bf06412352dd4e3b3b9242c6",
+      "pass_lines": [
+        "TB_PASS input_transform words=2048 LUTs=512 raw_lookup_mask_padding_invalid_reset=PASS"
+      ]
+    },
+    "dma": {
+      "path": "dma_sim/simulation.log",
+      "sha256": "506022cb3c509825ed4785ad6c169b1ec2f6b81d22e10db51524ae2e24e25c11",
+      "pass_lines": [
+        "TB_PASS dma_transfer success=34 expected_faults=12 commands=41"
+      ]
+    },
+    "writer4": {
+      "path": "writer_p4_sim/simulation.log",
+      "sha256": "253bba4ddbb3cc8d55f1c13af16552355229b2de574817fce841fc7acddd9a15",
+      "pass_lines": [
+        "TB_PASS tile_writer P=4 addressed_words=13374 conv_pool_gap_stride_padding=PASS",
+        "TB_PASS tile_conv P=4 dense_tiles=23 output_beats=22032 expected_errors=2 cycles=138985"
+      ]
+    },
+    "writer6": {
+      "path": "writer_p6_sim/simulation.log",
+      "sha256": "31c01b63d51bbca3cbe50061918929d6efc13683bca68a0f3d52d420e46551b3",
+      "pass_lines": [
+        "TB_PASS tile_writer P=6 addressed_words=13374 conv_pool_gap_stride_padding=PASS",
+        "TB_PASS tile_conv P=6 dense_tiles=23 output_beats=23052 expected_errors=2 cycles=126480"
+      ]
+    },
+    "parameters4": {
+      "path": "parameter_p4_sim/simulation.log",
+      "sha256": "94a65d50b2fe703366cca919743a3976a51425bf5277489f283249b4814bb104",
+      "pass_lines": [
+        "TB_PASS tile_writer P=4 addressed_words=13374 conv_pool_gap_stride_padding=PASS",
+        "TB_PASS tile_parameter_system P=4 DMA_parameters_conv_pool_write=PASS",
+        "TB_PASS tile_conv P=4 dense_tiles=23 output_beats=22032 expected_errors=2 cycles=156144"
+      ]
+    },
+    "parameters6": {
+      "path": "parameter_p6_sim/simulation.log",
+      "sha256": "6469155714aae566b6eddd036c460fb585aaa6e624920bc752d97dcbca99c38b",
+      "pass_lines": [
+        "TB_PASS tile_writer P=6 addressed_words=13374 conv_pool_gap_stride_padding=PASS",
+        "TB_PASS tile_parameter_system P=6 DMA_parameters_conv_pool_write=PASS",
+        "TB_PASS tile_conv P=6 dense_tiles=23 output_beats=23052 expected_errors=2 cycles=143602"
+      ]
+    },
+    "input4": {
+      "path": "input_p4_sim/simulation.log",
+      "sha256": "de0594d588e823986fb7990af13a17710f292d4efa9a4ce5092cf94690409bf1",
+      "pass_lines": [
+        "TB_PASS input_loader P=4 cases=8 bank_writes=12845 DMA_LUT=512 normal_CAT_halo_nearest_cache=PASS"
+      ]
+    },
+    "input6": {
+      "path": "input_p6_sim/simulation.log",
+      "sha256": "9e3c61156003dae656da58aad206c908fe1dba171a833c0ca994410d8becb9b4",
+      "pass_lines": [
+        "TB_PASS input_loader P=6 cases=8 bank_writes=12845 DMA_LUT=512 normal_CAT_halo_nearest_cache=PASS"
+      ]
+    },
+    "arbiter": {
+      "path": "arbiter_sim/simulation.log",
+      "sha256": "29bfd9d818fe849dd714e66c09b52b77593a45343d8c191167470bddcc890bf8",
+      "pass_lines": [
+        "TB_PASS dma_read_arbiter clients=3 packets=30 supplied_words=267 command_stability_fair_routing=PASS"
+      ]
+    }
+  }
+}

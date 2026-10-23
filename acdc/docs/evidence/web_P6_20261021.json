@@ -1,0 +1,33 @@
+{
+  "schema": "pld-acdc-web-PL-p6-audit-v1",
+  "run_id": "f9f99b598c3f47769ca3c16218f8d912",
+  "fresh_PL_heads": 82,
+  "all_heads_equal_CPU": true,
+  "statistics_equal_CPU": true,
+  "runtime_manifest_sha256": "1f0bdf8739980ea8e8e2a06ee349b57ed81d041d87515e4e9400cd30b7ae7747",
+  "completion": {
+    "end_to_end_seconds": 20.30654720001621,
+    "job_to_zip_seconds": 20.276760600012494,
+    "timing_scope": "server upload body read start to ZIP ready; browser rendering/download reported separately",
+    "upload_seconds": 0.029786600003717467,
+    "zip_sha256": "cb6b2ec40cc14afbd00bd7348214b828ee83c8af2840145fb980b66ec3532665"
+  },
+  "remote_p95_seconds": 0.22766839499672642,
+  "browser_ZIP_download_sha256": "cb6b2ec40cc14afbd00bd7348214b828ee83c8af2840145fb980b66ec3532665",
+  "browser_ZIP_CRC_passed": true,
+  "browser_PNG": {
+    "path": "out/acdc/manual_pl_jobs_20261020/f9f99b598c3f47769ca3c16218f8d912/ES-3D-browser.png",
+    "sha256": "0162a8e7997d68775fdfb44be1614333927f4bc741cb6db0d32784c964ae698e"
+  },
+  "browser_checks": [
+    "MPR gray/labels rendered",
+    "ED/ES switched",
+    "3D rendered",
+    "volumes and EF displayed",
+    "no console errors/warnings"
+  ],
+  "source_report": {
+    "path": "out/acdc/manual_web_pair_audit_20261021_p6.json",
+    "sha256": "9cd71b3f4f5fdad7e5d3e914a63921650c760cf9df4239b8ae7740ba323d5470"
+  }
+}

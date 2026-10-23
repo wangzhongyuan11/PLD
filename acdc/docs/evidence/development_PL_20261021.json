@@ -1,0 +1,186 @@
+{
+  "schema": "pld-acdc-development-PL-audit-v1",
+  "patients": 20,
+  "volumes": 40,
+  "fresh_PL_heads": 1616,
+  "runtime_manifest_sha256": "1f0bdf8739980ea8e8e2a06ee349b57ed81d041d87515e4e9400cd30b7ae7747",
+  "all_head_hashes_independently_checked": true,
+  "native_label_differences": 0,
+  "native_affines_equal": true,
+  "statistics_equal_CPU": true,
+  "A_report_max_abs_dice_delta": 0,
+  "A_report_max_abs_volume_delta_mL": 0.0,
+  "macro_dice": 0.8823042897748437,
+  "result_ZIPs_CRC_and_SHA_passed": 20,
+  "remote_slice_p50_seconds": 0.17474839999340475,
+  "remote_slice_p95_seconds": 0.21943939999619033,
+  "remote_slice_max_seconds": 0.24767849998897873,
+  "fresh_window_sustained_fps": 5.164174582533576,
+  "rows": [
+    {
+      "patient": "patient001",
+      "slices": 92,
+      "job_to_zip_seconds": 21.859037999995053,
+      "fresh_window_seconds": 18.553062599996338,
+      "remote_slice_p95_seconds": 0.21884639500785852,
+      "manifest_sha256": "33a83fc24f132cea8f67de6ea268e17d172b2b09ae60489d0e4f0963b175f1a8"
+    },
+    {
+      "patient": "patient006",
+      "slices": 102,
+      "job_to_zip_seconds": 20.836228300002404,
+      "fresh_window_seconds": 19.807229600002756,
+      "remote_slice_p95_seconds": 0.22207352500845443,
+      "manifest_sha256": "e6dc598f2448ead4575cd12d639a98d90607a8381077c6096aecfd7e5ef92099"
+    },
+    {
+      "patient": "patient009",
+      "slices": 92,
+      "job_to_zip_seconds": 18.669865300005767,
+      "fresh_window_seconds": 17.679226100008236,
+      "remote_slice_p95_seconds": 0.2154138200057787,
+      "manifest_sha256": "7ce1a257608d2d8c3bba15dc411b57034101559dd1f6911c9c80522eba156971"
+    },
+    {
+      "patient": "patient015",
+      "slices": 82,
+      "job_to_zip_seconds": 16.573054199980106,
+      "fresh_window_seconds": 15.694608099991456,
+      "remote_slice_p95_seconds": 0.21315577499335642,
+      "manifest_sha256": "902231933bf578f4fee1061b993936b1a5624a458e9a7adbf0bdf12263b42555"
+    },
+    {
+      "patient": "patient026",
+      "slices": 92,
+      "job_to_zip_seconds": 18.52746599999955,
+      "fresh_window_seconds": 17.605705099995248,
+      "remote_slice_p95_seconds": 0.21449028499191627,
+      "manifest_sha256": "a80b2ec399f13053107e157866ceaa30fd724982a0f9f83ace28ddaf19bf41e2"
+    },
+    {
+      "patient": "patient029",
+      "slices": 102,
+      "job_to_zip_seconds": 20.359106600022642,
+      "fresh_window_seconds": 19.491029500000877,
+      "remote_slice_p95_seconds": 0.22750586499751077,
+      "manifest_sha256": "34fed3fff4133d17d5b7d76d594fc788133fb4238ffea1e1734af3ce59b1cb32"
+    },
+    {
+      "patient": "patient039",
+      "slices": 82,
+      "job_to_zip_seconds": 16.740979599999264,
+      "fresh_window_seconds": 15.877335900004255,
+      "remote_slice_p95_seconds": 0.2211999350009137,
+      "manifest_sha256": "bf6078467264cbad67c631dc1807237416c7c1157572091e8f88ab1bba81b076"
+    },
+    {
+      "patient": "patient040",
+      "slices": 92,
+      "job_to_zip_seconds": 18.77850070002023,
+      "fresh_window_seconds": 17.8485204000026,
+      "remote_slice_p95_seconds": 0.21759950500563718,
+      "manifest_sha256": "b935428655981fdc5540df45b992bab5eff456ecc319ed7c73e2238347a984ff"
+    },
+    {
+      "patient": "patient051",
+      "slices": 92,
+      "job_to_zip_seconds": 18.606384300015634,
+      "fresh_window_seconds": 17.615373699984048,
+      "remote_slice_p95_seconds": 0.17942156499047995,
+      "manifest_sha256": "1f292910cbd68d140fc16058cf92f5824fb8abeb66bd162af4371afef40132ab"
+    },
+    {
+      "patient": "patient053",
+      "slices": 62,
+      "job_to_zip_seconds": 12.780170400015777,
+      "fresh_window_seconds": 12.020441900007427,
+      "remote_slice_p95_seconds": 0.22575317498703948,
+      "manifest_sha256": "501947bb1b2e932f4b33d6d20188cf79da29975174e09950331fcb2734e03083"
+    },
+    {
+      "patient": "patient056",
+      "slices": 82,
+      "job_to_zip_seconds": 16.531939400010742,
+      "fresh_window_seconds": 15.618781400000444,
+      "remote_slice_p95_seconds": 0.18890524500893663,
+      "manifest_sha256": "d4c25d6140cacdb14ca58c3708f432f1fed82747f0169d25ab150a624caae414"
+    },
+    {
+      "patient": "patient057",
+      "slices": 72,
+      "job_to_zip_seconds": 16.24964990001172,
+      "fresh_window_seconds": 14.584197999996832,
+      "remote_slice_p95_seconds": 0.2250519099907251,
+      "manifest_sha256": "65ebd6bbcec2b36b63d13f9b72752ed778a464c0420cf3380a383127bd169f63"
+    },
+    {
+      "patient": "patient072",
+      "slices": 72,
+      "job_to_zip_seconds": 14.661959399993066,
+      "fresh_window_seconds": 13.827034999994794,
+      "remote_slice_p95_seconds": 0.21913528999866685,
+      "manifest_sha256": "0c9babd8e10c19ce4ff9a8ce5a4e7ad5ae6c250cf960990bf9ca2252b7de75ba"
+    },
+    {
+      "patient": "patient073",
+      "slices": 62,
+      "job_to_zip_seconds": 12.832377999991877,
+      "fresh_window_seconds": 12.075800600025104,
+      "remote_slice_p95_seconds": 0.2283621900118305,
+      "manifest_sha256": "8990bfb1934bedf61bcbccafe4c0442cd651409e0dc1253530e3950b024152c5"
+    },
+    {
+      "patient": "patient074",
+      "slices": 72,
+      "job_to_zip_seconds": 14.796740499994485,
+      "fresh_window_seconds": 13.938740699988557,
+      "remote_slice_p95_seconds": 0.22007763499714203,
+      "manifest_sha256": "92cf661219f63451dbd338afa6b3bea2f99eadc56eaccd193c386cd7a3de0687"
+    },
+    {
+      "patient": "patient079",
+      "slices": 82,
+      "job_to_zip_seconds": 16.653945199999725,
+      "fresh_window_seconds": 15.80922239998472,
+      "remote_slice_p95_seconds": 0.22312189498916268,
+      "manifest_sha256": "eadff9dd25924def7574e3e781ecfc2e97e0d5ecace3a555a06d5f529cdc6ed3"
+    },
+    {
+      "patient": "patient083",
+      "slices": 52,
+      "job_to_zip_seconds": 10.726443699997617,
+      "fresh_window_seconds": 9.956519900006242,
+      "remote_slice_p95_seconds": 0.1793579750097706,
+      "manifest_sha256": "49f4e405f45216573add9788541e632317bc57b6589788b47b36fc383f0395ff"
+    },
+    {
+      "patient": "patient085",
+      "slices": 72,
+      "job_to_zip_seconds": 15.019339699996635,
+      "fresh_window_seconds": 13.875474100001156,
+      "remote_slice_p95_seconds": 0.20190347999741795,
+      "manifest_sha256": "c6c21daeaad120017d4195b437e5e73e6dea4e2f95f3b4af62d4eda11febd353"
+    },
+    {
+      "patient": "patient092",
+      "slices": 72,
+      "job_to_zip_seconds": 14.702789999981178,
+      "fresh_window_seconds": 13.82532600002014,
+      "remote_slice_p95_seconds": 0.18738052499102198,
+      "manifest_sha256": "22d068e9e8ddbf8289389df232a0e65951cd3a8a872c09c7770f0d40bb8e8f44"
+    },
+    {
+      "patient": "patient096",
+      "slices": 88,
+      "job_to_zip_seconds": 18.229739500005962,
+      "fresh_window_seconds": 17.22149850000278,
+      "remote_slice_p95_seconds": 0.22712627998553214,
+      "manifest_sha256": "7623362c1c51b36596759ba193b8aa43d288d9754397149cb3b6f73913e5add5"
+    }
+  ],
+  "scope": "sum of per-patient fresh inference windows including scheduling/checkpoint/phase gaps; not total validation process wall time",
+  "evaluation_report": {
+    "path": "out/acdc/development_pl_p6_rpc_v1_20261020/evaluation.json",
+    "sha256": "62d98c2142103bcc64770dd6a6a76676853da22c3e8d4f383bd636ea27887af6"
+  }
+}
