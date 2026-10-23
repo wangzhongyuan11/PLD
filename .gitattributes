@@ -8,6 +8,10 @@ rtl/requant_q24.sv -text
 rtl/tensor_tile_engine.sv -text
 *.tcl text eol=lf
 *.c text eol=lf
+acdc/appliance/native/mesh/*.cxx text eol=lf
+acdc/appliance/native/mesh/CMakeLists.txt text eol=lf
+acdc/appliance/native/mesh/*.cmake text eol=lf
+acdc/appliance/web_assets/* text eol=lf
 *.json text eol=lf
 *.md text eol=lf
 *.tar.gz binary

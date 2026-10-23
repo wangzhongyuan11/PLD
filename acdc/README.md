@@ -1,5 +1,7 @@
 # ACDC Axial 2.5D
 
+新版本：[Board Standalone V2 独立板端实现与小于 40 秒优化计划](docs/BOARD_STANDALONE_V2_PLAN_20261021.md)。V2 已实现板端预后处理、真实PL、MPR、平滑网格、LAN网页及导出，正在完成大尺寸病例优化和连续验收，见[独立应用说明](appliance/README.md)。下文仍为保留的PC协同版运行入口。
+
 独立于 Skin/CAMUS 的 Axial-only 工程。输入显式 ED、ES 两个3D NIfTI；按A的生产数值文字合同预处理，逐Axial中心片执行15Conv/21节点，恢复原生概率与标签，提供三平面MPR、原始/平滑3D表面、LV/RV/MYO容积、LV/RV EF、异步网页与结果包。平滑表面由电脑端生成，仅用于展示；定量依据仍为原空间标签。
 
 A真实研究Release已接入：原spec/参数身份保留，独立参考、Torch整数见证和tile模拟器的21节点精确一致。固定20名开发患者40体的软件Axial Dice为0.8823042898，与A逐体逐类Dice及容积差异均为0。当前事实和证据见[实施状态](docs/IMPLEMENTATION_STATUS.md)，范围以[最终优化计划](docs/FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md)为准。
