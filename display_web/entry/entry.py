@@ -241,6 +241,8 @@ class Handler(BaseHTTPRequestHandler):
                            or rest.startswith('interactive/'))
             upstream = self.path
             if interactive:
+                if match[1] != 'skin':
+                    return self.send(409, {'error': 'ROI 交互模式仅支持皮肤镜'})
                 state = board.hub()
                 if (state['phase'] != 'ready' or state['model'] != match[1]
                         or state['generation'] != int(match[2])):

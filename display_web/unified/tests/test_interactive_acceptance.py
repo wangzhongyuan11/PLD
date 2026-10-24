@@ -1,4 +1,4 @@
-"""End-to-end cache, replay, and serialization checks using synthetic heads."""
+"""Cache, legacy replay, and serialization checks using the checked-in skin head."""
 import base64
 import copy
 import io
@@ -15,6 +15,7 @@ from PIL import Image
 ROOT=Path(__file__).resolve().parents[3]
 sys.path.insert(0,str(ROOT))
 sys.path.insert(0,str(ROOT/'display_web/unified'))
+sys.path.insert(0,str(ROOT/'display_web'))
 import hub
 import interactive_bridge as bridge
 from prompt_seg.service import SegmentationService
@@ -24,23 +25,21 @@ class Board:
     def __init__(self,data):
         self.data=data
         self.jobs=0
-        self.states={'skin':'inactive','camus':'active'}
+        self.states={'skin':'active','camus':'inactive'}
 
     def props(self,model):return {'ActiveState':self.states[model]}
     def status(self,model):return dict(active=False,fault=False,warmup='ready',ready=True,backend='pl',mode='board',inference_available=True,hdmi='off')
     def stop(self,model):self.states[model]='inactive'
     def start(self,model):self.states[model]='active'
     def request(self,model,method,path,body=None):
-        assert model=='camus' and method=='POST' and path=='/api/jobs'
+        assert model=='skin' and method=='POST' and path=='/api/jobs'
         self.jobs+=1
         ident=f'{self.jobs:032x}'
-        out=self.data/ident/'output'
+        out=self.data/ident/'inference'
         out.mkdir(parents=True)
-        head=np.full((4,256,256),-24,np.int8)
-        head[0]=8
-        head[1,60:190,65:195]=32
-        (out/'head.bin').write_bytes(head.tobytes())
-        (out/'head.json').write_text(json.dumps(dict(spec_sha256=bridge.SPECS['camus'],shape=[1,4,256,256],dtype='int8',scale=.1)))
+        # Restore the checked-in real skin head through the production adapter.
+        for name in ('frame_000001.bin','frame_000001.json'):
+            (out/name).write_bytes((ROOT/'display_web/samples'/name).read_bytes())
         return 200,'application/json',json.dumps(dict(id=ident,state='done')).encode()
 
 
@@ -50,11 +49,11 @@ class AcceptanceTests(unittest.TestCase):
         self.path=Path(self.temp.name)
         self.board=Board(self.path)
         c=hub.Controller(self.board,self.path)
-        c.model='camus';c.phase='ready';c.generation=7
+        c.model='skin';c.phase='ready';c.generation=7
         m=bridge.Manager.__new__(bridge.Manager)
         m.controller=c;m.guard=threading.Lock();m.job=m.thread=None
-        m.image_slot=None;m.display_cache_key=m.display_cache=None
-        m.backends={'camus':{'data':str(self.path)}}
+        m.image_slot=None;m.display_cache_key=m.display_cache=None;m.reset_workspace()
+        m.backends={'skin':{'data':str(self.path)}}
         m.predictor=bridge.Predictor(m);m.service=SegmentationService(m.predictor)
         c.interactive=m
         self.c=c;self.m=m
@@ -68,10 +67,10 @@ class AcceptanceTests(unittest.TestCase):
         self.temp.cleanup()
 
     def upload(self,**extra):
-        return self.m.upload(dict(model='camus',generation=7,image=self.encoded,**extra))
+        return self.m.upload(dict(model='skin',generation=7,image=self.encoded,**extra))
 
     def run_job(self,token,params):
-        job=self.m.submit(dict(model='camus',generation=7,image_token=token,parameters=dict(variant='candidate',backend='int8',**params)))
+        job=self.m.submit(dict(model='skin',generation=7,image_token=token,parameters=dict(variant='delivery',backend='int8',**params)))
         self.m.thread.join(5)
         self.assertFalse(self.m.thread.is_alive())
         row=self.m.snapshot(job['id'])
@@ -112,7 +111,7 @@ class AcceptanceTests(unittest.TestCase):
         check=self.m.replay_check({'replay':record})
         self.assertEqual(check['parameters']['backend'],'int8')
         self.assertTrue(check['replay_ready'])
-        for values in [dict(backend='fp32'),dict(variant='delivery')]:
+        for values in [dict(backend='fp32'),dict(variant='candidate')]:
             with self.subTest(values=values):
                 bad=copy.deepcopy(record);bad['parameters'].update(values)
                 with self.assertRaises(ValueError):self.m.replay_check({'replay':bad})
@@ -124,10 +123,10 @@ class AcceptanceTests(unittest.TestCase):
 
     def test_frozen_v4_manifest_is_accepted_as_upgrade_source(self):
         from install_interactive import HUB
-        frozen=json.loads((ROOT/'delivery/pld_dual_20261017/MANIFEST.json').read_text())['files']
+        frozen=json.loads((ROOT/'delivery/pld_dual_20261017/MANIFEST.json').read_text(encoding='utf-8'))['files']
         accepted=json.loads((ROOT/'display_web/unified/interactive_accepted_versions.json').read_text())
         for name in HUB:
-            self.assertIn(frozen['hub/'+name],accepted['hub/'+name],name)
+            self.assertIn(frozen.get('hub/'+name),accepted['hub/'+name],name)
 
     def test_bad_expected_hash_preserves_original_token(self):
         first=self.upload()
@@ -147,7 +146,7 @@ class AcceptanceTests(unittest.TestCase):
             try:uploaded.append(self.upload())
             except Exception as exc:errors.append(exc)
         def switch():
-            try:self.c.switch('skin');switched.set()
+            try:self.c.switch('camus');switched.set()
             except Exception as exc:errors.append(exc)
         with patch.object(bridge,'decode_image',side_effect=blocked):
             a=threading.Thread(target=upload);a.start()

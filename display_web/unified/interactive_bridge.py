@@ -13,6 +13,7 @@ import numpy as np
 from PIL import Image, ImageOps
 from prompt_seg.contracts import Request
 from prompt_seg.service import SegmentationService, png_sha256
+from interactive_workspace import SkinWorkspace
 
 MAX_PIXELS = 1024*1024
 MAX_UPLOAD_BYTES = 16*1024*1024
@@ -114,11 +115,12 @@ class Predictor:
         return probs,identity
 
 
-class Manager:
+class Manager(SkinWorkspace):
     def __init__(self,controller,root):
         self.controller=controller;self.root=Path(root);self.guard=threading.Lock();self.job=None;self.thread=None
         self.display_cache_key=None;self.display_cache=None
         self.image_slot=None
+        self.reset_workspace()
         self.backends=json.loads((self.root/'installation.json').read_text())['backends']
         for kind in ('skin','camus'):sys.path.insert(0,self.backends[kind]['source'])
         self.predictor=Predictor(self);self.service=SegmentationService(self.predictor)
@@ -147,6 +149,7 @@ class Manager:
         generation=body.get('generation')
         expected=body.get('expected_sha256')
         with c.lock:
+            self.require_skin()
             if requested!=c.model or generation!=c.generation:
                 raise ValueError('模型已改变，请刷新交互页面')
             if self._busy():
@@ -161,6 +164,7 @@ class Manager:
             slot=dict(token=uuid.uuid4().hex,image=image,model=c.model,generation=c.generation,
                 width=int(image.shape[1]),height=int(image.shape[0]),sha256=digest)
             with self.guard:self.image_slot=slot
+            self.workspace_upload(slot)
         return {'image_token':slot['token'],'sha256':slot['sha256'],
                 'width':slot['width'],'height':slot['height'],
                 'model':slot['model'],'generation':slot['generation']}
@@ -190,15 +194,18 @@ class Manager:
         began=time.monotonic()
         c=self.controller
         with c.lock:
+            self.require_skin()
             if self._busy():raise RuntimeError('请等待模型或当前任务完成')
             self._check_context(body)
+            if 'revision' in body and body['revision']!=self.revision:
+                raise ValueError('提示已改变，请同步后再运行')
             # Reject concurrently running normal-page jobs before allocating arrays.
             other='camus' if c.model=='skin' else 'skin'
             if c.board.props(other)['ActiveState']!='inactive':raise RuntimeError('另一个模型未释放，禁止交互推理')
             status=c.board.status(c.model)
             if status.get('active') or status.get('fault') or status.get('warmup')=='running':raise RuntimeError('后端忙或异常，请先完成普通分割')
             image,image_token=self._image_for(body)
-            params=body.get('parameters',{})
+            params=body.get('parameters',getattr(self,'parameters',{}))
             req=Request.parse(c.model,params,image.shape[1],image.shape[0])
             if req.backend!='int8' or req.variant!=('delivery' if c.model=='skin' else 'candidate'):raise ValueError('交互模式固定使用当前板端模型，不能切换软件权重')
             identifier=uuid.uuid4().hex
@@ -260,10 +267,12 @@ class Manager:
                     'final_target_mask_png_sha256':png_sha256(result['outputs']['target_mask_png'])},
                 'execution':dict(result['execution']),'timings_ms':dict(result['timings_ms']),
                 'note':'导入回放需要同一 model/spec；处理图 PNG 随导出 JSON 一起保存'}
-            result['warnings'].append('交互输出单独下载；原任务历史、ZIP及HDMI仍是交互前结果。皮肤ROI以JPEG质量100编码。')
+            result['warnings'].append('皮肤 ROI 以 JPEG 质量100编码；普通任务历史和 ZIP 保留原始推理结果。')
             if model=='camus':result['warnings'].append('CAMUS 输入转换为8位灰度；彩色图不代表该模型的有效医学输入。')
             result['elapsed_ms']=round((time.monotonic()-began)*1000,2)
             with self.guard:self.job=dict(id=identifier,state='done',result=result)
+            self.result_revision=getattr(self,'revision',0)
+            if getattr(self,'hdmi_requested',False):self.sync_hdmi(result)
         except Exception as exc:
             self.predictor.clear()
             # A failed request must not leave a baseline/context keyed to
@@ -351,16 +360,24 @@ class Manager:
 
     def clear(self):
         with self.guard:self.job=None;self.image_slot=None
+        self.reset_workspace()
         self.predictor.clear();self.service.clear()
         self.display_cache_key=None;self.display_cache=None
 
 
 def handle(handler,path,post,body):
     root=Path(__file__).resolve().parent
+    manager=handler.server.interactive
+    manager.require_skin()
     if path in ('/interactive','/interactive.js') and not post:
         file='interactive.html' if path=='/interactive' else 'interactive.js'
         return handler.send(200,(root/file).read_bytes(),'text/html; charset=utf-8' if file.endswith('html') else 'application/javascript')
-    manager=handler.server.interactive
+    if path=='/interactive/state' and not post:
+        from urllib.parse import parse_qs,urlsplit
+        token=parse_qs(urlsplit(handler.path).query).get('image_token',[None])[0]
+        return handler.send(200,manager.state(token))
+    if path=='/interactive/control' and post:return handler.send(200,manager.control(json.loads(body)))
+    if path=='/interactive/hdmi' and post:return handler.send(200,manager.set_hdmi(json.loads(body)))
     if path=='/interactive/images' and post:return handler.send(200,manager.upload(json.loads(body)))
     if path=='/interactive/replay' and post:return handler.send(200,manager.replay_check(json.loads(body)))
     if path=='/interactive/jobs' and post:return handler.send(202,manager.submit(json.loads(body)))

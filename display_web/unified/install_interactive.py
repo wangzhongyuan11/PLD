@@ -9,8 +9,8 @@ import subprocess
 import sys
 import time
 
-SKIN = ()
-HUB = ('hub.py', 'index.html', 'interactive_bridge.py', 'interactive.html', 'interactive.js', 'prompt_seg/__init__.py', 'prompt_seg/contracts.py', 'prompt_seg/refinement.py', 'prompt_seg/service.py')
+SKIN = ('server.py', 'hdmi_worker.py', 'touch_display.py', 'touch_drag.py')
+HUB = ('hub.py', 'index.html', 'interactive_bridge.py', 'interactive_workspace.py', 'interactive_hdmi.py', 'interactive.html', 'interactive.js', 'prompt_seg/__init__.py', 'prompt_seg/contracts.py', 'prompt_seg/refinement.py', 'prompt_seg/service.py')
 UNITS = ('pld-hub.service','pld-web.service','pld-camus.service')
 
 

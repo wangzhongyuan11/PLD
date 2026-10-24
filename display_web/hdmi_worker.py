@@ -14,6 +14,12 @@ stop_requested = threading.Event()
 
 def main():
     folder, view = Path(sys.argv[1]), sys.argv[2]
+    if view == 'interactive':
+        hub = Path(__file__).resolve().parent / 'unified'
+        if not hub.is_dir(): hub = Path(__file__).resolve().parent.parent / 'hub'
+        sys.path.insert(0, str(hub))
+        from interactive_hdmi import run
+        return run(folder, hub, stop_requested)
     screen = skin_frame(folder)
     from pynq.overlays.base import BaseOverlay
     from hdmi_buttons import DebouncedButtons, handle_press

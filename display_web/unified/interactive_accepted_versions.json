@@ -40,5 +40,23 @@
     null,
     "0ac18687871eccbf1e4ae5ff0bcecc0083f8e1a9b7bd4865b758f18e96fabc07",
     "1157fa543b042daa8176b3a4cd31bc1cb1952c1ac9cbee7ab4f8a2c5e830237e"
+  ],
+  "hub/interactive_workspace.py": [
+    null
+  ],
+  "hub/interactive_hdmi.py": [
+    null
+  ],
+  "skin/server.py": [
+    "122580598d2941a2bb4124061a330e7a7ca39b9b58c40964c0b51c6802c54469"
+  ],
+  "skin/hdmi_worker.py": [
+    "a84f494b7ade0b4b38fb1d04f651bed29171bf24f8236f242fd745a7fe111f67"
+  ],
+  "skin/touch_drag.py": [
+    null
+  ],
+  "skin/touch_display.py": [
+    null
   ]
 }

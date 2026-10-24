@@ -335,7 +335,7 @@ class Console:
             if self.warmup_state == "running": raise RuntimeError("模型和 FPGA 正在预热，请稍候")
             if self.active: raise RuntimeError("请等待处理完成后再显示")
             j = self.job(ident)
-            if j["state"] != "done" or view not in j["views"]: raise ValueError("该显示画面尚未生成")
+            if j["state"] != "done" or (view not in j["views"] and view != "interactive"): raise ValueError("该显示画面尚未生成")
             self.stop_hdmi()
             folder = self.data / ident
             if self.b_worker is not None:
