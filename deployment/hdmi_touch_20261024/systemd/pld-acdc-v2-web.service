@@ -1,0 +1,22 @@
+[Unit]
+Description=ACDC V2 browser upload and board MPR service
+After=network.target
+Wants=pld-acdc-v2-engine.service
+
+[Service]
+Type=simple
+User=xilinx
+WorkingDirectory=/home/xilinx/acdc_board_v2/releases/hdmi_surface_20261024
+Group=xilinx
+UMask=0007
+Environment=PYTHONUNBUFFERED=1
+Environment=OMP_NUM_THREADS=1
+Environment=OPENBLAS_NUM_THREADS=1
+Environment=VTK_SMP_MAX_THREADS=1
+ExecStart=/bin/bash -lc "source /etc/profile; exec env PYTHONPATH=/home/xilinx/acdc_board_v2/releases/hdmi_surface_20261024/v2_deps /usr/local/share/pynq-venv/bin/python3 -m acdc.appliance web --config /home/xilinx/acdc_board_v2/releases/hdmi_surface_20261024/v2_config.json --app-sha c7131026b1a1f2b6668e34ddc628af0d2c536827ebf8e7380359b27cd985186c"
+TimeoutStopSec=30
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
