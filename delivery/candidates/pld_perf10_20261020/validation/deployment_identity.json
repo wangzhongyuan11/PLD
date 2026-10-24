@@ -1,0 +1,52 @@
+{
+  "payload_files_verified": 800,
+  "status": {
+    "model": "skin",
+    "busy": false,
+    "fault": null,
+    "closed": false
+  },
+  "services": {
+    "pld-perf10.service": {
+      "MainPID": "7843",
+      "Result": "success",
+      "ControlGroup": "/system.slice/pld-perf10.service",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "pld-hub.service": {
+      "MainPID": "0",
+      "Result": "success",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled"
+    },
+    "pld-web.service": {
+      "MainPID": "0",
+      "Result": "success",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled"
+    },
+    "pld-camus.service": {
+      "MainPID": "0",
+      "Result": "success",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled"
+    },
+    "pld-reuse9-web.service": {
+      "MainPID": "0",
+      "Result": "success",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled"
+    }
+  },
+  "archive_sha256": "1127b5e3d208ce3fa61fbd989228858d94cdfadfe734bbcafc38dc04138b1c7b",
+  "optimizer_sha256": "c5025660bee95a9e3f2536561c9575ca9e5fcd6615aab0623163bb7bc7af2e8b",
+  "runtime_pairs": {
+    "PLD_refactor_stage8/out/stage8_route/baseline100/.pynq_pair/cf9c3da2fa30cebb0c1949fa8ec830c8f249c0f0bc4e747c6a48667c3f20bdf9/dma_top.bit": "9c04f84be206d09daa522995b5cb10415172eae1a98a210bc1ae5570c0487122",
+    "PLD_refactor_stage8/out/stage8_route/baseline100/.pynq_pair/cf9c3da2fa30cebb0c1949fa8ec830c8f249c0f0bc4e747c6a48667c3f20bdf9/dma_top.hwh": "abec4cc493622983089e1dfd4165aa21149060ae33e9263a0c63d71223e6773d"
+  }
+}

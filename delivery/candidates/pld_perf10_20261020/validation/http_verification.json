@@ -1,0 +1,759 @@
+{
+  "passed": true,
+  "host_started": "2026-10-20T22:59:37.496769+08:00",
+  "scope": "actual PYNQ, Ethernet upload through four decoded previews and result ZIP; full 256 heads compared to independent CPU reference; synthetic image, short validation",
+  "execution": "FPGA convolution, CPU nonconvolution, batch 64, 100 MHz",
+  "models": {
+    "skin": {
+      "input_sha256": "82a29e7a8a28e1dfad5f4a4b6f094b9a136564295dbf243a826eec6bb2041cb0",
+      "runs": [
+        {
+          "run": 0,
+          "independent_cpu_comparison": true,
+          "job_id": "c94dcd92cecd409fada522828341256f",
+          "upload_to_four_decoded_previews_seconds": 67.74504950000005,
+          "upload_to_download_seconds": 68.51648799999998,
+          "head_sha256": "d5bc055ed90e882c510b801e4b4dd439af41c36d6a8b16c8fad317a87a60f4a6",
+          "report": {
+            "evidence": "board_actual_perf10_mixed",
+            "model": "skin",
+            "statistics": {
+              "foreground_pixels": 13642,
+              "valid_pixels": 49920
+            },
+            "source_sha256": "82a29e7a8a28e1dfad5f4a4b6f094b9a136564295dbf243a826eec6bb2041cb0",
+            "input_int8_sha256": "34aa07524ad65b55faeccbeaaae867dcf7ef9e7a4421441dbc61276adae04a32",
+            "head_sha256": "d5bc055ed90e882c510b801e4b4dd439af41c36d6a8b16c8fad317a87a60f4a6",
+            "inference": {
+              "seconds": 5.066050497000106,
+              "phases": {
+                "prepare_seconds": 1.565666848995761,
+                "pack_seconds": 1.7894566040017708,
+                "exchange_seconds": 0.29241652499763404,
+                "decode_seconds": 0.477361152993808,
+                "assemble_seconds": 0.32552088299530624
+              },
+              "unattributed_seconds": 0.6156284830158256,
+              "counts": {
+                "commands": 34,
+                "txbytes": 13132176,
+                "rxbytes": 4377152
+              },
+              "scope": "disjoint host phases; unattributed includes graph/hash checks and CPU reference when verify=True",
+              "transport_children": {
+                "rx_prepare": 0.026345748000494495,
+                "tx_flush": 0.007560437999700298,
+                "rx_flush": 0.007402689000400642,
+                "rx_invalidate": 0.008671454000250378,
+                "control_wait": 0.1500860949993239,
+                "guard_copy": 0.07015698100053669
+              },
+              "transport_scope": "children of exchange_seconds, never add to parent; control_wait includes CPU polling/MMIO and hardware, not pure PL time",
+              "inner_commands": 2112,
+              "operator_placement": "ps",
+              "ps_prepare_child": {
+                "seconds": 0.4584849860002578,
+                "calls": 14,
+                "scope": "included in prepare_seconds; convolution still uses device; not PL fusion"
+              },
+              "hardware_batch_counters": {
+                "cycles": 13209380,
+                "input_stall_cycles": 11368180,
+                "output_stall_cycles": 0
+              },
+              "observed_fclk_mhz": 100.0,
+              "hardware_batch_seconds": 0.1320938,
+              "estimated_dma_ddr": {
+                "tx_bytes": 13132176,
+                "rx_bytes": 4377152,
+                "estimated_ddr_bytes": 39660752
+              },
+              "ddr_estimate_scope": "TX writeback + DMA read + RX DMA write + full RX writeback/read; assumes cacheable allocations; excludes other CPU/system traffic and is not a controller measurement"
+            },
+            "preprocess_seconds": 0.15548257299997204,
+            "postprocess_seconds": 0.012163063999878432,
+            "cpu_comparison": {
+              "seconds": 67.21654715599993,
+              "head_equal": true,
+              "implementation": "independent production topology; skin NumPy32x32/Co8 memory-bounded convolution, CAMUS production tiled software reference",
+              "differing_values": 0,
+              "scope": "same frozen INT8 model; concurrent CPU work may affect FPGA host latency"
+            },
+            "preview_contract": "display-only resize-first enhancement/overlay, labels nearest; full native PNG/labels/head unchanged",
+            "memory_admission": {
+              "estimated_additional_bytes": 205627392,
+              "available_bytes": 336355328,
+              "scope": "conservative admission estimate; not a measured peak or CMA guarantee"
+            },
+            "resources": {
+              "values": {
+                "lut": 9521.0,
+                "ff": 13086.0,
+                "bram36_equivalent": 35.5,
+                "dsp": 96.0
+              },
+              "source_sha256": "51f207a343c799702132aeadfde696890bd308fde89f4c96ae3e0720153f66cc",
+              "scope": "parsed Vivado utilization report; not an estimate from RTL source"
+            },
+            "power": null,
+            "power_scope": "no power sensor measurement supplied",
+            "model_spec_sha256": "fe137ca5b128fc1983fabad9bee39b3208cda4256e0d04c4e27cef5c07666aef",
+            "preview_mode": "parallel",
+            "preview_seconds": 0.2044561039999735,
+            "worker_to_preview_seconds": 67.59992479199991,
+            "request_receive_to_worker_seconds": 0.0034047629999349738,
+            "request_to_preview_seconds": 67.60334129599983,
+            "server_timing_scope": "HTTP handler entry through publication; includes body read/parse/input write; excludes browser/network before handler entry and preview download/paint",
+            "full_view_write_seconds": 0.818121820999977,
+            "archive_report_scope": "snapshot before ZIP creation; final ZIP timing in external report.json and job API",
+            "zip_seconds": 0.02455123699996875,
+            "export_seconds": 0.8498672050000096,
+            "request_to_zip_seconds": 68.45469960299988,
+            "request_to_package_published_seconds": 68.45844043399984
+          },
+          "passed": true
+        },
+        {
+          "run": 1,
+          "independent_cpu_comparison": false,
+          "job_id": "8f4f8b9a549243b9bb48deb338a6e456",
+          "upload_to_four_decoded_previews_seconds": 3.6847724000001563,
+          "upload_to_download_seconds": 4.564842700000099,
+          "head_sha256": "d5bc055ed90e882c510b801e4b4dd439af41c36d6a8b16c8fad317a87a60f4a6",
+          "report": {
+            "evidence": "board_actual_perf10_mixed",
+            "model": "skin",
+            "statistics": {
+              "foreground_pixels": 13642,
+              "valid_pixels": 49920
+            },
+            "source_sha256": "82a29e7a8a28e1dfad5f4a4b6f094b9a136564295dbf243a826eec6bb2041cb0",
+            "input_int8_sha256": "34aa07524ad65b55faeccbeaaae867dcf7ef9e7a4421441dbc61276adae04a32",
+            "head_sha256": "d5bc055ed90e882c510b801e4b4dd439af41c36d6a8b16c8fad317a87a60f4a6",
+            "inference": {
+              "seconds": 3.2388269370001126,
+              "phases": {
+                "prepare_seconds": 0.9263316710057552,
+                "pack_seconds": 0.9991275679994942,
+                "exchange_seconds": 0.26034846500169806,
+                "decode_seconds": 0.3777309540037095,
+                "assemble_seconds": 0.14448512500484867
+              },
+              "unattributed_seconds": 0.530803153984607,
+              "counts": {
+                "commands": 34,
+                "txbytes": 13132176,
+                "rxbytes": 4377152
+              },
+              "scope": "disjoint host phases; unattributed includes graph/hash checks and CPU reference when verify=True",
+              "transport_children": {
+                "rx_prepare": 0.010802795000017795,
+                "tx_flush": 0.0066934510009559745,
+                "rx_flush": 0.006478938999180173,
+                "rx_invalidate": 0.00703147799913495,
+                "control_wait": 0.14854513600062091,
+                "guard_copy": 0.06336854499977562
+              },
+              "transport_scope": "children of exchange_seconds, never add to parent; control_wait includes CPU polling/MMIO and hardware, not pure PL time",
+              "inner_commands": 2112,
+              "operator_placement": "ps",
+              "ps_prepare_child": {
+                "seconds": 0.39463094699954127,
+                "calls": 14,
+                "scope": "included in prepare_seconds; convolution still uses device; not PL fusion"
+              },
+              "hardware_batch_counters": {
+                "cycles": 13209069,
+                "input_stall_cycles": 11368646,
+                "output_stall_cycles": 0
+              },
+              "observed_fclk_mhz": 100.0,
+              "hardware_batch_seconds": 0.13209069,
+              "estimated_dma_ddr": {
+                "tx_bytes": 13132176,
+                "rx_bytes": 4377152,
+                "estimated_ddr_bytes": 39660752
+              },
+              "ddr_estimate_scope": "TX writeback + DMA read + RX DMA write + full RX writeback/read; assumes cacheable allocations; excludes other CPU/system traffic and is not a controller measurement"
+            },
+            "preprocess_seconds": 0.06121374100007415,
+            "postprocess_seconds": 0.0102243379999436,
+            "cpu_comparison": null,
+            "preview_contract": "display-only resize-first enhancement/overlay, labels nearest; full native PNG/labels/head unchanged",
+            "memory_admission": {
+              "estimated_additional_bytes": 104964096,
+              "available_bytes": 339173376,
+              "scope": "conservative admission estimate; not a measured peak or CMA guarantee"
+            },
+            "resources": {
+              "values": {
+                "lut": 9521.0,
+                "ff": 13086.0,
+                "bram36_equivalent": 35.5,
+                "dsp": 96.0
+              },
+              "source_sha256": "51f207a343c799702132aeadfde696890bd308fde89f4c96ae3e0720153f66cc",
+              "scope": "parsed Vivado utilization report; not an estimate from RTL source"
+            },
+            "power": null,
+            "power_scope": "no power sensor measurement supplied",
+            "model_spec_sha256": "fe137ca5b128fc1983fabad9bee39b3208cda4256e0d04c4e27cef5c07666aef",
+            "preview_mode": "parallel",
+            "preview_seconds": 0.208542492000106,
+            "worker_to_preview_seconds": 3.522977932999993,
+            "request_receive_to_worker_seconds": 0.009541525999793521,
+            "request_to_preview_seconds": 3.532531132999793,
+            "server_timing_scope": "HTTP handler entry through publication; includes body read/parse/input write; excludes browser/network before handler entry and preview download/paint",
+            "full_view_write_seconds": 0.86328649699999,
+            "archive_report_scope": "snapshot before ZIP creation; final ZIP timing in external report.json and job API",
+            "zip_seconds": 0.015374079999901369,
+            "export_seconds": 0.8856818819999717,
+            "request_to_zip_seconds": 4.419578005999938,
+            "request_to_package_published_seconds": 4.422909974999811
+          },
+          "passed": true
+        },
+        {
+          "run": 2,
+          "independent_cpu_comparison": false,
+          "job_id": "bf3177ecf8044e6ab01fa34887b04e24",
+          "upload_to_four_decoded_previews_seconds": 3.709038400000054,
+          "upload_to_download_seconds": 4.434341800000084,
+          "head_sha256": "d5bc055ed90e882c510b801e4b4dd439af41c36d6a8b16c8fad317a87a60f4a6",
+          "report": {
+            "evidence": "board_actual_perf10_mixed",
+            "model": "skin",
+            "statistics": {
+              "foreground_pixels": 13642,
+              "valid_pixels": 49920
+            },
+            "source_sha256": "82a29e7a8a28e1dfad5f4a4b6f094b9a136564295dbf243a826eec6bb2041cb0",
+            "input_int8_sha256": "34aa07524ad65b55faeccbeaaae867dcf7ef9e7a4421441dbc61276adae04a32",
+            "head_sha256": "d5bc055ed90e882c510b801e4b4dd439af41c36d6a8b16c8fad317a87a60f4a6",
+            "inference": {
+              "seconds": 3.2457227760000933,
+              "phases": {
+                "prepare_seconds": 0.9445202659903771,
+                "pack_seconds": 0.987490711999726,
+                "exchange_seconds": 0.2615643080009704,
+                "decode_seconds": 0.37826250700322817,
+                "assemble_seconds": 0.1396161469974686
+              },
+              "unattributed_seconds": 0.534268836008323,
+              "counts": {
+                "commands": 34,
+                "txbytes": 13132176,
+                "rxbytes": 4377152
+              },
+              "scope": "disjoint host phases; unattributed includes graph/hash checks and CPU reference when verify=True",
+              "transport_children": {
+                "rx_prepare": 0.011078811999368554,
+                "tx_flush": 0.0066805739993469615,
+                "rx_flush": 0.007003735999660421,
+                "rx_invalidate": 0.007049230000347961,
+                "control_wait": 0.1488227910012938,
+                "guard_copy": 0.06363473500050532
+              },
+              "transport_scope": "children of exchange_seconds, never add to parent; control_wait includes CPU polling/MMIO and hardware, not pure PL time",
+              "inner_commands": 2112,
+              "operator_placement": "ps",
+              "ps_prepare_child": {
+                "seconds": 0.3988631930003521,
+                "calls": 14,
+                "scope": "included in prepare_seconds; convolution still uses device; not PL fusion"
+              },
+              "hardware_batch_counters": {
+                "cycles": 13209100,
+                "input_stall_cycles": 11368726,
+                "output_stall_cycles": 0
+              },
+              "observed_fclk_mhz": 100.0,
+              "hardware_batch_seconds": 0.132091,
+              "estimated_dma_ddr": {
+                "tx_bytes": 13132176,
+                "rx_bytes": 4377152,
+                "estimated_ddr_bytes": 39660752
+              },
+              "ddr_estimate_scope": "TX writeback + DMA read + RX DMA write + full RX writeback/read; assumes cacheable allocations; excludes other CPU/system traffic and is not a controller measurement"
+            },
+            "preprocess_seconds": 0.062410584999952334,
+            "postprocess_seconds": 0.010586356999965574,
+            "cpu_comparison": null,
+            "preview_contract": "display-only resize-first enhancement/overlay, labels nearest; full native PNG/labels/head unchanged",
+            "memory_admission": {
+              "estimated_additional_bytes": 104964096,
+              "available_bytes": 336928768,
+              "scope": "conservative admission estimate; not a measured peak or CMA guarantee"
+            },
+            "resources": {
+              "values": {
+                "lut": 9521.0,
+                "ff": 13086.0,
+                "bram36_equivalent": 35.5,
+                "dsp": 96.0
+              },
+              "source_sha256": "51f207a343c799702132aeadfde696890bd308fde89f4c96ae3e0720153f66cc",
+              "scope": "parsed Vivado utilization report; not an estimate from RTL source"
+            },
+            "power": null,
+            "power_scope": "no power sensor measurement supplied",
+            "model_spec_sha256": "fe137ca5b128fc1983fabad9bee39b3208cda4256e0d04c4e27cef5c07666aef",
+            "preview_mode": "parallel",
+            "preview_seconds": 0.2026870400000007,
+            "worker_to_preview_seconds": 3.525679810000156,
+            "request_receive_to_worker_seconds": 0.012934682999912184,
+            "request_to_preview_seconds": 3.5386267389999375,
+            "server_timing_scope": "HTTP handler entry through publication; includes body read/parse/input write; excludes browser/network before handler entry and preview download/paint",
+            "full_view_write_seconds": 0.8075608049998664,
+            "archive_report_scope": "snapshot before ZIP creation; final ZIP timing in external report.json and job API",
+            "zip_seconds": 0.015325531999906161,
+            "export_seconds": 0.8299927129999105,
+            "request_to_zip_seconds": 4.369994682999959,
+            "request_to_package_published_seconds": 4.373331532000066
+          },
+          "passed": true
+        }
+      ],
+      "two_sample_preview_median_seconds": 3.696905400000105
+    },
+    "camus": {
+      "input_sha256": "7a5b3055b2e6c1fcc1934f6b8bd33530d6fe3b74c7666cbfcabf8c0061e3f14c",
+      "runs": [
+        {
+          "run": 0,
+          "independent_cpu_comparison": true,
+          "job_id": "a2cbb4aa4b4d47c39ebad789a30ca662",
+          "upload_to_four_decoded_previews_seconds": 240.62607060000005,
+          "upload_to_download_seconds": 241.56595540000012,
+          "head_sha256": "b22af1919bc6926050d8811628ebc4134f0cfc2c7c5a35fa5a5dda6343960359",
+          "report": {
+            "evidence": "board_actual_perf10_mixed",
+            "model": "camus",
+            "statistics": {
+              "background": {
+                "pixels": 45358
+              },
+              "lv_cavity": {
+                "pixels": 43365
+              },
+              "myocardium": {
+                "pixels": 30460
+              },
+              "left_atrium": {
+                "pixels": 15217
+              }
+            },
+            "source_sha256": "7a5b3055b2e6c1fcc1934f6b8bd33530d6fe3b74c7666cbfcabf8c0061e3f14c",
+            "input_int8_sha256": "35c0efc4e1588e1fbc44512bd187428005e939ca5c670277399ec399a3b048c1",
+            "head_sha256": "b22af1919bc6926050d8811628ebc4134f0cfc2c7c5a35fa5a5dda6343960359",
+            "inference": {
+              "seconds": 8.990150785999958,
+              "phases": {
+                "prepare_seconds": 2.5774081829931674,
+                "pack_seconds": 3.0668908580005336,
+                "exchange_seconds": 0.8372290729994347,
+                "decode_seconds": 0.8701224310075304,
+                "assemble_seconds": 0.5310797259928677
+              },
+              "unattributed_seconds": 1.1074205150064245,
+              "counts": {
+                "commands": 65,
+                "txbytes": 49723464,
+                "rxbytes": 8223776
+              },
+              "scope": "disjoint host phases; unattributed includes graph/hash checks and CPU reference when verify=True",
+              "transport_children": {
+                "rx_prepare": 0.04028173099891319,
+                "tx_flush": 0.01638667600059307,
+                "rx_flush": 0.015999218000615656,
+                "rx_invalidate": 0.021904258999484227,
+                "control_wait": 0.5403195339988542,
+                "guard_copy": 0.153975682999544
+              },
+              "transport_scope": "children of exchange_seconds, never add to parent; control_wait includes CPU polling/MMIO and hardware, not pure PL time",
+              "inner_commands": 3968,
+              "operator_placement": "ps",
+              "ps_prepare_child": {
+                "seconds": 0.5046366019998914,
+                "calls": 6,
+                "scope": "included in prepare_seconds; convolution still uses device; not PL fusion"
+              },
+              "hardware_batch_counters": {
+                "cycles": 49965182,
+                "input_stall_cycles": 42838079,
+                "output_stall_cycles": 0
+              },
+              "observed_fclk_mhz": 100.0,
+              "hardware_batch_seconds": 0.49965182,
+              "estimated_dma_ddr": {
+                "tx_bytes": 49723464,
+                "rx_bytes": 8223776,
+                "estimated_ddr_bytes": 124643944
+              },
+              "ddr_estimate_scope": "TX writeback + DMA read + RX DMA write + full RX writeback/read; assumes cacheable allocations; excludes other CPU/system traffic and is not a controller measurement"
+            },
+            "preprocess_seconds": 0.07722852899996724,
+            "postprocess_seconds": 1.327694448000102,
+            "cpu_comparison": {
+              "seconds": 238.75431357000002,
+              "head_equal": true,
+              "implementation": "independent production topology; skin NumPy32x32/Co8 memory-bounded convolution, CAMUS production tiled software reference",
+              "differing_values": 0,
+              "scope": "same frozen INT8 model; concurrent CPU work may affect FPGA host latency"
+            },
+            "preview_contract": "display-only resize-first enhancement/overlay, labels nearest; full native PNG/labels/head unchanged",
+            "memory_admission": {
+              "estimated_additional_bytes": 211003392,
+              "available_bytes": 333893632,
+              "scope": "conservative admission estimate; not a measured peak or CMA guarantee"
+            },
+            "resources": {
+              "values": {
+                "lut": 9521.0,
+                "ff": 13086.0,
+                "bram36_equivalent": 35.5,
+                "dsp": 96.0
+              },
+              "source_sha256": "51f207a343c799702132aeadfde696890bd308fde89f4c96ae3e0720153f66cc",
+              "scope": "parsed Vivado utilization report; not an estimate from RTL source"
+            },
+            "power": null,
+            "power_scope": "no power sensor measurement supplied",
+            "model_spec_sha256": "68b4f425cc3612ad72d5e83955c2018981edee912fbc0937e9ac8c1718e7b5ae",
+            "preview_mode": "parallel",
+            "preview_seconds": 0.23317419599993627,
+            "worker_to_preview_seconds": 240.4128732050001,
+            "request_receive_to_worker_seconds": 0.020962824999969598,
+            "request_to_preview_seconds": 240.433847217,
+            "server_timing_scope": "HTTP handler entry through publication; includes body read/parse/input write; excludes browser/network before handler entry and preview download/paint",
+            "full_view_write_seconds": 0.9415461279997999,
+            "archive_report_scope": "snapshot before ZIP creation; final ZIP timing in external report.json and job API",
+            "zip_seconds": 0.03795652300004804,
+            "export_seconds": 0.9869040359999417,
+            "request_to_zip_seconds": 241.42222044699997,
+            "request_to_package_published_seconds": 241.42614471699994
+          },
+          "passed": true
+        },
+        {
+          "run": 1,
+          "independent_cpu_comparison": false,
+          "job_id": "2d38f3434f13426c8b725d45d47fe463",
+          "upload_to_four_decoded_previews_seconds": 7.608832599999914,
+          "upload_to_download_seconds": 8.536562900000035,
+          "head_sha256": "b22af1919bc6926050d8811628ebc4134f0cfc2c7c5a35fa5a5dda6343960359",
+          "report": {
+            "evidence": "board_actual_perf10_mixed",
+            "model": "camus",
+            "statistics": {
+              "background": {
+                "pixels": 45358
+              },
+              "lv_cavity": {
+                "pixels": 43365
+              },
+              "myocardium": {
+                "pixels": 30460
+              },
+              "left_atrium": {
+                "pixels": 15217
+              }
+            },
+            "source_sha256": "7a5b3055b2e6c1fcc1934f6b8bd33530d6fe3b74c7666cbfcabf8c0061e3f14c",
+            "input_int8_sha256": "35c0efc4e1588e1fbc44512bd187428005e939ca5c670277399ec399a3b048c1",
+            "head_sha256": "b22af1919bc6926050d8811628ebc4134f0cfc2c7c5a35fa5a5dda6343960359",
+            "inference": {
+              "seconds": 6.713662827000007,
+              "phases": {
+                "prepare_seconds": 1.8918292289984038,
+                "pack_seconds": 2.16542606499911,
+                "exchange_seconds": 0.7544070130004457,
+                "decode_seconds": 0.6730405150149181,
+                "assemble_seconds": 0.29132808599933924
+              },
+              "unattributed_seconds": 0.9376319189877904,
+              "counts": {
+                "commands": 65,
+                "txbytes": 49723464,
+                "rxbytes": 8223776
+              },
+              "scope": "disjoint host phases; unattributed includes graph/hash checks and CPU reference when verify=True",
+              "transport_children": {
+                "rx_prepare": 0.02441230599993105,
+                "tx_flush": 0.012866926000469903,
+                "rx_flush": 0.012820251999983157,
+                "rx_invalidate": 0.014171363000514248,
+                "control_wait": 0.5318351309986156,
+                "guard_copy": 0.12413391799987039
+              },
+              "transport_scope": "children of exchange_seconds, never add to parent; control_wait includes CPU polling/MMIO and hardware, not pure PL time",
+              "inner_commands": 3968,
+              "operator_placement": "ps",
+              "ps_prepare_child": {
+                "seconds": 0.44299534800029505,
+                "calls": 6,
+                "scope": "included in prepare_seconds; convolution still uses device; not PL fusion"
+              },
+              "hardware_batch_counters": {
+                "cycles": 49930657,
+                "input_stall_cycles": 42857238,
+                "output_stall_cycles": 0
+              },
+              "observed_fclk_mhz": 100.0,
+              "hardware_batch_seconds": 0.49930657,
+              "estimated_dma_ddr": {
+                "tx_bytes": 49723464,
+                "rx_bytes": 8223776,
+                "estimated_ddr_bytes": 124643944
+              },
+              "ddr_estimate_scope": "TX writeback + DMA read + RX DMA write + full RX writeback/read; assumes cacheable allocations; excludes other CPU/system traffic and is not a controller measurement"
+            },
+            "preprocess_seconds": 0.07525871999996525,
+            "postprocess_seconds": 0.40742478100014523,
+            "cpu_comparison": null,
+            "preview_contract": "display-only resize-first enhancement/overlay, labels nearest; full native PNG/labels/head unchanged",
+            "memory_admission": {
+              "estimated_additional_bytes": 110340096,
+              "available_bytes": 327155712,
+              "scope": "conservative admission estimate; not a measured peak or CMA guarantee"
+            },
+            "resources": {
+              "values": {
+                "lut": 9521.0,
+                "ff": 13086.0,
+                "bram36_equivalent": 35.5,
+                "dsp": 96.0
+              },
+              "source_sha256": "51f207a343c799702132aeadfde696890bd308fde89f4c96ae3e0720153f66cc",
+              "scope": "parsed Vivado utilization report; not an estimate from RTL source"
+            },
+            "power": null,
+            "power_scope": "no power sensor measurement supplied",
+            "model_spec_sha256": "68b4f425cc3612ad72d5e83955c2018981edee912fbc0937e9ac8c1718e7b5ae",
+            "preview_mode": "parallel",
+            "preview_seconds": 0.22943291699994006,
+            "worker_to_preview_seconds": 7.43482562600002,
+            "request_receive_to_worker_seconds": 0.02304569900002207,
+            "request_to_preview_seconds": 7.457883631999948,
+            "server_timing_scope": "HTTP handler entry through publication; includes body read/parse/input write; excludes browser/network before handler entry and preview download/paint",
+            "full_view_write_seconds": 0.9298897769999712,
+            "archive_report_scope": "snapshot before ZIP creation; final ZIP timing in external report.json and job API",
+            "zip_seconds": 0.022134861000040473,
+            "export_seconds": 0.9588213960000758,
+            "request_to_zip_seconds": 8.418246769000007,
+            "request_to_package_published_seconds": 8.421926997000128
+          },
+          "passed": true
+        },
+        {
+          "run": 2,
+          "independent_cpu_comparison": false,
+          "job_id": "07b10c2879654ec7931087846c855c5b",
+          "upload_to_four_decoded_previews_seconds": 7.676952399999891,
+          "upload_to_download_seconds": 8.52045720000001,
+          "head_sha256": "b22af1919bc6926050d8811628ebc4134f0cfc2c7c5a35fa5a5dda6343960359",
+          "report": {
+            "evidence": "board_actual_perf10_mixed",
+            "model": "camus",
+            "statistics": {
+              "background": {
+                "pixels": 45358
+              },
+              "lv_cavity": {
+                "pixels": 43365
+              },
+              "myocardium": {
+                "pixels": 30460
+              },
+              "left_atrium": {
+                "pixels": 15217
+              }
+            },
+            "source_sha256": "7a5b3055b2e6c1fcc1934f6b8bd33530d6fe3b74c7666cbfcabf8c0061e3f14c",
+            "input_int8_sha256": "35c0efc4e1588e1fbc44512bd187428005e939ca5c670277399ec399a3b048c1",
+            "head_sha256": "b22af1919bc6926050d8811628ebc4134f0cfc2c7c5a35fa5a5dda6343960359",
+            "inference": {
+              "seconds": 6.707130604999975,
+              "phases": {
+                "prepare_seconds": 1.8975680589976491,
+                "pack_seconds": 2.2007384520009055,
+                "exchange_seconds": 0.7583149809979659,
+                "decode_seconds": 0.6590961710010106,
+                "assemble_seconds": 0.26428228299823786
+              },
+              "unattributed_seconds": 0.9271306590042059,
+              "counts": {
+                "commands": 65,
+                "txbytes": 49723464,
+                "rxbytes": 8223776
+              },
+              "scope": "disjoint host phases; unattributed includes graph/hash checks and CPU reference when verify=True",
+              "transport_children": {
+                "rx_prepare": 0.027569485000185523,
+                "tx_flush": 0.013247518999833119,
+                "rx_flush": 0.012985784999500538,
+                "rx_invalidate": 0.014214197000910644,
+                "control_wait": 0.5308906639991164,
+                "guard_copy": 0.12302512199948978
+              },
+              "transport_scope": "children of exchange_seconds, never add to parent; control_wait includes CPU polling/MMIO and hardware, not pure PL time",
+              "inner_commands": 3968,
+              "operator_placement": "ps",
+              "ps_prepare_child": {
+                "seconds": 0.4454258560001563,
+                "calls": 6,
+                "scope": "included in prepare_seconds; convolution still uses device; not PL fusion"
+              },
+              "hardware_batch_counters": {
+                "cycles": 49930289,
+                "input_stall_cycles": 42856721,
+                "output_stall_cycles": 0
+              },
+              "observed_fclk_mhz": 100.0,
+              "hardware_batch_seconds": 0.49930289,
+              "estimated_dma_ddr": {
+                "tx_bytes": 49723464,
+                "rx_bytes": 8223776,
+                "estimated_ddr_bytes": 124643944
+              },
+              "ddr_estimate_scope": "TX writeback + DMA read + RX DMA write + full RX writeback/read; assumes cacheable allocations; excludes other CPU/system traffic and is not a controller measurement"
+            },
+            "preprocess_seconds": 0.07534191399986412,
+            "postprocess_seconds": 0.4186654879999878,
+            "cpu_comparison": null,
+            "preview_contract": "display-only resize-first enhancement/overlay, labels nearest; full native PNG/labels/head unchanged",
+            "memory_admission": {
+              "estimated_additional_bytes": 110340096,
+              "available_bytes": 327540736,
+              "scope": "conservative admission estimate; not a measured peak or CMA guarantee"
+            },
+            "resources": {
+              "values": {
+                "lut": 9521.0,
+                "ff": 13086.0,
+                "bram36_equivalent": 35.5,
+                "dsp": 96.0
+              },
+              "source_sha256": "51f207a343c799702132aeadfde696890bd308fde89f4c96ae3e0720153f66cc",
+              "scope": "parsed Vivado utilization report; not an estimate from RTL source"
+            },
+            "power": null,
+            "power_scope": "no power sensor measurement supplied",
+            "model_spec_sha256": "68b4f425cc3612ad72d5e83955c2018981edee912fbc0937e9ac8c1718e7b5ae",
+            "preview_mode": "parallel",
+            "preview_seconds": 0.23434871399990698,
+            "worker_to_preview_seconds": 7.439719373999878,
+            "request_receive_to_worker_seconds": 0.031103187000098842,
+            "request_to_preview_seconds": 7.470834535999984,
+            "server_timing_scope": "HTTP handler entry through publication; includes body read/parse/input write; excludes browser/network before handler entry and preview download/paint",
+            "full_view_write_seconds": 0.9303198569998585,
+            "archive_report_scope": "snapshot before ZIP creation; final ZIP timing in external report.json and job API",
+            "zip_seconds": 0.0236980610000046,
+            "export_seconds": 0.9610955370001193,
+            "request_to_zip_seconds": 8.433349175000103,
+            "request_to_package_published_seconds": 8.437117895000029
+          },
+          "passed": true
+        }
+      ],
+      "two_sample_preview_median_seconds": 7.642892499999903
+    }
+  },
+  "final_status": {
+    "model": "skin",
+    "busy": false,
+    "closed": false,
+    "fault": null,
+    "hdmi_available": false,
+    "total_jobs": 6,
+    "jobs": [
+      {
+        "id": "07b10c2879654ec7931087846c855c5b",
+        "model": "camus",
+        "state": "done",
+        "preview_ready": true,
+        "package_ready": true,
+        "preview_keys": [
+          "original",
+          "enhanced",
+          "segmentation",
+          "overlay"
+        ]
+      },
+      {
+        "id": "2d38f3434f13426c8b725d45d47fe463",
+        "model": "camus",
+        "state": "done",
+        "preview_ready": true,
+        "package_ready": true,
+        "preview_keys": [
+          "original",
+          "enhanced",
+          "segmentation",
+          "overlay"
+        ]
+      },
+      {
+        "id": "a2cbb4aa4b4d47c39ebad789a30ca662",
+        "model": "camus",
+        "state": "done",
+        "preview_ready": true,
+        "package_ready": true,
+        "preview_keys": [
+          "original",
+          "enhanced",
+          "segmentation",
+          "overlay",
+          "cpu_original",
+          "cpu_enhanced",
+          "cpu_segmentation",
+          "cpu_overlay"
+        ]
+      },
+      {
+        "id": "bf3177ecf8044e6ab01fa34887b04e24",
+        "model": "skin",
+        "state": "done",
+        "preview_ready": true,
+        "package_ready": true,
+        "preview_keys": [
+          "original",
+          "enhanced",
+          "segmentation",
+          "overlay"
+        ]
+      },
+      {
+        "id": "8f4f8b9a549243b9bb48deb338a6e456",
+        "model": "skin",
+        "state": "done",
+        "preview_ready": true,
+        "package_ready": true,
+        "preview_keys": [
+          "original",
+          "enhanced",
+          "segmentation",
+          "overlay"
+        ]
+      },
+      {
+        "id": "c94dcd92cecd409fada522828341256f",
+        "model": "skin",
+        "state": "done",
+        "preview_ready": true,
+        "package_ready": true,
+        "preview_keys": [
+          "original",
+          "enhanced",
+          "segmentation",
+          "overlay",
+          "cpu_original",
+          "cpu_enhanced",
+          "cpu_segmentation",
+          "cpu_overlay"
+        ]
+      }
+    ]
+  },
+  "host_finished": "2026-10-20T23:05:23.064413+08:00"
+}

@@ -1,0 +1,14 @@
+May 07 10:42:14 pynq systemd[1]: Started PLD Perf10 candidate, original release retained.
+May 07 10:42:19 pynq bash[3677]: BUILD_CHECK_PASS /home/xilinx/jupyter_notebooks/pld/releases/pld_perf10_20261020/PLD_refactor_stage8/out/stage8_route/baseline100: WNS=0.303 WHS=0.013 WPWS=3.75 ns; bit/hwh match XSA
+May 07 10:42:29 pynq bash[3677]: PERF10_READY port=8765 convolution=FPGA nonconvolution=CPU
+May 07 10:42:51 pynq bash[3677]: BUILD_CHECK_PASS /home/xilinx/jupyter_notebooks/pld/releases/pld_perf10_20261020/PLD_refactor_stage8/out/stage8_route/baseline100: WNS=0.303 WHS=0.013 WPWS=3.75 ns; bit/hwh match XSA
+May 07 10:44:11 pynq bash[3677]: BUILD_CHECK_PASS /home/xilinx/jupyter_notebooks/pld/releases/pld_perf10_20261020/PLD_refactor_stage8/out/stage8_route/baseline100: WNS=0.303 WHS=0.013 WPWS=3.75 ns; bit/hwh match XSA
+May 07 10:48:33 pynq bash[3677]: BUILD_CHECK_PASS /home/xilinx/jupyter_notebooks/pld/releases/pld_perf10_20261020/PLD_refactor_stage8/out/stage8_route/baseline100: WNS=0.303 WHS=0.013 WPWS=3.75 ns; bit/hwh match XSA
+May 07 10:49:09 pynq systemd[1]: Stopping PLD Perf10 candidate, original release retained...
+May 07 10:49:09 pynq bash[3677]: PERF10_CLOSED hardware_quiesced=true
+May 07 10:49:10 pynq systemd[1]: pld-perf10.service: Deactivated successfully.
+May 07 10:49:10 pynq systemd[1]: Stopped PLD Perf10 candidate, original release retained.
+May 07 10:49:10 pynq systemd[1]: pld-perf10.service: Consumed 6min 24.643s CPU time.
+May 07 10:50:12 pynq systemd[1]: Started PLD Perf10 candidate, original release retained.
+May 07 10:50:17 pynq bash[7843]: BUILD_CHECK_PASS /home/xilinx/jupyter_notebooks/pld/releases/pld_perf10_20261020/PLD_refactor_stage8/out/stage8_route/baseline100: WNS=0.303 WHS=0.013 WPWS=3.75 ns; bit/hwh match XSA
+May 07 10:50:30 pynq bash[7843]: PERF10_READY port=8765 convolution=FPGA nonconvolution=CPU
