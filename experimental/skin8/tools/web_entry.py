@@ -1,0 +1,146 @@
+"""Original presentation with Skin8 inference and guarded hardware lifecycle."""
+import argparse,hashlib,importlib,json,os,signal,sys,threading,time
+from pathlib import Path
+import numpy as np
+HERE=Path(__file__).resolve().parent
+CONFIG=dict(original_release='/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017',workspace='/home/xilinx/jupyter_notebooks/PLD_Dev',data='/home/xilinx/skin8_web_data')
+BASE=Path(CONFIG['original_release'])
+CORE_ROOT=Path(CONFIG['workspace'])
+BUILD=HERE
+DATA=Path(CONFIG['data'])
+sys.path.insert(0,str(CORE_ROOT))
+
+class Core:
+    def __init__(self,kind):
+        import asyncio
+        try:asyncio.get_event_loop()
+        except RuntimeError:asyncio.set_event_loop(asyncio.new_event_loop())
+        from types import SimpleNamespace
+        from pynq import Overlay,MMIO,allocate
+        from frame_driver import FrameSession
+        root=BASE/'skin/role_a_final/int8' if kind=='skin' else BASE/'camus/model/int8_export'
+        raw=(root/'model_spec.json').read_bytes()
+        manifest=json.loads((HERE/'models'/kind/'manifest.json').read_text())
+        if hashlib.sha256(raw).hexdigest()!=manifest['spec_sha256']:raise ValueError('model spec mismatch')
+        spec=json.loads(raw)
+        self.model=SimpleNamespace(layers=spec['layers'],spec_sha256=manifest['spec_sha256'])
+        self.overlay=Overlay(str(HERE/'skin8.bit'))
+        self.session=FrameSession(HERE/'models'/kind,MMIO(0x43c00000,0x1000),allocate)
+    def run(self,q):
+        head,t=self.session.run(q,timeout=10)
+        return dict(head=head,host_timing=dict(seconds=t['input_to_owned_head_seconds'],**t))
+    def close(self):
+        if self.session.closed:return
+        if not self.overlay.is_loaded():
+            # The old register address may now target unrelated hardware or an
+            # unresponsive AXI slave. Do not read MMIO or release DMA memory.
+            raise RuntimeError('FPGA configuration changed; retain buffers and inspect hardware before recovery')
+        self.session.close()
+
+
+class SkinWorker:
+    def __init__(self,runtime,*args,**kwargs):self.core=None;self.runtime=runtime;self.failure=None
+    def check_manifest(self):
+        assert (HERE/'skin8.bit').is_file()
+    def run(self,argv,log_path):
+        from persistent_worker import PersistentWorkerError
+        if self.failure:raise PersistentWorkerError(self.failure)
+        try:return self._run(argv,log_path)
+        except Exception as exc:
+            self.failure=str(exc)
+            raise PersistentWorkerError(self.failure) from exc
+    def _run(self,argv,log_path):
+        from reference.preprocess import decode_rgb,letterbox_int8
+        started=time.perf_counter();reused=self.core is not None
+        if not self.core:self.core=Core('skin')
+        startup=time.perf_counter()-started
+        if '--warmup-only' not in argv:
+            source=Path(argv[0]);out=Path(argv[argv.index('--output')+1]);out.mkdir(parents=True,exist_ok=False)
+            t=time.perf_counter()
+            with decode_rgb(source) as image:q,valid,g=letterbox_int8(image,self.core.model.layers[0]['input_scale'])
+            prep=time.perf_counter()-t
+            result=self.core.run(q[0]);head=result['head'][None];inference=result['host_timing']['seconds']
+            rect=[g['left'],g['top'],g['resized_width'],g['resized_height']]
+            spec=self.core.model.spec_sha256
+            metadata=dict(g,model_spec_sha256=spec,input_sha256=hashlib.sha256(q.tobytes()).hexdigest(),image_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),valid_rect=rect,valid_pixels=rect[2]*rect[3])
+            report=dict(status='success',shape=[1,1,256,256],dtype='int8',layout='NCHW',comparison='>=',model_name='soup_v5_a050',model_spec_sha256=spec,model_manifest_sha256='e47eb18b94369451b36790971f4e0db62b2d128f424937e00f2768e866a30936',threshold_q=-1,threshold_probability=.45,head_output_scale=self.core.model.layers[-1]['output_scale'],frame_id=1,valid_rect=rect,input_metadata=metadata,output_sha256=hashlib.sha256(head.tobytes()).hexdigest(),online_b_seconds=prep+inference,inference_seconds=inference,preprocess_seconds=prep,bit_sha256=hashlib.sha256((BUILD/'skin8.bit').read_bytes()).hexdigest(),abi_version='SKIN8-v0',execution_backend='skin8_125',execution_phases=result['host_timing'],source_name=source.name)
+            (out/'frame_000001.bin').write_bytes(head.tobytes());(out/'frame_000001.json').write_text(json.dumps(report,indent=2))
+            Path(log_path).write_text('SKIN8_SKIN_INFERENCE_COMPLETED_NOT_REFERENCE_CHECKED\n'+json.dumps(result['host_timing'],indent=2))
+        return dict(model_reused=reused,hardware_reused=reused,startup_seconds=startup,request_seconds=time.perf_counter()-started,worker_pid=os.getpid(),alive_after_reply=True)
+    def release_hardware(self,*args):self.close()
+    def close(self):
+        if self.core:self.core.close();self.core=None
+
+
+def serve_skin():
+    sys.path.insert(0,str(BASE/'web'))
+    import server as old
+    from hdmi_policy import guard_skin
+    guard_skin(old)
+    old.PersistentBWorker=SkinWorker
+    token=Path(json.loads((BASE/'hub/config.json').read_text())['token_file']).read_text().strip()
+    app=old.Console(DATA/'skin',BASE/'skin',token=token,persistent_b_worker=True)
+    server=old.make_server(app,'127.0.0.1',8766)
+    def stop(*_):threading.Thread(target=server.shutdown,daemon=True).start()
+    signal.signal(signal.SIGTERM,stop);signal.signal(signal.SIGINT,stop)
+    app.begin_warmup()
+    try:server.serve_forever(poll_interval=.2)
+    finally:
+        server.server_close()
+        while app.active:time.sleep(.2)
+        app.stop_hdmi()
+        app.close()
+
+
+def serve_camus():
+    sys.path.insert(0,str(BASE/'hub'))
+    sys.path.insert(1,str(BASE/'hub'))
+    from camus import web
+    from camus.pipeline import CamusPipeline
+    class Pipeline(CamusPipeline):
+        def __init__(self,model_root,backend='pl',runtime=None,timeout=3.):
+            if backend!='pl':super().__init__(model_root,backend,runtime,timeout);self.core=None;return
+            t=time.perf_counter();super().__init__(model_root,'reference')
+            self.core=Core('camus');self.backend='pl';self.native=None
+            core=self.core
+            class Network:
+                def forward(self,x):
+                    r=core.run(x[0]);return dict(head=r['head'][None],events=r.get('events',[]),conv_records=r.get('records',[]))
+            self.network=Network();self.initialization_seconds=time.perf_counter()-t
+        def close(self):
+            if self.core:self.core.close();self.core=None
+    web.CamusPipeline=Pipeline
+    from camus_input_adapter import install
+    install(web)
+    from camus_quad import install as quad
+    quad(web)
+    from hdmi_policy import guard_camus
+    guard_camus(web)
+    original=web.Handler.do_GET
+    def get(handler):
+        if web.urlsplit(handler.path).path=='/api/status':
+            hdmi=handler.server.hdmi_status()
+            with handler.server.guard:active=any(j.get('state') in ('queued','running') for j in handler.server.jobs.values())
+            return handler.json(dict(backend=handler.server.pipeline.backend,spec_sha256=web.MODEL_SPEC_SHA256,ready=not handler.server.fault,hdmi=hdmi,hdmi_available=not handler.server.fault,active=active,fault=handler.server.fault,model='CAMUS hidden_histogram INT8'))
+        return original(handler)
+    web.Handler.do_GET=get
+    web.main(['--backend','pl','--runtime',str(BASE/'camus'),'--model',str(BASE/'camus/model/int8_export'),'--host','127.0.0.1','--port','8090','--data',str(DATA/'camus')])
+
+
+def serve_hub():
+    sys.path.insert(0,str(BASE/'hub'))
+    import hub
+    hub.UNITS={'skin':'pld-original-rtl-skin.service','camus':'pld-original-rtl-camus.service'}
+    sys.argv=[sys.argv[0],'--config',str(HERE/'hub/config.json')]
+    hub.main()
+
+if __name__=='__main__':
+    import fcntl
+    p=argparse.ArgumentParser();p.add_argument('kind',choices=('skin','camus','hub'));a=p.parse_args()
+    DATA.mkdir(parents=True,exist_ok=True)
+    if a.kind=='hub':serve_hub()
+    else:
+        # Parent lease covers inference AND original HDMI subprocess lifetime.
+        with open('/run/pld-unified-fpga.lock','a+b') as lease:
+            fcntl.flock(lease,fcntl.LOCK_EX|fcntl.LOCK_NB)
+            (serve_skin if a.kind=='skin' else serve_camus)()

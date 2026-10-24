@@ -1,0 +1,45 @@
+{
+  "kind": "full_bd_candidate_not_board_validation",
+  "sources": {
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\board_top.sv": "adf711528d591f1652b7f2b43cea9ae5f08f8fe719d78a47867b221917d4b370",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\conv_pair_tile.sv": "a4aaf15705eeb000ac881def48a5e22cb8920eebfc0555f22a645ba10363fc53",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\ddr_read64.sv": "e9973a3663ec12ca8322d084872d6ed54858fa2d370242755dd1a7ae818b103f",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\ddr_write64.sv": "1eca9e1111ae519cbb781016f63853f7c80a935c14753370965efaf1a2799b3e",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\dot128.sv": "6c93e437605ab8a41cd6d9d26d3e2cd5005e7440d8892a3d0376a2b0dd8dfa6e",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\feature_banks.sv": "8bc718d72189054a38e7aef9dbf5eb4e366cb0556e05cf1a9896af5942d92a77",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\frame_engine.sv": "9bac54444b8597665b8a54b72e082d5d30fbeecece55cb7b7604402f01153323",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\frame_registers.sv": "a237a6c10985b4da1b6ded94e7b9e4b2f08383829df56a756d9934429c22eb34",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\graph_control.sv": "3c03a5b59a6d7bd7221b950627f70749fe0e86e757b8fd4a71d0166a9332ee9f",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\map8.sv": "4bc528531e530b4151650aa618a0c6e4c703410664ec326f72653823dbe8ad16",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\nearest2_row.sv": "2cead2f1ebbcef5e08e757393a6c940d4848d75bd8cf13cb36ce3aa771d0aec3",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\pair_to_words.sv": "8cdc283e1fa998e931145e845d4eb49151a451f8bd5f6c4d1f69f1d35e14d517",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\pool2_rows.sv": "bba4ae0e2307097fd0aa6b9ab0805e5d26619710d7a46368fb5b8b66e21ede24",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\quant_pair.sv": "b9726a37ec2f9102a1e5604256511e0a465de96fdb9ecce67ef663bb641fa8e6",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\requant24.sv": "315f9d5e11e3efbe49fb07c26c06e8b1fa5ba83cc164fa0f7f57ee8004c7d281",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\row_transform.sv": "4fd28e75bc9b5872094bf419aae45fa6d0fefa13c800eddf6b545a06fe69896d",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\stripe_engine.sv": "15a659ffc820f34032ad42dc999d033b8f30345f72927983ac79688a756deb14",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\stripe_load.sv": "0a1f96fa916425f31fa53b0af816fa370f16c05703a0c6edfc21bdc7abfe550a",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\tensor_load.sv": "ad65ac1c4e9a966293d978e123e829e85b4d792701dbfc61685fbf5ffe5f4bed",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\rtl\\tile_int8.sv": "ecf52e6cfaeced23d50454b7b767d90ccb928703604c5e7e2184d5ee93ea3789",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\tools\\build_board.tcl": "56ceac8938fdca3f5caf1cadf97978e265eb7fda3fa05813c9003aa0a554e214",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\tools\\run_board_build.py": "db79841b7b9fba7acb2b9b8e337b9e14d9e71a5ad0ad79873265fc6ebdc7def3",
+    "C:\\Users\\60398\\Desktop\\PLD_Dev\\vivado\\ps7_config.tcl": "963e86a02b9dd16a1de3be6233b5ba6f7380f742e5f7d865316b9a09d3575a83"
+  },
+  "passed": true,
+  "output_dir": "C:\\Users\\60398\\Desktop\\PLD_Dev\\experimental\\skin8\\out\\b1022080543",
+  "returncode": 0,
+  "critical_warnings": [
+    "CRITICAL WARNING: [PSU-1]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_0 has negative value -0.051 . PS DDR interfaces might fail when entering negative DQS skew values. ",
+    "CRITICAL WARNING: [PSU-2]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_1 has negative value -0.006 . PS DDR interfaces might fail when entering negative DQS skew values. ",
+    "CRITICAL WARNING: [PSU-3]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_2 has negative value -0.009 . PS DDR interfaces might fail when entering negative DQS skew values. ",
+    "CRITICAL WARNING: [PSU-4]  Parameter : PCW_UIPARAM_DDR_DQS_TO_CLK_DELAY_3 has negative value -0.033 . PS DDR interfaces might fail when entering negative DQS skew values. "
+  ],
+  "wns_ns": 0.008,
+  "whs_ns": 0.022,
+  "wpws_ns": 2.75,
+  "artifacts": {
+    "skin8.xsa": "f1c2fa479ea96b7701bb1b000b42b4d2188c8ae6fce9ccb0b2de17feef5a857d",
+    "skin8.bit": "a1965b58930adbc5ef991ac5ca07a80fcb09e2c57e22e910013ebe0ed6cd5cd3",
+    "skin8.hwh": "edec0b25390aefa99c67c5b970b9cd680d2848933d2b852455fd346e6e4f7cb4"
+  }
+}
