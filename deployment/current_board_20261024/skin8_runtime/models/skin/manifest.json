@@ -1,0 +1,632 @@
+{
+  "spec_sha256": "fe137ca5b128fc1983fabad9bee39b3208cda4256e0d04c4e27cef5c07666aef",
+  "layers": [
+    {
+      "index": 0,
+      "name": "encoders.0.0",
+      "mode": "input",
+      "ci": 3,
+      "co": 8,
+      "kernel": 3,
+      "input_shape": [
+        3,
+        256,
+        256
+      ],
+      "output_shape": [
+        8,
+        256,
+        256
+      ],
+      "input_groups": 1,
+      "output_groups": 1,
+      "weight_block_bytes": 576,
+      "parameter_block_bytes": 64,
+      "skip_layer": null,
+      "relu_in_quantizer": false,
+      "transition_equal": null
+    },
+    {
+      "index": 1,
+      "name": "encoders.0.2",
+      "mode": "map",
+      "ci": 8,
+      "co": 8,
+      "kernel": 3,
+      "input_shape": [
+        8,
+        256,
+        256
+      ],
+      "output_shape": [
+        8,
+        256,
+        256
+      ],
+      "input_groups": 1,
+      "output_groups": 1,
+      "weight_block_bytes": 576,
+      "parameter_block_bytes": 64,
+      "skip_layer": null,
+      "relu_in_quantizer": false,
+      "transition_equal": true
+    },
+    {
+      "index": 2,
+      "name": "encoders.1.0",
+      "mode": "maxpool2",
+      "ci": 8,
+      "co": 16,
+      "kernel": 3,
+      "input_shape": [
+        8,
+        128,
+        128
+      ],
+      "output_shape": [
+        16,
+        128,
+        128
+      ],
+      "input_groups": 1,
+      "output_groups": 2,
+      "weight_block_bytes": 576,
+      "parameter_block_bytes": 64,
+      "skip_layer": null,
+      "relu_in_quantizer": false,
+      "transition_equal": true
+    },
+    {
+      "index": 3,
+      "name": "encoders.1.2",
+      "mode": "map",
+      "ci": 16,
+      "co": 16,
+      "kernel": 3,
+      "input_shape": [
+        16,
+        128,
+        128
+      ],
+      "output_shape": [
+        16,
+        128,
+        128
+      ],
+      "input_groups": 2,
+      "output_groups": 2,
+      "weight_block_bytes": 1152,
+      "parameter_block_bytes": 64,
+      "skip_layer": null,
+      "relu_in_quantizer": false,
+      "transition_equal": true
+    },
+    {
+      "index": 4,
+      "name": "encoders.2.0",
+      "mode": "maxpool2",
+      "ci": 16,
+      "co": 32,
+      "kernel": 3,
+      "input_shape": [
+        16,
+        64,
+        64
+      ],
+      "output_shape": [
+        32,
+        64,
+        64
+      ],
+      "input_groups": 2,
+      "output_groups": 4,
+      "weight_block_bytes": 1152,
+      "parameter_block_bytes": 64,
+      "skip_layer": null,
+      "relu_in_quantizer": false,
+      "transition_equal": true
+    },
+    {
+      "index": 5,
+      "name": "encoders.2.2",
+      "mode": "map",
+      "ci": 32,
+      "co": 32,
+      "kernel": 3,
+      "input_shape": [
+        32,
+        64,
+        64
+      ],
+      "output_shape": [
+        32,
+        64,
+        64
+      ],
+      "input_groups": 4,
+      "output_groups": 4,
+      "weight_block_bytes": 2304,
+      "parameter_block_bytes": 64,
+      "skip_layer": null,
+      "relu_in_quantizer": false,
+      "transition_equal": true
+    },
+    {
+      "index": 6,
+      "name": "encoders.3.0",
+      "mode": "maxpool2",
+      "ci": 32,
+      "co": 64,
+      "kernel": 3,
+      "input_shape": [
+        32,
+        32,
+        32
+      ],
+      "output_shape": [
+        64,
+        32,
+        32
+      ],
+      "input_groups": 4,
+      "output_groups": 8,
+      "weight_block_bytes": 2304,
+      "parameter_block_bytes": 64,
+      "skip_layer": null,
+      "relu_in_quantizer": false,
+      "transition_equal": true
+    },
+    {
+      "index": 7,
+      "name": "encoders.3.2",
+      "mode": "map",
+      "ci": 64,
+      "co": 64,
+      "kernel": 3,
+      "input_shape": [
+        64,
+        32,
+        32
+      ],
+      "output_shape": [
+        64,
+        32,
+        32
+      ],
+      "input_groups": 8,
+      "output_groups": 8,
+      "weight_block_bytes": 4608,
+      "parameter_block_bytes": 64,
+      "skip_layer": null,
+      "relu_in_quantizer": false,
+      "transition_equal": true
+    },
+    {
+      "index": 8,
+      "name": "decoder_blocks.0.0",
+      "mode": "concat_nearest2",
+      "ci": 96,
+      "co": 32,
+      "kernel": 3,
+      "input_shape": [
+        96,
+        64,
+        64
+      ],
+      "output_shape": [
+        32,
+        64,
+        64
+      ],
+      "input_groups": 12,
+      "output_groups": 4,
+      "weight_block_bytes": 6912,
+      "parameter_block_bytes": 64,
+      "skip_layer": 5,
+      "relu_in_quantizer": false,
+      "transition_equal": true
+    },
+    {
+      "index": 9,
+      "name": "decoder_blocks.0.2",
+      "mode": "map",
+      "ci": 32,
+      "co": 32,
+      "kernel": 3,
+      "input_shape": [
+        32,
+        64,
+        64
+      ],
+      "output_shape": [
+        32,
+        64,
+        64
+      ],
+      "input_groups": 4,
+      "output_groups": 4,
+      "weight_block_bytes": 2304,
+      "parameter_block_bytes": 64,
+      "skip_layer": null,
+      "relu_in_quantizer": false,
+      "transition_equal": true
+    },
+    {
+      "index": 10,
+      "name": "decoder_blocks.1.0",
+      "mode": "concat_nearest2",
+      "ci": 48,
+      "co": 16,
+      "kernel": 3,
+      "input_shape": [
+        48,
+        128,
+        128
+      ],
+      "output_shape": [
+        16,
+        128,
+        128
+      ],
+      "input_groups": 6,
+      "output_groups": 2,
+      "weight_block_bytes": 3456,
+      "parameter_block_bytes": 64,
+      "skip_layer": 3,
+      "relu_in_quantizer": false,
+      "transition_equal": true
+    },
+    {
+      "index": 11,
+      "name": "decoder_blocks.1.2",
+      "mode": "map",
+      "ci": 16,
+      "co": 16,
+      "kernel": 3,
+      "input_shape": [
+        16,
+        128,
+        128
+      ],
+      "output_shape": [
+        16,
+        128,
+        128
+      ],
+      "input_groups": 2,
+      "output_groups": 2,
+      "weight_block_bytes": 1152,
+      "parameter_block_bytes": 64,
+      "skip_layer": null,
+      "relu_in_quantizer": false,
+      "transition_equal": true
+    },
+    {
+      "index": 12,
+      "name": "decoder_blocks.2.0",
+      "mode": "concat_nearest2",
+      "ci": 24,
+      "co": 8,
+      "kernel": 3,
+      "input_shape": [
+        24,
+        256,
+        256
+      ],
+      "output_shape": [
+        8,
+        256,
+        256
+      ],
+      "input_groups": 3,
+      "output_groups": 1,
+      "weight_block_bytes": 1728,
+      "parameter_block_bytes": 64,
+      "skip_layer": 1,
+      "relu_in_quantizer": false,
+      "transition_equal": true
+    },
+    {
+      "index": 13,
+      "name": "decoder_blocks.2.2",
+      "mode": "map",
+      "ci": 8,
+      "co": 8,
+      "kernel": 3,
+      "input_shape": [
+        8,
+        256,
+        256
+      ],
+      "output_shape": [
+        8,
+        256,
+        256
+      ],
+      "input_groups": 1,
+      "output_groups": 1,
+      "weight_block_bytes": 576,
+      "parameter_block_bytes": 64,
+      "skip_layer": null,
+      "relu_in_quantizer": false,
+      "transition_equal": true
+    },
+    {
+      "index": 14,
+      "name": "head",
+      "mode": "map",
+      "ci": 8,
+      "co": 1,
+      "kernel": 1,
+      "input_shape": [
+        8,
+        256,
+        256
+      ],
+      "output_shape": [
+        1,
+        256,
+        256
+      ],
+      "input_groups": 1,
+      "output_groups": 1,
+      "weight_block_bytes": 64,
+      "parameter_block_bytes": 64,
+      "skip_layer": null,
+      "relu_in_quantizer": false,
+      "transition_equal": true
+    }
+  ],
+  "artifacts": {
+    "first_input_nchwc8.bin": {
+      "bytes": 524288,
+      "sha256": "50637965960f71e89ccf13c42900fea35fcfb760b2d726257bbbc5c088d89137"
+    },
+    "00_weights.bin": {
+      "bytes": 576,
+      "sha256": "d08390e59176504cd57a67a0b67d300d1d4aa12283253c72a1e5eedc8e02da21"
+    },
+    "00_params.bin": {
+      "bytes": 64,
+      "sha256": "4d02623fe45cc4fffc382e2341de54e1cc9f37851d2dc0f0a6f80a1eaae5e6cb"
+    },
+    "00_luts.bin": {
+      "bytes": 512,
+      "sha256": "110009dcee21620b166f3abfecb5eff7a873be729d1c2d53822e7acc5f34eb9b"
+    },
+    "01_weights.bin": {
+      "bytes": 576,
+      "sha256": "f7b35b67594ffd9aeebd693dfb6231a8a9f73d8cde257ab3b99f531325f01327"
+    },
+    "01_params.bin": {
+      "bytes": 64,
+      "sha256": "968d9a7f6c93d34ae18bf6edbc9f8287c8cfe63319848940d80b5da2fb1e80dc"
+    },
+    "01_luts.bin": {
+      "bytes": 512,
+      "sha256": "5cc903ab3f043a9898f450f65a5bd4dddae7faeec474dcadd08d580bc9bb0ea6"
+    },
+    "02_weights.bin": {
+      "bytes": 1152,
+      "sha256": "9cc89c2a0390fc8b9f86fd1288c0e8f97aa40d9342701d5adc7ae198054c8f96"
+    },
+    "02_params.bin": {
+      "bytes": 128,
+      "sha256": "a00114346880fa9ca3c7cb1c1794fc0babe1059a4e9d772bc8126adc68436a1c"
+    },
+    "02_luts.bin": {
+      "bytes": 512,
+      "sha256": "8d9747da8fa72da27c90bd4e3bd98ec5deadce84c43f41c461120d19740b8c1b"
+    },
+    "03_weights.bin": {
+      "bytes": 2304,
+      "sha256": "f99e18700acae0209f4f5e76370fdbebe3eab1221ccf25acc0e0d964d7090f8d"
+    },
+    "03_params.bin": {
+      "bytes": 128,
+      "sha256": "85f7ffe40467df23886f92336b0e888a889d584d0e0fef74e95e5752d4af5396"
+    },
+    "03_luts.bin": {
+      "bytes": 512,
+      "sha256": "7b268dafff7613f342b19f83773289349d4c3819962d85ecc3aa5a7bea4ec697"
+    },
+    "04_weights.bin": {
+      "bytes": 4608,
+      "sha256": "19fb82c692448399fc1b596069d0e19b16ffe08c9053b23750589560414e930c"
+    },
+    "04_params.bin": {
+      "bytes": 256,
+      "sha256": "472dd83d26917ab096214fdbadf348f638349c0d2cb2f317e83c19098ab019e5"
+    },
+    "04_luts.bin": {
+      "bytes": 512,
+      "sha256": "d36de11fba0f1d354aa6367b31573c86eab46ec36eb98751d26cbbcda39f228e"
+    },
+    "05_weights.bin": {
+      "bytes": 9216,
+      "sha256": "cb77cd81d67689778487f2610ca861fbfd2d54459a775a811abc747113bf36d1"
+    },
+    "05_params.bin": {
+      "bytes": 256,
+      "sha256": "268d07b0352c380bbe6d0d4cd6825cbc8bd3b26959573c909b73759c8471ccce"
+    },
+    "05_luts.bin": {
+      "bytes": 512,
+      "sha256": "51df2a3da383f4f8b267ab5994ad03b495662b20a08519e79133fea5bb0096d9"
+    },
+    "06_weights.bin": {
+      "bytes": 18432,
+      "sha256": "e2f5670a53872e7ba52ebefe93022ada9e3814cc9de25af99cbf416073dac9a7"
+    },
+    "06_params.bin": {
+      "bytes": 512,
+      "sha256": "f08599d744ac8ca33aac663b56e0bdccc4e3b3553701500f66026c0f7a451979"
+    },
+    "06_luts.bin": {
+      "bytes": 512,
+      "sha256": "b42967a9334dfa1769d0dd8def52ff7319f92c5ec7e810ab611e490cf4bcaa32"
+    },
+    "07_weights.bin": {
+      "bytes": 36864,
+      "sha256": "473b83955bfb49e21fe875eebad55bf8d8ebad742d9cd177c40426aaceca5446"
+    },
+    "07_params.bin": {
+      "bytes": 512,
+      "sha256": "d04db5695bd81ee19a8e84d93f1c272d5d326b69c2ae068fa05ce34cfe88eac5"
+    },
+    "07_luts.bin": {
+      "bytes": 512,
+      "sha256": "032c44608db935e576e5809b84282709006cc35d361b74966a866f504777fa77"
+    },
+    "08_weights.bin": {
+      "bytes": 27648,
+      "sha256": "32a7aa83ff746ddcddf09df72188e03221c63a0d9c4c42b74837723a1d99de6d"
+    },
+    "08_params.bin": {
+      "bytes": 256,
+      "sha256": "89dc22736dbaa73ff98d3c6ea4a02b1090ac1aef9b5909ea954274a880fb14d2"
+    },
+    "08_luts.bin": {
+      "bytes": 512,
+      "sha256": "9ae778962c3a6348f530f327e25bbb966ee86db0136b3b7a124b75e0fa30e15d"
+    },
+    "09_weights.bin": {
+      "bytes": 9216,
+      "sha256": "8411f14ed21b413246d7ca1ee3b04acc750d04d689dd63c00790d50b2116cb9a"
+    },
+    "09_params.bin": {
+      "bytes": 256,
+      "sha256": "ce780b7fb9600038a4ab45844fd15d0ca9735eb0415822a049f4ade6bde2794a"
+    },
+    "09_luts.bin": {
+      "bytes": 512,
+      "sha256": "fde68bf26d52cd9327dd0308f80625f467e3db37ba1d465adb9af16d4122f24d"
+    },
+    "10_weights.bin": {
+      "bytes": 6912,
+      "sha256": "1c04863a67c05a351c77181a769025204837a9c251bae85021d651fb4ee55f3e"
+    },
+    "10_params.bin": {
+      "bytes": 128,
+      "sha256": "e8c940eb0bbebc954b96c30e7e508ccb8fa276f6c5ecb8003d309b1b65a8eb72"
+    },
+    "10_luts.bin": {
+      "bytes": 512,
+      "sha256": "88c76a383df6c21eb68b66c20e7d294b0519c3aaccf75834571d33985bf2e8ba"
+    },
+    "11_weights.bin": {
+      "bytes": 2304,
+      "sha256": "64f3668171fbc937d6867adfc9faafcd9fc4dbf29cdf6f61eb9d1e0a0a15e9b1"
+    },
+    "11_params.bin": {
+      "bytes": 128,
+      "sha256": "a8f2458745285d9a533297964bd0911f85068ab51a570120a40c7dbef330f20e"
+    },
+    "11_luts.bin": {
+      "bytes": 512,
+      "sha256": "e73836af09977df4b401d2cdc8723169798217d0730e0cae2d8e273aa2897f64"
+    },
+    "12_weights.bin": {
+      "bytes": 1728,
+      "sha256": "eb4c890aa6f35623553aace5a402bd5c6cfc57e182fdb081d8c723c638894cd0"
+    },
+    "12_params.bin": {
+      "bytes": 64,
+      "sha256": "24ff79417ab4c51ada8fc69159f54d26f43f564e1162ac115b99d822a2c5b37f"
+    },
+    "12_luts.bin": {
+      "bytes": 512,
+      "sha256": "86e49387e813b1ed70602c1fcf813d9992bd8a1800953cb94e6158df18c47e0f"
+    },
+    "13_weights.bin": {
+      "bytes": 576,
+      "sha256": "675e6094e04aa126b1db3b4cb34778fd545cbafe9ccbb1cf1243f2686b82d838"
+    },
+    "13_params.bin": {
+      "bytes": 64,
+      "sha256": "7b624063990f1d59b6902ded692ea495df60c08d4447d947722579734f61f699"
+    },
+    "13_luts.bin": {
+      "bytes": 512,
+      "sha256": "8d9747da8fa72da27c90bd4e3bd98ec5deadce84c43f41c461120d19740b8c1b"
+    },
+    "14_weights.bin": {
+      "bytes": 64,
+      "sha256": "b2338eda16561f577a623a935574ed367460479bca0145e26b3ddbc16058e6e6"
+    },
+    "14_params.bin": {
+      "bytes": 64,
+      "sha256": "10e01ea619a07d993d369deb52a6b3f7c4f68eff21ed921f9bf3096bd6edb0fb"
+    },
+    "14_luts.bin": {
+      "bytes": 512,
+      "sha256": "8d9747da8fa72da27c90bd4e3bd98ec5deadce84c43f41c461120d19740b8c1b"
+    },
+    "golden_head_nchwc8.bin": {
+      "bytes": 524288,
+      "sha256": "7747589ffe5ef64e76c44bae2b011cd6d07239f4d49049a268ee978bce01e150"
+    }
+  },
+  "sources": {
+    "role_a_final\\int8\\encoders_0_0\\input_full.bin": "d33d4a23ed2f3222aacd65107c0434547c53454f52c273ffb55f444c415c2309",
+    "role_a_final\\int8\\encoders_0_0\\output_full_golden.bin": "23d3c01630656aab58ed890e7e92f4a673af3e78673869e19d8633fcb8b028e2",
+    "role_a_final\\int8\\encoders_0_0\\weight.bin": "da093fdaddd4d9dcc0aad85555067feb8294ef311cd9155d5c300dc7e8504336",
+    "role_a_final\\int8\\encoders_0_0\\bias.bin": "096c59a74915abec3cbdf2c086a4d039b93bec17119ec80afcc71c953fcea26a",
+    "role_a_final\\int8\\encoders_0_2\\input_full.bin": "9afeae3f69c444ef634350f1bfc5dd224f94e61cd6309157cc1f6c4371677439",
+    "role_a_final\\int8\\encoders_0_2\\output_full_golden.bin": "ea287f57b2dba9e655512e5c6d6dab1267b9d44662cff2ef872a53c9351aefca",
+    "role_a_final\\int8\\encoders_0_2\\weight.bin": "2777b9cf8716e9addaf42e78ac22ef8df8cdf3bb1d66f046f16143d802836df2",
+    "role_a_final\\int8\\encoders_0_2\\bias.bin": "93606579a4286a1e65fd5d5831a8a42632a24fb1c92d12856cae8d0031e543a3",
+    "role_a_final\\int8\\encoders_1_0\\input_full.bin": "3df82d0bb5f3d0da23bd229a29b490425a03e79c6c86806f5a549e884af26ebc",
+    "role_a_final\\int8\\encoders_1_0\\output_full_golden.bin": "f164c4af34f25fff35383ff3b215683932c0cceb929155afba3ef292b8d472cf",
+    "role_a_final\\int8\\encoders_1_0\\weight.bin": "c07e170330ba07441bf7e507ce51ff88bc12fcac26db8e6acf84b80b2af8c36c",
+    "role_a_final\\int8\\encoders_1_0\\bias.bin": "2cedff72cc0e27cb9e950039837d6bff7100555768746e8a3329937bb7102309",
+    "role_a_final\\int8\\encoders_1_2\\input_full.bin": "77f35a7f92152721f86db1970c2bfbfeac6d7cd1757bfd963e3f2688696de1f1",
+    "role_a_final\\int8\\encoders_1_2\\output_full_golden.bin": "8c51c46cb9f461542afd8c045dfc47f9f0a4ee2f23f6ffad68a012819aa97064",
+    "role_a_final\\int8\\encoders_1_2\\weight.bin": "23e8ee2b495c74fc6ac3cc5800976f8a73b31a6d566b28b71cb385ed717c170d",
+    "role_a_final\\int8\\encoders_1_2\\bias.bin": "51dc9e043b9d133f90c3a2dbbfdc0f15ed0fb0d1ad62b67d255ad118445caa85",
+    "role_a_final\\int8\\encoders_2_0\\input_full.bin": "b7bfec0ca3a29f6b2d51a629a244aee2c497e69fcc4c82e0bf5da5e39d487408",
+    "role_a_final\\int8\\encoders_2_0\\output_full_golden.bin": "ac3a8553dd098bf5190351e4fa8ae4246742ff7d078bcc6f5e911b2854bac4d1",
+    "role_a_final\\int8\\encoders_2_0\\weight.bin": "bf8383050712039f5716afa7981e1495f25d97eb68162e2df9fdc7125335d5f2",
+    "role_a_final\\int8\\encoders_2_0\\bias.bin": "9406eaa94fcdf2a58cc1a0e3da7aec35114a25f556c0d55ff12576d8c07bc885",
+    "role_a_final\\int8\\encoders_2_2\\input_full.bin": "223a39b89c7dadcffb0eba56b2c1d2073cdf19861b11549a859876605bd78dac",
+    "role_a_final\\int8\\encoders_2_2\\output_full_golden.bin": "5f78e8dc88e1f2dcace78d7dbad59f4c2602f7a7df3990064a93ff0029a0dad1",
+    "role_a_final\\int8\\encoders_2_2\\weight.bin": "4a3d520153633c0bcb74e4f73fcee21344fdc1eda9b2615699ba3a4a78164fcf",
+    "role_a_final\\int8\\encoders_2_2\\bias.bin": "74fd312144597cc37f7dea9e5fbafc97fd265b8c1b1c753591f2c1e556771e06",
+    "role_a_final\\int8\\encoders_3_0\\input_full.bin": "88710535f76d7f6b4120509aec2e909aea686c3eddc67197a71d500268e48e98",
+    "role_a_final\\int8\\encoders_3_0\\output_full_golden.bin": "6786369d32a054790c8a3d189710e9c545a0425172c154e2bff99459aad90684",
+    "role_a_final\\int8\\encoders_3_0\\weight.bin": "b40bbe545e33408aff3dbfb497f523ca65836cf3908132a6245e154256915471",
+    "role_a_final\\int8\\encoders_3_0\\bias.bin": "eac909f8fb9879d2b08ab63e282d8612d96f6c9608e4e7cd8495245660519cfd",
+    "role_a_final\\int8\\encoders_3_2\\input_full.bin": "a39b98c1e1d2af09a81135a4e755ddd0ce7ee67a77fa66a5dfcad49dfbd43bfc",
+    "role_a_final\\int8\\encoders_3_2\\output_full_golden.bin": "59ad6993b6914839892cab034d16293d23ca15efbb5afb9482283def617c61a3",
+    "role_a_final\\int8\\encoders_3_2\\weight.bin": "2df42e831d19f46466a5cf6841ba0af8f9471310689736a808193e1df2690c2a",
+    "role_a_final\\int8\\encoders_3_2\\bias.bin": "1905ca37bec446fc29d7c7bc5701f0f4f212ca6409a32f39b6df201c0b3083c1",
+    "role_a_final\\int8\\decoder_blocks_0_0\\input_full.bin": "822894800346baf6c0a71c46636d32a207736d460b516afe0830cff8cd473ee7",
+    "role_a_final\\int8\\decoder_blocks_0_0\\output_full_golden.bin": "281b3e3814c80939d1cdf4c78773a0c42b18f1122ecdb879a35cb7e7dd63ecb1",
+    "role_a_final\\int8\\decoder_blocks_0_0\\weight.bin": "33fb2fd17457ab12f0ee9ba29aca280eb5a1751f43ed42d04cabfc0437115b19",
+    "role_a_final\\int8\\decoder_blocks_0_0\\bias.bin": "ce0738806fe48cea7030ab05f2680cb6f915657afc5763702469f4ae376ca965",
+    "role_a_final\\int8\\decoder_blocks_0_2\\input_full.bin": "0f658e947c9d784f8be2bc3883ffcec84285d8d91c38e7085c67c91e67eb7991",
+    "role_a_final\\int8\\decoder_blocks_0_2\\output_full_golden.bin": "50b73d8d812e4a83f8608d7c87885c1291f6fe05f91568dde1143779dc40c828",
+    "role_a_final\\int8\\decoder_blocks_0_2\\weight.bin": "953baa9be367c3eb1df442e3db97b9a7422be2ee3081d87fcef5cecde58b28c8",
+    "role_a_final\\int8\\decoder_blocks_0_2\\bias.bin": "31c596de8da243c6773017de5ec9e569da1640f51cb39c4e814063d955c39e3c",
+    "role_a_final\\int8\\decoder_blocks_1_0\\input_full.bin": "6eb80f20a9c0b0c16b898582cf32d5f4ccf6ea5ad72788642194353f307f5ace",
+    "role_a_final\\int8\\decoder_blocks_1_0\\output_full_golden.bin": "2dbc17880ad97707ca3ba1e9694dd471aec38c4e917ef1b2ef92e9fd6395cc09",
+    "role_a_final\\int8\\decoder_blocks_1_0\\weight.bin": "077c46e67384f14495b45f7702aab4943e4dbfe804f4640d0298c0e49c36696a",
+    "role_a_final\\int8\\decoder_blocks_1_0\\bias.bin": "218aa3b48f3995b6eb84c1d922cdf6cb7096bf8d028b08431daca157ba3ea596",
+    "role_a_final\\int8\\decoder_blocks_1_2\\input_full.bin": "e1bd5ef86d815df958a55154bb2116e486c07770dee3d41c7fca861c1e279967",
+    "role_a_final\\int8\\decoder_blocks_1_2\\output_full_golden.bin": "dc2808ea649e5ca53fdc8cd55e163f45ec8f1737162d813bc04048f797a95972",
+    "role_a_final\\int8\\decoder_blocks_1_2\\weight.bin": "41751b7d62957a70dcbe9212f0de52918d45c2c1a708754f34014ce249a10728",
+    "role_a_final\\int8\\decoder_blocks_1_2\\bias.bin": "10c70e5adc5a23f7896b490a738ed3bf3defeea885bbf28bcb95c0e7c14e5353",
+    "role_a_final\\int8\\decoder_blocks_2_0\\input_full.bin": "b923ae2d8a400eb3d23c055369d437019bae97372ea231e4c268543515d66bc7",
+    "role_a_final\\int8\\decoder_blocks_2_0\\output_full_golden.bin": "8b7649f7176ff7177955ea28aaf25b30492ad1dc336a3a51ff8a558964fd42ce",
+    "role_a_final\\int8\\decoder_blocks_2_0\\weight.bin": "2f8e0ddb2ae6eada619227b5d79b9c41087454a5f50f03122563059f01c4de5c",
+    "role_a_final\\int8\\decoder_blocks_2_0\\bias.bin": "5c0488bc5b15b80a493015c684760347e4a083ad9f7067cdda85d474f8f44c97",
+    "role_a_final\\int8\\decoder_blocks_2_2\\input_full.bin": "94556814c69211c471a028bca8647c26f3b4e14a37cc81e76606dc969f70d44b",
+    "role_a_final\\int8\\decoder_blocks_2_2\\output_full_golden.bin": "194361122cc270ccf471371ff3d718b75d82ec38f4eb413053263ed5ea04f566",
+    "role_a_final\\int8\\decoder_blocks_2_2\\weight.bin": "a596c1da36112e3e7b4a3b8c99c03669c642ce9bbb054aea577e8f1e2e4206da",
+    "role_a_final\\int8\\decoder_blocks_2_2\\bias.bin": "21e78e63156c198d0e7fc5b1566cc9538b8162ac2ba3b9e4e0b42d73ff8ab763",
+    "role_a_final\\int8\\head\\input_full.bin": "6fff82062b87894c5922a387864d56630e50d134faa14b734da17790bb65cad9",
+    "role_a_final\\int8\\head\\output_full_golden.bin": "f6118a491bce0f3cfd680ff0852a844a59f28392b440a3c63fdb1f45405e5af4",
+    "role_a_final\\int8\\head\\weight.bin": "213e154d92a2e09994357b585154002aa0d64bebb8181ffe37a9d29d6a885c6d",
+    "role_a_final\\int8\\head\\bias.bin": "ca9512fb79a05d812d2340d8860eef312d7aae2601ca9e5cc8e48338ffa063fe"
+  }
+}
