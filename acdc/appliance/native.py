@@ -27,7 +27,8 @@ def load_native():
                   compiler=compiler,compiler_version=version,flags=flags,machine=platform.machine())
     key=hashlib.sha256(json.dumps(identity,sort_keys=True).encode()).hexdigest()
     owner=str(os.getuid()) if hasattr(os,'getuid') else 'desktop'
-    folder=Path(tempfile.gettempdir())/('pld-acdc-image-'+owner)/key
+    base=Path(os.environ.get('ACDC_NATIVE_CACHE',tempfile.gettempdir()))
+    folder=base/('pld-acdc-image-'+owner)/key
     folder.mkdir(parents=True,exist_ok=True)
     library=folder/('image.dll' if os.name=='nt' else 'image.so')
     manifest=folder/'build.json'

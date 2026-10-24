@@ -27,6 +27,7 @@ class BoardLifecycleTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);events=[]
             original=Mock();original.backend='pl';original.model.root=root/'model/int8_export'
+            del original.restore_hardware  # Legacy backend has no resident-session adapter.
             original.close.side_effect=lambda:events.append('release')
             process=Mock();process.poll.return_value=None;process.returncode=0
             process.wait.side_effect=lambda **_:events.append('hdmi_stopped')
@@ -58,6 +59,20 @@ class BoardLifecycleTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,'did not confirm'):server.stop_hdmi()
             self.assertTrue(server.fault)
             server.hdmi=None;server.server_close()
+
+    def test_resident_pipeline_restores_hardware_without_rebuilding_software(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            pipeline=Mock();pipeline.backend='pl';pipeline.run.return_value=dict(output_dir='x',report={},backend='pl')
+            pipeline.model.root=Path(tmp)/'model/int8_export'
+            server=CamusServer(('127.0.0.1',0),pipeline,Path(tmp)/'jobs')
+            server.released=True
+            job=dict(id='b'*32,state='queued',_started=0);server.busy.acquire()
+            try:
+                with patch('camus.web.CamusPipeline',side_effect=AssertionError('software was reconstructed')):
+                    server.execute(job,'frame.nii.gz',None)
+                self.assertEqual(job['state'],'done');pipeline.restore_hardware.assert_called_once()
+                self.assertIs(server.pipeline,pipeline);self.assertFalse(server.released)
+            finally:server.server_close()
 
     def test_http_rejects_cross_origin_hardware_control(self):
         import threading

@@ -9,10 +9,9 @@ import threading
 import time
 import numpy as np
 from PIL import Image
-from .accelerator import HardwareLease
 
 
-def main(argv=None):
+def main(argv=None, stop=None):
     p=argparse.ArgumentParser();p.add_argument('--result',type=Path,required=True)
     p.add_argument('--view',choices=('overlay','segmentation','label','label_raw'),default='overlay')
     p.add_argument('--duration',type=float,default=3600.)
@@ -20,22 +19,37 @@ def main(argv=None):
     if not 0<args.duration<=86400:p.error('duration must be in (0,86400] seconds')
     folder=args.result.resolve();source=folder/(args.view+'.png')
     if not source.is_file():p.error('completed CAMUS result PNG required')
-    stop=threading.Event()
-    signal.signal(signal.SIGTERM,lambda *_:stop.set());signal.signal(signal.SIGINT,lambda *_:stop.set())
+    if stop is None:
+        stop=threading.Event()
+        signal.signal(signal.SIGTERM,lambda *_:stop.set());signal.signal(signal.SIGINT,lambda *_:stop.set())
     # Reuse C's display transport without changing its binary-mask/UI contract.
     from display_web.pld_hdmi import PynqHdmiDisplay,fit_rgb
-    from pynq.overlays.base import BaseOverlay
-    ready=folder/'hdmi.ready.json';display=None;lease=HardwareLease()
+    from display_web.touch_display import TouchInput
+    try:from display_web.video_overlay import video_overlay
+    except ModuleNotFoundError:from video_overlay import video_overlay
+    try:from display_web.display_lease import CamusDisplayLease
+    except ModuleNotFoundError:from display_lease import CamusDisplayLease
+    ready=folder/'hdmi.ready.json';display=None;lease=CamusDisplayLease()
     try:
         rgb=np.asarray(Image.open(source).convert('RGB'))
         screen=fit_rgb(rgb,640,480,nearest=args.view in ('label','label_raw','segmentation'))
-        base=BaseOverlay('base.bit');display=PynqHdmiDisplay(base.video.hdmi_out)
+        base=video_overlay();display=PynqHdmiDisplay(base.video.hdmi_out)
         display.start();display.show(screen)
         evidence=dict(scope='HDMI overlay/configure/frame submission; physical screen appearance requires observation',
                       view=args.view,resolution=[640,480],source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
                       frame_sha256=hashlib.sha256(screen.tobytes()).hexdigest())
         ready.write_text(json.dumps(evidence,indent=2)+'\n',encoding='utf-8')
-        print(json.dumps(evidence),flush=True);stop.wait(args.duration)
+        print(json.dumps(evidence),flush=True)
+        touch=TouchInput();views=['overlay','segmentation','label','label_raw'];selected=views.index(args.view)
+        deadline=time.monotonic()+args.duration
+        try:
+            while not stop.wait(.02) and time.monotonic()<deadline:
+                for x,y in touch.poll():
+                    selected=(selected+1)%len(views)
+                    with Image.open(folder/(views[selected]+'.png')) as im:
+                        display.show(fit_rgb(np.asarray(im.convert('RGB')),640,480,nearest=selected!=0))
+                    print('TOUCH_TAP',x,y,views[selected],flush=True)
+        finally:touch.close()
     finally:
         try:
             if display is not None:display.close()

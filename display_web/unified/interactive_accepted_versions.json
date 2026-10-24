@@ -2,7 +2,8 @@
   "hub/hub.py": [
     "fa5a999577134c07d88dbe189100949890c78b79f0cc016e50d469d697929fd0",
     "32f9ad9d4dafece832ea7224242b86b034facb7426638077b447c5556baee76e",
-    "34319554bcc42dd1b433953e7f0f61fa60d467c574946b99b2eed39115f9e3d5"
+    "34319554bcc42dd1b433953e7f0f61fa60d467c574946b99b2eed39115f9e3d5",
+    "5c4c922d42a175651c5df79449cc81d23058e44eb159b01e9f27e8345bbe1184"
   ],
   "hub/index.html": [
     "5339228be03bdb3a41d8c171f013397dd999902c1f13a1a5deacb46ca7a3ce05",
@@ -12,16 +13,19 @@
   "hub/interactive_bridge.py": [
     null,
     "26d631f6ff4157a8534c7844448ee2e4d926d29596a6d0f8bc6e582ca95bbcd6",
-    "d945dc55de39e787e363f3f77cc61050179bf58bd7d2e94c49a28ad59e965842"
+    "d945dc55de39e787e363f3f77cc61050179bf58bd7d2e94c49a28ad59e965842",
+    "fdb49c94e20c5f65b5b322ceb5eede2235d97e9a8f45dd6bf6ce4ee00d8081bd"
   ],
   "hub/interactive.html": [
     null,
-    "c86e744b9dfe4898ea29450c91a68c96c8e49e2105efd77fc71fe642fe6fd1a2"
+    "c86e744b9dfe4898ea29450c91a68c96c8e49e2105efd77fc71fe642fe6fd1a2",
+    "2da05954111863027de897afd045ce2b87eb509b3d4ad39de137e20047be812a"
   ],
   "hub/interactive.js": [
     null,
     "4e2b466ab4baa9617c2c5013edfe5751192029aec2a4de3972208b6ec4effe67",
-    "be34e5f00644c2e86e8820626384d3c07739686e4d2a29f142addf7bb92127bd"
+    "be34e5f00644c2e86e8820626384d3c07739686e4d2a29f142addf7bb92127bd",
+    "6b3cb3d86bbea08855e0d93aa212c54cdaea229d1b4da7acd9d4b79cb1a77dc3"
   ],
   "hub/prompt_seg/__init__.py": [
     null,
@@ -34,29 +38,89 @@
   ],
   "hub/prompt_seg/refinement.py": [
     null,
-    "5f12b99aa9a13e807476a7a0b944c73ecadcf21d83ce1f91010020050d4d085e"
+    "5f12b99aa9a13e807476a7a0b944c73ecadcf21d83ce1f91010020050d4d085e",
+    "28d0f9e4552d84fa96e18f1f85cf32a1c95c3a2b14263cd3cec5b79c2c0f8425"
   ],
   "hub/prompt_seg/service.py": [
     null,
     "0ac18687871eccbf1e4ae5ff0bcecc0083f8e1a9b7bd4865b758f18e96fabc07",
-    "1157fa543b042daa8176b3a4cd31bc1cb1952c1ac9cbee7ab4f8a2c5e830237e"
+    "1157fa543b042daa8176b3a4cd31bc1cb1952c1ac9cbee7ab4f8a2c5e830237e",
+    "26d0fe6aeee086787bf1b8f5a3641179b6af2b049a34f41a8905eb5a34537e1a"
   ],
   "hub/interactive_workspace.py": [
-    null
+    null,
+    "a77d32d589056f2cbb4222673b7e094537d53f6e451f7e14f9204a3b3d031fe7"
   ],
   "hub/interactive_hdmi.py": [
-    null
+    null,
+    "408c12cf3496258dacf8595cb901c7dfb2d06270dcfaebd89dd04f6fee656d52"
   ],
   "skin/server.py": [
-    "122580598d2941a2bb4124061a330e7a7ca39b9b58c40964c0b51c6802c54469"
+    "122580598d2941a2bb4124061a330e7a7ca39b9b58c40964c0b51c6802c54469",
+    "c35d325268371299fadaca4dd1b5e4b49d2081daff2d808027a502e60c0a810a"
   ],
   "skin/hdmi_worker.py": [
-    "a84f494b7ade0b4b38fb1d04f651bed29171bf24f8236f242fd745a7fe111f67"
+    "a84f494b7ade0b4b38fb1d04f651bed29171bf24f8236f242fd745a7fe111f67",
+    "31ce668209b29aaefe801457aa4a13bdb881f1d6b819b22c1712ac8cba0a394a"
   ],
   "skin/touch_drag.py": [
-    null
+    null,
+    "200b8cff258809feb082003ac8de71ca0293790e13c13c10baec8c7a89729119"
   ],
   "skin/touch_display.py": [
+    null,
+    "0d30284712e4dd049db3485cd4e947718759f4d108e76f1a486471cb087e6432"
+  ],
+  "skin/static/app.js": [
+    null,
+    "9e1a88ea2f9ff4fbaf1431141ba9d8fba50586782d7acabcef2eed3aee580841"
+  ],
+  "skin/display_completion.py": [
+    null
+  ],
+  "skin/warm_hdmi.py": [
+    null
+  ],
+  "skin/video_overlay.py": [
+    null
+  ],
+  "skin/overlay_metadata.py": [
+    null
+  ],
+  "skin/latency.py": [
+    null
+  ],
+  "hub/camus_quad.py": [
+    null,
+    "3e6f871ee85697fd584b2f3f7c525706313ca073cf33f479408d53e1c50577ec"
+  ],
+  "hub/quad_camus.html": [
+    null,
+    "333f96a29bd0036f763dd1a9c52b7c2b993675eb954fe17002663b8b6e3dd83f"
+  ],
+  "hub/quad_camus_hdmi.py": [
+    null,
+    "204b3226c32662e1fb8da394ead64496bcfec8e107a5f5fcfed3031c105baf73"
+  ],
+  "hub/display_completion.py": [
+    null
+  ],
+  "hub/warm_hdmi.py": [
+    null
+  ],
+  "hub/video_overlay.py": [
+    null
+  ],
+  "hub/overlay_metadata.py": [
+    null
+  ],
+  "hub/latency.py": [
+    null
+  ],
+  "skin/display_lease.py": [
+    null
+  ],
+  "hub/display_lease.py": [
     null
   ]
 }

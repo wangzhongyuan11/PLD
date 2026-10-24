@@ -1,0 +1,175 @@
+{
+  "schema": "pld-model-hdmi-optimization-evidence-v1",
+  "host_date": "2026-10-25",
+  "board_clock_used": false,
+  "scope": "single representative runs; monotonic server/API timing; HDMI means first frame submitted, not physical observation",
+  "comparison": {
+    "original_acdc_hdmi_seconds": 44.589840247,
+    "original_acdc_restore_seconds": 42.86645881,
+    "prior_resident_acdc_switch_seconds": 40.452552863,
+    "prior_release_seconds": 32.635107964
+  },
+  "measurements": [
+    {
+      "case": "skin_after_acdc",
+      "seconds": 7.033304837999822
+    },
+    {
+      "case": "camus_hot_switch",
+      "seconds": 3.9193897720001587
+    },
+    {
+      "case": "skin_hot_switch",
+      "seconds": 2.3585023780001393
+    },
+    {
+      "case": "acdc_hot_resume",
+      "seconds": 7.298137651000161
+    },
+    {
+      "case": "acdc_prepared_show",
+      "seconds": 7.7148940989995936
+    },
+    {
+      "case": "acdc_repeated_show",
+      "seconds": 0.012849027000356728
+    },
+    {
+      "case": "acdc_post_hdmi_recovery",
+      "seconds": 4.938715671999944,
+      "selftest": {
+        "backend": "pl",
+        "head_equal": true,
+        "head_sha256": "69727f2dd44a4b582d1dd1fdaee0c016f0c173a5826b813313451b82f9adb4d2"
+      }
+    },
+    {
+      "case": "camus_after_acdc",
+      "seconds": 5.2258114199999
+    },
+    {
+      "case": "camus_prepared_show",
+      "seconds": 6.140170790999946,
+      "job": "660f656a343846ef88e846d9096a8d87"
+    },
+    {
+      "case": "camus_view_overlay",
+      "seconds": 0.3843258950000745
+    },
+    {
+      "case": "camus_view_label_raw",
+      "seconds": 0.3556241159999445
+    },
+    {
+      "case": "camus_view_quad",
+      "seconds": 0.35892323699999906
+    },
+    {
+      "case": "camus_view_updates_same_process_and_configuration"
+    },
+    {
+      "case": "skin_after_camus_hdmi",
+      "seconds": 6.477227542000037
+    },
+    {
+      "case": "skin_new_image_auto_display",
+      "seconds": 5.826507455999945,
+      "result_to_show": 3.742299439999897,
+      "head_sha256": "809dea10b63a2e5637fae351b7305e25cd588596e5131144d745a0d432b82b14",
+      "job": "72a1885e7aed464ba4af20d9c239bf48"
+    }
+  ],
+  "roi": [
+    {
+      "case": "automatic_initial_segmentation",
+      "seconds": 4.50022250999973,
+      "dimensions": [
+        192,
+        144
+      ],
+      "label_hashes": {
+        "baseline": "90b097e3b7895c6214aa9f1b6856602ad69fdde9ec2d6315a7ccce0e5f0d92a1",
+        "final": "90b097e3b7895c6214aa9f1b6856602ad69fdde9ec2d6315a7ccce0e5f0d92a1"
+      }
+    },
+    {
+      "case": "hdmi_roi_reinfer_and_restore",
+      "seconds": 3.879649662000702,
+      "cache": false,
+      "source_job": "da52790008234f1c92820ca51392291e",
+      "label_hashes": {
+        "baseline": "54c4d09c805668abfb446b22b92e9b77915b2e2d9d40c24ef3c4d64666c13aa5",
+        "final": "54c4d09c805668abfb446b22b92e9b77915b2e2d9d40c24ef3c4d64666c13aa5"
+      }
+    },
+    {
+      "case": "hdmi_points_box_cached",
+      "seconds": 1.5441290369999479,
+      "cache": true,
+      "source_job": "da52790008234f1c92820ca51392291e",
+      "label_hashes": {
+        "baseline": "54c4d09c805668abfb446b22b92e9b77915b2e2d9d40c24ef3c4d64666c13aa5",
+        "final": "0adeb7da45a3dd7a90a6cd10cd1bd6ea15cb48a83c32b632e95d45380dd9e47f"
+      }
+    },
+    {
+      "case": "post_hdmi_inference",
+      "seconds": 3.787007717999586,
+      "cache": false,
+      "source_job": "53a4937f2184444e958946b5d8446832",
+      "label_hashes": {
+        "baseline": "90b097e3b7895c6214aa9f1b6856602ad69fdde9ec2d6315a7ccce0e5f0d92a1",
+        "final": "90b097e3b7895c6214aa9f1b6856602ad69fdde9ec2d6315a7ccce0e5f0d92a1"
+      }
+    }
+  ],
+  "alignment": {
+    "source_files_checked": 45,
+    "source_mismatches": [
+      "/home/xilinx/acdc_board_v2/releases/latency_opt_20261024/acdc/appliance/surface_hdmi.py",
+      "/home/xilinx/acdc_board_v2/releases/latency_opt_20261024/acdc/appliance/web_assets/index.html"
+    ],
+    "rollback_drift": [],
+    "acdc_core_files_checked": 219,
+    "acdc_core_drift": [],
+    "runtime_files_checked": 292,
+    "runtime_asset_drift": [],
+    "application_sha256": "1bc0e7c99d99f9bb3a06eda3a1d50cd04203e19e6b61f63ca9c7c2f9d31baaa7",
+    "runtime_sha256": "1f0bdf8739980ea8e8e2a06ee349b57ed81d041d87515e4e9400cd30b7ae7747",
+    "expected_source_variants": [
+      {
+        "file": "surface_hdmi.py",
+        "reason": "newline encoding and unused Linux fcntl import omitted on host",
+        "board_sha256": "b04d9a2be9b158980aca1f5d371e5de16562fdb05462ad7b16c7fd6684648988",
+        "local_sha256": "eed6fd82b3d8cd5432823274a9fcefa36e5f3eba5b36c7694d7570f391ab90c1"
+      },
+      {
+        "file": "web_assets/index.html",
+        "reason": "newline encoding",
+        "board_sha256": "736085a027ecd2b8684d5edcb3abe9b127e02c1aa088d93b7056cf1886a3a479",
+        "local_sha256": "07a3a805f9ce6b634830e6ed0a8e1a1b40dc713c7c9e65406126ac811f1945d3"
+      }
+    ],
+    "unexpected_source_mismatches": []
+  },
+  "verification": {
+    "skin_head_equal": true,
+    "camus_head_equal": true,
+    "acdc_recovery_selftest_equal": true,
+    "software_pids_retained": true,
+    "camus_view_updates_preserved_process_and_fpga_configuration": true,
+    "roi_cached_update_preserved_fpga_configuration": true,
+    "manual_stop_disabled_automatic_display": true
+  },
+  "sample_note": "ROI and skin auto-display fixed image is 192x144; these end-to-end numbers are not a full-resolution performance claim.",
+  "physical_acceptance": "pending user observation for this candidate",
+  "remaining": [
+    "Physical HDMI and touch observation",
+    "Final cold-start limits and larger-image end-to-end sampling remain separate from warm switching metrics"
+  ],
+  "deployment": {
+    "entry": "/home/xilinx/latency_opt_20261024/entry",
+    "acdc": "/home/xilinx/acdc_board_v2/releases/latency_opt_20261024",
+    "rollback": "/home/xilinx/latency_opt_20261024/rollback.py"
+  }
+}

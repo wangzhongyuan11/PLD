@@ -141,6 +141,14 @@ def handler(app):
                 if origin is not None and urlsplit(origin).netloc!=self.headers.get('Host'):
                     raise PermissionError('cross-origin request refused')
                 path=urlsplit(self.path).path
+                if path=='/api/v2/lifecycle':
+                    if self.client_address[0]!='127.0.0.1':raise PermissionError('lifecycle is board-local')
+                    body=self.body();self.send(202,app.client.request(op='lifecycle',action=body.get('action')));return
+                if path=='/api/v2/hdmi':
+                    from display_web.display_completion import user_display
+                    body=self.body()
+                    if not body.get('_automatic'):user_display(body.get('action','show'))
+                    self.send(202,app.client.request(op='hdmi',job=body.get('job'),action=body.get('action','show')));return
                 if path=='/api/v2/jobs':
                     length=int(self.headers.get('Content-Length','0'));ed_bytes=int(self.headers.get('X-ED-Bytes','0'))
                     if not 0<ed_bytes<length<=MAX_UPLOAD:raise ContractError('invalid ED/ES upload length')

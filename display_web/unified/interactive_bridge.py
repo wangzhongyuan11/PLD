@@ -70,7 +70,7 @@ class Predictor:
         if model=='camus':frame=frame.convert('L')
         frame.save(encoded,format='JPEG' if model=='skin' else 'PNG',**({'quality':100,'subsampling':0} if model=='skin' else {'compress_level':1}))
         b64=base64.b64encode(encoded.getvalue()).decode()
-        body={'mode':'infer','image':b64,'name':'interactive ROI','thickness':2} if model=='skin' else {'input_name':'roi.png','files':[{'name':'roi.png','data_base64':b64}]}
+        body={'mode':'infer','image':b64,'name':'interactive ROI','thickness':2,'auto_display':False} if model=='skin' else {'input_name':'roi.png','files':[{'name':'roi.png','data_base64':b64}],'auto_display':False}
         submitted=time.monotonic()
         row=m.request(model,'POST','/api/jobs',body)
         ident=row['id']
@@ -165,6 +165,9 @@ class Manager(SkinWorkspace):
                 width=int(image.shape[1]),height=int(image.shape[0]),sha256=digest)
             with self.guard:self.image_slot=slot
             self.workspace_upload(slot)
+        if body.get('auto_segment') is True:
+            self.submit(dict(model=slot['model'],generation=slot['generation'],
+                             image_token=slot['token'],revision=self.revision))
         return {'image_token':slot['token'],'sha256':slot['sha256'],
                 'width':slot['width'],'height':slot['height'],
                 'model':slot['model'],'generation':slot['generation']}
@@ -201,8 +204,12 @@ class Manager(SkinWorkspace):
                 raise ValueError('提示已改变，请同步后再运行')
             # Reject concurrently running normal-page jobs before allocating arrays.
             other='camus' if c.model=='skin' else 'skin'
-            if c.board.props(other)['ActiveState']!='inactive':raise RuntimeError('另一个模型未释放，禁止交互推理')
+            if c.board.props(other)['ActiveState']!='inactive':
+                other_state=c.board.status(other)
+                if not (other_state.get('suspended') and other_state.get('hardware_released') and other_state.get('hdmi')=='off'):
+                    raise RuntimeError('另一个模型未释放，禁止交互推理')
             status=c.board.status(c.model)
+            self.runtime_identity=status.get('runtime_identity')
             if status.get('active') or status.get('fault') or status.get('warmup')=='running':raise RuntimeError('后端忙或异常，请先完成普通分割')
             image,image_token=self._image_for(body)
             params=body.get('parameters',getattr(self,'parameters',{}))
@@ -216,6 +223,9 @@ class Manager(SkinWorkspace):
             return dict(id=identifier,state='running')
 
     def run(self,identifier,model,image,params,began=None,submit_seconds=0,image_token=None):
+        try:from display_web.display_completion import Completion
+        except ModuleNotFoundError:from display_completion import Completion
+        completion=Completion('skin',identifier,'interactive',getattr(self,'runtime_identity',None))
         if began is None:began=time.monotonic()
         try:
             c=self.controller
@@ -272,7 +282,6 @@ class Manager(SkinWorkspace):
             result['elapsed_ms']=round((time.monotonic()-began)*1000,2)
             with self.guard:self.job=dict(id=identifier,state='done',result=result)
             self.result_revision=getattr(self,'revision',0)
-            if getattr(self,'hdmi_requested',False):self.sync_hdmi(result)
         except Exception as exc:
             self.predictor.clear()
             # A failed request must not leave a baseline/context keyed to
@@ -281,6 +290,11 @@ class Manager(SkinWorkspace):
             with self.guard:self.job=dict(id=identifier,state='error',error=str(exc))
         finally:
             with self.controller.lock:self.controller.interactive_busy=False
+            with self.guard:success=self.job.get('state')=='done'
+            completion.finish(success,self.job['result']['identity'].get('source_job') if success else None)
+            if success and not completion.token and getattr(self,'hdmi_requested',False):
+                try:self.sync_hdmi(self.job['result'])
+                except (RuntimeError,OSError) as exc:self.hdmi_error=str(exc)
 
     def snapshot(self,identifier):
         with self.guard:

@@ -145,13 +145,13 @@ class Surface:
 def run(folder,hub,stop):
     from pld_hdmi import PynqHdmiDisplay
     from touch_drag import DragInput
-    from pynq.overlays.base import BaseOverlay
+    from video_overlay import video_overlay
     client=Client(hub);surface=Surface()
     state=client.request('/interactive/state');surface.update(state)
     if state['model']!='skin' or state['phase']!='ready':return
     if state['result_ready']:
         surface.update(state,client.request('/interactive/jobs/'+state['job_id'])['result'])
-    base=BaseOverlay('base.bit');display=PynqHdmiDisplay(base.video.hdmi_out);touch=DragInput()
+    base=video_overlay();display=PynqHdmiDisplay(base.video.hdmi_out);touch=DragInput()
     ready=folder/'hdmi.ready'
     next_sync=0
     try:

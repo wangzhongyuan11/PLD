@@ -126,6 +126,35 @@ class Lifecycle(unittest.TestCase):
             controller._switch('acdc')
         self.assertEqual(controller.phase, 'ready')
 
+    def test_resident_roundtrip_keeps_software_and_serializes_hardware(self):
+        class ResidentBoard(Board):
+            def __init__(self):super().__init__();self.heart_paused=False;self.hub_paused=False
+            def can_park_heart(self):return True
+            def health(self):return dict(ready=not self.heart_paused,backend='pl',active_job=None,
+                suspended=self.heart_paused,hardware_released=self.heart_paused,hdmi='off',
+                lifecycle='pause-resume-v1',resident_handoff='resident-hub-v1')
+            def hub(self):return dict(phase='paused' if self.hub_paused else 'ready',model=self.model,
+                generation=7,backend={},lifecycle='resident-hub-v1',hardware_released=self.hub_paused)
+            def start(self,unit):
+                if unit==entry.HUB:assert self.heart_paused
+                if unit==entry.WEB:assert self.hub_paused
+                self.states[unit]=True;self.events.append(('start',unit))
+            def request(self,port,path,body):
+                if port==8092:
+                    if body['action']=='resume':assert self.hub_paused
+                    self.heart_paused=body['action']=='pause'
+                elif path=='/hub/lifecycle':
+                    if body['action']=='resume':assert self.heart_paused;self.model=body['model']
+                    self.hub_paused=body['action']=='pause'
+                else:self.model=body['model']
+        board=ResidentBoard();controller=entry.Controller(board)
+        for model in ('skin','camus','acdc','skin'):
+            controller._switch(model)
+            self.assertEqual(controller.phase,'ready',controller.error)
+            self.assertEqual(controller.model,model)
+        self.assertFalse(any(event[0]=='stop' for event in board.events))
+        self.assertTrue(board.states[entry.ENGINE] and board.states[entry.HUB])
+
 
 class Gateway(unittest.TestCase):
     def setUp(self):

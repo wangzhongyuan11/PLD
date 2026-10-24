@@ -2,6 +2,7 @@
 import argparse,hashlib,importlib,json,os,signal,sys,threading,time
 from pathlib import Path
 import numpy as np
+from web_lifecycle import OWNER
 HERE=Path(__file__).resolve().parent
 CONFIG=dict(original_release='/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017',workspace='/home/xilinx/jupyter_notebooks/PLD_Dev',data='/home/xilinx/skin8_web_data')
 BASE=Path(CONFIG['original_release'])
@@ -10,21 +11,34 @@ BUILD=HERE
 DATA=Path(CONFIG['data'])
 sys.path.insert(0,str(CORE_ROOT))
 
+def runtime_identity(kind):
+    return hashlib.sha256((HERE/'models'/kind/'manifest.json').read_bytes()+
+                          hashlib.sha256((HERE/'skin8.bit').read_bytes()).digest()).hexdigest()
+
 class Core:
     def __init__(self,kind):
+        OWNER.acquire()
         import asyncio
         try:asyncio.get_event_loop()
         except RuntimeError:asyncio.set_event_loop(asyncio.new_event_loop())
         from types import SimpleNamespace
         from pynq import Overlay,MMIO,allocate
+        from overlay_metadata import enable_metadata_cache
+        enable_metadata_cache()
         from frame_driver import FrameSession
+        from pynq.pl_server.global_state import load_global_state, global_state_file_exists, bitstream_hash
         root=BASE/'skin/role_a_final/int8' if kind=='skin' else BASE/'camus/model/int8_export'
         raw=(root/'model_spec.json').read_bytes()
         manifest=json.loads((HERE/'models'/kind/'manifest.json').read_text())
         if hashlib.sha256(raw).hexdigest()!=manifest['spec_sha256']:raise ValueError('model spec mismatch')
         spec=json.loads(raw)
         self.model=SimpleNamespace(layers=spec['layers'],spec_sha256=manifest['spec_sha256'])
-        self.overlay=Overlay(str(HERE/'skin8.bit'))
+        bit=HERE/'skin8.bit'
+        # Overlay(download=False) updates process-local device metadata; its
+        # is_loaded() is insufficient to identify a download by another process.
+        loaded=(global_state_file_exists() and load_global_state().bitfile_hash==bitstream_hash(bit))
+        self.overlay=Overlay(str(bit),download=False)
+        if not loaded:self.overlay.download()
         self.session=FrameSession(HERE/'models'/kind,MMIO(0x43c00000,0x1000),allocate)
     def run(self,q):
         head,t=self.session.run(q,timeout=10)
@@ -80,7 +94,10 @@ def serve_skin():
     old.PersistentBWorker=SkinWorker
     token=Path(json.loads((BASE/'hub/config.json').read_text())['token_file']).read_text().strip()
     app=old.Console(DATA/'skin',BASE/'skin',token=token,persistent_b_worker=True)
+    app.runtime_identity=runtime_identity('skin')
     server=old.make_server(app,'127.0.0.1',8766)
+    from web_lifecycle import install
+    install(old,app,'skin')
     def stop(*_):threading.Thread(target=server.shutdown,daemon=True).start()
     signal.signal(signal.SIGTERM,stop);signal.signal(signal.SIGINT,stop)
     app.begin_warmup()
@@ -102,11 +119,14 @@ def serve_camus():
             if backend!='pl':super().__init__(model_root,backend,runtime,timeout);self.core=None;return
             t=time.perf_counter();super().__init__(model_root,'reference')
             self.core=Core('camus');self.backend='pl';self.native=None
-            core=self.core
+            pipeline=self
             class Network:
                 def forward(self,x):
-                    r=core.run(x[0]);return dict(head=r['head'][None],events=r.get('events',[]),conv_records=r.get('records',[]))
+                    r=pipeline.core.run(x[0]);return dict(head=r['head'][None],events=r.get('events',[]),conv_records=r.get('records',[]))
             self.network=Network();self.initialization_seconds=time.perf_counter()-t
+        def restore_hardware(self):
+            if self.core is not None:raise RuntimeError('CAMUS hardware already active')
+            self.core=Core('camus')
         def close(self):
             if self.core:self.core.close();self.core=None
     web.CamusPipeline=Pipeline
@@ -121,9 +141,16 @@ def serve_camus():
         if web.urlsplit(handler.path).path=='/api/status':
             hdmi=handler.server.hdmi_status()
             with handler.server.guard:active=any(j.get('state') in ('queued','running') for j in handler.server.jobs.values())
-            return handler.json(dict(backend=handler.server.pipeline.backend,spec_sha256=web.MODEL_SPEC_SHA256,ready=not handler.server.fault,hdmi=hdmi,hdmi_available=not handler.server.fault,active=active,fault=handler.server.fault,model='CAMUS hidden_histogram INT8'))
+            return handler.json(dict(backend=handler.server.pipeline.backend,spec_sha256=web.MODEL_SPEC_SHA256,ready=not handler.server.fault and not getattr(handler.server,'suspended',False),hdmi=hdmi,hdmi_available=not handler.server.fault,active=active,fault=handler.server.fault,model='CAMUS hidden_histogram INT8',lifecycle='pause-resume-v1',suspended=getattr(handler.server,'suspended',False),hardware_released=OWNER.handle is None,runtime_identity=handler.server.runtime_identity,owner_pid=os.getpid()))
         return original(handler)
     web.Handler.do_GET=get
+    server_init=web.CamusServer.__init__
+    def init(server,*args,**kwargs):
+        server_init(server,*args,**kwargs)
+        server.runtime_identity=runtime_identity('camus')
+        from web_lifecycle import install
+        install(web,server,'camus',Pipeline)
+    web.CamusServer.__init__=init
     web.main(['--backend','pl','--runtime',str(BASE/'camus'),'--model',str(BASE/'camus/model/int8_export'),'--host','127.0.0.1','--port','8090','--data',str(DATA/'camus')])
 
 
@@ -141,6 +168,6 @@ if __name__=='__main__':
     if a.kind=='hub':serve_hub()
     else:
         # Parent lease covers inference AND original HDMI subprocess lifetime.
-        with open('/run/pld-unified-fpga.lock','a+b') as lease:
-            fcntl.flock(lease,fcntl.LOCK_EX|fcntl.LOCK_NB)
-            (serve_skin if a.kind=='skin' else serve_camus)()
+        OWNER.acquire()
+        try:(serve_skin if a.kind=='skin' else serve_camus)()
+        finally:OWNER.release()

@@ -10,7 +10,7 @@ from acdc.contract import ContractError,atomic_json,file_sha,safe_member
 def create(root):
     root=Path(root).resolve();config=json.loads((root/'v2_config.json').read_text('utf-8'))
     names={'v2_config.json'}
-    for sub in ('acdc/appliance','v2_assets','v2_deps'):
+    for sub in ('acdc/appliance','v2_assets','v2_deps','display_web'):
         for path in (root/sub).rglob('*'):
             if path.is_file() and '__pycache__' not in path.parts and path.suffix!='.pyc':
                 names.add(path.relative_to(root).as_posix())

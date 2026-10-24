@@ -254,7 +254,7 @@ $('run').onclick=async()=>{
   finally {preparing=false;buttons();}
 };
 $('mode').onchange=()=>{const infer=$('mode').value==='infer';$('maskField').hidden=infer;$('imageFile').accept='image/jpeg,image/png';$('modeNote').textContent=infer?'上传 JPG / PNG 后调用板端模型，PNG 自动转为 JPG 副本。处理前会关闭本网页启动的 HDMI。':'使用你上传的掩膜提取轮廓，不执行模型推理。';};
-$('imageFile').onchange=()=>{$('fileLabel').textContent=$('imageFile').files[0]?.name||'选择原始图片';};
+$('imageFile').onchange=()=>{$('fileLabel').textContent=$('imageFile').files[0]?.name||'选择原始图片';if(pldAutoSegment&&$('mode').value==='infer'&&!busy&&!preparing&&$('imageFile').files.length)$('run').onclick();};
 $('thickness').oninput=()=>{$('widthValue').textContent=$('thickness').value+' px';};
 document.querySelectorAll('[data-view]').forEach(b=>{b.onclick=async()=>{currentView=b.dataset.view;try{await render();}catch(e){message(e.message,true);}};b.onkeydown=e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key))return;const tabs=[...document.querySelectorAll('[data-view]')].filter(t=>!t.disabled);const i=tabs.indexOf(b);tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length].focus();e.preventDefault();};});
 $('download').onclick=async()=>{try{const blob=await asset('results.zip');const url=URL.createObjectURL(blob);const a=Object.assign(document.createElement('a'),{href:url,download:'PLD_'+current.id.slice(0,8)+'.zip'});a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(e){message(e.message,true);}};
@@ -338,3 +338,14 @@ $('downloadTimings').onclick=()=>{
  const a=Object.assign(document.createElement('a'),{href:url,download:'PLD_timing_'+timingReport.id.slice(0,8)+'.json'});
  document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 };
+
+
+// The board entry owns preferences; iframe reloads do not reset them.
+let pldAutoSegment=false;
+if(typeof window!=='undefined'){
+ const entryOrigin='http://'+location.hostname+':8088';
+ window.addEventListener('message',event=>{
+  if(event.source===window.parent&&event.origin===entryOrigin&&event.data?.type==='pld-preferences')pldAutoSegment=event.data.settings?.auto_segment===true;
+ });
+ if(window.parent!==window)window.parent.postMessage({type:'pld-preferences-request'},entryOrigin);
+}

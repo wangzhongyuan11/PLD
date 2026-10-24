@@ -17,8 +17,19 @@ canvas.onpointerdown=e=>{if(!image||acting||state?.busy)return;const p=coordinat
 canvas.onpointermove=e=>{if(!drag)return;drag.end=coordinate(e,true);draw();};
 canvas.onpointercancel=()=>{drag=null;draw();};
 canvas.onpointerup=e=>{if(!drag)return;const d=drag,end=coordinate(e,true);drag=null;draw();if(d.revision!==state.revision)return;const p=JSON.parse(JSON.stringify(state.parameters));if(d.tool==='roi'||d.tool==='box'){const r=rect(d.start,end);if(r.x1-r.x0<2||r.y1-r.y0<2)return;p[d.tool]=r;if(d.tool==='roi'){p.points=[];p.box=null;}}else{if(!coordinate(e).inside)return;p.points.push({x:end.x,y:end.y,label:d.tool});}act(async()=>{await api('/interactive/control',{...context(),parameters:p});});};
-$('file').onchange=()=>act(async()=>{const file=$('file').files[0];if(!file)return;if(file.size>16*1024*1024)throw Error('图片须小于16MB');const url=URL.createObjectURL(file);let original;try{original=await loadImage(url);}finally{URL.revokeObjectURL(url);}const scale=Math.min(1,1024/Math.max(original.naturalWidth,original.naturalHeight));const prepared=document.createElement('canvas');prepared.width=Math.max(2,Math.round(original.naturalWidth*scale));prepared.height=Math.max(2,Math.round(original.naturalHeight*scale));prepared.getContext('2d').drawImage(original,0,0,prepared.width,prepared.height);await api('/interactive/images',{model:'skin',generation:state.generation,image:prepared.toDataURL('image/png')});$('file').value='';});
+$('file').onchange=()=>act(async()=>{const file=$('file').files[0];if(!file)return;if(file.size>16*1024*1024)throw Error('图片须小于16MB');const url=URL.createObjectURL(file);let original;try{original=await loadImage(url);}finally{URL.revokeObjectURL(url);}const scale=Math.min(1,1024/Math.max(original.naturalWidth,original.naturalHeight));const prepared=document.createElement('canvas');prepared.width=Math.max(2,Math.round(original.naturalWidth*scale));prepared.height=Math.max(2,Math.round(original.naturalHeight*scale));prepared.getContext('2d').drawImage(original,0,0,prepared.width,prepared.height);await api('/interactive/images',{model:'skin',generation:state.generation,image:prepared.toDataURL('image/png'),auto_segment:pldAutoSegment});$('file').value='';});
 $('run').onclick=()=>act(async()=>{await api('/interactive/jobs',context());});
 $('hdmi').onclick=()=>act(async()=>{await api('/interactive/hdmi',{...context(),action:'show'});});
 $('stopHdmi').onclick=()=>act(async()=>{await api('/interactive/hdmi',{...context(),action:'stop'});});
 refresh();setInterval(refresh,750);
+
+
+// The board entry owns preferences; iframe reloads do not reset them.
+let pldAutoSegment=false;
+if(typeof window!=='undefined'){
+ const entryOrigin='http://'+location.hostname+':8088';
+ window.addEventListener('message',event=>{
+  if(event.source===window.parent&&event.origin===entryOrigin&&event.data?.type==='pld-preferences')pldAutoSegment=event.data.settings?.auto_segment===true;
+ });
+ if(window.parent!==window)window.parent.postMessage({type:'pld-preferences-request'},entryOrigin);
+}

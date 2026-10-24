@@ -47,8 +47,9 @@ def install(web):
         return original_get(handler)
 
     def hdmi(server, identifier, view):
-        if view != 'quad':
+        if view != 'quad' and not getattr(server,'display_agent',None):
             return original_hdmi(server, identifier, view)
+        if view not in ('quad','overlay','segmentation','label','label_raw'):raise ValueError('invalid CAMUS view')
         if server.pipeline.backend != 'pl':
             raise ValueError('HDMI requires the real board PL backend')
         with server.guard:
@@ -58,17 +59,24 @@ def install(web):
         folder = server.data/identifier/'output'
         if not (folder/'quad.png').is_file():
             raise ValueError('四宫格未生成，请重新处理图片')
+        if (getattr(server,'display_agent',None) and server.hdmi is not None
+                and server.hdmi.poll() is None and server.hdmi_folder==folder):
+            if getattr(server,'hdmi_view',None)!=view:server.hdmi.update(view)
+            server.hdmi_view=view;return
         # Same lifecycle as the original backend: no second hardware owner.
         server.stop_hdmi()
         server.pipeline.close()
         server.released = True
         server.hdmi_folder = folder
         (folder/'hdmi.ready.json').unlink(missing_ok=True)
-        with (folder/'hdmi.log').open('w', encoding='utf-8') as log:
-            server.hdmi = subprocess.Popen([sys.executable, '-u', str(ROOT/'quad_camus_hdmi.py'),
-                                           '--result', str(folder), '--source',
-                                           str(Path(web.__file__).resolve().parents[1])], stdout=log, stderr=log)
+        command=[sys.executable,'-u',str(ROOT/'quad_camus_hdmi.py'),'--result',str(folder),
+                 '--source',str(Path(web.__file__).resolve().parents[1]),'--view',view]
+        if getattr(server,'display_agent',None):server.hdmi=server.display_agent.start(command,folder/'hdmi.log')
+        else:
+            with (folder/'hdmi.log').open('w', encoding='utf-8') as log:
+                server.hdmi=subprocess.Popen(command,stdout=log,stderr=log)
         server.hdmi_started = time.monotonic()
+        server.hdmi_view=view
 
     web.ARTIFACTS.update({'quad_original.png', 'quad_enhanced.png', 'quad.png'})
     web.CamusPipeline.run = run

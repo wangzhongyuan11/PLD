@@ -126,6 +126,7 @@ async function resume(job){state.job=job;state.busy=true;$('cancel').disabled=fa
 $('start').onclick=async()=>{
  const ed=$('ed').files[0],es=$('es').files[0];if(!ed||!es){error(Error('请选择 ED 和 ES'));return;}
  if(ed.size+es.size>(state.health?.max_upload_bytes||0)){error(Error('上传文件超过板卡限制'));return;}
+ pldChangedInputs.clear();
  clearJobDisplay();
  state.busy=true;$('start').disabled=true;$('cancel').disabled=true;$('progress').value=0;$('status').textContent='上传到板卡';
  state.clientId=Array.from(crypto.getRandomValues(new Uint8Array(16)),x=>x.toString(16).padStart(2,'0')).join('');state.started=performance.now();
@@ -146,3 +147,25 @@ let drag=null;$('surface').onpointerdown=event=>{drag=[event.clientX,event.clien
 $('reset').onclick=()=>{state.yaw=.55;state.pitch=-1.05;state.zoom=1;selectPhase(state.phase);};
 $('snapshot').onclick=()=>{if(!state.phases[state.phase])return;const canvas=document.createElement('canvas');canvas.width=720;canvas.height=680;const ctx=canvas.getContext('2d');ctx.fillStyle='#071018';ctx.fillRect(0,0,720,680);ctx.drawImage($('surface'),0,0);ctx.fillStyle='#a9e5ee';ctx.font='14px sans-serif';ctx.fillText('板卡 ARM 生成 / 浏览器渲染 / '+state.phase+' / '+$('surfaceGeometry').value+' / '+state.job,12,665);const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='ACDC-'+state.phase+'-3D.png';a.click();};
 refreshHealth().then(async()=>{const job=new URLSearchParams(location.search).get('job')||state.health?.active_job;if(state.health&&job&&/^[0-9a-f]{32}$/.test(job))try{await resume(job);}catch(e){error(e);}});setInterval(refreshHealth,1500);
+
+async function hdmiAction(action){
+ if(action==='show'&&!state.phases[state.phase]){error(Error('请先完成分析或打开已有结果'));return;}
+ try{await post('/api/v2/hdmi',{action,job:state.job});$('hdmiStatus').textContent='正在切换 HDMI…';}
+ catch(e){error(e);}
+}
+$('showHdmi').onclick=()=>hdmiAction('show');$('stopHdmi').onclick=()=>hdmiAction('stop');
+setInterval(()=>{const h=state.health;if(!h)return;$('hdmiStatus').textContent=({off:'HDMI 已停止',starting:'HDMI 初始化中',showing:'HDMI 显示中：触屏可切换 ED/ES、切面和切层',restoring:'正在恢复推理',error:h.hdmi_error||'HDMI 异常'})[h.hdmi]||'';},1500);
+
+
+// The board entry owns preferences; iframe reloads do not reset them.
+let pldAutoSegment=false;
+if(typeof window!=='undefined'){
+ const entryOrigin='http://'+location.hostname+':8088';
+ window.addEventListener('message',event=>{
+  if(event.source===window.parent&&event.origin===entryOrigin&&event.data?.type==='pld-preferences')pldAutoSegment=event.data.settings?.auto_segment===true;
+ });
+ if(window.parent!==window)window.parent.postMessage({type:'pld-preferences-request'},entryOrigin);
+}
+
+const pldChangedInputs=new Set();
+for(const id of ['ed','es'])$(id).onchange=()=>{pldChangedInputs.add(id);if(pldAutoSegment&&pldChangedInputs.size===2&&!state.busy&&state.health?.ready&&$('ed').files.length&&$('es').files.length){pldChangedInputs.clear();$('start').onclick();}};

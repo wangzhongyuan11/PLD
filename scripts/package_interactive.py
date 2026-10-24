@@ -6,14 +6,14 @@ import sys
 import zipfile
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'display_web/unified'))
-from install_interactive import HUB,SKIN
-VERSION='PLD_Skin_ROI_Touch_20261024_v6'
+from install_interactive import HUB,SKIN,SHARED
+VERSION='PLD_Skin_ROI_Touch_20261025_v7'
 def package():
     members={};manifest={}
     # Reviewed v1-v4 manifest hashes, including the frozen v4 release payload.
     # The supplied source snapshot has no Git objects for its original history.
     accepted=json.loads((ROOT/'display_web/unified/interactive_accepted_versions.json').read_text())
-    names=[('hub',name,'display_web/unified/') for name in HUB]+[('skin',name,'display_web/') for name in SKIN]
+    names=[('hub',name,'display_web/' if name in SHARED else 'display_web/unified/') for name in HUB]+[('skin',name,'display_web/') for name in SKIN]
     if set(accepted)!={kind+'/'+name for kind,name,_ in names}:raise ValueError('Baseline member mismatch')
     for kind,name,base in names:
         new=(ROOT/(base+name)).read_bytes()

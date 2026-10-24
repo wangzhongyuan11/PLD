@@ -6,15 +6,24 @@ from pathlib import Path
 import re
 import signal
 import subprocess
+import sys
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
+from display_control import DisplayControl
 ENGINE = 'pld-acdc-v2-engine.service'
 WEB = 'pld-acdc-v2-web.service'
 HUB = 'pld-hub.service'
 MODELS = ('acdc', 'skin', 'camus')
+
+
+class UpstreamError(RuntimeError):
+    def __init__(self,path,status):
+        super().__init__(f'{path}: HTTP {status}')
+        self.status=status
 
 
 class Board:
@@ -35,7 +44,7 @@ class Board:
             response = conn.getresponse()
             raw = response.read()
             if response.status != 200 and response.status != 202:
-                raise RuntimeError(f'{path}: HTTP {response.status}')
+                raise UpstreamError(path,response.status)
             if response.getheader('Set-Cookie'):
                 self.cookie = response.getheader('Set-Cookie')
             return json.loads(raw)
@@ -44,7 +53,7 @@ class Board:
 
     def props(self, unit):
         result = subprocess.run(['systemctl', 'show', unit, '-p', 'ActiveState', '-p', 'MainPID',
-                                 '-p', 'Result', '-p', 'ControlGroup'],
+                                 '-p', 'Result', '-p', 'ControlGroup', '-p', 'Conflicts'],
                                 check=True, capture_output=True, text=True, timeout=10)
         return dict(line.split('=', 1) for line in result.stdout.splitlines() if '=' in line)
 
@@ -73,11 +82,22 @@ class Board:
 
     def hub(self):
         # The existing token stays on the board. Only the original HttpOnly session cookie is used.
-        self.request(8765, '/hub/login', {'token': self.token})
-        return self.request(8765, '/hub/status')
+        if not self.cookie:self.request(8765, '/hub/login', {'token': self.token})
+        try:state=self.request(8765, '/hub/status')
+        except UpstreamError as exc:
+            if exc.status!=401:raise
+            self.request(8765, '/hub/login', {'token': self.token})
+            state=self.request(8765, '/hub/status')
+        if state.get('phase')=='ready':
+            state['backend']=self.request(8765,f"/{state['model']}/g/{state['generation']}/api/status")
+        return state
 
     def health(self):
         return self.request(8092, '/api/v2/health')
+
+    def can_park_heart(self):
+        conflicts=set(self.props(ENGINE).get('Conflicts','').split())
+        return not conflicts.intersection((HUB,'pld-web.service','pld-camus.service'))
 
     def prepare_dual(self, target):
         state = self.hub_root / 'state'
@@ -88,7 +108,7 @@ class Board:
 
 
 class Controller:
-    def __init__(self, board):
+    def __init__(self, board, state_dir=None):
         self.board = board
         self.lock = threading.RLock()
         self.proxy_lock = threading.Lock()
@@ -99,11 +119,43 @@ class Controller:
         self.url = ''
         self.thread = None
         self.stopping = False
+        self.state_dir = Path(state_dir) if state_dir else None
+        self.settings = dict(auto_hdmi=True, auto_segment=True, last_model='acdc')
+        if self.state_dir:
+            self.state_dir.mkdir(parents=True, exist_ok=True)
+            path = self.state_dir / 'preferences.json'
+            if path.exists():
+                saved = json.loads(path.read_text())
+                for key in ('auto_hdmi', 'auto_segment'):
+                    if type(saved.get(key)) is bool: self.settings[key] = saved[key]
+                if saved.get('last_model') in MODELS: self.settings['last_model'] = saved['last_model']
+        self.stage = ''
+        self.metrics = {}
+        self.switch_started = None
+        self.display = DisplayControl(self)
+
+    def save_settings(self):
+        if self.state_dir:
+            path = self.state_dir / 'preferences.json'
+            temp = path.with_suffix('.tmp')
+            temp.write_text(json.dumps(self.settings))
+            temp.replace(path)
+
+    def set_stage(self, stage):
+        now = time.monotonic()
+        with self.lock:
+            if self.stage and self.switch_started is not None:
+                self.metrics[self.stage] = now - self.stage_started
+            self.stage = stage
+            self.stage_started = now
 
     def snapshot(self):
         with self.lock:
             return dict(model=self.model, target=self.target, phase=self.phase,
-                        error=self.error, url=self.url)
+                        error=self.error, url=self.url, stage=self.stage,
+                        settings=dict(self.settings), display=self.display.snapshot(), stages_seconds=dict(self.metrics),
+                        elapsed_seconds=(time.monotonic()-self.switch_started
+                                         if self.switch_started is not None else None))
 
     def switch(self, target):
         if target not in MODELS:
@@ -116,6 +168,7 @@ class Controller:
             if self.phase == 'ready' and self.model == target:
                 return self.snapshot()
             self.target = target
+            self.display.cancel()
             self.phase = 'switching'
             self.error = ''
             self.url = ''
@@ -130,27 +183,46 @@ class Controller:
                 return
             if time.monotonic() > deadline:
                 raise RuntimeError('等待任务完成或模型就绪超时，保留现场')
-            time.sleep(.5)
+            time.sleep(.2)
 
     def _switch(self, target):
+        self.switch_started = time.monotonic()
+        self.stage = ''
+        self.metrics = {}
+        self.set_stage('wait_current_task')
         try:
             board = self.board
             if target == 'acdc':
+                resident=False
                 if board.running(HUB):
                     def dual_idle():
                         state = board.hub()
                         if state['phase'] == 'error':
                             raise RuntimeError(state.get('error') or '原入口报告故障')
-                        return (state['phase'] == 'ready' and not state.get('evaluation_busy')
+                        return (state['phase'] in ('ready','paused') and not state.get('evaluation_busy')
                                 and not state.get('interactive_busy')
                                 and not state.get('backend', {}).get('active'))
                     self.wait(dual_idle)
-                    # Original hub waits for jobs, releases HDMI, and checks both backend cgroups.
-                    board.stop(HUB)
+                    self.set_stage('release_previous_model')
+                    state=board.hub()
+                    heart=board.health() if board.running(ENGINE) else {}
+                    resident=(state.get('lifecycle')=='resident-hub-v1' and heart.get('resident_handoff')=='resident-hub-v1')
+                    if resident:
+                        board.request(8765,'/hub/lifecycle',{'action':'pause'})
+                        state=board.hub()
+                        if state.get('phase')!='paused' or not state.get('hardware_released'):
+                            raise RuntimeError('双模型硬件释放未确认')
+                    else:board.stop(HUB)
                 for unit in ('pld-web.service', 'pld-camus.service', 'pld-acdc.service'):
-                    if board.running(unit):
+                    if board.running(unit) and (unit=='pld-acdc.service' or not resident):
                         raise RuntimeError(f'{unit} 仍在运行，禁止加载心脏模型')
+                self.set_stage('start_target')
                 board.start(WEB)  # Its existing Wants= starts the engine and waits for READY.
+                self.set_stage('initialize_target')
+                try:state=board.health()
+                except (OSError,http.client.HTTPException):state={}
+                if state.get('suspended'):
+                    board.request(8092,'/api/v2/lifecycle',{'action':'resume'})
                 self.wait(lambda: self._heart_ready(), 200)
                 url = '8092/'
             else:
@@ -159,23 +231,38 @@ class Controller:
                         state = board.health()
                         if state.get('status') == 'fault':
                             raise RuntimeError('心脏模型报告硬件故障')
-                        return state.get('ready') and not state.get('active_job')
+                        return (state.get('ready') or state.get('suspended')) and not state.get('active_job')
                     self.wait(heart_idle)
-                board.stop(WEB)
-                board.stop(ENGINE)
+                self.set_stage('release_previous_model')
+                state=board.health() if board.running(ENGINE) else {}
+                if state.get('lifecycle')=='pause-resume-v1' and board.can_park_heart():
+                    if not state.get('suspended'):
+                        board.request(8092,'/api/v2/lifecycle',{'action':'pause'})
+                    def paused():
+                        state=board.health()
+                        if state.get('hdmi')=='error':raise RuntimeError(state.get('hdmi_error'))
+                        return state.get('suspended') and state.get('hardware_released') and state.get('hdmi')=='off'
+                    self.wait(paused,90)
+                else:
+                    board.stop(WEB)
+                    board.stop(ENGINE)
                 if not board.running(HUB):
+                    self.set_stage('start_target')
                     board.prepare_dual(target)
                     board.start(HUB)
                 def hub_started():
                     try:
-                        return board.hub()['phase'] in ('ready', 'error')
+                        return board.hub()['phase'] in ('ready', 'paused', 'error')
                     except (OSError, http.client.HTTPException):
                         return False
+                self.set_stage('initialize_target')
                 self.wait(hub_started, 200)
                 state = board.hub()
                 if state['phase'] == 'error':
                     raise RuntimeError(state.get('error') or '原入口初始化失败')
-                if state['model'] != target:
+                if state['phase']=='paused':
+                    board.request(8765,'/hub/lifecycle',{'action':'resume','model':target})
+                elif state['model'] != target:
                     board.request(8765, '/hub/switch', {'model': target})
                 def selected():
                     state = board.hub()
@@ -188,9 +275,16 @@ class Controller:
                 self.wait(selected)
                 url = self.url
             with self.lock:
+                self.set_stage('ready')
                 self.model = target
                 self.url = url
                 self.phase = 'ready'
+                self.settings['last_model'] = target
+                self.save_settings()
+                self.metrics['total'] = time.monotonic()-self.switch_started
+                print('ENTRY_SWITCH_TIMING', json.dumps(dict(model=target, stages=self.metrics)), flush=True)
+                self.switch_started = None
+            self.display.restore(target)
         except Exception as exc:
             with self.lock:
                 self.phase = 'error'
@@ -301,14 +395,23 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         try:
-            if self.path != '/entry/switch':
+            if self.path not in ('/entry/switch', '/entry/task', '/entry/settings'):
                 return self.proxy()
             if self.headers.get('Origin') != 'http://' + self.headers.get('Host', ''):
                 return self.send(403, {'error': '不允许跨站切换'})
             size = int(self.headers.get('Content-Length', '0'))
-            if not 0 < size <= 1024:
+            if not 0 < size <= 2048:
                 raise ValueError('请求大小无效')
-            self.send(202, self.server.controller.switch(json.loads(self.rfile.read(size))['model']))
+            body = json.loads(self.rfile.read(size))
+            if self.path == '/entry/task':
+                if self.client_address[0] != '127.0.0.1':
+                    return self.send(403, {'error': '任务通知仅供板内使用'})
+                return self.send(200, self.server.controller.display.task(body))
+            if self.path == '/entry/settings':
+                result=self.server.controller.display.settings(body)
+                if body.get('auto_hdmi') is True:self.server.controller.display.restore(self.server.controller.model)
+                return self.send(200,result)
+            self.send(202, self.server.controller.switch(body['model']))
         except (ValueError, KeyError, TypeError) as exc:
             self.send(400, {'error': str(exc)})
         except RuntimeError as exc:
@@ -322,18 +425,20 @@ def main():
     parser.add_argument('--hub-root', type=Path, required=True)
     parser.add_argument('--port', type=int, default=8088)
     args = parser.parse_args()
-    controller = Controller(Board(args.hub_root))
+    controller = Controller(Board(args.hub_root), args.hub_root / 'state' / 'entry')
     server = ThreadingHTTPServer(('0.0.0.0', args.port), Handler)
     server.controller = controller
+    controller.display.start()
     def stop(*_):
         controller.stopping = True
         threading.Thread(target=server.shutdown, daemon=True).start()
     signal.signal(signal.SIGTERM, stop)
     signal.signal(signal.SIGINT, stop)
-    controller.switch('acdc')
+    controller.switch(controller.settings['last_model'])
     try:
         server.serve_forever()
     finally:
+        controller.display.close()
         server.server_close()
         if controller.thread:
             controller.thread.join()

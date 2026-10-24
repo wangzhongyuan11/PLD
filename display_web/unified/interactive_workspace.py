@@ -25,6 +25,10 @@ class SkinWorkspace:
             raise ValueError('ROI 交互模式仅支持皮肤镜')
 
     def state(self, image_token=None):
+        try:from display_web.display_completion import notify
+        except ModuleNotFoundError:from display_completion import notify
+        preference=notify(dict(action='preferences'))
+        if 'auto_hdmi' in preference:self.hdmi_requested=preference['auto_hdmi']
         with self.controller.lock:
             self.require_skin()
             with self.guard:
@@ -37,6 +41,7 @@ class SkinWorkspace:
                     image_token=slot['token'] if slot else None,
                     job_id=job['id'] if job else None, job_state=job['state'] if job else None,
                     error=job.get('error', '') if job else '',
+                    hdmi_error=getattr(self,'hdmi_error',''),
                     result_ready=bool(job and job['state']=='done' and self.result_revision==self.revision))
                 if slot:
                     result.update(width=slot['width'], height=slot['height'])
@@ -82,15 +87,18 @@ class SkinWorkspace:
         if status.get('hdmi') in ('starting', 'showing') and status.get('hdmi_view')=='interactive':
             return status
         return self.request('skin', 'POST', '/api/hdmi', dict(action='show',
-            id=result['identity']['source_job'], view='interactive'))
+            id=result['identity']['source_job'], view='interactive', _automatic=True))
 
     def set_hdmi(self, body):
+        try:from display_web.display_completion import user_display
+        except ModuleNotFoundError:from display_completion import user_display
         with self.controller.lock:
             self.require_skin()
             self._check_context(body)
             if self._busy():
                 raise RuntimeError('请等待分割完成')
             action = body.get('action')
+            if not body.get('_automatic'):user_display(action)
             if action in ('stop', 'leave'):
                 self.hdmi_requested = False
                 # The on-screen Back button exits its own child after this reply.
