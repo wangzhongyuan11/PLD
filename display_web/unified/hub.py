@@ -65,7 +65,7 @@ class Controller:
         self.metrics={};self.last_backend={}
     def snapshot(self):
         with self.lock:return dict(model=self.model,target=self.target,phase=self.phase,error=self.error,
-            generation=self.generation,memory=memory(),switch=self.metrics,backend=self.last_backend)
+            generation=self.generation,interactive_busy=getattr(self,'interactive_busy',False),memory=memory(),switch=self.metrics,backend=self.last_backend)
     def switch(self,target):
         if target not in UNITS:raise ValueError('未知模型')
         with self.lock:

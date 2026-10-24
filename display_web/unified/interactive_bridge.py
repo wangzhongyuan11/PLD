@@ -132,7 +132,8 @@ class Manager:
 
     def _busy(self):
         c=self.controller
-        return bool(c.phase!='ready' or c.stopping or getattr(c,'interactive_busy',False))
+        return bool(c.phase!='ready' or c.stopping or getattr(c,'interactive_busy',False)
+                    or getattr(c,'evaluation_busy',False))
 
     def upload(self,body):
         """Single authenticated image slot; validated, decoded and replaced under c.lock.
