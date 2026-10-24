@@ -1,0 +1,48 @@
+{
+  "model": "skin",
+  "target": "skin",
+  "phase": "ready",
+  "error": null,
+  "generation": 2,
+  "evaluation_busy": false,
+  "memory": {
+    "MemAvailable": "304672 kB",
+    "CmaTotal": "131072 kB",
+    "CmaFree": "10268 kB"
+  },
+  "switch": {
+    "seconds": 23.47530595300009,
+    "stages_seconds": {
+      "wait_idle": 0.19035135400008585,
+      "release": 1.7843613330001062,
+      "initialize": 21.499587463999887
+    },
+    "before": {
+      "MemAvailable": "307484 kB",
+      "CmaTotal": "131072 kB",
+      "CmaFree": "5924 kB"
+    },
+    "after_release": {
+      "MemAvailable": "376492 kB",
+      "CmaTotal": "131072 kB",
+      "CmaFree": "29516 kB"
+    },
+    "after_ready": {
+      "MemAvailable": "308192 kB",
+      "CmaTotal": "131072 kB",
+      "CmaFree": "5956 kB"
+    }
+  },
+  "backend": {
+    "mode": "board",
+    "inference_available": true,
+    "warmup": "ready",
+    "warmup_seconds": 11.48837140400019,
+    "hdmi_available": true,
+    "active": null,
+    "hdmi": "off",
+    "hdmi_view": null,
+    "fault": null,
+    "runtime_error": null
+  }
+}
