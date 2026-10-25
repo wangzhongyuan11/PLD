@@ -5,6 +5,7 @@ import base64
 from concurrent.futures import ThreadPoolExecutor
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
+import os
 from pathlib import Path
 import re
 import signal
@@ -17,6 +18,8 @@ import uuid
 
 from .model import DEFAULT_MODEL_ROOT, MODEL_SPEC_SHA256
 from .pipeline import CamusPipeline, protect_output
+try:from display_web.display_completion import Completion, user_display
+except ModuleNotFoundError:from display_completion import Completion, user_display
 
 MAX_BODY = 32 * 1024 * 1024
 ARTIFACTS = {'overlay.png','segmentation.png','label.png','label_raw.png','labels_native.npz',
@@ -47,7 +50,7 @@ def decode_upload(payload):
 
 class CamusServer(ThreadingHTTPServer):
     daemon_threads = True
-    def __init__(self, address, pipeline, data, runtime=None):
+    def __init__(self, address, pipeline, data, runtime=None, *, display_agent=None):
         self.pipeline, self.data = pipeline, Path(data).resolve()
         protect_output(self.data/'_probe_not_created', pipeline.model.root)
         self.data.mkdir(parents=True, exist_ok=True)
@@ -56,6 +59,11 @@ class CamusServer(ThreadingHTTPServer):
         self.fault = False
         self.runtime,self.released,self.hdmi = runtime,False,None
         self.hdmi_folder,self.hdmi_started = None,0.
+        self.display_agent=display_agent
+        if display_agent is None and pipeline.backend=='pl' and os.environ.get('PLD_WARM_HDMI')=='1':
+            try:from display_web.warm_hdmi import WarmHDMI
+            except ModuleNotFoundError:from warm_hdmi import WarmHDMI
+            self.display_agent=WarmHDMI(self.data/'warm_hdmi.log');self.display_agent.prepare()
         super().__init__(address, Handler)
 
     def hdmi_status(self):
@@ -90,17 +98,22 @@ class CamusServer(ThreadingHTTPServer):
         self.pipeline.close();self.released=True
         self.hdmi_folder=self.data/identifier/'output'
         (self.hdmi_folder/'hdmi.ready.json').unlink(missing_ok=True)
-        with (self.hdmi_folder/'hdmi.log').open('w',encoding='utf-8') as log:
-            self.hdmi=subprocess.Popen([sys.executable,'-u','-m','camus.hdmi','--result',str(self.hdmi_folder),'--view',view],stdout=log,stderr=log)
+        command=[sys.executable,'-u','-m','camus.hdmi','--result',str(self.hdmi_folder),'--view',view]
+        if self.display_agent:self.hdmi=self.display_agent.start(command,self.hdmi_folder/'hdmi.log')
+        else:
+            with (self.hdmi_folder/'hdmi.log').open('w',encoding='utf-8') as log:
+                self.hdmi=subprocess.Popen(command,stdout=log,stderr=log)
         self.hdmi_started=time.monotonic()
 
     def execute(self, job, selected, spacing):
+        completion = Completion('camus', job['id'], 'quad',getattr(self,'runtime_identity',None)) if job.pop('_auto_display', True) else None
         job['state'] = 'running'
         finished = {}
         try:
             self.stop_hdmi()
             if self.released:
-                self.pipeline=CamusPipeline(self.pipeline.model.root,'pl',self.runtime)
+                if hasattr(self.pipeline,'restore_hardware'):self.pipeline.restore_hardware()
+                else:self.pipeline=CamusPipeline(self.pipeline.model.root,'pl',self.runtime)
                 self.released=False
             result = self.pipeline.run(self.data/job['id']/'input'/selected,
                                        self.data/job['id']/'output', spacing)
@@ -117,11 +130,13 @@ class CamusServer(ThreadingHTTPServer):
                 job['server_seconds'] = time.perf_counter()-job.pop('_started')
                 job.update(finished)
             self.busy.release()
+            if completion: completion.finish(job.get('state') == 'done')
 
     def server_close(self):
         super().server_close()
         self.executor.shutdown(wait=True)
         self.stop_hdmi()
+        if self.display_agent:self.display_agent.close()
         self.pipeline.close()
 
 
@@ -173,6 +188,7 @@ class Handler(BaseHTTPRequestHandler):
                 if not 0<length<=2048:raise ValueError('invalid control request size')
                 request=json.loads(self.rfile.read(length))
                 if not isinstance(request,dict):raise ValueError('control request must be a JSON object')
+                if not request.get('_automatic'):user_display(request.get('action'),'camus',request.get('id'),request.get('view','overlay'))
                 if request.get('action')=='stop':self.server.stop_hdmi()
                 elif request.get('action')=='show':self.server.start_hdmi(request.get('id'),request.get('view','overlay'))
                 else:raise ValueError('unknown HDMI action')
@@ -197,6 +213,7 @@ class Handler(BaseHTTPRequestHandler):
             folder = self.server.data/identifier/'input'; folder.mkdir(parents=True)
             for name, content in files.items(): (folder/name).write_bytes(content)
             job = dict(id=identifier, state='queued', backend=self.server.pipeline.backend, _started=started)
+            job['_auto_display'] = payload.get('auto_display') is not False
             with self.server.guard: self.server.jobs[identifier] = job
             self.server.executor.submit(self.server.execute, job, selected, payload.get('spacing'))
             submitted = True

@@ -1,0 +1,38 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const html=fs.readFileSync(__dirname+'/index.html','utf8');
+const elements=new Map();
+function fresh(){return {hidden:true,disabled:true,src:'',setAttribute(){},replaceWith(view){elements.set(this.id,view);}};}
+function element(id){if(!elements.has(id))elements.set(id,Object.assign(fresh(),{id}));return elements.get(id);}
+const context=vm.createContext({document:{getElementById:element,createElement:fresh},location:{hostname:'192.168.2.99'},setInterval(){},fetch:async()=>({ok:true,json:async()=>({phase:'ready',model:'acdc',url:'8092/'})})});
+vm.runInContext(html.match(/<script>([\s\S]*?)<\/script>/)[1],context);
+const tick=()=>new Promise(setImmediate);
+(async()=>{
+ await tick();
+ assert.equal(element('workspace').src,'http://192.168.2.99:8092/');
+ const heart=element('workspace');
+ vm.runInContext("render({phase:'ready',model:'camus',url:'/camus/g/2/'})",context);
+ assert.notEqual(element('workspace'),heart);
+ assert.equal(element('workspace').src,'/camus/g/2/');
+ const camus=element('workspace');
+ assert.equal(element('interactive').hidden,true);
+ element('interactive').onclick();
+ assert.equal(element('workspace').src,'/camus/g/2/');
+ vm.runInContext("render({phase:'ready',model:'skin',url:'/skin/g/3/'})",context);
+ element('interactive').onclick();
+ assert.equal(element('workspace').src,'/skin/g/3/interactive');
+ assert.equal(element('interactive').hidden,false);
+ vm.runInContext("render({phase:'ready',model:'skin',url:'/skin/g/3/'})",context);
+ assert.equal(element('workspace').src,'/skin/g/3/interactive');
+ element('interactive').onclick();
+ assert.equal(element('workspace').src,'/skin/g/3/');
+ vm.runInContext("render({phase:'switching',target:'acdc',url:''})",context);
+ assert.notEqual(element('workspace'),camus);
+ assert.equal(element('workspace').hidden,true);
+ assert.equal(element('workspace').src,'about:blank');
+ assert.equal(element('skin').disabled,true);
+ vm.runInContext("render({phase:'ready',model:'acdc',url:'8092/'})",context);
+ assert.equal(element('workspace').hidden,false);
+ assert.equal(element('workspace').src,'http://192.168.2.99:8092/');
+ assert.equal(element('interactive').hidden,true);
+ console.log('PASS: cardiac URL, original dual URL, fresh iframe per transition, switch blanking, return');
+})().catch(e=>{console.error(e);process.exitCode=1;});

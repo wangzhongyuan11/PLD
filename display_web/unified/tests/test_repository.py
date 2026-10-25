@@ -31,7 +31,7 @@ class RepositoryTests(unittest.TestCase):
             for name in packager.FILES:
                 target = source / name
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_bytes((SOURCE / name).read_bytes())
+                target.write_bytes(packager.member_path(SOURCE,name).read_bytes())
             for name in ['config.json', 'installation.json', '.access_token', 'state/last_model']:
                 target = source / name
                 target.parent.mkdir(parents=True, exist_ok=True)

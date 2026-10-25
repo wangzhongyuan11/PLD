@@ -1,0 +1,28 @@
+set(CMAKE_SYSTEM_NAME Linux)
+set(CMAKE_SYSTEM_PROCESSOR armv7)
+set(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc-11)
+set(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++-11)
+if(NOT DEFINED ENV{ACDC_BOARD_SYSROOT})
+  message(FATAL_ERROR "ACDC_BOARD_SYSROOT must point to the captured PYNQ root")
+endif()
+set(CMAKE_SYSROOT "$ENV{ACDC_BOARD_SYSROOT}")
+set(CMAKE_FIND_ROOT_PATH "${CMAKE_SYSROOT}")
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE BOTH)
+execute_process(COMMAND arm-linux-gnueabihf-gcc-11 -print-file-name=include
+  OUTPUT_VARIABLE _gcc_include OUTPUT_STRIP_TRAILING_WHITESPACE)
+set(_abi_flags "-mcpu=cortex-a9 -mfpu=neon -mfloat-abi=hard")
+set(_c_headers "-isystem ${_gcc_include} -isystem ${CMAKE_SYSROOT}/usr/include/arm-linux-gnueabihf -isystem ${CMAKE_SYSROOT}/usr/include")
+# GCC's configured cross include directory otherwise precedes --sysroot and
+# silently supplies Noble's libc 2.39 headers. Use only the captured board SDK.
+set(CMAKE_C_FLAGS_INIT "${_abi_flags} -nostdinc ${_c_headers}")
+set(CMAKE_CXX_FLAGS_INIT "${_abi_flags} -nostdinc -nostdinc++ -isystem ${CMAKE_SYSROOT}/usr/include/c++/11 -isystem ${CMAKE_SYSROOT}/usr/include/arm-linux-gnueabihf/c++/11 -isystem ${CMAKE_SYSROOT}/usr/include/c++/11/backward ${_c_headers}")
+# Prefer the board's crt and libstdc++ over the cross distribution's newer ABI.
+set(_board_lib "${CMAKE_SYSROOT}/usr/lib/arm-linux-gnueabihf")
+set(_board_gcc "${CMAKE_SYSROOT}/usr/lib/gcc/arm-linux-gnueabihf/11")
+string(APPEND CMAKE_C_FLAGS_INIT " -B${_board_lib}/ -B${_board_gcc}/")
+string(APPEND CMAKE_CXX_FLAGS_INIT " -B${_board_lib}/ -B${_board_gcc}/")
+set(CMAKE_EXE_LINKER_FLAGS_INIT "-L${_board_gcc} -L${_board_lib} -Wl,-rpath-link,${_board_lib}")
+set(CMAKE_SKIP_RPATH TRUE)

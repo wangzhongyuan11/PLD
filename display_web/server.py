@@ -35,6 +35,7 @@ from pld_result import load_result
 from infer_then_display import inference_command, verify_runtime, RuntimeVerifier
 from persistent_worker import (PersistentBWorker, PersistentWorkerError,
                                runtime_manifest_sha256)
+from display_completion import Completion, user_display
 
 ROOT = Path(__file__).resolve().parent
 MAX_BODY = 24 * 1024 * 1024
@@ -150,7 +151,7 @@ def decode_upload(value, is_mask=False):
 
 class Console:
     def __init__(self, data, runtime=None, token=None, portable=False, boot_id=None,
-                 persistent_b_worker=False):
+                 persistent_b_worker=False, display_agent=None):
         self.data = Path(data).resolve(); self.data.mkdir(parents=True, exist_ok=True)
         self.runtime = Path(runtime).resolve() if runtime else None
         self.token = token if token is not None else persistent_token(self.data)
@@ -167,9 +168,14 @@ class Console:
         self.boot_id = boot_id or current_boot_id()
         self.restore_history()
         self.active = None
+        self.suspended = False
         self.hdmi = None
         self.hdmi_job = None
         self.hdmi_view = None
+        self.display_agent = display_agent
+        if display_agent is None and self.board and os.environ.get('PLD_WARM_HDMI') == '1':
+            from warm_hdmi import WarmHDMI
+            self.display_agent = WarmHDMI(self.data/'warm_hdmi.log'); self.display_agent.prepare()
         self.fault = None
         self.runtime_ok = False
         self.runtime_error = None
@@ -271,6 +277,7 @@ class Console:
         width = body.get("thickness", 2)
         if type(width) is not int or not 1 <= width <= 8: raise ValueError("线宽须为 1–8 的整数")
         with self.lock:
+            if self.suspended:raise RuntimeError('模型已暂停，请先通过统一入口选择皮肤镜')
             if self.warmup_state == "running": raise RuntimeError("模型和 FPGA 正在预热，请稍候")
             if self.active: raise RuntimeError("已有任务处理中，请等待完成")
             if self.fault: raise RuntimeError(self.fault)
@@ -294,9 +301,10 @@ class Console:
                                 "mode": mode, "name": str(body.get("name", "ISIC_0000003 · 真实掩膜回放"))[:120],
                                 "thickness": width, "created": time.time()}
             self.active = ident
+            completion = None if body.get('auto_display') is False else Completion('skin', ident, 'outlined',getattr(self,'runtime_identity',None))
             threading.Thread(target=self._run,
                              args=(ident, mode, raw, rgb, mask, width,
-                                   request_started or submit_started, upload_stages),
+                                   request_started or submit_started, upload_stages, completion),
                              daemon=True).start()
             return self.job(ident)
 
@@ -326,6 +334,7 @@ class Console:
             self.b_worker = None
         if worker is not None:
             worker.close()
+        if self.display_agent:self.display_agent.close()
 
     def start_hdmi(self, ident, view):
         with self.lock:
@@ -335,7 +344,10 @@ class Console:
             if self.warmup_state == "running": raise RuntimeError("模型和 FPGA 正在预热，请稍候")
             if self.active: raise RuntimeError("请等待处理完成后再显示")
             j = self.job(ident)
-            if j["state"] != "done" or view not in j["views"]: raise ValueError("该显示画面尚未生成")
+            if j["state"] != "done" or (view not in j["views"] and view != "interactive"): raise ValueError("该显示画面尚未生成")
+            if (self.hdmi is not None and self.hdmi.poll() is None
+                    and self.hdmi_job == ident and self.hdmi_view == view):
+                return self.status()
             self.stop_hdmi()
             folder = self.data / ident
             if self.b_worker is not None:
@@ -345,12 +357,15 @@ class Console:
                     self.fault = "推理硬件释放未确认，禁止启动 HDMI；请检查日志并重启服务"
                     raise RuntimeError(self.fault) from exc
             (folder / "hdmi.ready").unlink(missing_ok=True)
-            with (folder / "hdmi.log").open("w", encoding="utf-8") as log:
-                self.hdmi = subprocess.Popen([sys.executable, str(ROOT / "hdmi_worker.py"), str(folder), view], stdout=log, stderr=log)
+            command=[sys.executable, str(ROOT / "hdmi_worker.py"), str(folder), view]
+            if self.display_agent:self.hdmi=self.display_agent.start(command,folder/'hdmi.log')
+            else:
+                with (folder / "hdmi.log").open("w", encoding="utf-8") as log:
+                    self.hdmi = subprocess.Popen(command, stdout=log, stderr=log)
             self.hdmi_job, self.hdmi_view = ident, view
             return self.status()
 
-    def _run(self, ident, mode, raw, rgb, mask, width, request_started, upload_stages=None):
+    def _run(self, ident, mode, raw, rgb, mask, width, request_started, upload_stages=None, completion=None):
         folder = self.data / ident; folder.mkdir()
         job_start = time.perf_counter()
         stages = dict(upload_stages or {})
@@ -459,7 +474,8 @@ class Console:
             preview_started = time.perf_counter()
             preview_details = {}
             preview_views = ["original" if rgb is not None else "mask", "outlined"]
-            for key in preview_views: save_preview(key)
+            with ThreadPoolExecutor(max_workers=PNG_SAVE_WORKERS,thread_name_prefix="pld-preview") as pool:
+                list(pool.map(save_preview,preview_views))
             stages["preview_build"] = time.perf_counter() - preview_started
             stages["request_to_preview_ready"] = time.perf_counter() - request_started
             stages["preview_images"] = dict(preview_details)
@@ -471,8 +487,8 @@ class Console:
                         statistics=json.loads(json.dumps(stats)), progress=82,
                         stage="预览已就绪，后台生成原尺寸图片和结果包")
             remaining_started = time.perf_counter()
-            for key in views:
-                if key not in preview_views: save_preview(key)
+            with ThreadPoolExecutor(max_workers=PNG_SAVE_WORKERS,thread_name_prefix="pld-preview") as pool:
+                list(pool.map(save_preview,[key for key in views if key not in preview_views]))
             stages["preview_remaining"] = time.perf_counter()-remaining_started
             stages["preview_images"] = preview_details
             self.update(ident, preview_views=list(views))
@@ -554,6 +570,7 @@ class Console:
                         stage_seconds=stages, png_save_seconds=png_timings)
         finally:
             with self.lock: self.active = None
+            if completion: completion.finish(self.job(ident).get('state') == 'done')
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -614,6 +631,7 @@ class Handler(BaseHTTPRequestHandler):
             if not isinstance(body, dict): raise ValueError("请求格式错误")
             if self.path == "/api/jobs": return self.send(202, self.app.submit(body, request_started))
             if self.path == "/api/hdmi":
+                if not body.get('_automatic'): user_display(body.get('action'),'skin',body.get('id'),body.get('view'))
                 if body.get("action") == "stop": self.app.stop_hdmi(); return self.send(200, self.app.status())
                 if body.get("action") == "show": return self.send(202, self.app.start_hdmi(body.get("id"), body.get("view")))
                 raise ValueError("未知显示操作")

@@ -7,20 +7,28 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'display_web/unified'
+SHARED = ('display_completion.py', 'display_lease.py', 'warm_hdmi.py', 'video_overlay.py', 'overlay_metadata.py', 'latency.py')
 FILES = (
     'interactive_bridge.py', 'interactive.html', 'interactive.js',
+    'interactive_workspace.py', 'interactive_hdmi.py',
+    'evaluation_bridge.py', 'evaluation.html', 'evaluation_config.example.json',
     'prompt_seg/__init__.py', 'prompt_seg/contracts.py', 'prompt_seg/refinement.py', 'prompt_seg/service.py',
     'hub.py', 'backend_launcher.py', 'camus_input_adapter.py', 'install.py', 'diagnose.py', 'index.html',
     'accepted_backends.json', 'README.md', 'TEST_REPORT.md', 'QUAD_VIEW.md',
     'camus_quad.py', 'quad_display.py', 'quad_camus.html', 'quad_camus_hdmi.py',
     'tests/test_hub.py', 'tests/test_ui.cjs',
-)
+) + SHARED
+
+
+def member_path(source, name):
+    source=Path(source)
+    return source/name if (source/name).is_file() or name not in SHARED else source.parent/name
 
 
 def package(output, source=SOURCE):
     source, output = Path(source), Path(output)
     # Fixed allowlist: never collect credentials, state, models or arbitrary files.
-    members = {name: (source / name).read_bytes() for name in FILES}
+    members = {name: member_path(source,name).read_bytes() for name in FILES}
     hashes = {name: hashlib.sha256(data).hexdigest() for name, data in members.items()}
     members['SHA256.json'] = (json.dumps(hashes, indent=2) + '\n').encode()
     output.parent.mkdir(parents=True, exist_ok=True)

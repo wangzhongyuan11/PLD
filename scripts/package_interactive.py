@@ -6,17 +6,18 @@ import sys
 import zipfile
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'display_web/unified'))
-from install_interactive import HUB
-VERSION='PLD_Interactive_20261017_v5'
+from install_interactive import HUB,SKIN,SHARED
+VERSION='PLD_Skin_ROI_Touch_20261025_v9'
 def package():
     members={};manifest={}
     # Reviewed v1-v4 manifest hashes, including the frozen v4 release payload.
     # The supplied source snapshot has no Git objects for its original history.
     accepted=json.loads((ROOT/'display_web/unified/interactive_accepted_versions.json').read_text())
-    if set(accepted)!={'hub/'+name for name in HUB}:raise ValueError('Baseline member mismatch')
-    for name in HUB:
-        rel='display_web/unified/'+name;new=(ROOT/rel).read_bytes()
-        key='hub/'+name;manifest[key]=dict(old=accepted[key],new=hashlib.sha256(new).hexdigest());members['payload/'+key]=new
+    names=[('hub',name,'display_web/' if name in SHARED else 'display_web/unified/') for name in HUB]+[('skin',name,'display_web/') for name in SKIN]
+    if set(accepted)!={kind+'/'+name for kind,name,_ in names}:raise ValueError('Baseline member mismatch')
+    for kind,name,base in names:
+        new=(ROOT/(base+name)).read_bytes()
+        key=kind+'/'+name;manifest[key]=dict(old=accepted[key],new=hashlib.sha256(new).hexdigest());members['payload/'+key]=new
     members['patch_manifest.json']=json.dumps(manifest,indent=2).encode()
     for name in ('install_interactive.py','INTERACTIVE.md'):members[name]=(ROOT/'display_web/unified'/name).read_bytes()
     dest=ROOT/('out/'+VERSION+'.zip');dest.parent.mkdir(exist_ok=True)

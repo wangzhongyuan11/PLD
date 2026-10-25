@@ -1,0 +1,393 @@
+/* Portable float32/float64 kernels; preserve the frozen reference operation order.
+ * No approximate reciprocal, fast-math or fused multiply/add is permitted. */
+#include <stdint.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+
+#ifdef _WIN32
+#define API __declspec(dllexport)
+#else
+#define API __attribute__((visibility("default")))
+#endif
+
+API int acdc_image_abi(void) { return 1; }
+
+static double select_rank(float *a, size_t n, size_t k) {
+    size_t lo=0, hi=n;
+    while (hi-lo>1) {
+        float pivot=a[lo+(hi-lo)/2];
+        size_t lt=lo, i=lo, gt=hi;
+        while (i<gt) {
+            float v=a[i];
+            if (v<pivot) { a[i]=a[lt]; a[lt++]=v; ++i; }
+            else if (v>pivot) { a[i]=a[--gt]; a[gt]=v; }
+            else ++i;
+        }
+        if (k<lt) hi=lt;
+        else if (k>=gt) lo=gt;
+        else return pivot;
+    }
+    return a[lo];
+}
+
+static double percentile(float *a,size_t n,double percent) {
+    double index=(double)(n-1)*percent;
+    size_t k=(size_t)floor(index);
+    double t=index-(double)k;
+    double left=select_rank(a,n,k);
+    double right=select_rank(a,n,k+1<n?k+1:k);
+    /* NumPy's linear interpolation uses the right endpoint when t >= .5. */
+    double diff=right-left;
+    return t>=.5 ? right-diff*(1.-t) : left+diff*t;
+}
+
+API int acdc_normalize(const float *src,float *dst,size_t count,double *limits) {
+    if (!src || !dst || !limits || count==0 || count>SIZE_MAX/sizeof(double)) return 1;
+    /* Source values are already exact float32. Rank comparisons need no
+     * double copy; interpolate the selected endpoints in double as before. */
+    float *values=(float*)malloc(count*sizeof(float));
+    if (!values) return 2;
+    size_t n=0;
+    for(size_t i=0;i<count;++i) {
+        if (!isfinite(src[i])) { free(values); return 3; }
+        if(src[i]!=0.f) values[n++]=src[i];
+    }
+    if(n<8) { free(values); return 4; }
+    double low=percentile(values,n,.01), high=percentile(values,n,.99);
+    free(values);
+    if(high<=low) return 5;
+    for(size_t i=0;i<count;++i) {
+        double v=2.*((double)src[i]-low)/(high-low)-1.;
+        dst[i]=(float)(v < -1. ? -1. : v > 1. ? 1. : v);
+    }
+    limits[0]=low; limits[1]=high;
+    return 0;
+}
+
+static void linear_index(int i,int input,int output,int *a,int *b,float *w0,float *w1) {
+    if(input==output) { *a=*b=i; *w0=1.f; *w1=0.f; return; }
+    float scale=(float)((double)input/(double)output);
+    float p=scale*((float)i+.5f)-.5f;
+    if(p<0.f) p=0.f;
+    *a=(int)p; if(*a>=input) *a=input-1;
+    *b=*a<input-1?*a+1:*a;
+    *w1=p-(float)*a;
+    if(*w1<0.f) *w1=0.f;
+    if(*w1>1.f) *w1=1.f;
+    *w0=1.f-*w1;
+}
+
+API int acdc_resize(const float *src,float *dst,int channels,int ih,int iw,int oh,int ow) {
+    if(!src || !dst || channels<1 || ih<1 || iw<1 || oh<1 || ow<1) return 1;
+    /* Coordinates are independent of channels and output rows. In particular,
+     * do not call floorf/libm for every one of 4*H*W pixels on Cortex-A9. */
+    int *x0s=malloc((size_t)ow*sizeof(int)),*x1s=malloc((size_t)ow*sizeof(int));
+    float *w0s=malloc((size_t)ow*sizeof(float)),*w1s=malloc((size_t)ow*sizeof(float));
+    if(!x0s || !x1s || !w0s || !w1s) {
+        free(x0s);free(x1s);free(w0s);free(w1s);return 2;
+    }
+    for(int x=0;x<ow;++x) linear_index(x,iw,ow,&x0s[x],&x1s[x],&w0s[x],&w1s[x]);
+    for(int c=0;c<channels;++c) for(int y=0;y<oh;++y) {
+        int y0,y1; float hy0,hy1;
+        linear_index(y,ih,oh,&y0,&y1,&hy0,&hy1);
+        for(int x=0;x<ow;++x) {
+            int x0=x0s[x],x1=x1s[x]; float wx0=w0s[x],wx1=w1s[x];
+            const float *plane=src+(size_t)c*ih*iw;
+            float top=wx0*plane[(size_t)y0*iw+x0]+wx1*plane[(size_t)y0*iw+x1];
+            float bottom=wx0*plane[(size_t)y1*iw+x0]+wx1*plane[(size_t)y1*iw+x1];
+            /* Torch 2.11 chooses a different operation order for small outputs
+             * and contiguous channels-last singleton images. Preserve both. */
+            float value=hy0*top+hy1*bottom;
+            if(oh+ow<=128 || (channels>3 && ih==1 && iw==1)) {
+                float w00=hy0*wx0, w01=hy0*wx1, w10=hy1*wx0, w11=hy1*wx1;
+                value=plane[(size_t)y0*iw+x0]*w00+plane[(size_t)y0*iw+x1]*w01
+                      +plane[(size_t)y1*iw+x0]*w10+plane[(size_t)y1*iw+x1]*w11;
+            }
+            dst[((size_t)c*oh+y)*ow+x]=value;
+        }
+    }
+    free(x0s);free(x1s);free(w0s);free(w1s);
+    return 0;
+}
+
+API int acdc_quantize(const float *src,int8_t *dst,size_t count) {
+    if(!src || !dst) return 1;
+    for(size_t i=0;i<count;++i) {
+        if(!isfinite(src[i])) return 2;
+        double v=(double)src[i]*127.;
+        if(v<=-127.) {dst[i]=-127;continue;}
+        if(v>=127.) {dst[i]=127;continue;}
+        int base=(int)v;
+        if(v<(double)base) --base;
+        double frac=v-(double)base;
+        if(frac>.5 || (frac==.5 && base%2!=0)) ++base;
+        dst[i]=(int8_t)base;
+    }
+    return 0;
+}
+
+/* exp_table is generated by the frozen PC NumPy implementation and qualified
+ * against the actual head scale. Avoid relying on the ARM libm expf rounding. */
+API int acdc_softmax(const int8_t *src,float *dst,size_t pixels,const float *exp_table) {
+    if(!src || !dst || !exp_table) return 1;
+    for(size_t i=0;i<pixels;++i) {
+        int maximum=-127;
+        for(int c=0;c<4;++c) {
+            int q=src[(size_t)c*pixels+i];
+            if(q==-128) return 2;
+            if(q>maximum) maximum=q;
+        }
+        float v[4];
+        for(int c=0;c<4;++c) v[c]=exp_table[(size_t)(maximum+127)*255+src[(size_t)c*pixels+i]+127];
+        float total=((v[0]+v[1])+v[2])+v[3];
+        for(int c=0;c<4;++c) dst[(size_t)c*pixels+i]=v[c]/total;
+    }
+    return 0;
+}
+
+/* C-contiguous (X,Y,Z), scipy order=1, mode=constant (not grid-constant).
+ * matrix maps an output voxel to an input voxel. Offset includes block origin.
+ * scipy multiplies each coefficient by axis weights in axis order, in double. */
+typedef struct { int64_t index; double w0,w1; } Sample;
+
+static void affine_diagonal(const float *src,float *dst,const int64_t *in,const int64_t *out,
+                            Sample *const maps[3],float fill,int channels) {
+    size_t iy=(size_t)in[1],iz=(size_t)in[2],oy=(size_t)out[1],oz=(size_t)out[2];
+    size_t source_stride=(size_t)in[0]*iy*iz,target_stride=(size_t)out[0]*oy*oz;
+    for(size_t x=0;x<(size_t)out[0];++x) for(size_t y=0;y<oy;++y) {
+        const Sample *mx=&maps[0][x],*my=&maps[1][y];
+        size_t row=(x*oy+y)*oz;
+        if(mx->index<0 || my->index<0) {
+            for(int channel=0;channel<channels;++channel)
+                for(size_t z=0;z<oz;++z) dst[channel*target_stride+row+z]=fill;
+            continue;
+        }
+        size_t x0=(size_t)mx->index,x1=x0+1<(size_t)in[0]?x0+1:x0;
+        size_t y0=(size_t)my->index,y1=y0+1<iy?y0+1:y0;
+        size_t b00=(x0*iy+y0)*iz,b01=(x0*iy+y1)*iz;
+        size_t b10=(x1*iy+y0)*iz,b11=(x1*iy+y1)*iz;
+        double wx0=mx->w0,wx1=mx->w1,wy0=my->w0,wy1=my->w1;
+        for(size_t z=0;z<oz;++z) {
+            const Sample *mz=&maps[2][z];
+            if(mz->index<0) {
+                for(int channel=0;channel<channels;++channel) dst[channel*target_stride+row+z]=fill;
+                continue;
+            }
+            size_t z0=(size_t)mz->index,z1=z0+1<iz?z0+1:z0;
+            double wz0=mz->w0,wz1=mz->w1;
+            for(int channel=0;channel<channels;++channel) {
+                const float *s=src+channel*source_stride;double value=0.;
+                // Unroll the eight corners, keeping each multiply/add in the
+                // same order as SciPy. Only integer addressing is hoisted.
+#define ADD_CORNER(P,WX,WY,WZ) do { if((WX)!=0. && (WY)!=0. && (WZ)!=0.) { \
+    double v=(double)s[(P)];v*=(WX);v*=(WY);v*=(WZ);value+=v; } } while(0)
+                ADD_CORNER(b00+z0,wx0,wy0,wz0);ADD_CORNER(b00+z1,wx0,wy0,wz1);
+                ADD_CORNER(b01+z0,wx0,wy1,wz0);ADD_CORNER(b01+z1,wx0,wy1,wz1);
+                ADD_CORNER(b10+z0,wx1,wy0,wz0);ADD_CORNER(b10+z1,wx1,wy0,wz1);
+                ADD_CORNER(b11+z0,wx1,wy1,wz0);ADD_CORNER(b11+z1,wx1,wy1,wz1);
+#undef ADD_CORNER
+                dst[channel*target_stride+row+z]=(float)value;
+            }
+        }
+    }
+}
+
+static int affine_channels(const float *src,float *dst,const int64_t *in,const int64_t *out,
+                    const double *matrix,const double *offset,float fill,int channels) {
+    if(!src || !dst || !in || !out || !matrix || !offset) return 1;
+    for(int j=0;j<3;++j) if(in[j]<1 || out[j]<1) return 2;
+    Sample *maps[3]={NULL,NULL,NULL};
+    int diagonal=matrix[1]==0. && matrix[2]==0. && matrix[3]==0.
+                 && matrix[5]==0. && matrix[6]==0. && matrix[7]==0.;
+    if(diagonal) {
+        for(int a=0;a<3;++a) {
+            maps[a]=malloc((size_t)out[a]*sizeof(Sample));
+            if(!maps[a]) {for(int b=0;b<3;++b) free(maps[b]);return 3;}
+            for(int64_t i=0;i<out[a];++i) {
+                double p=(double)i*matrix[a*3+a]+offset[a];
+                Sample *s=&maps[a][i];
+                if(p<0. || p>(double)(in[a]-1)) {s->index=-1;continue;}
+                s->index=(int64_t)p;s->w0=1.-(p-(double)s->index);s->w1=1.-s->w0;
+            }
+        }
+        affine_diagonal(src,dst,in,out,maps,fill,channels);
+        for(int a=0;a<3;++a) free(maps[a]);
+        return 0;
+    }
+    size_t source_stride=(size_t)in[0]*in[1]*in[2],target_stride=(size_t)out[0]*out[1]*out[2];
+    for(int64_t x=0;x<out[0];++x) for(int64_t y=0;y<out[1];++y)
+    for(int64_t z=0;z<out[2];++z) {
+        const int64_t coord[3]={x,y,z};
+        int64_t index[3]; double weights[3][2]; int outside=0;
+        for(int a=0;a<3;++a) {
+            double p=offset[a];
+            for(int b=0;b<3;++b) p+=(double)coord[b]*matrix[a*3+b];
+            if(p<0. || p>(double)(in[a]-1)) {outside=1;break;}
+            index[a]=(int64_t)p;
+            // SciPy ni_splines computes the last weight as 1 - weight[0].
+            weights[a][0]=1.-(p-(double)index[a]);weights[a][1]=1.-weights[a][0];
+        }
+        size_t d=((size_t)x*out[1]+y)*out[2]+z;
+        if(outside) {for(int channel=0;channel<channels;++channel) dst[d+channel*target_stride]=fill;continue;}
+        double value[4]={0.,0.,0.,0.};
+        for(int a=0;a<2;++a) for(int b=0;b<2;++b) for(int c=0;c<2;++c) {
+            if(weights[0][a]==0. || weights[1][b]==0. || weights[2][c]==0.) continue;
+            int64_t xx=index[0]+a, yy=index[1]+b, zz=index[2]+c;
+            if(xx==in[0]) xx=in[0]-1;
+            if(yy==in[1]) yy=in[1]-1;
+            if(zz==in[2]) zz=in[2]-1;
+            size_t source=((size_t)xx*in[1]+yy)*in[2]+zz;
+            for(int channel=0;channel<channels;++channel) {
+                double v=(double)src[source+channel*source_stride];
+                // Preserve SciPy's multiply and corner accumulation order.
+                v*=weights[0][a];v*=weights[1][b];v*=weights[2][c];
+                value[channel]+=v;
+            }
+        }
+        for(int channel=0;channel<channels;++channel) dst[d+channel*target_stride]=(float)value[channel];
+    }
+    for(int a=0;a<3;++a) free(maps[a]);
+    return 0;
+}
+
+API int acdc_affine(const float *src,float *dst,const int64_t *in,const int64_t *out,
+                    const double *matrix,const double *offset,float fill) {
+    return affine_channels(src,dst,in,out,matrix,offset,fill,1);
+}
+
+API int acdc_affine4(const float *src,float *dst,const int64_t *in,const int64_t *out,
+                    const double *matrix,const double *offset,float fill) {
+    return affine_channels(src,dst,in,out,matrix,offset,fill,4);
+}
+
+API int acdc_bbox(const uint8_t *labels,const int64_t *shape,int64_t *bounds) {
+    if(!labels || !shape || !bounds) return 1;
+    uint64_t size=1;
+    for(int a=0;a<3;++a) {
+        if(shape[a]<1 || (uint64_t)shape[a]>2000000/size) return 2;
+        size*=shape[a];bounds[a]=shape[a];bounds[a+3]=-1;
+    }
+    size_t i=0;
+    for(int64_t x=0;x<shape[0];++x) for(int64_t y=0;y<shape[1];++y)
+    for(int64_t z=0;z<shape[2];++z,++i) {
+        if(labels[i]>3) return 3;
+        if(!labels[i]) continue;
+        const int64_t point[3]={x,y,z};
+        for(int a=0;a<3;++a) {
+            if(point[a]<bounds[a]) bounds[a]=point[a];
+            if(point[a]>bounds[a+3]) bounds[a+3]=point[a];
+        }
+    }
+    return 0;
+}
+
+static uint8_t clamped_byte(double v) {
+    if(v<=0.) return 0;
+    if(v>=255.) return 255;
+    int n=(int)v;double f=v-n;
+    if(f>.5 || (f==.5 && n%2)) ++n;
+    return (uint8_t)n;
+}
+
+API int acdc_mpr(const float *gray,const uint8_t *labels,uint8_t *rgba,const int64_t *shape,
+                 const double *origin,const double *dx,const double *dy,int height,int width,
+                 double level,double window,double alpha,int visible,int outline) {
+    if(!gray || !labels || !rgba || !shape || !origin || !dx || !dy || height<1 || width<1 || window<=0.) return 1;
+    const int colors[4][3]={{0,0,0},{255,0,0},{0,255,0},{0,0,255}};
+    size_t sx=(size_t)shape[1]*shape[2],sy=(size_t)shape[2];
+    for(int y=0;y<height;++y) {
+        double v[3];for(int a=0;a<3;++a) v[a]=origin[a]+y*dy[a];
+        for(int x=0;x<width;++x) {
+            double intensity=0.;int c=0;
+            if(v[0]>=0. && v[1]>=0. && v[2]>=0. && v[0]<=shape[0]-1 && v[1]<=shape[1]-1 && v[2]<=shape[2]-1) {
+                int64_t low[3],high[3];double f[3];
+                for(int a=0;a<3;++a) {low[a]=(int64_t)v[a];high[a]=low[a]<shape[a]-1?low[a]+1:low[a];f[a]=v[a]-low[a];}
+                double layer[2];
+                for(int z=0;z<2;++z) {
+                    int64_t zz=z?high[2]:low[2];
+                    double a=(double)gray[(size_t)low[0]*sx+low[1]*sy+zz]*(1.-f[0])
+                            +(double)gray[(size_t)high[0]*sx+low[1]*sy+zz]*f[0];
+                    double b=(double)gray[(size_t)low[0]*sx+high[1]*sy+zz]*(1.-f[0])
+                            +(double)gray[(size_t)high[0]*sx+high[1]*sy+zz]*f[0];
+                    layer[z]=a*(1.-f[1])+b*f[1];
+                }
+                intensity=layer[0]*(1.-f[2])+layer[1]*f[2];
+                int64_t xx=(int64_t)(v[0]+.5),yy=(int64_t)(v[1]+.5),zz=(int64_t)(v[2]+.5);
+                size_t index=(size_t)xx*sx+yy*sy+zz;c=labels[index];
+                if(c>3) return 2;
+                if(outline && c && xx>0 && xx<shape[0]-1 && yy>0 && yy<shape[1]-1 && zz>0 && zz<shape[2]-1
+                   && labels[index-sx]==c && labels[index+sx]==c && labels[index-sy]==c && labels[index+sy]==c
+                   && labels[index-1]==c && labels[index+1]==c) c=0;
+            }
+            double val=(intensity-level+window/2.)/window*255.;
+            if(val<0.) val=0.;if(val>255.) val=255.;
+            size_t d=((size_t)y*width+x)*4;
+            for(int a=0;a<3;++a) rgba[d+a]=clamped_byte(c && (visible&(1<<c)) ? val*(1.-alpha)+colors[c][a]*alpha : val);
+            rgba[d+3]=255;
+            for(int a=0;a<3;++a) v[a]+=dx[a];
+        }
+    }
+    return 0;
+}
+
+typedef struct { size_t low,high,nearest; double w0,w1; int inside; } MPRSample;
+
+/* Orthogonal source axes: cache conversion/weights by row or column. Keep
+ * incremental X coordinates and the original separable interpolation order.
+ * A genuinely oblique source retains the original general sampler above. */
+API int acdc_mpr_fast(const float *gray,const uint8_t *labels,uint8_t *rgba,const int64_t *shape,
+                 const double *origin,const double *dx,const double *dy,int height,int width,
+                 double level,double window,double alpha,int visible,int outline) {
+    if(!gray || !labels || !rgba || !shape || !origin || !dx || !dy || height<1 || width<1 || window<=0.) return 1;
+    for(int a=0;a<3;++a) if(dx[a]!=0. && dy[a]!=0.)
+        return acdc_mpr(gray,labels,rgba,shape,origin,dx,dy,height,width,level,window,alpha,visible,outline);
+    MPRSample *maps[3]={NULL,NULL,NULL};int along_x[3],result=0;
+    for(int a=0;a<3;++a) {
+        along_x[a]=dx[a]!=0.;int count=along_x[a]?width:height;
+        maps[a]=malloc((size_t)count*sizeof(MPRSample));
+        if(!maps[a]) {result=3;goto done;}
+        double px=origin[a]+0.;
+        for(int i=0;i<count;++i) {
+            double p=along_x[a]?px:origin[a]+i*dy[a];MPRSample *s=&maps[a][i];
+            s->inside=p>=0. && p<=shape[a]-1;
+            if(s->inside) {
+                s->low=(size_t)p;s->high=s->low<(size_t)shape[a]-1?s->low+1:s->low;
+                s->nearest=(size_t)(p+.5);s->w1=p-(double)s->low;s->w0=1.-s->w1;
+            }
+            if(along_x[a]) px+=dx[a];
+        }
+    }
+    size_t sx=(size_t)shape[1]*shape[2],sy=(size_t)shape[2];
+    for(int y=0;y<height;++y) for(int x=0;x<width;++x) {
+        const MPRSample *mx=&maps[0][along_x[0]?x:y],*my=&maps[1][along_x[1]?x:y],*mz=&maps[2][along_x[2]?x:y];
+        double intensity=0.;int c=0;
+        if(mx->inside && my->inside && mz->inside) {
+            size_t b00=mx->low*sx+my->low*sy,b10=mx->high*sx+my->low*sy;
+            size_t b01=mx->low*sx+my->high*sy,b11=mx->high*sx+my->high*sy;
+            double a0=(double)gray[b00+mz->low]*mx->w0+(double)gray[b10+mz->low]*mx->w1;
+            double b0=(double)gray[b01+mz->low]*mx->w0+(double)gray[b11+mz->low]*mx->w1;
+            double a1=(double)gray[b00+mz->high]*mx->w0+(double)gray[b10+mz->high]*mx->w1;
+            double b1=(double)gray[b01+mz->high]*mx->w0+(double)gray[b11+mz->high]*mx->w1;
+            double layer0=a0*my->w0+b0*my->w1,layer1=a1*my->w0+b1*my->w1;
+            intensity=layer0*mz->w0+layer1*mz->w1;
+            size_t xx=mx->nearest,yy=my->nearest,zz=mz->nearest,index=xx*sx+yy*sy+zz;
+            c=labels[index];if(c>3) {result=2;goto done;}
+            if(outline && c && xx>0 && xx<(size_t)shape[0]-1 && yy>0 && yy<(size_t)shape[1]-1 && zz>0 && zz<(size_t)shape[2]-1
+               && labels[index-sx]==c && labels[index+sx]==c && labels[index-sy]==c && labels[index+sy]==c
+               && labels[index-1]==c && labels[index+1]==c) c=0;
+        }
+        double val=(intensity-level+window/2.)/window*255.;
+        if(val<0.) val=0.;if(val>255.) val=255.;
+        size_t d=((size_t)y*width+x)*4;
+        if(c && (visible&(1<<c))) {
+            double base=val*(1.-alpha);
+            uint8_t off=clamped_byte(base+0.*alpha),on=clamped_byte(base+255.*alpha);
+            rgba[d]=c==1?on:off;rgba[d+1]=c==2?on:off;rgba[d+2]=c==3?on:off;
+        } else {uint8_t v=clamped_byte(val);rgba[d]=rgba[d+1]=rgba[d+2]=v;}
+        rgba[d+3]=255;
+    }
+done:
+    for(int a=0;a<3;++a) free(maps[a]);
+    return result;
+}

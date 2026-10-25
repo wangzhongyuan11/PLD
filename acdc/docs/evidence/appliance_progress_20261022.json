@@ -1,0 +1,164 @@
+{
+  "schema": "pld-acdc-appliance-progress-v2",
+  "status": "candidate_under_test_not_final_acceptance",
+  "date": "2026-10-22",
+  "native_reference": {
+    "volumes": 40,
+    "slices": 1616,
+    "integer_inputs_equal": true,
+    "native_label_mismatches": 0,
+    "fresh_pl_inferences": 0,
+    "audit_sha256": "52a7645a24e99cc6e1c00acec0222644931c237f22b562b6fe572b2098204d93",
+    "native_build": {
+      "identity": {
+        "compiler": "gcc",
+        "compiler_version": "gcc (Rev8, Built by MSYS2 project) 15.1.0\nCopyright (C) 2025 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+        "flags": [
+          "-O3",
+          "-std=c11",
+          "-shared",
+          "-fno-fast-math",
+          "-ffp-contract=off",
+          "-fno-strict-aliasing"
+        ],
+        "machine": "AMD64",
+        "source_sha256": "b0177f39a0747f09cffb3a8f4b1dccb234ded92d7be92641dc331239de24433a",
+        "wrapper_sha256": "fc18f393c40b6ba3a2af687e2948649e580e14de721740ab355ef8082c7e3efd"
+      },
+      "library_sha256": "0dec5a59367327527ae26f62a29c5bc3f7520ad8989d6855b6fae1159b1ea6e5"
+    }
+  },
+  "first_board_cohort": {
+    "jobs": 20,
+    "fresh_physical_pl_heads": 1616,
+    "native_labels_affines_equal": true,
+    "all_input_head_hashes_equal": true,
+    "all_statistics_equal": true,
+    "zip_sha_crc_members_equal": true,
+    "downloaded_assets_seconds": {
+      "maximum": 53.9259933999856,
+      "p50": 29.389641849993495,
+      "p95": 35.40583393501585
+    },
+    "over_40": [
+      "d8e831b4fe3b4abfac8e383ff78048b9"
+    ],
+    "stability60_complete": false,
+    "interruption": "board reboot observed; services disabled at that stage"
+  },
+  "bulk_mesh": {
+    "schema": "pld-acdc-board-bulk-mesh-audit-v2",
+    "patient": "patient057",
+    "phase": "ED",
+    "rows": [
+      {
+        "structure": "RV",
+        "kind": "raw",
+        "points": 20118,
+        "triangles": 40220,
+        "geometry_normals_indices_colors_equal": true
+      },
+      {
+        "structure": "RV",
+        "kind": "smooth",
+        "points": 20118,
+        "triangles": 40220,
+        "geometry_normals_indices_colors_equal": true
+      },
+      {
+        "structure": "MYO",
+        "kind": "raw",
+        "points": 26776,
+        "triangles": 53560,
+        "geometry_normals_indices_colors_equal": true
+      },
+      {
+        "structure": "MYO",
+        "kind": "smooth",
+        "points": 26776,
+        "triangles": 53560,
+        "geometry_normals_indices_colors_equal": true
+      },
+      {
+        "structure": "LV",
+        "kind": "raw",
+        "points": 13556,
+        "triangles": 27108,
+        "geometry_normals_indices_colors_equal": true
+      },
+      {
+        "structure": "LV",
+        "kind": "smooth",
+        "points": 13556,
+        "triangles": 27108,
+        "geometry_normals_indices_colors_equal": true
+      }
+    ],
+    "mesh_seconds": 3.8173611509998864
+  },
+  "application_under_test": "f96a08a882f2af96cb7f204875329390a4250d8a846c2b67a185fd700281952c",
+  "mesh_binary_sha256": "a196aadf784256067cab682f25da568735142a4249ac8ce6ffbdd0b06ba278fe",
+  "unit_tests": 81,
+  "browser_indexed_loader_test_pass": true,
+  "current_application_under_test": "af4c5f0ffb9fa1eb613aee4427f5452c624205046664d352bc77c6117fb4adb3",
+  "actual_browser_patient057": {
+    "job_id": "c70dba5cbd4647f88d96037d5f897e19",
+    "application_sha256": "f96a08a882f2af96cb7f204875329390a4250d8a846c2b67a185fd700281952c",
+    "interactive_seconds": 37.52280000001192,
+    "server_upload_to_assets_seconds": 36.7349419330003,
+    "both_phases_loaded": true,
+    "webgl_ready": true,
+    "measured_by": "actual browser performance.now, both phase resource preload and gl.finish; CUA UI observed",
+    "scope": "one observed worst known development patient; not all clients or final stability distribution"
+  },
+  "lifecycle": {
+    "schema": "pld-acdc-appliance-lifecycle-board-v2",
+    "complete": true,
+    "transport": "real board-local HTTP/TCP; not an Ethernet unplug test",
+    "interrupted_upload_released": true,
+    "invalid_nifti_failed_without_result": true,
+    "concurrent_upload_rejected": true,
+    "cancelled_during_inference": true,
+    "cancelled_job_without_complete_result": true,
+    "admission_ready_after_cancel": true,
+    "invalid_job": "77c84ce7e51c4ddeb73e925f218590ef",
+    "cancelled_job": "b8b9b37a40d440a19d02ea9cc863b07c",
+    "phase_at_cancel": {
+      "completed_slices": 1,
+      "phase": "ED",
+      "phase_completed": 1,
+      "phase_total": 51,
+      "run_id": "b8b9b37a40d440a19d02ea9cc863b07c",
+      "status": "infer_restore"
+    },
+    "health": {
+      "active_job": null,
+      "backend": "pl",
+      "generator": "pynq_ps",
+      "inference": "pynq_pl",
+      "initialization": {
+        "application_sha256": "af4c5f0ffb9fa1eb613aee4427f5452c624205046664d352bc77c6117fb4adb3",
+        "pl_selftest": {
+          "backend": "pl",
+          "head_equal": true,
+          "head_sha256": "69727f2dd44a4b582d1dd1fdaee0c016f0c173a5826b813313451b82f9adb4d2"
+        },
+        "ready_seconds": 53.74155195100002
+      },
+      "max_upload_bytes": 33554432,
+      "model_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+      "ready": true,
+      "renderer": "browser_webgl",
+      "runtime_sha256": "1f0bdf8739980ea8e8e2a06ee349b57ed81d041d87515e4e9400cd30b7ae7747",
+      "status": "ready",
+      "synthetic": false
+    },
+    "next_full_fresh_job_must_be_verified_separately": true,
+    "next_full_fresh_job_verification": {
+      "job_id": "359935e757eb423b9693c5db315d72d4",
+      "patient": "patient001",
+      "input_head_statistics_zip_equal": true,
+      "scope": "native labels are audited separately after the full cohort"
+    }
+  }
+}

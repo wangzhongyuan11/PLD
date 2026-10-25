@@ -4,6 +4,10 @@
 
 系统用于工程教学和算法演示。数据来自公开开发数据；开发集结果不称独立测试结果，不用于临床诊断。
 
+## 当前板端应用（2026-10-25）
+
+日常入口为 **http://192.168.2.99:8088/**，包含心脏 2.5D、皮肤镜、CAMUS，以及仅供皮肤镜使用的 ROI 网页/HDMI 触控。最新常驻切换、自动分割/上屏、ROI 清除标记及板端评测入口已同步；实际路径、228 项源码/服务哈希和回退说明见[当前板端源码对齐](deployment/current_board_20261025/README.md)。`deployment/current_board_20261024/` 是历史快照，正式冻结资产指针保持不变。
+
 ## 获取与准备
 
 克隆本仓库，从 [唯一正式 Release](https://github.com/wangzhongyuan11/PLD/releases/tag/pld-dual-20261017) 下载 `pld_dual_20261017_assets.zip`，放入 `out/`。这是模型、冻结运行时、配对硬件证据及小型公开回归样本，不能用私人备份替代。
@@ -23,7 +27,7 @@ python -m camus --plan
 |---|---|
 | `rtl/`、`camus/rtl/` | 两套冻结计算核心；`conv_tile_engine.sv` 是皮肤镜必需模块 |
 | `board/`、`reference/`、`camus/` | 有界 DMA/驱动、定点参考、调度与验证 |
-| `display_web/`、`display_web/unified/` | 普通网页、统一入口、ROI/点/框/阈值交互与四宫格 |
+| `display_web/`、`display_web/unified/` | 三模型入口、自动显示、皮肤镜 ROI/点/框交互与四宫格 |
 | `sim/`、`camus/tests/`、`display_web/*/tests/` | 数值、协议、服务与交互回归 |
 | `vivado/`、`scripts/` | IP/BD 构建、校验、模型准备、部署与板测工具 |
 | `delivery/` | 当前版本指针、严格白名单 manifest、小型证据与部署模板 |

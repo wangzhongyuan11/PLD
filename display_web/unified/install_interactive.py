@@ -9,8 +9,9 @@ import subprocess
 import sys
 import time
 
-SKIN = ()
-HUB = ('hub.py', 'index.html', 'interactive_bridge.py', 'interactive.html', 'interactive.js', 'prompt_seg/__init__.py', 'prompt_seg/contracts.py', 'prompt_seg/refinement.py', 'prompt_seg/service.py')
+SHARED = ('display_completion.py', 'display_lease.py', 'warm_hdmi.py', 'video_overlay.py', 'overlay_metadata.py', 'latency.py')
+SKIN = ('server.py', 'static/app.js', 'hdmi_worker.py', 'touch_display.py', 'touch_drag.py') + SHARED
+HUB = ('hub.py', 'index.html', 'evaluation_bridge.py', 'evaluation.html', 'interactive_bridge.py', 'interactive_workspace.py', 'interactive_hdmi.py', 'interactive.html', 'interactive.js', 'prompt_seg/__init__.py', 'prompt_seg/contracts.py', 'prompt_seg/refinement.py', 'prompt_seg/service.py', 'camus_quad.py', 'quad_camus.html', 'quad_camus_hdmi.py') + SHARED
 UNITS = ('pld-hub.service','pld-web.service','pld-camus.service')
 
 

@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 import sys
 import tempfile
+import types
+import numpy as np
 import unittest
 from unittest.mock import patch
 
@@ -26,13 +28,16 @@ class InstallTests(unittest.TestCase):
             targets=installer.destinations(hub);manifest={};old_paths=[]
             for i,(key,target) in enumerate(targets.items()):
                 target.parent.mkdir(parents=True,exist_ok=True)
-                old=b'old' if i%2 else None
+                old=b'old' if i%2 or key=='skin/server.py' else None
                 if old is not None:target.write_bytes(old);old_paths.append(key)
+                else:target.unlink(missing_ok=True)
                 payload=package/'payload'/key;payload.parent.mkdir(parents=True,exist_ok=True);payload.write_bytes(b'new')
                 manifest[key]={'old':[hashlib.sha256(old).hexdigest() if old is not None else None],
                                'new':hashlib.sha256(b'new').hexdigest()}
             (package/'patch_manifest.json').write_text(json.dumps(manifest))
-            with patch.object(installer,'__file__',str(package/'install_interactive.py')),patch.object(installer.sys,'platform','linux'),patch.object(installer.os,'geteuid',return_value=0,create=True),patch.object(installer,'stop_safely'),patch.object(installer,'call'):
+            preflight=types.ModuleType('prompt_seg.refinement')
+            preflight.seeded_cut=lambda *args:None
+            with patch.dict(sys.modules,{'prompt_seg':types.ModuleType('prompt_seg'),'prompt_seg.refinement':preflight}),patch.object(installer,'__file__',str(package/'install_interactive.py')),patch.object(installer.sys,'platform','linux'),patch.object(installer.os,'geteuid',return_value=0,create=True),patch.object(installer,'stop_safely'),patch.object(installer,'call'):
                 with patch.object(sys,'argv',['install_interactive.py','--hub',str(hub),'--apply']):installer.main()
                 self.assertTrue(all(p.read_bytes()==b'new' for p in targets.values()))
                 backup=next(hub.glob('backup_interactive_*'))

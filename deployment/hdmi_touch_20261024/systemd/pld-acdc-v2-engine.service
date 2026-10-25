@@ -19,7 +19,8 @@ Environment=VTK_SMP_MAX_THREADS=1
 ExecStart=/bin/bash -lc "source /etc/profile; exec env PYTHONPATH=/home/xilinx/acdc_board_v2/releases/hdmi_surface_20261024/v2_deps /usr/local/share/pynq-venv/bin/python3 -m acdc.appliance engine --config /home/xilinx/acdc_board_v2/releases/hdmi_surface_20261024/v2_config.json --app-sha c7131026b1a1f2b6668e34ddc628af0d2c536827ebf8e7380359b27cd985186c"
 TimeoutStartSec=180
 TimeoutStopSec=90
-KillMode=control-group
+# Signal the owner first; it closes and waits for its HDMI child itself.
+KillMode=mixed
 SendSIGKILL=no
 Restart=no
 

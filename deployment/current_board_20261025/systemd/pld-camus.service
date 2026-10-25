@@ -1,0 +1,19 @@
+[Unit]
+Description=PLD camus frozen backend
+After=network.target
+Conflicts=
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/camus
+Environment=PYTHONPATH=/home/xilinx/jupyter_notebooks/pld/camus_deps_20261015
+TimeoutStartSec=90
+ExecStart=/bin/bash -lc 'exec /usr/local/share/pynq-venv/bin/python3 -u /home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/hub/backend_launcher.py camus /home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/camus -- --host 127.0.0.1 --port 8090 --runtime /home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/camus --data /home/xilinx/jupyter_notebooks/pld/camus_web_data_20261015 --backend pl --model /home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/camus/model/int8_export'
+Restart=no
+KillMode=mixed
+KillSignal=SIGTERM
+SendSIGKILL=no
+TimeoutStopSec=240
+UMask=0077
+[Install]
+WantedBy=multi-user.target
