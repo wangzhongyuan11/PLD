@@ -150,6 +150,8 @@ def handler(app):
                     if not body.get('_automatic'):user_display(body.get('action','show'))
                     self.send(202,app.client.request(op='hdmi',job=body.get('job'),action=body.get('action','show')));return
                 if path=='/api/v2/jobs':
+                    auto_display=self.headers.get('X-Auto-Display','true').lower()
+                    if auto_display not in ('true','false'):raise ContractError('invalid X-Auto-Display')
                     length=int(self.headers.get('Content-Length','0'));ed_bytes=int(self.headers.get('X-ED-Bytes','0'))
                     if not 0<ed_bytes<length<=MAX_UPLOAD:raise ContractError('invalid ED/ES upload length')
                     suffixes=[]
@@ -172,7 +174,7 @@ def handler(app):
                                 if not chunk:raise ContractError('interrupted upload')
                                 stream.write(chunk);count-=len(chunk)
                     result=app.client.request(op='start',job=job,reservation=reservation,suffixes=suffixes,
-                                              upload_seconds=time.perf_counter()-began)
+                                              upload_seconds=time.perf_counter()-began,auto_display=auto_display=='true')
                     submitted=True;self.send(202,result);return
                 match=re.fullmatch(r'/api/v2/jobs/([0-9a-f]{32})/cancel',path)
                 if match:
