@@ -99,6 +99,15 @@ class Board:
         conflicts=set(self.props(ENGINE).get('Conflicts','').split())
         return not conflicts.intersection((HUB,'pld-web.service','pld-camus.service'))
 
+    def prestart_dual(self,model):
+        units={'skin':'pld-web.service','camus':'pld-camus.service'}
+        states={key:self.props(unit) for key,unit in units.items()}
+        if any(state.get('ActiveState')!='inactive' for state in states.values()):return
+        if any(set(state.get('Conflicts','').split()).intersection((ENGINE,WEB,HUB,*units.values())) for state in states.values()):return
+        # The caller has confirmed ACDC hardware release. Overlap the target's
+        # normal startup with the hub's CPU-only imports; no extra owner exists.
+        self.start(units[model])
+
     def prepare_dual(self, target):
         state = self.hub_root / 'state'
         state.mkdir(exist_ok=True)
@@ -249,6 +258,7 @@ class Controller:
                 if not board.running(HUB):
                     self.set_stage('start_target')
                     board.prepare_dual(target)
+                    if hasattr(board,'prestart_dual'):board.prestart_dual(target)
                     board.start(HUB)
                 def hub_started():
                     try:

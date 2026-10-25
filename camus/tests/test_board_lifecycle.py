@@ -10,6 +10,16 @@ from camus.web import CamusServer
 
 
 class BoardLifecycleTests(unittest.TestCase):
+    def test_prepared_display_agent_is_reused_instead_of_creating_a_second_process(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            pipeline=Mock();pipeline.backend='pl';pipeline.model.root=Path(tmp)/'model/int8_export'
+            agent=Mock()
+            with patch.dict('os.environ',{'PLD_WARM_HDMI':'1'}):
+                server=CamusServer(('127.0.0.1',0),pipeline,Path(tmp)/'jobs',display_agent=agent)
+            try:self.assertIs(server.display_agent,agent)
+            finally:server.server_close()
+            agent.close.assert_called_once()
+
     def test_xsa_sibling_is_rejected_before_pynq_metadata(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);(root/'overlay').mkdir();(root/'overlay/dma_top.xsa').write_bytes(b'xsa')

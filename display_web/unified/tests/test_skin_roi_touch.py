@@ -81,6 +81,21 @@ def test_native_touch_tools_point_and_roi_map_to_processed_image():
     assert surface.gesture('up',450,20)[0]=='/interactive/jobs'
 
 
+def test_hdmi_unchanged_state_and_updated_image_do_not_show_stale_thumbnails():
+    m=manager();surface=Surface();surface.image=Image.new('RGB',(100,50),'red')
+    current=m.state('a'*32);assert surface.update(current)
+    assert not surface.update(dict(current))
+    frame=surface.frame();ox,oy,rw,rh=surface.geometry();point=(oy+rh//2,ox+rw//2)
+    assert tuple(frame[point])==(255,0,0)
+    assert np.array_equal(frame,surface.frame())
+    surface.image=Image.new('RGB',(100,50),'green')
+    assert tuple(surface.frame()[point])==(0,128,0)
+    surface.overlay=Image.new('RGB',(100,50),'blue')
+    assert tuple(surface.frame()[point[0],point[1]+320])==(0,0,255)
+    surface.overlay=None
+    assert tuple(surface.frame()[point[0],point[1]+320])==(15,28,40)
+
+
 def test_drag_input_keeps_motion_release_and_partial_packets(monkeypatch):
     reader=DragInput();reader.fd=42;reader.axes=(0,1);reader.ranges=[(0,4096),(0,4096)]
     events=[(3,0,1024),(3,1,1024),(1,330,1),(0,0,0),

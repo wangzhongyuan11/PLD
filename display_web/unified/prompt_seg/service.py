@@ -83,21 +83,24 @@ class SegmentationService:
         """Statistics and display arrays only; PNG encoding is timed separately."""
         selected = native==req.target_class
         boundary = selected & ~ndimage.binary_erosion(selected)
-        overlay = image.copy().astype(float)
+        overlay = image.copy()
         colors = ((0,0,0),(25,174,114),(232,150,43),(98,107,213))
         # Display only the selected structure; labels.png still contains all
         # classes. The drawn rectangle itself is never part of this overlay.
         color = np.asarray(colors[req.target_class],float)
-        overlay[selected] = .6*overlay[selected]+.4*color
+        # Apply the exact original floating-point blend/rounding to 256
+        # possible byte values, instead of allocating a full float RGB image.
+        blend = np.rint(.6*np.arange(256)[:,None]+.4*color).clip(0,255).astype(np.uint8)
+        overlay[selected] = blend[image[selected],np.arange(3)]
         outline = ndimage.binary_dilation(boundary,iterations=1)
         overlay[outline] = color
         roi = req.roi
         domain_pixels = (roi.y1-roi.y0)*(roi.x1-roi.x0) if roi else native.size
-        statistics = {'target_pixels':int(selected.sum()),'processed_pixels':int(domain_pixels),
-            'area_ratio':int(selected.sum())/domain_pixels,
+        target_pixels=int(selected.sum())
+        statistics = {'target_pixels':target_pixels,'processed_pixels':int(domain_pixels),
+            'area_ratio':target_pixels/domain_pixels,
             'per_class_pixels':{str(i):int((labels==i).sum()) for i in range(nclasses)}}
-        overlay_png = np.rint(overlay).clip(0,255).astype(np.uint8)
-        return overlay_png, selected.astype(np.uint8)*255, statistics
+        return overlay, selected.astype(np.uint8)*255, statistics
 
     def _encode(self,native,overlay_rgb,mask):
         return {'labels_png':png_data(native),'target_mask_png':png_data(mask),

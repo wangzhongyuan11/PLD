@@ -34,6 +34,8 @@ sudo /usr/local/share/pynq-venv/bin/python3 /home/xilinx/pld_entry_20261023/inst
 
 2026-10-25 性能候选位于 `/home/xilinx/latency_opt_20261024`，ACDC 应用位于 `/home/xilinx/acdc_board_v2/releases/latency_opt_20261024`。`98-latency-opt.conf` 选择候选；原目录保留。该候选的 `rollback.json` 保存替换前后身份，`backup/` 保存文件；专用回退入口为 `sudo /usr/local/share/pynq-venv/bin/python3 /home/xilinx/latency_opt_20261024/rollback.py`。使用此回退入口，不运行下面旧增量版本的回退方式。板端评估 hub 使用逐处适配，通用安装包不会批准整文件覆盖该定制版本。
 
+最终候选已通过用户的三模型实屏与触控确认。常驻热切换约 2.4～7.3 秒；新进程首次准备仍约 27～33 秒。软件预热不保证开机即秒切；1022×767 的 ROI 初始到首帧仍观察到 16～28 秒。完整计时和限制见 [优化记录](../../docs/design/MODEL_HDMI_OPTIMIZATION_PLAN_20261024.md#13-2026-10-25-候选实施记录) 与 [测量证据](../../docs/validation/MODEL_HDMI_OPTIMIZATION_20261025.json)。
+
 本地检查：
 
 ```text

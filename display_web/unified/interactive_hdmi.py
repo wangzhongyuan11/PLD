@@ -46,6 +46,7 @@ class Surface:
         self.anchor=None;self.drag=None;self.message=''
 
     def update(self,state,result=None):
+        changed=self.state!=state or result is not None
         self.state=state
         if state.get('image_png'):
             self.image=decode(state['image_png'])
@@ -56,6 +57,7 @@ class Surface:
             self.result_id=state['job_id']
         if state['busy']:
             self.anchor=None;self.drag=None
+        return changed
 
     def geometry(self):
         if self.image is None:return None
@@ -121,8 +123,12 @@ class Surface:
         geometry=self.geometry()
         if geometry:
             ox,oy,rw,rh=geometry;w,h=self.image.size
-            image.paste(self.image.resize((rw,rh)),(ox,oy))
-            if self.overlay is not None:image.paste(self.overlay.resize((rw,rh)),(ox+320,oy))
+            key=(id(self.image),id(self.overlay),rw,rh)
+            if getattr(self,'thumbnail_key',None)!=key:
+                self.thumbnails=(self.image.resize((rw,rh)),self.overlay.resize((rw,rh)) if self.overlay is not None else None)
+                self.thumbnail_key=key
+            image.paste(self.thumbnails[0],(ox,oy))
+            if self.thumbnails[1] is not None:image.paste(self.thumbnails[1],(ox+320,oy))
             def rectangle(rect,color):
                 draw.rectangle((ox+rect['x0']*rw/w,oy+rect['y0']*rh/h,
                     ox+rect['x1']*rw/w,oy+rect['y1']*rh/h),outline=color,width=2)
@@ -166,7 +172,7 @@ def run(folder,hub,stop):
                     result=None
                     if state['result_ready'] and surface.result_id!=state['job_id']:
                         result=client.request('/interactive/jobs/'+state['job_id'])['result']
-                    surface.update(state,result);changed=True;next_sync=time.monotonic()+.5
+                    changed=surface.update(state,result) or changed;next_sync=time.monotonic()+.5
                 for action,x,y in touch.poll_events():
                     command=surface.gesture(action,x,y);changed=True
                     if command:

@@ -1,6 +1,7 @@
 """Per-bitstream PYNQ metadata cache; never caches hardware or DMA objects."""
 import hashlib
 import datetime
+import gc
 import json
 import os
 from pathlib import Path
@@ -14,6 +15,18 @@ def _sha(path):
     with path.open('rb') as stream:
         for block in iter(lambda: stream.read(1024*1024), b''): h.update(block)
     return h.hexdigest()
+
+
+def _load_snapshot(path):
+    # This verified pickle is a pure metadata graph. Repeated cyclic scans
+    # during its construction are expensive; restore the caller's GC policy
+    # even on an error. Reference counting and explicit hardware closes stay on.
+    enabled=gc.isenabled()
+    try:
+        gc.disable()
+        with path.open('rb') as stream:return pickle.load(stream)
+    finally:
+        if enabled:gc.enable()
 
 
 def enable_metadata_cache(directory=None):
@@ -42,7 +55,7 @@ def enable_metadata_cache(directory=None):
         if cache.exists() and manifest.exists():
             record = json.loads(manifest.read_text())
             if record.get('identity') == identity and record.get('sha256') == _sha(cache):
-                with cache.open('rb') as stream: parser = pickle.load(stream)
+                parser = _load_snapshot(cache)
                 # A different bitstream may have been active. Let PYNQ publish
                 # the actual new global state during the real download.
                 if hasattr(parser, '_from_cache'): del parser._from_cache

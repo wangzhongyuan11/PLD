@@ -12,6 +12,18 @@ module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
 
 
 class MetadataCacheTests(unittest.TestCase):
+    def test_metadata_load_restores_gc_policy_even_when_pickle_fails(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'snapshot';path.write_bytes(b'invalid pickle')
+            initially=module.gc.isenabled()
+            try:
+                for enabled in (True,False):
+                    module.gc.enable() if enabled else module.gc.disable()
+                    with self.assertRaises(Exception):module._load_snapshot(path)
+                    self.assertEqual(module.gc.isenabled(),enabled)
+            finally:
+                module.gc.enable() if initially else module.gc.disable()
+
     def test_download_publishes_new_state_without_serializing_graph_again(self):
         with tempfile.TemporaryDirectory() as directory:
             folder=Path(directory);bit=folder/'base.bit';bit.write_bytes(b'bit');bit.with_suffix('.hwh').write_bytes(b'hwh')

@@ -39,6 +39,8 @@ def install(web,app,kind,pipeline_factory=None):
             result=status()
             result.update(lifecycle='pause-resume-v1',suspended=app.suspended,
                           hardware_released=OWNER.handle is None,runtime_identity=getattr(app,'runtime_identity',None),owner_pid=os.getpid())
+            core=getattr(app.b_worker,'core',None)
+            result['hardware_ready']=bool(OWNER.handle is not None and core is not None and not core.session.closed and not app.suspended)
             if app.suspended:result['inference_available']=False
             return result
         app.status=snapshot

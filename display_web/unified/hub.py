@@ -139,7 +139,10 @@ class Controller:
             props=self.board.props(model)
             if props['ActiveState']=='inactive':return
             if props['ActiveState']!='active':raise RuntimeError(model+' 服务状态异常，请检查后重试')
-            state=self.board.status(model)
+            try:state=self.board.status(model)
+            except (OSError,http.client.HTTPException):
+                if time.monotonic()>deadline:raise RuntimeError(model+' 软件启动状态不可用')
+                time.sleep(.2);continue
             with self.lock:self.last_backend=state
             if 'active' not in state:raise RuntimeError('后台缺少任务状态，不能安全切换')
             if not state['active'] and state.get('warmup')!='running':
@@ -160,14 +163,17 @@ class Controller:
             stages['wait_idle']=time.monotonic()-started
             stop_started=time.monotonic()
             with self.lock:self.phase='stopping'
+            state=self.board.status(target) if self.board.props(target)['ActiveState']=='active' else {}
+            adopted=self.model is None and state.get('hardware_ready',False)
             for model in UNITS:
+                if adopted and model==target:continue
                 if hasattr(self.board,'park'):self.board.park(model)
                 else:self.board.stop(model)
             stages['release']=time.monotonic()-stop_started
             released=memory()
             load_started=time.monotonic()
             with self.lock:self.model=None;self.phase='loading'
-            self.board.start(target)
+            if not adopted:self.board.start(target)
             deadline=time.monotonic()+180
             while True:
                 try:state=self.board.status(target)
@@ -181,7 +187,7 @@ class Controller:
             stages['initialize']=time.monotonic()-load_started
             with self.lock:
                 self.model=target;self.phase='ready';self.last_backend=state
-                self.metrics=dict(seconds=time.monotonic()-started,stages_seconds=stages,before=before,after_release=released,after_ready=memory())
+                self.metrics=dict(seconds=time.monotonic()-started,stages_seconds=stages,before=before,after_release=released,after_ready=memory(),adopted_preloaded_target=bool(adopted))
                 temp=self.state_dir/'last_model.tmp';temp.write_text(target);temp.replace(self.state_dir/'last_model')
         except Exception as exc:
             with self.lock:self.phase='error';self.error=str(exc)

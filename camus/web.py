@@ -50,7 +50,7 @@ def decode_upload(payload):
 
 class CamusServer(ThreadingHTTPServer):
     daemon_threads = True
-    def __init__(self, address, pipeline, data, runtime=None):
+    def __init__(self, address, pipeline, data, runtime=None, *, display_agent=None):
         self.pipeline, self.data = pipeline, Path(data).resolve()
         protect_output(self.data/'_probe_not_created', pipeline.model.root)
         self.data.mkdir(parents=True, exist_ok=True)
@@ -59,8 +59,8 @@ class CamusServer(ThreadingHTTPServer):
         self.fault = False
         self.runtime,self.released,self.hdmi = runtime,False,None
         self.hdmi_folder,self.hdmi_started = None,0.
-        self.display_agent=None
-        if pipeline.backend=='pl' and os.environ.get('PLD_WARM_HDMI')=='1':
+        self.display_agent=display_agent
+        if display_agent is None and pipeline.backend=='pl' and os.environ.get('PLD_WARM_HDMI')=='1':
             try:from display_web.warm_hdmi import WarmHDMI
             except ModuleNotFoundError:from warm_hdmi import WarmHDMI
             self.display_agent=WarmHDMI(self.data/'warm_hdmi.log');self.display_agent.prepare()

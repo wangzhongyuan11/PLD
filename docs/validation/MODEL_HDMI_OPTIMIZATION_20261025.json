@@ -2,7 +2,7 @@
   "schema": "pld-model-hdmi-optimization-evidence-v1",
   "host_date": "2026-10-25",
   "board_clock_used": false,
-  "scope": "single representative runs; monotonic server/API timing; HDMI means first frame submitted, not physical observation",
+  "scope": "Single representative runs, not P95; monotonic server/API timing. HDMI timings measure first submitted frame; separate physical acceptance is recorded below.",
   "comparison": {
     "original_acdc_hdmi_seconds": 44.589840247,
     "original_acdc_restore_seconds": 42.86645881,
@@ -124,17 +124,18 @@
     }
   ],
   "alignment": {
-    "source_files_checked": 45,
+    "source_files_checked": 50,
     "source_mismatches": [
       "/home/xilinx/acdc_board_v2/releases/latency_opt_20261024/acdc/appliance/surface_hdmi.py",
-      "/home/xilinx/acdc_board_v2/releases/latency_opt_20261024/acdc/appliance/web_assets/index.html"
+      "/home/xilinx/acdc_board_v2/releases/latency_opt_20261024/acdc/appliance/web_assets/index.html",
+      "/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/hub/hub.py"
     ],
     "rollback_drift": [],
     "acdc_core_files_checked": 219,
     "acdc_core_drift": [],
     "runtime_files_checked": 292,
     "runtime_asset_drift": [],
-    "application_sha256": "1bc0e7c99d99f9bb3a06eda3a1d50cd04203e19e6b61f63ca9c7c2f9d31baaa7",
+    "application_sha256": "80c3b92f0fce9c3ad3da191d5f4c417852fdc17175bbee90e8ea87ae0d635c9f",
     "runtime_sha256": "1f0bdf8739980ea8e8e2a06ee349b57ed81d041d87515e4e9400cd30b7ae7747",
     "expected_source_variants": [
       {
@@ -148,6 +149,12 @@
         "reason": "newline encoding",
         "board_sha256": "736085a027ecd2b8684d5edcb3abe9b127e02c1aa088d93b7056cf1886a3a479",
         "local_sha256": "07a3a805f9ce6b634830e6ed0a8e1a1b40dc713c7c9e65406126ac811f1945d3"
+      },
+      {
+        "file": "hub/hub.py",
+        "reason": "newline encoding; board evaluation integration retained",
+        "board_sha256": "9210a84460cab19c45e2c5f527c64e4bc4c418350e84529a7bbbd29ff6d66528",
+        "local_sha256": "525afc2e023c4041a71a22c5b26f6f3c492525a42dea82b218e307461375945d"
       }
     ],
     "unexpected_source_mismatches": []
@@ -159,17 +166,398 @@
     "software_pids_retained": true,
     "camus_view_updates_preserved_process_and_fpga_configuration": true,
     "roi_cached_update_preserved_fpga_configuration": true,
-    "manual_stop_disabled_automatic_display": true
+    "manual_stop_disabled_automatic_display": true,
+    "local_followup": "Focused metadata GC restoration, exact display composition, preview preservation, prepared display child, entry/hub lifecycle and thumbnail invalidation checks passed; no RTL rebuild or long numerical suite repeated."
   },
-  "sample_note": "ROI and skin auto-display fixed image is 192x144; these end-to-end numbers are not a full-resolution performance claim.",
-  "physical_acceptance": "pending user observation for this candidate",
+  "sample_note": "Warm small-image observations use 192x144; separate full-image observations use the original 1022x767 JPEG.",
+  "physical_acceptance": {
+    "status": "passed",
+    "source": "user reply in this task",
+    "host_date": "2026-10-25",
+    "statement": "三个模型画面与触控均正常",
+    "scope": "Skin ROI drag, FG/BG, Run and web synchronization; CAMUS and ACDC HDMI and touch"
+  },
   "remaining": [
-    "Physical HDMI and touch observation",
-    "Final cold-start limits and larger-image end-to-end sampling remain separate from warm switching metrics"
+    "First fresh process still takes about 27-33 seconds; OS reboot timing is not measured.",
+    "Prepared ACDC/CAMUS first HDMI is about 6-8 seconds in representative runs, above the aspirational 5-second target.",
+    "1022x767 normal ZIP takes 6.46-7.23 seconds and auto first frame 10.09-10.71 seconds.",
+    "1022x767 ROI initial plus HDMI varied 16.00-27.78 seconds; crop plus HDMI 12.69-13.90 seconds. No universal ROI latency target is claimed."
   ],
   "deployment": {
     "entry": "/home/xilinx/latency_opt_20261024/entry",
     "acdc": "/home/xilinx/acdc_board_v2/releases/latency_opt_20261024",
     "rollback": "/home/xilinx/latency_opt_20261024/rollback.py"
+  },
+  "followup_observations": {
+    "large_image_verification.json": [
+      {
+        "case": "memory_before",
+        "values": {
+          "MemAvailable": "186700 kB",
+          "CmaFree": "24620 kB"
+        }
+      },
+      {
+        "case": "full_image_auto_display",
+        "dimensions": [
+          1022,
+          767
+        ],
+        "job": "c301f2d2f27a4cb093fa3d80cf02e2db",
+        "accepted_seconds": 0.2382540919998064,
+        "result_zip_ready_seconds": 6.459306728999763,
+        "first_frame_seconds": 10.086108735999915,
+        "result_to_display_seconds": 3.626808942000025,
+        "head_sha256": "1842db37a28ca1cf2108ded4a6c2b451ace44d500afae2c41955e95b43c36e49",
+        "head_equal": true,
+        "zip_members": [
+          "original.png",
+          "mask.png",
+          "contour.png",
+          "outlined.png",
+          "cutout.png",
+          "comparison.png",
+          "report.json"
+        ]
+      },
+      {
+        "case": "full_roi_automatic_initial_and_hdmi",
+        "seconds": 16.001143624999713,
+        "dimensions": [
+          1022,
+          767
+        ],
+        "label_hashes": {
+          "baseline": "6a56aa67407370f982f8e585356d02bb8f6e3013692ca2aeb10382edad927a71",
+          "final": "6a56aa67407370f982f8e585356d02bb8f6e3013692ca2aeb10382edad927a71"
+        }
+      },
+      {
+        "case": "full_roi_crop_and_hdmi",
+        "seconds": 12.685655889000373,
+        "source_job": "a81779c9f78747599a36bd0afe8fe55c"
+      },
+      {
+        "case": "full_roi_points_box_cache",
+        "seconds": 8.262051900999722,
+        "cache_hit": true,
+        "configuration_unchanged": true
+      },
+      {
+        "case": "memory_after",
+        "values": {
+          "MemAvailable": "145732 kB",
+          "CmaFree": "16520 kB"
+        }
+      }
+    ],
+    "large_r7_roi_verification.json": [
+      {
+        "case": "full_roi_automatic_initial_and_hdmi",
+        "seconds": 27.775500513000225,
+        "dimensions": [
+          1022,
+          767
+        ],
+        "label_hashes": {
+          "baseline": "6a56aa67407370f982f8e585356d02bb8f6e3013692ca2aeb10382edad927a71",
+          "final": "6a56aa67407370f982f8e585356d02bb8f6e3013692ca2aeb10382edad927a71"
+        }
+      },
+      {
+        "case": "full_roi_crop_and_hdmi",
+        "seconds": 13.897993032000159,
+        "source_job": "38db99bb914043439087aceec50de5d4"
+      },
+      {
+        "case": "full_roi_points_box_cache",
+        "seconds": 7.852118173001145,
+        "cache_hit": true,
+        "configuration_unchanged": true,
+        "timings_ms": {
+          "input_validation": 0.7340310003201012,
+          "prediction": 144.45385799990618,
+          "decision_postprocess": 719.3570639992686,
+          "baseline_compose": 0.0,
+          "baseline_png": 0.0,
+          "cut_context": 1197.9336040003545,
+          "prompt_refinement": 1858.910969000135,
+          "render_statistics": 749.573519000478,
+          "result_png": 590.416983999603,
+          "original_enhanced_png": 0.08892299956642091,
+          "request_validation_decode": 102.65521800101851
+        },
+        "elapsed_ms": 5779.6
+      },
+      {
+        "case": "memory_after",
+        "values": {
+          "MemAvailable": "141216 kB",
+          "CmaFree": "16180 kB"
+        }
+      }
+    ],
+    "cold_r6_verification.json": [
+      {
+        "case": "acdc_new_process_startup",
+        "initialization": {
+          "application_sha256": "80c3b92f0fce9c3ad3da191d5f4c417852fdc17175bbee90e8ea87ae0d635c9f",
+          "pl_selftest": {
+            "backend": "pl",
+            "head_equal": true,
+            "head_sha256": "69727f2dd44a4b582d1dd1fdaee0c016f0c173a5826b813313451b82f9adb4d2"
+          },
+          "ready_seconds": 20.17920339200009,
+          "timing": {
+            "seconds": 27.09726463000061,
+            "stages_seconds": {
+              "application_verify": 5.586322121000194,
+              "assets_load": 0.07995916300023964,
+              "backend": 16.399011311000322,
+              "engine_imports": 1.2838605400002052,
+              "mesh_generator": 2.070098420999784,
+              "mesh_warmup": 0.295631243000571,
+              "model_load": 1.207462600999861,
+              "native_image": 0.04746745800002827,
+              "pl_selftest": 0.12689200599925243
+            }
+          }
+        },
+        "scope": "new process; persistent artifacts and OS page cache retained, not an OS reboot"
+      },
+      {
+        "case": "acdc_first_hdmi_immediately_after_ready",
+        "seconds": 6.275810359999923,
+        "accepted_seconds": 0.019116565999865998
+      },
+      {
+        "case": "skin_new_process_startup",
+        "seconds": 43.244908212000155,
+        "accepted_seconds": 0.014851383999484824,
+        "state": {
+          "model": "skin",
+          "target": "skin",
+          "phase": "ready",
+          "error": "",
+          "url": "/skin/g/1/",
+          "stage": "ready",
+          "settings": {
+            "auto_hdmi": false,
+            "auto_segment": true,
+            "last_model": "skin"
+          },
+          "display": {
+            "pending": null,
+            "error": "",
+            "restored": null
+          },
+          "stages_seconds": {
+            "wait_current_task": 0.17164753200086125,
+            "release_previous_model": 0.47306760599985864,
+            "start_target": 0.19213635599953705,
+            "initialize_target": 42.37243993100037,
+            "total": 43.23062089599989
+          },
+          "elapsed_seconds": null
+        }
+      },
+      {
+        "case": "skin_first_hdmi_immediately_after_ready",
+        "seconds": 8.009851070999503
+      },
+      {
+        "case": "full_skin_new_image_auto_display",
+        "job": "68101cc302f44e08a0f4d14b09a191cc",
+        "dimensions": [
+          1022,
+          767
+        ],
+        "result_zip_ready_seconds": 7.226233829999728,
+        "first_frame_seconds": 10.714746759999798,
+        "result_to_display_seconds": 3.488520659000642,
+        "head_sha256": "1842db37a28ca1cf2108ded4a6c2b451ace44d500afae2c41955e95b43c36e49"
+      },
+      {
+        "case": "camus_new_process_startup",
+        "seconds": 37.456789531999675,
+        "accepted_seconds": 0.014564307999535231,
+        "state": {
+          "model": "camus",
+          "target": "camus",
+          "phase": "ready",
+          "error": "",
+          "url": "/camus/g/2/",
+          "stage": "ready",
+          "settings": {
+            "auto_hdmi": false,
+            "auto_segment": true,
+            "last_model": "camus"
+          },
+          "display": {
+            "pending": null,
+            "error": "",
+            "restored": null
+          },
+          "stages_seconds": {
+            "wait_current_task": 0.09608552000008785,
+            "release_previous_model": 0.24494939700070972,
+            "initialize_target": 36.9662427939993,
+            "total": 37.312182855000174
+          },
+          "elapsed_seconds": null
+        }
+      },
+      {
+        "case": "camus_first_task_and_hdmi",
+        "job": "656d29177c494f058275160bb31d3c2b",
+        "first_frame_seconds": 12.035690018999958,
+        "result_to_display_seconds": 6.196648163000646,
+        "head_sha256": "3b386974e65805f25de89dde854e267b81229227e7e59d14799fa95bddb876d8"
+      },
+      {
+        "case": "skin_new_process_startup",
+        "seconds": 7.5359237000002395,
+        "accepted_seconds": 0.009582585000316612,
+        "state": {
+          "model": "skin",
+          "target": "skin",
+          "phase": "ready",
+          "error": "",
+          "url": "/skin/g/3/",
+          "stage": "ready",
+          "settings": {
+            "auto_hdmi": false,
+            "auto_segment": true,
+            "last_model": "skin"
+          },
+          "display": {
+            "pending": null,
+            "error": "",
+            "restored": null
+          },
+          "stages_seconds": {
+            "wait_current_task": 0.09365303400045377,
+            "release_previous_model": 0.24073076199965726,
+            "initialize_target": 7.159208599000522,
+            "total": 7.496343718000389
+          },
+          "elapsed_seconds": null
+        }
+      }
+    ],
+    "r7_startup.json": {
+      "case": "skin_fresh_process_overlapped_hub",
+      "seconds": 33.342155888999514,
+      "accepted_seconds": 0.012056350999955612,
+      "state": {
+        "model": "skin",
+        "target": "skin",
+        "phase": "ready",
+        "error": "",
+        "url": "/skin/g/1/",
+        "stage": "ready",
+        "settings": {
+          "auto_hdmi": false,
+          "auto_segment": true,
+          "last_model": "skin"
+        },
+        "display": {
+          "pending": null,
+          "error": "",
+          "restored": null
+        },
+        "stages_seconds": {
+          "wait_current_task": 0.0852374959995359,
+          "release_previous_model": 0.2504014640007881,
+          "start_target": 0.4343660419999651,
+          "initialize_target": 32.43588831499983,
+          "total": 33.217685100999915
+        },
+        "elapsed_seconds": null
+      },
+      "immediate_first_hdmi_seconds": 4.376940614999512
+    },
+    "r8_startup.json": {
+      "case": "camus_retained_preheat_order_first_process",
+      "seconds": 30.353529807000086,
+      "state": {
+        "model": "camus",
+        "target": "camus",
+        "phase": "ready",
+        "error": "",
+        "url": "/camus/g/4/",
+        "stage": "ready",
+        "settings": {
+          "auto_hdmi": false,
+          "auto_segment": true,
+          "last_model": "camus"
+        },
+        "display": {
+          "pending": null,
+          "error": "",
+          "restored": null
+        },
+        "stages_seconds": {
+          "wait_current_task": 0.09435054800087528,
+          "release_previous_model": 0.239266589998806,
+          "initialize_target": 29.860308940000323,
+          "total": 30.264745340000445
+        },
+        "elapsed_seconds": null
+      },
+      "same_bit_skin_return_seconds": 3.268366568001511
+    },
+    "display_cpu_benchmark.json": [
+      {
+        "case": "original_float",
+        "seconds": 3.0328717250004047,
+        "overlay_sha256": "07788849afef213a6b5a23978a9749e29ec8f2f1c7a1447222ced5b565385067"
+      },
+      {
+        "case": "lookup",
+        "seconds": 0.8401859489995331,
+        "overlay_sha256": "07788849afef213a6b5a23978a9749e29ec8f2f1c7a1447222ced5b565385067"
+      },
+      {
+        "case": "preview_parallel",
+        "seconds": 0.44192179599940573,
+        "sha256": {
+          "original": "016a197dd1333bfce15cc59b5d5373d2319ecdbcb33e6db7749f7bad1a742f5a",
+          "outlined": "3d2efcb59c350c634d1b44190ae869a524d9d9969b8a5e2c2c926ec9a5092a5c"
+        }
+      },
+      {
+        "case": "preview_sequential",
+        "seconds": 0.7586478080002053,
+        "sha256": {
+          "original": "016a197dd1333bfce15cc59b5d5373d2319ecdbcb33e6db7749f7bad1a742f5a",
+          "outlined": "3d2efcb59c350c634d1b44190ae869a524d9d9969b8a5e2c2c926ec9a5092a5c"
+        }
+      }
+    ],
+    "metadata_gc_profile.json": [
+      {
+        "mode": "normal",
+        "seconds": 8.761317532000248,
+        "bytes": 18284933,
+        "metadata_fingerprint": "8abc154ee05a92c7486990eab7c03f3a8ec957ce7a69bf9532de55ddcd886077",
+        "gc_enabled": true
+      },
+      {
+        "mode": "deferred",
+        "seconds": 4.50855413499994,
+        "bytes": 18284933,
+        "metadata_fingerprint": "8abc154ee05a92c7486990eab7c03f3a8ec957ce7a69bf9532de55ddcd886077",
+        "gc_enabled": true
+      }
+    ]
+  },
+  "interpretation": {
+    "cold_scope": "New processes with persistent artifacts and OS page cache retained, not a board reboot.",
+    "acdc_show_case_name": "Legacy immediately_after_ready label is inaccurate: this observation started after deployment completed, with unmeasured preparation delay.",
+    "skin_second_new_process_case": "The final 7.54-second skin_new_process_startup row in cold_r6 is a resident return, not a fresh process.",
+    "chosen_revision": "R6 ACDC; R7 skin startup overlap; R8 restores original CAMUS preparation order. The slower early-CAMUS R7 experiment was reverted.",
+    "cpu_microbenchmarks": "Exact pixel/PNG/metadata fingerprints matched. These isolated gains do not imply all full-image elapsed times improved.",
+    "completion_boundary": "Automatic display and resident hot handoff are implemented and accepted. Remaining cold and full-resolution costs are disclosed; no claim that every planned aspirational timing target passed."
   }
 }

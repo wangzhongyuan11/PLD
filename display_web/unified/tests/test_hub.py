@@ -103,6 +103,25 @@ class FormatTests(unittest.TestCase):
             self.assertEqual(list(Path(tmp).iterdir()),[])
 
 class ResidentTests(unittest.TestCase):
+    def test_bootstrap_adopts_verified_preloaded_target_without_reinitializing_it(self):
+        board=Board();board.states['skin']='active'
+        status=board.status;board.status=lambda model:dict(status(model),hardware_ready=model=='skin')
+        with tempfile.TemporaryDirectory() as tmp:
+            controller=hub.Controller(board,tmp);controller.switch('skin');controller.thread.join(3)
+            self.assertEqual(controller.phase,'ready');self.assertTrue(controller.metrics['adopted_preloaded_target'])
+            self.assertNotIn(('stop','skin'),board.events);self.assertNotIn(('start','skin'),board.events)
+
+    def test_preloaded_process_without_http_status_is_observed_until_ready(self):
+        board=Board();board.states['skin']='active';status=board.status;attempts=[]
+        def preparing(model):
+            attempts.append(model)
+            if len(attempts)==1:raise ConnectionRefusedError()
+            return dict(status(model),hardware_ready=model=='skin')
+        board.status=preparing
+        with tempfile.TemporaryDirectory() as tmp,patch.object(hub.time,'sleep'):
+            controller=hub.Controller(board,tmp);controller.switch('skin');controller.thread.join(3)
+            self.assertEqual(controller.phase,'ready');self.assertGreater(len(attempts),1)
+
     def test_pause_invalidates_requests_and_retains_services_until_resume(self):
         board=Board()
         board.park=lambda model:board.events.append(('park',model))

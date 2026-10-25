@@ -57,6 +57,14 @@ class Board:
 
 
 class Lifecycle(unittest.TestCase):
+    def test_prestart_only_uses_inactive_nonconflicting_units(self):
+        board=entry.Board.__new__(entry.Board)
+        with patch.object(board,'props',return_value=dict(ActiveState='inactive',Conflicts='')),patch.object(board,'start') as start:
+            board.prestart_dual('skin');start.assert_called_once_with('pld-web.service')
+        for state in [dict(ActiveState='active',Conflicts=''),dict(ActiveState='inactive',Conflicts=entry.ENGINE)]:
+            with patch.object(board,'props',return_value=state),patch.object(board,'start') as start:
+                board.prestart_dual('skin');start.assert_not_called()
+
     def test_default_adopts_heart_without_reloading_engine(self):
         board = Board()
         controller = entry.Controller(board)

@@ -151,7 +151,7 @@ def decode_upload(value, is_mask=False):
 
 class Console:
     def __init__(self, data, runtime=None, token=None, portable=False, boot_id=None,
-                 persistent_b_worker=False):
+                 persistent_b_worker=False, display_agent=None):
         self.data = Path(data).resolve(); self.data.mkdir(parents=True, exist_ok=True)
         self.runtime = Path(runtime).resolve() if runtime else None
         self.token = token if token is not None else persistent_token(self.data)
@@ -172,8 +172,8 @@ class Console:
         self.hdmi = None
         self.hdmi_job = None
         self.hdmi_view = None
-        self.display_agent = None
-        if self.board and os.environ.get('PLD_WARM_HDMI') == '1':
+        self.display_agent = display_agent
+        if display_agent is None and self.board and os.environ.get('PLD_WARM_HDMI') == '1':
             from warm_hdmi import WarmHDMI
             self.display_agent = WarmHDMI(self.data/'warm_hdmi.log'); self.display_agent.prepare()
         self.fault = None
@@ -474,7 +474,8 @@ class Console:
             preview_started = time.perf_counter()
             preview_details = {}
             preview_views = ["original" if rgb is not None else "mask", "outlined"]
-            for key in preview_views: save_preview(key)
+            with ThreadPoolExecutor(max_workers=PNG_SAVE_WORKERS,thread_name_prefix="pld-preview") as pool:
+                list(pool.map(save_preview,preview_views))
             stages["preview_build"] = time.perf_counter() - preview_started
             stages["request_to_preview_ready"] = time.perf_counter() - request_started
             stages["preview_images"] = dict(preview_details)
@@ -486,8 +487,8 @@ class Console:
                         statistics=json.loads(json.dumps(stats)), progress=82,
                         stage="预览已就绪，后台生成原尺寸图片和结果包")
             remaining_started = time.perf_counter()
-            for key in views:
-                if key not in preview_views: save_preview(key)
+            with ThreadPoolExecutor(max_workers=PNG_SAVE_WORKERS,thread_name_prefix="pld-preview") as pool:
+                list(pool.map(save_preview,[key for key in views if key not in preview_views]))
             stages["preview_remaining"] = time.perf_counter()-remaining_started
             stages["preview_images"] = preview_details
             self.update(ident, preview_views=list(views))
