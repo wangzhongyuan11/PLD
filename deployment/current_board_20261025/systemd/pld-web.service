@@ -1,0 +1,18 @@
+[Unit]
+Description=PLD skin frozen backend
+After=network.target
+Conflicts=
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/web
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/bin/bash -lc 'exec /usr/local/share/pynq-venv/bin/python3 -u /home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/hub/backend_launcher.py skin /home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/web -- --host 127.0.0.1 --port 8766 --runtime /home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/skin --data /home/xilinx/jupyter_notebooks/PLD_Web/data --persistent-b-worker'
+Restart=no
+KillMode=mixed
+KillSignal=SIGINT
+SendSIGKILL=no
+TimeoutStopSec=240
+UMask=0077
+[Install]
+WantedBy=multi-user.target

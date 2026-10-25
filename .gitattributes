@@ -28,3 +28,6 @@ delivery/c_v3/hardware/*.rpt -text -whitespace
 delivery/c_v3/hardware/*.json -text -whitespace
 delivery/c_v3/validation/*.json -text -whitespace
 *.service text eol=lf
+# Preserve the collected Linux service configuration, including its recorded EOF.
+deployment/current_board_20261025/systemd/** text eol=lf
+deployment/current_board_20261025/systemd/pld-camus.service.d/95-camus-dependencies.conf whitespace=-blank-at-eof

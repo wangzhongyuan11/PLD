@@ -1,0 +1,27 @@
+{
+  "host_date": "2026-10-25",
+  "board_clock_used": false,
+  "board_source_verification": {
+    "scope": "board exact bytes",
+    "checked": 228,
+    "passed": true,
+    "failures": []
+  },
+  "repository_source_verification": {
+    "checked": 228,
+    "passed": true,
+    "normalization": "CRLF to LF only"
+  },
+  "checks": {
+    "python_focused_cases": 49,
+    "scope": "hub lifecycle, evaluator coordination and benchmark contracts, reversible installer and source packaging",
+    "javascript_ui": "passed including evaluation selection and busy lockout",
+    "package_crc_and_member_hashes": "passed"
+  },
+  "activity": "Read-only inventory and exact-file checks; no service restart, model switch, FPGA reconfiguration, numerical benchmark or repeated physical acceptance.",
+  "retained_limits": [
+    "Initial process startup and full-resolution ROI latency remain as reported in the optimization evidence.",
+    "Random HDMI flicker was not reproduced and is not marked fixed.",
+    "Imported board evaluation adapters were source-aligned and software-checked; no new CPU/PL score is claimed."
+  ]
+}

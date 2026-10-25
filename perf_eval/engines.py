@@ -2,6 +2,7 @@
 from pathlib import Path
 import subprocess
 import sys
+import os
 import numpy as np
 from .core import digest
 
@@ -23,7 +24,10 @@ class Lease:
         for unit in ('pld-hub.service','pld-web.service','pld-camus.service'):
             p=subprocess.run(['systemctl','show',unit,'-p','ActiveState','-p','MainPID'],capture_output=True,text=True,timeout=10)
             state=dict(line.split('=',1) for line in p.stdout.splitlines() if '=' in line)
-            if state.get('ActiveState')!='inactive' or state.get('MainPID')!='0':raise RuntimeError(unit+' must be normally stopped and have MainPID=0 before PL benchmark')
+            coordinated=(unit=='pld-hub.service' and state.get('ActiveState')=='active'
+                and state.get('MainPID')==str(os.getppid())
+                and os.environ.get('PLD_EVAL_HUB_PARENT')==str(os.getppid()))
+            if not coordinated and (state.get('ActiveState')!='inactive' or state.get('MainPID')!='0'):raise RuntimeError(unit+' must be normally stopped and have MainPID=0 before PL benchmark')
         import fcntl
         self.file=open('/run/pld-unified-fpga.lock','a+b')
         try:fcntl.flock(self.file,fcntl.LOCK_EX|fcntl.LOCK_NB)
@@ -40,6 +44,7 @@ class Engine:
         self.input_shape=(1,3 if model=='skin' else 1,256,256)
         self.head_shape=(1,1 if model=='skin' else 4,256,256)
         self.provenance={'spec_sha256':self.spec,'numpy':np.__version__,'backend':backend}
+        self.provenance['evaluator_files']={name:digest(Path(__file__).parent/name) for name in ('engines.py','benchmark.py','core.py','metrics.py')}
         self.provenance['source_files']={str(p.relative_to(self.source)):digest(p) for p in [self.source/'reference/tinyunet.py',self.source/'camus/reference.py',self.source/'camus/graph.py',self.source/'board/pl_graph.py']}
         try:
             if model=='skin':

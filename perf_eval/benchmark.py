@@ -84,9 +84,11 @@ def benchmark(args):
         engine=Engine(args.source,args.model,args.model_root,args.backend,checkpoint=args.checkpoint,runtime=args.runtime,bit=args.bit,
                       native_copy=args.native_copy,native_control=args.native_control,fuse=args.fuse)
         report['model_initialization_seconds']=time.perf_counter()-started;report['provenance']=engine.provenance
+        print('INITIALIZED',args.backend,'starting cold forward',flush=True)
         first,valid=_arrays(path,doc['cases'][0],args.backend)
         # Always measure one cold forward separately, never include it in hot FPS.
         start=time.perf_counter();head,_=engine.run(first,0);report['first_forward_seconds']=time.perf_counter()-start
+        print('FIRST_FORWARD_DONE',args.backend,round(report['first_forward_seconds'],6),flush=True)
         del head,first,valid
         for i in range(args.warmup):
             image,_=_arrays(path,doc['cases'][i%len(doc['cases'])],args.backend)

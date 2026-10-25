@@ -1,0 +1,15 @@
+{
+  "tools": "/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/hub/evaluation_tools",
+  "source": "/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/hub/evaluation_tools/pld_source",
+  "data": "/home/xilinx/jupyter_notebooks/pld/evaluation_data",
+  "skin": {
+    "model": "/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/skin/role_a_final/int8",
+    "bit": "/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/skin/overlay/dma_top.bit",
+    "native_copy": "/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/skin/out/native/tensor_copy.so",
+    "native_control": "/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/skin/out/native/tensor_control.so"
+  },
+  "camus": {
+    "model": "/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/camus/model/int8_export",
+    "runtime": "/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/camus"
+  }
+}

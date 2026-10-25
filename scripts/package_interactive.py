@@ -7,7 +7,7 @@ import zipfile
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'display_web/unified'))
 from install_interactive import HUB,SKIN,SHARED
-VERSION='PLD_Skin_ROI_Touch_20261025_v8'
+VERSION='PLD_Skin_ROI_Touch_20261025_v9'
 def package():
     members={};manifest={}
     # Reviewed v1-v4 manifest hashes, including the frozen v4 release payload.

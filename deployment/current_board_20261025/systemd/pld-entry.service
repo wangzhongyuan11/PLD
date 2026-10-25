@@ -1,0 +1,16 @@
+[Unit]
+Description=PLD three-model entry (default cardiac 2.5D)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/xilinx/pld_entry_20261023
+ExecStart=/usr/local/share/pynq-venv/bin/python3 -u /home/xilinx/pld_entry_20261023/entry.py --hub-root /home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/hub
+Restart=no
+SendSIGKILL=no
+TimeoutStopSec=1500
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

@@ -119,6 +119,7 @@ class Controller:
             with self.lock:self.phase='error';self.error=str(exc)
             raise
         return self.snapshot()
+
     def switch(self,target,*,resume=False):
         if target not in UNITS:raise ValueError('未知模型')
         with self.lock:
@@ -194,6 +195,7 @@ class Controller:
             print('SWITCH_ERROR',str(exc),flush=True)
     def proxy(self,model,generation,method,path,body,kind):
         with self.lock:
+            if getattr(self,'evaluation_busy',False):raise RuntimeError('评测独占硬件，等待恢复模型')
             if self.phase!='ready' or self.model!=model or generation!=self.generation:raise RuntimeError('模型已切换或正在初始化，请等待新页面')
             if method=='POST' and getattr(self,'interactive_busy',False):raise RuntimeError('交互任务处理中，请稍候')
             # Serialize submit/control vs switch. Switching cannot overtake an
@@ -206,6 +208,8 @@ class Controller:
             return self.board.request(model,method,path,body,kind)
     def close(self):
         with self.lock:self.stopping=True
+        if getattr(self,'evaluation',None) and self.evaluation.thread:
+            self.evaluation.cancelled.set();self.evaluation.thread.join()
         if hasattr(self,'interactive') and self.interactive.thread:self.interactive.thread.join()
         if self.thread:self.thread.join()
         for model in UNITS:
@@ -254,6 +258,9 @@ class Handler(BaseHTTPRequestHandler):
             if self.client_address[0]!='127.0.0.1':return self.send(403,{'error':'board-local lifecycle'})
             value=json.loads(body)
             return self.send(200,self.server.controller.lifecycle(value.get('action'),value.get('model')))
+        if path.startswith('/evaluation'):
+            from evaluation_bridge import handle
+            return handle(self,path,post,body)
         if path.startswith('/interactive'):
             from interactive_bridge import handle
             return handle(self,path,post,body)
@@ -279,6 +286,9 @@ def main():
     server.controller=controller;server.token=token;server.session=secrets.token_urlsafe(32)
     from interactive_bridge import Manager
     server.interactive=Manager(controller,ROOT);controller.interactive=server.interactive
+    from evaluation_bridge import Manager as EvaluationManager
+    server.evaluation=EvaluationManager(controller,ROOT) if (ROOT/'evaluation_config.json').is_file() else None
+    controller.evaluation=server.evaluation
     def stop(*args):threading.Thread(target=server.shutdown,daemon=True).start()
     signal.signal(signal.SIGTERM,stop);signal.signal(signal.SIGINT,stop)
     try:

@@ -1,3 +1,5 @@
+> 当前板端的三模型入口、评测适配与源码映射见[2026-10-25 对齐记录](../../deployment/current_board_20261025/README.md)。下面的双模型安装步骤保留作模块说明。评测配置可参考 evaluation_config.example.json，缺少实际 evaluation_config.json 时评测接口返回未安装；正常分割不受影响。
+
 > 当前唯一正式版本为 pld_dual_20261017，部署/回退和验证入口见仓库根 README 及 docs/DEPLOYMENT.md。本页独立应用/补丁步骤保留作模块说明，旧目录名和单模型启动方式不作为正式系统入口。
 
 # 双模型统一网页（2026-10-16）

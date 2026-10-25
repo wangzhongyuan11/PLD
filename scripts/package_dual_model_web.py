@@ -11,6 +11,7 @@ SHARED = ('display_completion.py', 'display_lease.py', 'warm_hdmi.py', 'video_ov
 FILES = (
     'interactive_bridge.py', 'interactive.html', 'interactive.js',
     'interactive_workspace.py', 'interactive_hdmi.py',
+    'evaluation_bridge.py', 'evaluation.html', 'evaluation_config.example.json',
     'prompt_seg/__init__.py', 'prompt_seg/contracts.py', 'prompt_seg/refinement.py', 'prompt_seg/service.py',
     'hub.py', 'backend_launcher.py', 'camus_input_adapter.py', 'install.py', 'diagnose.py', 'index.html',
     'accepted_backends.json', 'README.md', 'TEST_REPORT.md', 'QUAD_VIEW.md',
