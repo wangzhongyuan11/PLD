@@ -109,3 +109,22 @@ def test_drag_input_keeps_motion_release_and_partial_packets(monkeypatch):
     result=reader.poll_events()
     assert [r[0] for r in result]==['down','move','up']
     assert result[0][1:] == (159,119) and result[-1][1:] == (479,359)
+
+
+def test_clear_all_shared_marks_preserves_image_and_requires_fresh_result():
+    m=manager();m.parameters.update(roi=dict(x0=10,y0=10,x1=90,y1=45),
+        box=dict(x0=20,y0=15,x1=60,y1=40),points=[dict(x=30,y=20,label='foreground'),dict(x=40,y=30,label='background')])
+    m.job=dict(id='b'*32,state='done');m.result_revision=0
+    surface=Surface();surface.image=Image.new('RGB',(100,50),'red')
+    surface.update(m.state('a'*32))
+    surface.gesture('down',570,460)
+    path,body=surface.gesture('up',570,460)
+    assert path=='/interactive/control'
+    previous_image=m.image_slot
+    state=m.control(body)
+    assert m.image_slot is previous_image and state['revision']==1
+    assert state['parameters']==parameters() and not state['result_ready']
+    with pytest.raises(ValueError,match='同步'):m.control(body)
+    surface.update(state);surface.state['busy']=True
+    surface.gesture('down',570,460)
+    assert surface.gesture('up',570,460) is None

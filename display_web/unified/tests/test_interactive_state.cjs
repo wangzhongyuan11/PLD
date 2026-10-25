@@ -2,6 +2,7 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
 const base=__dirname+'/../',html=fs.readFileSync(base+'interactive.html','utf8');
 for(const id of ['undo','restore','clear','download','replayFile','target','threshold'])assert(!html.includes('id="'+id+'"'));
+assert(html.includes('id="clearMarks"'));
 const elements=new Map(),calls=[];
 const paint={clearRect(){},drawImage(){},strokeRect(){},beginPath(){},arc(){},fill(){},stroke(){}};
 function el(id){if(!elements.has(id))elements.set(id,{width:100,height:50,disabled:false,src:'',setAttribute(){},removeAttribute(){this.src='';},getContext:()=>paint,setPointerCapture(){},getBoundingClientRect:()=>({left:20,top:30,width:600,height:450})});return elements.get(id);}
@@ -29,5 +30,10 @@ const tick=()=>new Promise(setImmediate);
  await vm.runInContext('refresh()',context);
  assert.equal(vm.runInContext('state.parameters.points[0].label',context),'background');
  assert.equal(el('overlay').src,'');
- console.log('PASS: skin tool buttons, pointer tap/drag, shared HDMI state, stale-result clearing, removed controls');
+ shared.parameters.roi={x0:2,y0:2,x1:80,y1:40};shared.parameters.box={x0:5,y0:5,x1:70,y1:35};
+ const imageToken=shared.image_token,jobs=calls.filter(c=>c.path==='/interactive/jobs').length;
+ await el('clearMarks').onclick();await tick();
+ assert.equal(shared.image_token,imageToken);assert.equal(shared.parameters.roi,null);assert.equal(shared.parameters.box,null);assert.deepEqual(shared.parameters.points,[]);
+ assert.equal(calls.filter(c=>c.path==='/interactive/jobs').length,jobs);
+ console.log('PASS: skin tool buttons, pointer tap/drag, shared HDMI state, stale-result clearing, clear-all marks, removed controls');
 })().catch(e=>{console.error(e);process.exitCode=1;});

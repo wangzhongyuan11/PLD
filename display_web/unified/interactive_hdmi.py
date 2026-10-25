@@ -90,6 +90,8 @@ class Surface:
         if action!='up':return None
         self.anchor=None;self.drag=None
         context={k:self.state[k] for k in ('model','generation','image_token','revision')}
+        if 520<=ax<640 and 438<=ay<480 and 520<=x<640 and 438<=y<480:
+            return '/interactive/control',dict(context,parameters=dict(self.state['parameters'],roi=None,box=None,points=[]))
         if ay<48 and y<48:
             a=next((i for i,(lo,hi) in enumerate(((0,100),(100,200),(200,300),(300,400),(400,520),(520,640))) if lo<=ax<hi),None)
             if a is None:return None
@@ -141,10 +143,12 @@ class Surface:
             if self.drag:
                 a,b=self.drag;rectangle(dict(x0=min(a['x'],b['x']),y0=min(a['y'],b['y']),
                     x1=max(a['x'],b['x'])+1,y1=max(a['y'],b['y'])+1),'white')
-        status='Working: display may pause for FPGA inference' if self.state and self.state['busy'] else 'Select tool, touch / drag, then Run'
+        status='Working: FPGA inference may pause HDMI' if self.state and self.state['busy'] else 'Select tool, touch / drag, then Run'
         draw.text((8,446),status,fill=(150,225,215))
         # Native default fonts need ASCII; the web page carries full error text.
-        if self.message:draw.text((8,463),self.message.encode('ascii','replace').decode()[:94],fill=(255,185,100))
+        if self.message:draw.text((8,463),self.message.encode('ascii','replace').decode()[:70],fill=(255,185,100))
+        draw.rectangle((522,440,637,477),fill=(35,65,80))
+        draw.text((536,453),'Clear all',fill='white')
         return np.asarray(image).copy()
 
 
