@@ -1,0 +1,126 @@
+[
+  {
+    "model": "acdc",
+    "hdmi_showing_observed": true,
+    "restore_health": {
+      "active_job": null,
+      "backend": "pl",
+      "generator": "pynq_ps",
+      "hdmi": "off",
+      "hdmi_error": "",
+      "inference": "pynq_pl",
+      "initialization": {
+        "application_sha256": "c7131026b1a1f2b6668e34ddc628af0d2c536827ebf8e7380359b27cd985186c",
+        "pl_selftest": {
+          "backend": "pl",
+          "head_equal": true,
+          "head_sha256": "69727f2dd44a4b582d1dd1fdaee0c016f0c173a5826b813313451b82f9adb4d2"
+        },
+        "ready_seconds": 53.87455878200126
+      },
+      "max_upload_bytes": 33554432,
+      "model_sha256": "fef60178abaf8f81cd3206b2c37e3ca1aef56299ee01c2f8cb3dac3c28bf33be",
+      "ready": true,
+      "renderer": "browser_webgl",
+      "runtime_sha256": "1f0bdf8739980ea8e8e2a06ee349b57ed81d041d87515e4e9400cd30b7ae7747",
+      "status": "ready",
+      "synthetic": false
+    },
+    "resumed_job": "00cf322720834ee1840c7c8abec901fa",
+    "resumed_seconds": 37.74513776599633,
+    "passed": true
+  },
+  {
+    "model": "skin",
+    "path": "/skin/g/1/",
+    "before_job": "df44ed07659c4aa49b6d10a4a0e7cf1e",
+    "before_seconds": 3.9067706400019233,
+    "show_status": {
+      "mode": "board",
+      "inference_available": true,
+      "warmup": "ready",
+      "warmup_seconds": 15.727919668999675,
+      "hdmi_available": true,
+      "active": null,
+      "hdmi": "showing",
+      "hdmi_view": "outlined",
+      "fault": null,
+      "runtime_error": null
+    },
+    "stop_status": {
+      "mode": "board",
+      "inference_available": true,
+      "warmup": "ready",
+      "warmup_seconds": 15.727919668999675,
+      "hdmi_available": true,
+      "active": null,
+      "hdmi": "off",
+      "hdmi_view": null,
+      "fault": null,
+      "runtime_error": null
+    },
+    "after_job": "e9f9d8c580474133b289d584a5a83866",
+    "after_seconds": 6.025215369001671,
+    "head_sha256": [
+      "1842db37a28ca1cf2108ded4a6c2b451ace44d500afae2c41955e95b43c36e49",
+      "1842db37a28ca1cf2108ded4a6c2b451ace44d500afae2c41955e95b43c36e49"
+    ],
+    "head_equal": true,
+    "passed": true
+  },
+  {
+    "model": "camus",
+    "path": "/camus/g/2/"
+  },
+  {
+    "error": "{'id': '492378f5c27947fe85f7c9eda51d7a67', 'state': 'error', 'backend': 'pl', 'error': 'NIfTI input requires the optional dependency nibabel; it is not installed', 'error_kind': 'input', 'server_seconds': 0.03214666499843588}"
+  },
+  {
+    "model": "camus",
+    "path": "/camus/g/1/",
+    "before_job": "4df9406e3d304d1294a2014fb33da381",
+    "before_seconds": 3.2081495099992026
+  },
+  {
+    "error": "{'backend': 'pl', 'spec_sha256': '68b4f425cc3612ad72d5e83955c2018981edee912fbc0937e9ac8c1718e7b5ae', 'ready': False, 'hdmi': 'error', 'hdmi_available': False, 'active': False, 'fault': True, 'model': 'CAMUS hidden_histogram INT8'}"
+  },
+  {
+    "error": "<urlopen error [Errno 111] Connection refused>"
+  },
+  {
+    "model": "camus",
+    "path": "/camus/g/1/",
+    "before_job": "8eb83af3b3f1471eb89aac474bd9c0c0",
+    "before_seconds": 2.77730195899494,
+    "show_status": {
+      "backend": "pl",
+      "spec_sha256": "68b4f425cc3612ad72d5e83955c2018981edee912fbc0937e9ac8c1718e7b5ae",
+      "ready": true,
+      "hdmi": "showing",
+      "hdmi_available": true,
+      "active": false,
+      "fault": false,
+      "model": "CAMUS hidden_histogram INT8"
+    },
+    "stop_status": {
+      "hdmi": "off"
+    },
+    "after_job": "b518e66b9bd34f2d990c3354ad7fb7b7",
+    "after_seconds": 10.59270590399683,
+    "head_sha256": [
+      "3b386974e65805f25de89dde854e267b81229227e7e59d14799fa95bddb876d8",
+      "3b386974e65805f25de89dde854e267b81229227e7e59d14799fa95bddb876d8"
+    ],
+    "head_equal": true,
+    "passed": true
+  },
+  {
+    "restored_entry": {
+      "model": "acdc",
+      "target": "acdc",
+      "phase": "ready",
+      "error": "",
+      "url": "8092/"
+    }
+  }
+]

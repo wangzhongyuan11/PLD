@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PLD · 统一入口</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f7fa;color:#203343;font:15px system-ui,"Microsoft YaHei",sans-serif}header{background:white;border-bottom:1px solid #dce4eb;padding:14px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}strong{font-size:21px}.buttons{display:flex;gap:10px;flex-wrap:wrap}button{font:inherit;padding:10px 20px;border:1px solid #b6c9d6;background:white;color:#24475e;border-radius:8px;cursor:pointer}button[aria-pressed=true]{background:#176a84;border-color:#176a84;color:white}button:disabled{opacity:.5;cursor:wait}#status{margin:0;padding:10px 24px;font-size:14px}#error{color:#a52b2b;padding:0 24px;white-space:pre-wrap}iframe{display:block;width:100%;height:calc(100vh - 114px);border:0;background:#f4f7fa}[hidden]{display:none!important}small{color:#64798a}
+</style></head><body>
+<header><strong>PLD 统一入口</strong><div class="buttons"><button id="acdc" disabled aria-pressed="true">心脏 2.5D</button><button id="skin" disabled aria-pressed="false">皮肤镜</button><button id="camus" disabled aria-pressed="false">CAMUS</button></div><small>切换前请下载需要保留的结果</small></header>
+<p id="status" role="status" aria-live="polite">正在初始化心脏 2.5D…</p><p id="error" role="alert" hidden></p><iframe id="workspace" title="模型操作界面" hidden></iframe>
+<script>
+'use strict';
+const $=id=>document.getElementById(id),names={acdc:'心脏 2.5D',skin:'皮肤镜',camus:'CAMUS'};
+let frame='',pending=false;
+async function api(path,body){const r=await fetch(path,{signal:AbortSignal.timeout(15000),cache:'no-store',...(body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{})});const s=await r.json();if(!r.ok)throw Error(s.error||'服务连接失败');return s;}
+function render(s){const ready=s.phase==='ready';for(const key of Object.keys(names)){$(key).disabled=!ready;$(key).setAttribute('aria-pressed',String(ready?s.model===key:s.target===key));}$('status').textContent=ready?names[s.model]+'已就绪':s.phase==='error'?'切换未完成':'正在等待任务结束并加载'+names[s.target]+'，请稍候…';$('error').hidden=!s.error;$('error').textContent=s.error||'';const url=ready?(s.url.startsWith('/')?s.url:'http://'+location.hostname+':'+s.url):'';if(url!==frame){frame=url;const view=document.createElement('iframe');view.id='workspace';view.title='模型操作界面';view.hidden=!url;view.src=url||'about:blank';$('workspace').replaceWith(view);}}
+async function refresh(){if(pending)return;pending=true;try{render(await api('/entry/status'));}catch(e){$('status').textContent='入口连接中断';$('error').hidden=false;$('error').textContent=e.message;for(const key of Object.keys(names))$(key).disabled=true;}finally{pending=false;}}
+for(const model of Object.keys(names))$(model).onclick=async()=>{for(const key of Object.keys(names))$(key).disabled=true;try{render(await api('/entry/switch',{model}));}catch(e){$('error').hidden=false;$('error').textContent=e.message;}};
+refresh();setInterval(refresh,1000);
+</script></body></html>
