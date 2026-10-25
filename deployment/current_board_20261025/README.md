@@ -16,7 +16,9 @@
 
 ACDC 应用身份为 `80c3b92f0fce9c3ad3da191d5f4c417852fdc17175bbee90e8ea87ae0d635c9f`，运行时清单身份为 `1f0bdf8739980ea8e8e2a06ee349b57ed81d041d87515e4e9400cd30b7ae7747`。systemd 原 unit 和全部有效 drop-in 位于 `systemd/`，按原绝对路径对应保存；多层覆盖都保留，不能仅用旧 base unit 推断当前入口，也不要把快照直接覆盖安装到其他板卡。
 
-228 项映射包括 210 个应用/工具源码条目和 18 个 unit/drop-in。多个运行目录的公共模块指向同一仓库源码；`board_sha256` 核对板端原始字节，`lf_sha256` 仅规范化 CRLF/LF，不忽略逻辑差异。
+230 项映射包括 212 个应用/工具源码条目和 18 个 unit/drop-in。多个运行目录的公共模块指向同一仓库源码；`board_sha256` 核对板端原始字节，`lf_sha256` 仅规范化 CRLF/LF，不忽略逻辑差异。
+
+同日 HDMI 后分割优化已更新到源码表：皮肤镜网页复用完整 PNG，Skin8 会话构建复用本次已校验参数文件，CAMUS 接回已有原生图像处理并使用快速无损四宫格编码。补齐两份 C 源文件；位流、模型及推理驱动未修改。单次同图 HDMI 后对照为皮肤镜 6.756→4.314 秒；CAMUS 较大图片最终 HDMI 后任务为 6.230 秒，仍包含硬件恢复，不能称为完整 3 秒达标。验证边界见 `ALIGNMENT.json` 的 `latency_followup`；本次板端备份为 `/home/xilinx/latency_followup_20261025/rollback.json`。
 
 ## 最新行为与验收边界
 

@@ -143,7 +143,10 @@ def serve_camus(display_agent=None):
         def __init__(self,model_root,backend='pl',runtime=None,timeout=3.):
             if backend!='pl':super().__init__(model_root,backend,runtime,timeout);self.core=None;return
             t=time.perf_counter();super().__init__(model_root,'reference')
-            self.core=Core('camus');self.backend='pl';self.native=None
+            from camus.native import load_native
+            # Use only the existing PS image operations; no CAM2 MMIO binding.
+            self.native=load_native()
+            self.core=Core('camus');self.backend='pl'
             pipeline=self
             class Network:
                 def forward(self,x):

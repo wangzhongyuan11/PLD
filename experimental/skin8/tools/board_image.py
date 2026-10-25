@@ -13,11 +13,16 @@ def build_image(directory, regions):
     manifest=json.loads((directory/'manifest.json').read_text())
     schedule=json.loads((directory/'descriptors.json').read_text())
     descriptors=schedule['descriptors']
+    artifacts={}
     def artifact(name):
+        # A parameter block is shared by many stripes. Validate each file once
+        # per image build, without retaining stale model bytes across sessions.
+        if name in artifacts:return artifacts[name]
         data=(directory/name).read_bytes()
         record=manifest['artifacts'][name]
         if len(data)!=record['bytes'] or hashlib.sha256(data).hexdigest()!=record['sha256']:
             raise ValueError('artifact integrity failure: '+name)
+        artifacts[name]=data
         return data
     weights=bytearray();weight_offsets=[]
     tables=bytearray()

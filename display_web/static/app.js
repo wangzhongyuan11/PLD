@@ -152,7 +152,7 @@ function resultStatistics(job) {
   if($('timeLabel')) $('timeLabel').textContent=complete?'完整结果包总耗时':'预览就绪耗时';
   const seconds=complete ? (s.request_to_job_complete_seconds ?? s.processing_seconds) : s.preview_ready_seconds;
   $('time').textContent=Number.isFinite(seconds) ? seconds.toFixed(2)+' s' : '—';
-  $('timingNote').textContent=complete ? '服务端总时：请求接收到完整结果包生成。网页为最长边 800 像素预览；下载结果保留上传图片的尺寸。' : '当前显示服务端预览就绪耗时。原尺寸图片与结果包正在后台生成，完成后可下载和发送到 HDMI。';
+  $('timingNote').textContent=complete ? '服务端总时：请求接收到完整结果包生成。网页与下载结果均保留上传图片的尺寸。' : '当前显示服务端预览就绪耗时。原尺寸图片与结果包正在后台生成，完成后可下载和发送到 HDMI。';
   $('sourceNote').textContent=s.data_source;
 }
 async function watchCurrent(clientTimes, clickStarted) {
@@ -176,7 +176,7 @@ async function watchCurrent(clientTimes, clickStarted) {
   if(current.state==='error') throw new Error((current.preview_ready?'预览已保留，但完整结果包生成失败：':'')+current.error);
   resultStatistics(current);
   if(!rendered) await render();
-  message('完整结果包已生成，可以下载或发送到 HDMI。网页显示缩小预览，下载文件保留上传尺寸。');
+  message('完整结果包已生成，可以下载或发送到 HDMI。网页与下载文件均保留上传尺寸。');
 }
 async function resumeActive(id) {
   if(busy) return;
@@ -306,7 +306,7 @@ async function refreshHistory(force=false) {
 $('refreshHistory').onclick=()=>refreshHistory(true).catch(e=>message(e.message,true));
 
 let timingReport=null;
-const timingLabels={request_receive_parse:'请求体接收与 JSON 解析（与接收总计重叠）',upload_decode_validate:'上传数据还原、解码与校验（与接收总计重叠）',preview_remaining:'后台生成其余预览',preview_build:'生成首屏两张预览',request_to_preview_ready:'服务端请求至预览就绪',prepare_upload:'浏览器图片准备（含缩图、转换及编码）',submit_roundtrip:'上传提交往返（含服务端接收校验）',until_done:'点击到获知完成（含轮询）',preview_load:'两张预览下载、解码与绘制等待',click_to_preview:'点击到预览就绪总计',request_to_job_start:'服务端接收、解析、解码及任务启动',stop_hdmi:'停止 HDMI',input_write:'写入推理输入',runtime_verify:'运行包校验',inference_launch:'推理进程启动',inference_wait:'等待推理进程结束',inference_subprocess:'推理子进程总计（含初始化与退出）',persistent_worker_startup:'常驻进程启动',persistent_worker_request:'常驻进程本次请求',persistent_worker_total:'常驻进程调用总计',result_load:'读取推理结果',mask_remap:'掩膜回映射',contour_process:'轮廓提取与统计',view_composition:'生成对比视图',png_batch_wall:'PNG 并行保存整体等待',zip_payload:'ZIP 写入图片',report_write:'统计报告写入',zip_report_append:'ZIP 追加报告',zip_package:'ZIP 打包总计',job_total:'后台任务总计',request_to_job_complete:'服务端请求至 ZIP 完成总计'};
+const timingLabels={request_receive_parse:'请求体接收与 JSON 解析（与接收总计重叠）',upload_decode_validate:'上传数据还原、解码与校验（与接收总计重叠）',preview_remaining:'后台生成其余预览',preview_build:'生成首屏两张预览',request_to_preview_ready:'服务端请求至预览就绪',prepare_upload:'浏览器图片准备（含缩图、转换及编码）',submit_roundtrip:'上传提交往返（含服务端接收校验）',until_done:'点击到获知完成（含轮询）',preview_load:'两张预览下载、解码与绘制等待',click_to_preview:'点击到预览就绪总计',request_to_job_start:'服务端接收、解析、解码及任务启动',stop_hdmi:'停止 HDMI',input_write:'写入推理输入',runtime_verify:'运行包校验',inference_launch:'推理进程启动',inference_wait:'等待推理进程结束',inference_subprocess:'推理子进程总计（含初始化与退出）',persistent_worker_startup:'推理硬件会话初始化',persistent_worker_request:'常驻进程本次请求',persistent_worker_total:'常驻进程调用总计',result_load:'读取推理结果',mask_remap:'掩膜回映射',contour_process:'轮廓提取与统计',view_composition:'生成对比视图',png_batch_wall:'剩余 PNG 保存等待',zip_payload:'ZIP 写入图片',report_write:'统计报告写入',zip_report_append:'ZIP 追加报告',zip_package:'ZIP 打包总计',job_total:'后台任务总计',request_to_job_complete:'服务端请求至 ZIP 完成总计'};
 function timingText(job,clientTimes) {
   const stats=job.statistics||{};
   const stages=stats.final_stage_seconds||(job.state==='error'?job.stage_seconds:null)||stats.stage_seconds||job.stage_seconds||{};

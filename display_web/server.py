@@ -458,19 +458,15 @@ class Console:
                 stats["historical_b_time"] = mode == "demo"
             else:
                 stats["area_scope"] = "上传掩膜的原图像素网格"
-            # Publish only after every small preview has been fully written.
-            # Full arrays remain untouched for export and HDMI.
+            # Publish completed lossless views early, then reuse their exact
+            # bytes for export and HDMI instead of encoding five thumbnails too.
             def save_preview(key):
                 array = arrays[key]
-                pixels = array.astype(np.uint8)*255 if array.dtype == bool else array
-                im = Image.fromarray(pixels)
-                resample = getattr(Image, "Resampling", Image)
                 started = time.perf_counter()
-                im.thumbnail((800, 800), resample.NEAREST if pixels.ndim == 2 else resample.BILINEAR)
-                resize_seconds = time.perf_counter()-started
-                started = time.perf_counter()
-                save_lossless_png(np.asarray(im), folder / ("preview_"+key+".png"))
-                preview_details[key] = {"resize":resize_seconds, "encode_write":time.perf_counter()-started}
+                save_lossless_png(array, folder / (key+".png"))
+                elapsed = time.perf_counter()-started
+                png_timings[key] = elapsed
+                preview_details[key] = {"resize":0., "encode_write":elapsed}
             preview_started = time.perf_counter()
             preview_details = {}
             preview_views = ["original" if rgb is not None else "mask", "outlined"]
@@ -482,7 +478,7 @@ class Console:
             stats["stage_seconds"] = dict(stages)
             stats["preview_ready_seconds"] = stages["request_to_preview_ready"]
             stats["data_source"] = "历史板测掩膜回放" if mode == "demo" else "用户图片及掩膜" if mode == "mask" else "本次板端 FPGA 推理"
-            self.update(ident, preview_ready=True, package_ready=False,
+            self.update(ident, preview_ready=True, package_ready=False, preview_full_resolution=True,
                         preview_views=preview_views, views=list(views),
                         statistics=json.loads(json.dumps(stats)), progress=82,
                         stage="预览已就绪，后台生成原尺寸图片和结果包")
@@ -504,13 +500,9 @@ class Console:
                     save_lossless_png(array, folder / (key+".png"))
                     png_timings[key] = time.perf_counter() - started
 
-            # Split this one batch into exactly one deterministic group per worker:
-            # at most two PNG encoders run concurrently, there is no pending queue
-            # beyond the six views, and each view is converted and written once.
-            # Leaving the executor context joins both workers, so ZIP/report and
-            # the successful history entry are only created after every file is
-            # closed. Any save error propagates and fails the whole job instead.
-            items = [(key, arrays[key]) for key in views]
+            # Early views are already complete. Encode only the remaining view;
+            # ZIP/history still wait for every output to close successfully.
+            items = [(key, arrays[key]) for key in views if key not in png_timings]
             png_batch_started = time.perf_counter()
             with ThreadPoolExecutor(max_workers=PNG_SAVE_WORKERS,
                                     thread_name_prefix="pld-png") as pool:
@@ -613,6 +605,8 @@ class Handler(BaseHTTPRequestHandler):
                 ready_preview = job.get("preview_ready") and name in previews
                 ready_export = job["state"] == "done" and name in allowed
                 if not (ready_preview or ready_export): raise KeyError("文件尚不可用")
+                if ready_preview and job.get('preview_full_resolution'):
+                    name = name[len('preview_'):]
                 f = self.app.data / ident / name
                 return self.send(200, f.read_bytes(), mimetypes.guess_type(name)[0] or "application/octet-stream")
             raise KeyError("页面不存在")

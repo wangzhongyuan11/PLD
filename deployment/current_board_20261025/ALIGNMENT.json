@@ -23,5 +23,37 @@
     "Initial process startup and full-resolution ROI latency remain as reported in the optimization evidence.",
     "Random HDMI flicker was not reproduced and is not marked fixed.",
     "Imported board evaluation adapters were source-aligned and software-checked; no new CPU/PL score is claimed."
-  ]
+  ],
+  "latency_followup": {
+    "scope": "HDMI recovery, skin export reuse, CAMUS native PS operations and lossless quad PNG encoding",
+    "python_focused_cases": 7,
+    "javascript_preview": "passed",
+    "descriptor_bytes_identical": [
+      "skin",
+      "camus"
+    ],
+    "camus_native_input_labels_and_view_pixels_identical": true,
+    "skin_hdmi_before_seconds": 6.756191639000008,
+    "skin_hdmi_after_seconds": 4.3137447019998945,
+    "skin_head_and_six_png_bytes_identical": true,
+    "camus_after_hdmi_before_quad_change_seconds": 7.068056425999885,
+    "camus_after_hdmi_final_seconds": 6.230393271000139,
+    "camus_head_and_view_pixels_identical": true,
+    "zip_integrity": "passed for both models",
+    "auto_hdmi_submission": "passed for both models",
+    "final_model": "skin",
+    "auto_hdmi_restored": false,
+    "rollback_record": "/home/xilinx/latency_followup_20261025/rollback.json",
+    "limits": [
+      "Single paired skin task, not a latency distribution; service restart and runtime load affect timing.",
+      "CAMUS quad comparison is within the native-enabled candidate; no matched full-task pre-native baseline is claimed.",
+      "FPGA reconfiguration remains necessary after HDMI; complete 3-second latency is not achieved for every task.",
+      "HDMI submission and output pixels checked; no new physical display or touch observation."
+    ],
+    "source_verification": {
+      "board_exact_bytes": 230,
+      "repository_lf_normalized": 230,
+      "passed": true
+    }
+  }
 }

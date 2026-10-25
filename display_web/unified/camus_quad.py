@@ -1,5 +1,6 @@
 """Optional presentation adapter; frozen CAMUS inference files stay untouched."""
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 import subprocess
 import sys
 import time
@@ -12,19 +13,22 @@ ROOT = Path(__file__).resolve().parent
 
 def build_views(input_path, output):
     from camus.preprocess import load_gray_frame
+    from camus.png import save_png
     output = Path(output)
     # Display-only reload after inference. Do not change preprocessing or labels.
     loaded = load_gray_frame(input_path)
     raw = np.clip(loaded.data, 0, 255).astype(np.uint8)
     original = thumbnail(raw)
     enhanced = enhance(original)
-    original.save(output/'quad_original.png', compress_level=1)
-    enhanced.save(output/'quad_enhanced.png', compress_level=1)
     with Image.open(output/'segmentation.png') as im:
         segmentation = thumbnail(im, nearest=True)
     with Image.open(output/'overlay.png') as im:
         overlay = thumbnail(im)
-    Image.fromarray(compose([original, enhanced, segmentation, overlay])).save(output/'quad.png', compress_level=1)
+    views = [('quad_original.png', np.asarray(original)),
+             ('quad_enhanced.png', np.asarray(enhanced)),
+             ('quad.png', compose([original, enhanced, segmentation, overlay]))]
+    with ThreadPoolExecutor(max_workers=2, thread_name_prefix='camus-quad-png') as pool:
+        list(pool.map(lambda item: save_png(item[1], output/item[0]), views))
 
 
 def install(web):
