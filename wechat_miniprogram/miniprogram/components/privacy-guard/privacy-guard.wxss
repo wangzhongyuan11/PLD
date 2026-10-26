@@ -1,0 +1,40 @@
+.privacy-mask {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(15, 25, 30, 0.55);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.privacy-panel {
+  width: 82%;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 36rpx 32rpx 28rpx;
+}
+
+.privacy-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+.privacy-body {
+  font-size: 26rpx;
+  color: #5a6a74;
+  line-height: 1.7;
+  margin-bottom: 30rpx;
+}
+
+.privacy-actions {
+  display: flex;
+  gap: 20rpx;
+}
+
+.privacy-btn {
+  flex: 1;
+  font-size: 28rpx;
+}

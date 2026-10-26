@@ -57,6 +57,15 @@ class Board:
 
 
 class Lifecycle(unittest.TestCase):
+    def test_stopped_heart_residency_uses_effective_configuration(self):
+        board=entry.Board.__new__(entry.Board)
+        with patch.object(board,'can_park_heart',return_value=True),patch.object(entry.subprocess,'run') as run:
+            run.return_value.stdout='"PLD_RESIDENT_MODELS=1" OTHER=value\n'
+            self.assertTrue(board.can_start_resident_heart())
+            run.return_value.stdout='PLD_RESIDENT_MODELS=0\n'
+            self.assertFalse(board.can_start_resident_heart())
+        with patch.object(board,'can_park_heart',return_value=False),patch.object(entry.subprocess,'run') as run:
+            self.assertFalse(board.can_start_resident_heart());run.assert_not_called()
     def test_prestart_only_uses_inactive_nonconflicting_units(self):
         board=entry.Board.__new__(entry.Board)
         with patch.object(board,'props',return_value=dict(ActiveState='inactive',Conflicts='')),patch.object(board,'start') as start:
@@ -162,6 +171,13 @@ class Lifecycle(unittest.TestCase):
             self.assertEqual(controller.model,model)
         self.assertFalse(any(event[0]=='stop' for event in board.events))
         self.assertTrue(board.states[entry.ENGINE] and board.states[entry.HUB])
+        # First entry into a stopped heart must not destroy the warm dual hub.
+        board=ResidentBoard();board.states[entry.ENGINE]=board.states[entry.WEB]=False
+        board.states[entry.HUB]=True;board.can_start_resident_heart=lambda:True
+        controller=entry.Controller(board);controller._switch('acdc')
+        self.assertEqual(controller.phase,'ready',controller.error)
+        self.assertTrue(board.hub_paused and board.states[entry.HUB])
+        self.assertFalse(any(event[0]=='stop' for event in board.events))
 
 
 class Gateway(unittest.TestCase):

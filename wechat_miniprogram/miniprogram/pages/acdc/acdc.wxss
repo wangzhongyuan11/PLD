@@ -1,0 +1,23 @@
+.demo-row {
+  padding: 16rpx 0;
+  align-items: center;
+}
+
+.small-btn { font-size: 24rpx; padding: 8rpx 28rpx; }
+
+.slot {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 20rpx;
+}
+
+.slot-btn { flex: none; font-size: 26rpx; }
+
+.slot-name {
+  flex: 1;
+  font-size: 26rpx;
+  word-break: break-all;
+}
+
+.small { font-size: 24rpx; padding: 6rpx 24rpx; }

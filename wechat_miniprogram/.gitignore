@@ -1,0 +1,13 @@
+# 电脑桥接与小程序密钥配置（含 AppSecret、访问码）
+bridge/config.json
+bridge/logs/
+bridge/out_demo/
+
+# 开发者工具与本机私有配置
+project.private.config.json
+
+# 运行产物
+*.log
+__pycache__/
+*.pyc
+.DS_Store

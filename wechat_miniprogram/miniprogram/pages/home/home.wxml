@@ -1,0 +1,53 @@
+<view class="page">
+  <view class="card">
+    <view class="card-title">板卡状态</view>
+    <view class="row">
+      <text>连接状态</text>
+      <text wx:if="{{board.online}}" class="tag tag-ok">在线</text>
+      <text wx:else class="tag tag-err">离线</text>
+    </view>
+    <view class="row" style="margin-top:12rpx">
+      <text>当前模型</text>
+      <text wx:if="{{board.model}}" class="tag tag-info">{{board.model}}</text>
+      <text wx:else class="muted">未知</text>
+    </view>
+    <view class="row" style="margin-top:12rpx">
+      <text>部署模式</text>
+      <text class="muted">{{board.source === 'entry' ? '三模型入口' : board.source === 'hub' ? '双模型（无三模型入口）' : '—'}}</text>
+    </view>
+    <view class="row" style="margin-top:12rpx">
+      <text>状态更新</text>
+      <text class="muted">{{board.updatedAt || '—'}}</text>
+    </view>
+    <view wx:if="{{board.phase === 'switching' || switchTarget}}" class="switching">
+      正在等待切换到 {{switchTarget || board.model}}{{board.stage ? '（' + board.stage + '）' : ''}}…
+    </view>
+    <view wx:if="{{switchError || board.error}}" class="err-box">{{switchError || board.error}}</view>
+  </view>
+
+  <view wx:for="{{models}}" wx:key="key" class="card">
+    <view class="row">
+      <view class="card-title">{{item.name}}</view>
+      <text wx:if="{{board.model === item.key}}" class="tag tag-ok">当前</text>
+    </view>
+    <view class="hint">{{item.desc}}</view>
+    <view class="divider"></view>
+    <view class="row">
+      <button class="primary-btn model-btn" data-key="{{item.key}}"
+              bindtap="goModel">使用</button>
+      <button wx:if="{{board.online && (board.model !== item.key || board.phase === 'error')}}"
+              class="plain-btn model-btn" data-key="{{item.key}}"
+              disabled="{{board.phase === 'switching' || switchTarget}}"
+              bindtap="switchTo">切换到此模型</button>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="hint">
+      任务由板卡按现有单任务串行机制执行。推理会按现有规则释放 HDMI；切换模型会同步影响网页端。
+      结果图片可保存到相册，完整结果包可在任务页转发。
+    </view>
+  </view>
+
+  <privacy-guard />
+</view>

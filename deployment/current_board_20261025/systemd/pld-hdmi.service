@@ -1,0 +1,18 @@
+[Unit]
+Description=PLD shared resident HDMI renderer
+After=network.target
+
+[Service]
+Type=notify
+NotifyAccess=main
+User=root
+RuntimeDirectory=pld-hdmi
+RuntimeDirectoryMode=0700
+WorkingDirectory=/home/xilinx/acdc_board_v2/releases/latency_opt_20261024
+ExecStart=/bin/bash -lc "source /etc/profile; exec env PYTHONPATH=/home/xilinx/acdc_board_v2/releases/latency_opt_20261024/v2_deps:/home/xilinx/jupyter_notebooks/PLD_Dev /usr/local/share/pynq-venv/bin/python3 -u /home/xilinx/acdc_board_v2/releases/latency_opt_20261024/display_web/warm_hdmi.py --broker /run/pld-hdmi/shared.sock"
+KillSignal=SIGTERM
+SendSIGKILL=no
+TimeoutStartSec=30
+TimeoutStopSec=100
+Restart=no
+UMask=0077

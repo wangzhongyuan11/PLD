@@ -48,3 +48,14 @@ def test_failed_release_keeps_lease_and_does_not_claim_pause(monkeypatch):
     app.b_worker.release_hardware.side_effect=RuntimeError('DMA not released')
     request=handler('pause');request.do_POST()
     assert request.reply[0]==409 and owner.handle is not None and not app.suspended
+
+
+def test_pause_parks_display_only_after_hardware_close(monkeypatch):
+    app,owner,handler=fixture(monkeypatch)
+    events=[]
+    app.stop_hdmi.side_effect=lambda:events.append('display_closed')
+    app.b_worker.release_hardware.side_effect=lambda _:events.append('inference_closed')
+    app.display_agent=SimpleNamespace(park=lambda:events.append('metadata_parked'))
+    request=handler('pause');request.do_POST()
+    assert request.reply[0]==200 and owner.handle is None
+    assert events==['display_closed','inference_closed','metadata_parked']

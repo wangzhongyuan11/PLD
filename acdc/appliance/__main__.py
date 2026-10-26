@@ -89,7 +89,7 @@ def production(args):
     display_agent=None
     if os.environ.get('PLD_WARM_HDMI')=='1':
         from display_web.warm_hdmi import WarmHDMI
-        display_agent=WarmHDMI(data/'warm_hdmi.log');display_agent.prepare()
+        display_agent=WarmHDMI(data/'warm_hdmi.log')
     def make_backend():
         trace=Stages('acdc_backend')
         if os.environ.get('PLD_PROFILE_STARTUP')=='1':
@@ -118,6 +118,7 @@ def production(args):
             label[1:5,2:6,2:6]=1;label[5:9,3:8,3:8]=2;label[6:8,4:6,4:6]=3
             meshes.generate(label,np.eye(4),Path(temporary)/'meshes',cancel=threading.Event())
         timing.mark('mesh_warmup')
+        if display_agent:display_agent.prepare()
         numerical=NumericalPipeline(backend,kernel,table,binding=model.implementation_binding,
                                     policy=config.get('geometry_policy','strict'))
         def check_backend(backend):

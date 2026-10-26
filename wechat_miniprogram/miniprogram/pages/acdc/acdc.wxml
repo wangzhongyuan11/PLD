@@ -1,0 +1,46 @@
+<view class="page">
+  <view class="card">
+    <view class="card-title">内置演示病例</view>
+    <view wx:if="{{!demos.length}}" class="hint">
+      暂无演示病例。可在电脑上运行 bridge/tools/upload_demo_data.py 预置。
+    </view>
+    <view wx:for="{{demos}}" wx:key="_id" class="row demo-row">
+      <view>
+        <view>{{item.title}}</view>
+        <view class="hint">{{item.desc || '一键运行 ED/ES 演示数据'}}</view>
+      </view>
+      <button class="plain-btn small-btn" data-id="{{item._id}}"
+              disabled="{{submitting || demoRunning === item._id}}"
+              bindtap="runDemo">{{demoRunning === item._id ? '提交中…' : '运行'}}</button>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">上传 ED / ES 体数据</view>
+    <view class="hint">
+      ACDC 需要同一病例的舒张末期（ED）与收缩末期（ES）两个 .nii / .nii.gz 文件，
+      可从微信聊天记录或文件管理器选择（ED 与 ES 总计 ≤ 32MiB）。
+    </view>
+    <view class="slot">
+      <button class="plain-btn slot-btn" data-slot="ed" bindtap="pickFile">
+        {{ed ? '重选 ED' : '选择 ED 文件'}}
+      </button>
+      <text wx:if="{{ed}}" class="slot-name">{{ed.name}}</text>
+      <button wx:if="{{ed}}" class="danger-btn small" data-slot="ed"
+              bindtap="clearSlot">移除</button>
+    </view>
+    <view class="slot">
+      <button class="plain-btn slot-btn" data-slot="es" bindtap="pickFile">
+        {{es ? '重选 ES' : '选择 ES 文件'}}
+      </button>
+      <text wx:if="{{es}}" class="slot-name">{{es.name}}</text>
+      <button wx:if="{{es}}" class="danger-btn small" data-slot="es"
+              bindtap="clearSlot">移除</button>
+    </view>
+  </view>
+
+  <button class="primary-btn" disabled="{{!ed || !es || submitting}}"
+          bindtap="submitFiles">{{submitting ? '提交中…' : '提交分割任务'}}</button>
+
+  <privacy-guard />
+</view>

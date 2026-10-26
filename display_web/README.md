@@ -19,6 +19,11 @@
 
 轮廓处理不会自动修正模型分割错误；目前未实现去噪、填孔、阈值交互或训练。网页服务串行使用计算和显示硬件，不能一边推理一边连续 HDMI 输出。
 
+当前仓库候选支持 `PLD_WARM_HDMI=1` 与 `PLD_SHARED_HDMI_SOCKET`：由 `pld-hdmi.service`
+运行一个常驻渲染软件进程，三模型复用既有显示入口并串行交接显示会话；未设置共享 socket 时保留原进程方式。
+示例服务与依赖 drop-in 在 `deployment/current_board_20261025/systemd/`。本轮只发布源码配置，不自动安装服务；
+Linux broker 用例与物理板端验收的边界见[仓库源码说明](../deployment/repository_20261026/README.md)。
+
 ## 电脑端运行
 
 Windows 双击 `start_windows.cmd`。本机优先使用已有 Python 环境，其他电脑可安装依赖后运行：

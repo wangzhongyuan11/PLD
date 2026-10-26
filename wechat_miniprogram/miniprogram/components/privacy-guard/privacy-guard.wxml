@@ -1,0 +1,16 @@
+<view wx:if="{{need}}" class="privacy-mask">
+  <view class="privacy-panel">
+    <view class="privacy-title">用户隐私保护提示</view>
+    <view class="privacy-body">
+      使用本演示需要访问你的照片/文件并保存图片到相册。相关图片仅用于
+      本设备的图像分割教学演示，提交即代表所传内容可供演示处理。
+      详见小程序内隐私保护指引。
+    </view>
+    <view class="privacy-actions">
+      <button class="plain-btn privacy-btn" bindtap="onRefuse">拒绝</button>
+      <button class="primary-btn privacy-btn" id="agree-btn"
+              open-type="agreePrivacyAuthorization"
+              bindagreeprivacyauthorization="onAgree">同意并继续</button>
+    </view>
+  </view>
+</view>

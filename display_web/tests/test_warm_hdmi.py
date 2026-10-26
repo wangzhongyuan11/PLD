@@ -3,6 +3,9 @@ import importlib.util
 from pathlib import Path
 import sys
 import time
+import os
+import subprocess
+from contextlib import contextmanager
 
 import pytest
 
@@ -55,3 +58,61 @@ def test_view_update_keeps_the_existing_session_and_child(tmp_path,monkeypatch):
     assert session.poll() is None and agent.process.pid==pid
     session.terminate();assert session.wait(5)==0
     agent.close()
+
+
+def test_park_requires_closed_display_and_reuses_child_afterwards(tmp_path,monkeypatch):
+    agent,script=agent_fixture(tmp_path,monkeypatch)
+    session=agent.start([sys.executable,str(script),str(tmp_path/'first')],tmp_path/'frame.log')
+    pid=agent.process.pid
+    with pytest.raises(RuntimeError,match='close HDMI'):agent.park()
+    session.terminate();assert session.wait(5)==0
+    agent.park()
+    second=agent.start([sys.executable,str(script),str(tmp_path/'second')],tmp_path/'frame2.log')
+    assert agent.process.pid==pid and second.poll() is None
+    second.terminate();assert second.wait(5)==0
+    agent.close()
+
+
+@contextmanager
+def shared_fixture(tmp_path,monkeypatch):
+    _,script=agent_fixture(tmp_path,monkeypatch)
+    path=tmp_path/'shared.sock'
+    with (tmp_path/'broker.log').open('w') as log:
+        process=subprocess.Popen([sys.executable,'-u',str(Path(module.__file__)),'--broker',str(path)],
+            stdout=log,stderr=log,env=dict(os.environ,PYTHONPATH=os.pathsep.join(sys.path)))
+    try:
+        deadline=time.monotonic()+5
+        while not path.exists() and time.monotonic()<deadline:
+            assert process.poll() is None
+            time.sleep(.02)
+        assert path.exists()
+        yield str(path),script
+    finally:
+        process.terminate();process.wait(timeout=10)
+
+
+@pytest.mark.skipif(sys.platform=='win32',reason='Linux board Unix-socket broker')
+def test_two_models_share_one_child_and_close_waits_for_renderer_cleanup(tmp_path,monkeypatch):
+    with shared_fixture(tmp_path,monkeypatch) as (path,script):
+        first=module.WarmHDMI(tmp_path/'first.log',shared_socket=path)
+        second=module.WarmHDMI(tmp_path/'second.log',shared_socket=path)
+        session=first.start([sys.executable,str(script),str(tmp_path/'first')],tmp_path/'one.log')
+        pid=first.process.pid
+        first.close()
+        assert (tmp_path/'first.closed').exists() and session.returncode==0
+        session=second.start([sys.executable,str(script),str(tmp_path/'second')],tmp_path/'two.log')
+        assert second.process.pid==pid
+        session.update('label');session.terminate();assert session.wait(5)==0
+        second.park();second.close()
+
+
+@pytest.mark.skipif(sys.platform=='win32',reason='Linux board Unix-socket broker')
+def test_shared_broker_rejects_second_owner_without_stopping_first(tmp_path,monkeypatch):
+    with shared_fixture(tmp_path,monkeypatch) as (path,script):
+        first=module.WarmHDMI(tmp_path/'first.log',shared_socket=path)
+        second=module.WarmHDMI(tmp_path/'second.log',shared_socket=path)
+        session=first.start([sys.executable,str(script),str(tmp_path/'first')],tmp_path/'one.log')
+        rejected=second.start([sys.executable,str(script),str(tmp_path/'second')],tmp_path/'two.log')
+        assert rejected.wait(5)==1 and session.poll() is None
+        with pytest.raises(RuntimeError):second.close()
+        session.terminate();assert session.wait(5)==0;first.close()

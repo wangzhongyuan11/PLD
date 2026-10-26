@@ -118,6 +118,11 @@ def serve_skin(display_agent=None):
     app=old.Console(DATA/'skin',BASE/'skin',token=token,persistent_b_worker=True,display_agent=display_agent)
     startup_stage('skin_console_init')
     app.runtime_identity=runtime_identity('skin')
+    warmup=app._warmup
+    def warmup_then_prepare_display():
+        warmup()
+        if app.warmup_state=='ready' and display_agent:display_agent.prepare()
+    app._warmup=warmup_then_prepare_display
     server=old.make_server(app,'127.0.0.1',8766)
     from web_lifecycle import install
     install(old,app,'skin')
@@ -210,7 +215,7 @@ if __name__=='__main__':
             if a.kind=='skin' and os.environ.get('PLD_WARM_HDMI')=='1':
                 sys.path.insert(0,str(BASE/('web' if a.kind=='skin' else 'hub')))
                 from warm_hdmi import WarmHDMI
-                display_agent=WarmHDMI(DATA/a.kind/'warm_hdmi.log');display_agent.prepare()
+                display_agent=WarmHDMI(DATA/a.kind/'warm_hdmi.log')
             (serve_skin if a.kind=='skin' else serve_camus)(display_agent)
         finally:
             if display_agent:display_agent.close()

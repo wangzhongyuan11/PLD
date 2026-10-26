@@ -1,0 +1,4 @@
+{
+  "navigationBarTitleText": "CAMUS 心超分割",
+  "usingComponents": { "privacy-guard": "/components/privacy-guard/privacy-guard" }
+}
