@@ -4,8 +4,8 @@
 <main><div class="heading"><div><p class="eyebrow">SEGMENTATION WORKSPACE</p><h1>从图像，到清晰的边界。</h1></div><button class="quiet" id="demo">加载真实结果示例</button></div>
 <div class="workspace"><aside class="controls"><div class="section-head"><span class="number">01</span><h2>输入与处理</h2></div>
 <label class="field">处理方式<select id="mode"><option value="mask">图片 + 配套掩膜</option><option value="infer" disabled>板端 FPGA 分割</option></select></label>
-<label class="upload" id="drop"><span class="upload-icon">＋</span><strong id="fileLabel">选择原始图片</strong><span>JPG / PNG · 大图上传前自动缩小</span><input type="file" id="imageFile" accept="image/jpeg,image/png"></label>
-<p class="hint" id="uploadNote" role="status">超过 300 万像素时等比例缩小；仅处理上传副本，电脑原文件保持不变。结果按上传尺寸生成。</p>
+<label class="upload" id="drop"><span class="upload-icon">＋</span><strong id="fileLabel">选择原始图片</strong><span>JPG / PNG · 板端处理</span><input type="file" id="imageFile" accept="image/jpeg,image/png"></label>
+<p class="hint" id="uploadNote" role="status">原文件上传至板端；大图由板端等比例缩小，电脑原文件保持不变。</p>
 <div id="maskField"><label class="field" for="maskFile">配套二值掩膜</label><input type="file" id="maskFile" accept="image/png"><p class="hint">黑色为背景，白色为病灶。尺寸须与原图一致。</p></div>
 <div class="range-label"><label for="thickness">轮廓线宽</label><output id="widthValue">2 px</output></div><input type="range" id="thickness" min="1" max="8" value="2"><p class="hint">调整线宽后，重新处理即可更新结果。</p>
 <button class="primary" id="run">开始处理</button><p class="mode-note" id="modeNote">本机可处理已有掩膜。新图片的模型分割需在 PYNQ 上启动本服务。</p>
@@ -13,12 +13,12 @@
 </aside>
 <section class="viewer"><div class="viewer-top"><div><span class="number">02</span><h2>结果预览</h2></div><span id="jobName">尚未选择图像</span></div>
 <div class="tabs" role="tablist" aria-label="显示内容"><button role="tab" data-view="outlined" aria-selected="true">轮廓描边</button><button role="tab" data-view="cutout" aria-selected="false">切割图</button><button role="tab" data-view="mask" aria-selected="false">二值掩膜</button><button role="tab" data-view="contour" aria-selected="false">独立轮廓</button></div>
-<p class="hint">四宫格：原图 / 显示增强 / 分割掩膜 / 轮廓叠加。增强仅用于显示，不改变模型输入。</p>
+<p class="hint">先显示原图和轮廓叠加，随后补齐分割掩膜和切割图。</p>
 <div class="image-grid quad-grid">
 <figure><figcaption id="leftLabel">原始图像</figcaption><div class="image-box"><img id="leftImage" alt="原始图像" hidden><div class="empty" id="leftEmpty">等待图像</div></div></figure>
-<figure><figcaption>显示增强 · 1% 自动对比度</figcaption><div class="image-box"><canvas id="enhancedImage" hidden></canvas><div class="empty" id="enhancedEmpty">等待原图</div></div></figure>
-<figure><figcaption>分割掩膜</figcaption><div class="image-box"><img id="maskImage" alt="分割掩膜" hidden><div class="empty" id="maskEmpty">后台生成中</div></div></figure>
 <figure><figcaption id="rightLabel">轮廓叠加</figcaption><div class="image-box"><img id="rightImage" alt="轮廓叠加" hidden><div class="empty" id="rightEmpty">等待结果</div></div></figure>
+<figure><figcaption>分割掩膜</figcaption><div class="image-box"><img id="maskImage" alt="分割掩膜" hidden><div class="empty" id="maskEmpty">后台生成中</div></div></figure>
+<figure><figcaption>分割提取</figcaption><div class="image-box"><img id="cutoutImage" alt="分割提取" hidden><div class="empty" id="cutoutEmpty">后台生成中</div></div></figure>
 </div>
 <div class="result-foot"><span id="sourceNote">保留原图比例 · 黄色表示提取到的边界</span><button id="download" class="quiet" disabled>下载结果包</button></div>
 </section>

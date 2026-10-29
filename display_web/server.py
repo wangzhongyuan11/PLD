@@ -9,6 +9,7 @@ import hashlib
 import io
 import json
 import mimetypes
+import math
 import os
 import platform
 import secrets
@@ -25,7 +26,7 @@ from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import parse_qs, urlsplit
 
 import numpy as np
 from PIL import Image, ImageOps
@@ -139,12 +140,17 @@ def decode_upload(value, is_mask=False):
         with Image.open(io.BytesIO(raw)) as im:
             if im.format not in ("JPEG", "PNG") or im.width * im.height > MAX_PIXELS:
                 raise ValueError("仅支持 JPG/PNG，最多 1200 万像素")
+            oriented = ImageOps.exif_transpose(im) if im.getexif().get(274, 1) in range(2, 9) else im
             if is_mask:
-                arr = np.asarray(im).copy()
+                arr = np.asarray(oriented).copy()
+                if oriented.mode not in ('1', 'L', 'I', 'I;16'):
+                    rgba = np.asarray(oriented.convert('RGBA'))
+                    if np.any(rgba[:, :, 3] != 255) or np.any(rgba[:, :, 0] != rgba[:, :, 1]) or np.any(rgba[:, :, 0] != rgba[:, :, 2]):
+                        raise ValueError('掩膜须为不透明的二值灰度图')
+                    arr = rgba[:, :, 0].copy()
                 binary_mask(arr)
             else:
                 # Avoid full-frame copies when no orientation/conversion is needed.
-                oriented = ImageOps.exif_transpose(im) if im.getexif().get(274, 1) in range(2, 9) else im
                 arr = np.array(oriented if oriented.mode == "RGB" else oriented.convert("RGB"))
     return raw, arr
 
@@ -165,6 +171,7 @@ class Console:
         self.warmup_thread = None
         self.board = platform.system() == "Linux" and platform.machine().lower().startswith("arm")
         self.lock = threading.RLock()
+        self.changed = threading.Condition(self.lock)
         self.jobs = {}
         self.boot_id = boot_id or current_boot_id()
         self.restore_history()
@@ -271,7 +278,16 @@ class Console:
             return json.loads(json.dumps(self.jobs[ident]))
 
     def update(self, ident, **values):
-        with self.lock: self.jobs[ident].update(values)
+        with self.changed:
+            self.jobs[ident].update(values)
+            self.changed.notify_all()
+
+    def wait_job(self, ident, phase):
+        with self.changed:
+            self.changed.wait_for(
+                lambda: self.jobs[ident]['state'] != 'running' or
+                (phase == 'preview' and self.jobs[ident].get('preview_ready')), timeout=1.)
+            return self.job(ident)
 
     def submit(self, body, request_started=None):
         submit_started = time.perf_counter()
@@ -290,13 +306,22 @@ class Console:
             rgb = raw = mask = None
             if mode != "demo":
                 raw, rgb = decode_upload(body.get("image"))
-                if self.board and rgb.shape[0] * rgb.shape[1] > 3_000_000:
-                    raise ValueError("板端网页版本限制为 300 万像素以内，请先缩小原图（掩膜模式需同步缩小掩膜）")
-                if mode == "infer" and not raw.startswith(b"\xff\xd8"):
+                if mode == "infer" and not self.processing_only and not raw.startswith(b"\xff\xd8"):
                     raise ValueError("当前 B 推理接口要求原始 JPG，请上传 JPG 图片")
                 if mode == "mask":
                     _, mask = decode_upload(body.get("mask"), True)
                     binary_mask(mask, rgb.shape[:2])
+                if self.board and rgb.shape[0] * rgb.shape[1] > 3_000_000:
+                    height, width_pixels = rgb.shape[:2]
+                    scale = math.sqrt(3_000_000 / (height * width_pixels))
+                    size = (max(1, int(width_pixels * scale)), max(1, int(height * scale)))
+                    resampling = getattr(Image, 'Resampling', Image)
+                    rgb = np.asarray(Image.fromarray(rgb).resize(size, resampling.BILINEAR)).copy()
+                    if mask is not None:
+                        mask = np.asarray(Image.fromarray(mask).resize(size, resampling.NEAREST)).copy()
+                    encoded = io.BytesIO()
+                    Image.fromarray(rgb).save(encoded, format='PNG', compress_level=1)
+                    raw = encoded.getvalue()
             upload_stages = {"request_receive_parse": max(0, submit_started-(request_started or submit_started)),
                              "upload_decode_validate": time.perf_counter()-upload_started}
             ident = uuid.uuid4().hex
@@ -388,7 +413,7 @@ class Console:
                 self.stop_hdmi()
                 stages["stop_hdmi"] = time.perf_counter() - stage
                 self.update(ident, stage="FPGA 分割中", progress=30)
-                source = folder / "input.jpg"
+                source = folder / ("input.png" if raw.startswith(b"\x89PNG") else "input.jpg")
                 stage = time.perf_counter(); source.write_bytes(raw)
                 stages["input_write"] = time.perf_counter() - stage
                 if not self.processing_only and self.persistent_b_worker and self.b_worker is not None:
@@ -606,6 +631,9 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/history": return self.send(200, self.app.history())
             parts = path.strip("/").split("/")
             if len(parts) == 3 and parts[:2] == ["api", "jobs"]:
+                phase = parse_qs(urlsplit(self.path).query).get('wait', [None])[0]
+                if phase in ('preview', 'done'):
+                    return self.send(200, self.app.wait_job(parts[2], phase))
                 return self.send(200, self.app.job(parts[2]))
             if len(parts) == 3 and parts[0] == "files":
                 ident, name = parts[1:]

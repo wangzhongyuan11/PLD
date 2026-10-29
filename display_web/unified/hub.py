@@ -194,17 +194,23 @@ class Controller:
             with self.lock:self.phase='error';self.error=str(exc)
             print('SWITCH_ERROR',str(exc),flush=True)
     def proxy(self,model,generation,method,path,body,kind):
+        if method=='GET':
+            with self.lock:
+                if self.phase!='ready' or self.model!=model or generation!=self.generation:
+                    raise RuntimeError('模型已切换或正在初始化，请等待新页面')
+            return self.board.request(model,method,path,body,kind)
         with self.lock:
             if getattr(self,'evaluation_busy',False):raise RuntimeError('评测独占硬件，等待恢复模型')
             if self.phase!='ready' or self.model!=model or generation!=self.generation:raise RuntimeError('模型已切换或正在初始化，请等待新页面')
             if method=='POST' and getattr(self,'interactive_busy',False):raise RuntimeError('交互任务处理中，请稍候')
             # Serialize submit/control vs switch. Switching cannot overtake an
             # upload accepted by the backend but not yet returned to the hub.
-            other='camus' if model=='skin' else 'skin'
-            if self.board.props(other)['ActiveState']!='inactive':
-                state=self.board.status(other)
-                if not (state.get('suspended') and state.get('hardware_released') and state.get('hdmi')=='off'):
-                    raise RuntimeError('另一个模型未释放硬件，请检查占用')
+            if path.split('?',1)[0]!='/api/jobs':
+                other='camus' if model=='skin' else 'skin'
+                if self.board.props(other)['ActiveState']!='inactive':
+                    state=self.board.status(other)
+                    if not (state.get('suspended') and state.get('hardware_released') and state.get('hdmi')=='off'):
+                        raise RuntimeError('另一个模型未释放硬件，请检查占用')
             return self.board.request(model,method,path,body,kind)
     def close(self):
         with self.lock:self.stopping=True
@@ -269,7 +275,9 @@ class Handler(BaseHTTPRequestHandler):
         m=re.fullmatch(r'/(skin|camus)/g/(\d+)/(.*)',path)
         if not m:return self.send(404,{'error':'页面不存在'})
         model,epoch,rest=m.groups();prefix='/'+model+'/g/'+epoch+'/'
-        code,kind,raw=self.server.controller.proxy(model,int(epoch),self.command,'/'+rest,body,self.headers.get('Content-Type','application/json'))
+        query=urlsplit(self.path).query
+        upstream='/'+rest+('?' + query if query else '')
+        code,kind,raw=self.server.controller.proxy(model,int(epoch),self.command,upstream,body,self.headers.get('Content-Type','application/json'))
         self.send(code,rewrite(raw,kind,prefix),kind)
     def do_GET(self):
         try:self.handle_request()

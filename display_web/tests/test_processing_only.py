@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 import tempfile
+import threading
 import unittest
 import zipfile
 from unittest.mock import Mock, patch
@@ -69,3 +70,43 @@ class ProcessingOnlyTests(unittest.TestCase):
             self.assertEqual(result.stats['mask_pixels'], 800)
             self.assertEqual(result.stats['valid_pixels'], 49152)
             self.assertEqual(result.original_mask().shape, (768, 1024))
+
+    def test_waiting_request_returns_when_preview_is_published(self):
+        self.app.jobs['waiting'] = dict(id='waiting', state='running')
+        replies = []
+        waiting = threading.Thread(target=lambda: replies.append(self.app.wait_job('waiting', 'preview')))
+        waiting.start()
+        self.app.update('waiting', preview_ready=True)
+        waiting.join(1)
+        self.assertFalse(waiting.is_alive())
+        self.assertTrue(replies[0]['preview_ready'])
+        self.assertEqual(replies[0]['state'], 'running')
+
+    def test_original_png_reaches_board_worker_without_jpeg_conversion(self):
+        self.app.processing_only = True
+        self.app.board = self.app.runtime_ok = self.app.persistent_b_worker = True
+        self.app.runtime = Path(self.temp.name)
+        self.app.b_worker = Mock()
+        rgb = np.full((32, 40, 3), 100, np.uint8)
+        encoded = test_web.encoded(rgb)
+
+        def run(argv, log):
+            import base64
+            source = Path(argv[0])
+            self.assertEqual(source.read_bytes(), base64.b64decode(encoded))
+            self.assertEqual(source.suffix, '.png')
+            output = Path(argv[argv.index('--output')+1]); output.mkdir()
+            head = np.full((1, 1, 256, 256), -2, np.int8)
+            head[0, 0, 40:80, 10:30] = 0
+            (output/'frame_000001.bin').write_bytes(head.tobytes())
+            (output/'frame_000001.json').write_text(json.dumps(dict(
+                processing_only=True,valid_rect=[0,25,256,205],online_b_seconds=.01,
+                input_metadata=dict(original_width=40,original_height=32))))
+            return dict(model_reused=True, hardware_reused=True, startup_seconds=0.,
+                        request_seconds=.01, worker_pid=1, alive_after_reply=True)
+
+        self.app.b_worker.run.side_effect = run
+        with patch('server.inference_command', side_effect=lambda runtime, source, dest, portable:
+                   ['python','infer.py',str(source),'--output',str(dest)]):
+            job = self.wait(self.app.submit(dict(mode='infer',image=encoded))['id'])
+        self.assertEqual(job['state'], 'done', job.get('error'))

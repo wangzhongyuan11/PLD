@@ -2,6 +2,6 @@
 
 .history{margin-top:24px;padding:24px;background:white;border:1px solid var(--border);border-radius:12px}.history-heading{display:flex;justify-content:space-between;align-items:center;gap:16px}.history-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}.history-card{border:1px solid var(--border);border-radius:8px;padding:14px;min-width:0}.history-card img{width:100%;height:170px;object-fit:contain;background:#101e27;border-radius:5px;margin-bottom:14px}.history-card strong{display:block;font-size:14px;overflow-wrap:anywhere}.history-actions{display:flex;gap:8px;flex-wrap:wrap}.history-actions button{font-size:14px}@media(max-width:600px){.history-heading{align-items:flex-start;flex-direction:column}}
 
-.quad-grid .image-box{min-height:190px;aspect-ratio:4/3;flex:initial}.quad-grid .image-box img,.quad-grid canvas{width:100%;height:100%;object-fit:contain;max-height:360px}.quad-grid canvas[hidden]{display:none}.tabs{display:none}
+.quad-grid .image-box{min-height:190px;aspect-ratio:4/3;flex:initial}.quad-grid .image-box img{width:100%;height:100%;object-fit:contain;max-height:360px}.tabs{display:none}
 
 .quad-grid{grid-template-columns:repeat(2,minmax(0,1fr))}

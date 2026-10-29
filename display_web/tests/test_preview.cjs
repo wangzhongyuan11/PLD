@@ -5,7 +5,8 @@ const $=id=>{if(!nodes.has(id))nodes.set(id,{replaceChildren(){}});return nodes.
 const events=[],queue=[];
 const context={$,document:{querySelectorAll:()=>tabs,createTextNode:t=>t,createElement:()=>({})},
  current:null,currentView:'outlined',busy:true,preparing:false,status:{hdmi_available:true},
- performance:{now:()=>1000},setTimeout:f=>f(),message:(m,e)=>events.push(['message',m,e]),
+ performance:{now:()=>1000},setTimeout:()=>{throw Error('fixed polling delay');},message:(m,e)=>events.push(['message',m,e]),
+ updateAuxiliary:async()=>{},
  showTimings:(j,t)=>events.push(['timings',j.state,{...t}]),
  api:async()=>{events.push(['poll']);assert(queue.length);return queue.shift();},refreshStatus:async()=>{}};
 vm.createContext(context);

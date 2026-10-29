@@ -34,6 +34,7 @@ function buttons() {
   $('download').textContent=busy && current?.preview_ready ? '结果包生成中…' : '下载结果包';
 }
 async function refreshStatus() {
+  if(busy) return;
   try {
     status=await api('/api/status');
     rememberAccess();
@@ -54,93 +55,11 @@ async function fileData(file) {
   if(!file) throw new Error('请先选择文件'); if(file.size>8*1024*1024) throw new Error('单个文件不能超过 8 MB');
   return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result.split(',')[1]);r.onerror=()=>reject(new Error('文件读取失败'));r.readAsDataURL(file);});
 }
-// Prepare an in-memory upload copy only. Never write to the selected local files.
-const UPLOAD_PIXELS = 3000000, UPLOAD_BYTES = 8*1024*1024;
-function uploadSize(width, height) {
-  const scale = Math.min(1, Math.sqrt(UPLOAD_PIXELS/(width*height)));
-  return [Math.max(1,Math.floor(width*scale)), Math.max(1,Math.floor(height*scale))];
-}
-async function decodedImage(file) {
-  if(!file) throw new Error('请先选择文件');
-  const sig=new Uint8Array(await file.slice(0,8).arrayBuffer());
-  const jpeg=sig[0]===255 && sig[1]===216;
-  const png=[137,80,78,71,13,10,26,10].every((n,i)=>sig[i]===n);
-  if(!jpeg && !png) throw new Error('仅支持 JPG / PNG 图片');
-  try { return {bitmap:await createImageBitmap(file,{imageOrientation:'from-image'}), jpeg, png}; }
-  catch { throw new Error('图片无法解码或超出浏览器可用内存，请换用较小图片'); }
-}
-function imageCanvas(bitmap,width,height,smooth=true) {
-  const canvas=document.createElement('canvas'); canvas.width=width; canvas.height=height;
-  const ctx=canvas.getContext('2d',{willReadFrequently:!smooth});
-  if(!ctx) throw new Error('浏览器无法创建图像画布');
-  ctx.imageSmoothingEnabled=smooth; ctx.imageSmoothingQuality='high';
-  ctx.drawImage(bitmap,0,0,width,height); return canvas;
-}
-function canvasBlob(canvas,type,quality) {
-  return new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('图片转换失败')),type,quality));
-}
-// Canvas PNGs are RGBA; emit a grayscale PNG so the existing mask validator
-// continues to receive a single-channel binary image, including after resizing.
-function pngChunk(type,data) {
-  const bytes=new Uint8Array(data.length+12), view=new DataView(bytes.buffer);
-  view.setUint32(0,data.length); bytes.set(new TextEncoder().encode(type),4); bytes.set(data,8);
-  let crc=0xffffffff;
-  for(let i=4;i<bytes.length-4;i++) { crc^=bytes[i]; for(let b=0;b<8;b++)crc=(crc>>>1)^((crc&1)?0xedb88320:0); }
-  view.setUint32(bytes.length-4,(crc^0xffffffff)>>>0); return bytes;
-}
-async function grayscaleMask(canvas) {
-  const {width,height}=canvas, rgba=canvas.getContext('2d').getImageData(0,0,width,height).data;
-  const raw=new Uint8Array((width+1)*height); let hasOne=false,has255=false;
-  for(let y=0;y<height;y++) for(let x=0;x<width;x++) {
-    const i=(y*width+x)*4,v=rgba[i];
-    if(rgba[i+1]!==v || rgba[i+2]!==v || rgba[i+3]!==255 || ![0,1,255].includes(v)) throw new Error('掩膜须为不透明的二值图（0/1 或 0/255），不能含灰度或彩色像素');
-    hasOne ||= v===1; has255 ||= v===255;
-    raw[y*(width+1)+x+1]=v?255:0;
-  }
-  if(hasOne && has255) throw new Error('掩膜不能混用 0/1 和 0/255');
-  const compressed=new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('deflate'))).arrayBuffer());
-  const header=new Uint8Array(13), hv=new DataView(header.buffer);
-  hv.setUint32(0,width); hv.setUint32(4,height); header[8]=8;
-  return new Blob([new Uint8Array([137,80,78,71,13,10,26,10]),pngChunk('IHDR',header),pngChunk('IDAT',compressed),pngChunk('IEND',new Uint8Array())],{type:'image/png'});
-}
+// Read the selected bytes; image decoding, resizing and processing run on the board.
 async function prepareUpload(imageFile,maskFile,mode) {
-  let source, mask;
-  try {
-    source=await decodedImage(imageFile);
-    const {width,height}=source.bitmap;
-    if(mode==='mask') {
-      mask=await decodedImage(maskFile);
-      if(!mask.png) throw new Error('配套掩膜须为 PNG');
-      if(mask.bitmap.width!==width || mask.bitmap.height!==height) throw new Error('配套掩膜尺寸须与原图一致（按图片方向显示后的尺寸）');
-    }
-    let [w,h]=uploadSize(width,height), image=imageFile;
-    let converted=w!==width || h!==height || imageFile.size>UPLOAD_BYTES || (mode==='infer' && !source.jpeg);
-    if(converted) {
-      for(let attempt=0;attempt<12;attempt++) {
-        const canvas=imageCanvas(source.bitmap,w,h);
-        try { image=await canvasBlob(canvas,'image/jpeg',0.92); }
-        finally {canvas.width=canvas.height=1;}
-        if(image.size<=UPLOAD_BYTES) break;
-        w=Math.max(1,Math.floor(w*0.8)); h=Math.max(1,Math.floor(h*0.8));
-      }
-      if(image.size>UPLOAD_BYTES) throw new Error('自动压缩后仍超过上传大小，请选择较小图片');
-    }
-    let maskData;
-    if(mask) {
-      // Validate at full resolution first so shrinking cannot hide invalid pixels.
-      const full=imageCanvas(mask.bitmap,width,height,false);
-      let binary;
-      try {binary=await grayscaleMask(full);} finally {full.width=full.height=1;}
-      if(w!==width || h!==height) {
-        const small=imageCanvas(mask.bitmap,w,h,false);
-        try {binary=await grayscaleMask(small);} finally {small.width=small.height=1;}
-      }
-      maskData=await fileData(binary);
-    }
-    const resized=w!==width || h!==height;
-    const note=resized ? `已等比例缩小：${width} × ${height} → ${w} × ${h}${mask?'；配套掩膜已同步缩放':''}。原文件未修改，结果按上传尺寸生成。` : `上传尺寸：${w} × ${h}${converted?'（已转换为 JPG 上传副本）':''}。原文件未修改。`;
-    return {image:await fileData(image), ...(maskData?{mask:maskData}:{}), note};
-  } finally {source?.bitmap.close(); mask?.bitmap.close();}
+  const image=await fileData(imageFile);
+  const mask=mode==='mask' ? await fileData(maskFile) : null;
+  return {image,...(mask?{mask}:{}),note:'原文件已准备好，结果按板端处理尺寸生成。'};
 }
 function stage(j) { $('stage').textContent=j.stage; $('progress').value=j.progress; $('percent').textContent=j.progress+'%'; }
 function resultStatistics(job) {
@@ -156,26 +75,34 @@ function resultStatistics(job) {
   $('sourceNote').textContent=s.data_source;
 }
 async function watchCurrent(clientTimes, clickStarted) {
-  let rendered=false;
+  let rendered=false,renderTask=null,renderError=null;
+  const firstRender=()=>{
+    rendered=true;
+    const started=performance.now();
+    renderTask=render().then(()=>{
+      clientTimes.preview_load=(performance.now()-started)/1000;
+      if(clickStarted!==null) clientTimes.click_to_preview=(performance.now()-clickStarted)/1000;
+      showTimings(current,clientTimes);
+    },error=>{renderError=error;});
+  };
   while(true) {
     stage(current);buttons();
-    if(current.preview_ready && (!rendered || (current.preview_views?.includes('mask') && $('maskImage').hidden))) {
-      resultStatistics(current);
-      const initialPreview=!rendered;const previewStarted=performance.now();await render();rendered=true;
-      if(initialPreview) clientTimes.preview_load=(performance.now()-previewStarted)/1000;
-      if(initialPreview && clickStarted!==null) clientTimes.click_to_preview=(performance.now()-clickStarted)/1000;
-      showTimings(current,clientTimes);
-      message('预览已显示，可切换查看。后台正在生成原尺寸图片和完整结果包，请稍候。');
+    if(current.preview_ready && !rendered) {
+      resultStatistics(current);firstRender();
+    } else if(rendered) {
+      void updateAuxiliary(current).catch(error=>message(error.message,true));
     }
     if(current.state!=='running') break;
-    await new Promise(r=>setTimeout(r,450));
-    current=await api('/api/jobs/'+current.id);
+    current=await api('/api/jobs/'+current.id+'?wait='+(rendered?'done':'preview'));
   }
   if(clickStarted!==null) clientTimes.until_done=(performance.now()-clickStarted)/1000;
+  if(!rendered && current.state==='done') firstRender();
+  if(renderTask) await renderTask;
+  if(renderError) throw renderError;
+  if(rendered) void updateAuxiliary(current).catch(error=>message(error.message,true));
   showTimings(current,clientTimes);
   if(current.state==='error') throw new Error((current.preview_ready?'预览已保留，但完整结果包生成失败：':'')+current.error);
   resultStatistics(current);
-  if(!rendered) await render();
   message('完整结果包已生成，可以下载或发送到 HDMI。网页与下载文件均保留上传尺寸。');
 }
 async function resumeActive(id) {
@@ -206,37 +133,47 @@ async function historyAsset(id, name) {
   const response=await fetch('/files/'+id+'/'+name,{headers:{Authorization:'Bearer '+token}});
   if(!response.ok) throw new Error('结果文件读取失败'); return response.blob();
 }
-function enhancePreview(image,canvas){
- const scale=Math.min(1,640/image.naturalWidth,480/image.naturalHeight);
- canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
- const ctx=canvas.getContext('2d');ctx.drawImage(image,0,0,canvas.width,canvas.height);
- const frame=ctx.getImageData(0,0,canvas.width,canvas.height),hist=Array.from({length:3},()=>new Uint32Array(256));
- for(let i=0;i<frame.data.length;i+=4)for(let c=0;c<3;c++)hist[c][frame.data[i+c]]++;
- const cut=Math.floor(canvas.width*canvas.height*.01),ranges=hist.map(h=>{let lo=0,hi=255,n=0;while(lo<255&&n+h[lo]<=cut)n+=h[lo++];n=0;while(hi>lo&&n+h[hi]<=cut)n+=h[hi--];return[lo,hi];});
- for(let i=0;i<frame.data.length;i+=4)for(let c=0;c<3;c++){const[lo,hi]=ranges[c];if(hi>lo)frame.data[i+c]=Math.floor(Math.max(0,Math.min(255,(frame.data[i+c]-lo)*255/(hi-lo))));}
- ctx.putImageData(frame,0,0);
+let renderVersion=0,visibleJob=null,primaryDisplayedJob=null;
+const viewAssets=new Map();
+function viewAsset(job,name) {
+  const key=job.id+'/'+name;
+  if(!viewAssets.has(key)) viewAssets.set(key,historyAsset(job.id,name).then(blob=>{
+    const url=URL.createObjectURL(blob);imageUrls.push(url);return url;
+  }));
+  return viewAssets.get(key);
 }
-let renderVersion=0;
+async function updateAuxiliary(job,version=renderVersion) {
+  if(primaryDisplayedJob!==job.id) return;
+  const filename=name=>(job.preview_ready && job.preview_views?.includes(name)?'preview_':'')+name+'.png';
+  await Promise.all([['mask','maskImage','maskEmpty'],['cutout','cutoutImage','cutoutEmpty']].map(async([name,id,empty])=>{
+    if(!(job.state==='done' || job.preview_views?.includes(name)) || !job.views.includes(name)) return;
+    const url=await viewAsset(job,filename(name));
+    if(version!==renderVersion || visibleJob!==job.id) return;
+    const image=$(id);
+    if(image.src!==url){image.src=url;await image.decode();}
+    if(version!==renderVersion || visibleJob!==job.id) return;
+    image.hidden=false;$(empty).hidden=true;
+  }));
+}
 async function render() {
-  const version=++renderVersion;
-  const job=current, view='outlined';
+  const version=++renderVersion,job=current;
+  if(visibleJob!==job.id) {
+    imageUrls.forEach(URL.revokeObjectURL);imageUrls=[];viewAssets.clear();visibleJob=job.id;primaryDisplayedJob=null;
+    for(const name of ['mask','cutout']) {$(name+'Image').hidden=true;$(name+'Empty').hidden=false;}
+  }
   const left=job.views.includes('original')?'original':'mask';
   const filename=name=>(job.preview_ready && job.preview_views?.includes(name)?'preview_':'')+name+'.png';
-  const hasMask=job.state==='done'||job.preview_views?.includes('mask');
-  const blobs=await Promise.all([historyAsset(job.id,filename(left)),historyAsset(job.id,filename(view)),...(hasMask?[historyAsset(job.id,filename('mask'))]:[])]);
+  const urls=await Promise.all([viewAsset(job,filename(left)),viewAsset(job,filename('outlined'))]);
   if(version!==renderVersion) return;
-  imageUrls.forEach(URL.revokeObjectURL); imageUrls=blobs.map(b=>URL.createObjectURL(b));
-  $('leftImage').src=imageUrls[0]; $('rightImage').src=imageUrls[1];
-  await Promise.all([$ ('leftImage').decode(), $('rightImage').decode()]);
+  const images=[$('leftImage'),$('rightImage')];
+  await Promise.all(images.map(async(image,index)=>{if(image.src!==urls[index]){image.src=urls[index];await image.decode();}}));
   if(version!==renderVersion) return;
-  const c=$('enhancedImage');enhancePreview($('leftImage'),c);c.hidden=false;$('enhancedEmpty').hidden=true;
-  $('maskImage').hidden=!hasMask;$('maskEmpty').hidden=hasMask;
-  if(hasMask){$('maskImage').src=imageUrls[2];await $('maskImage').decode();}
   $('leftImage').hidden=false;$('rightImage').hidden=false;$('leftEmpty').hidden=true;$('rightEmpty').hidden=true;
-  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-  $('leftLabel').textContent=left==='original'?'原始图像':'真实板测掩膜 · 非原图'; $('rightLabel').textContent='轮廓叠加';
-  $('leftImage').alt=$('leftLabel').textContent;$('rightImage').alt=labels[currentView];
-  document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.view===currentView)));
+  primaryDisplayedJob=job.id;
+  $('leftLabel').textContent=left==='original'?'原始图像':'真实板测掩膜 · 非原图';$('rightLabel').textContent='轮廓叠加';
+  $('leftImage').alt=$('leftLabel').textContent;$('rightImage').alt='轮廓叠加';
+  document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-selected',String(button.dataset.view===currentView)));
+  void updateAuxiliary(job,version).catch(error=>message(error.message,true));
 }
 $('demo').onclick=()=>start({mode:'demo',thickness:Number($('thickness').value)});
 $('run').onclick=async()=>{
@@ -253,7 +190,7 @@ $('run').onclick=async()=>{
   } catch(e) {$('uploadNote').textContent='上传准备未完成，原文件未修改。';message(e.message,true);}
   finally {preparing=false;buttons();}
 };
-$('mode').onchange=()=>{const infer=$('mode').value==='infer';$('maskField').hidden=infer;$('imageFile').accept='image/jpeg,image/png';$('modeNote').textContent=infer?'上传 JPG / PNG 后调用板端模型，PNG 自动转为 JPG 副本。处理前会关闭本网页启动的 HDMI。':'使用你上传的掩膜提取轮廓，不执行模型推理。';};
+$('mode').onchange=()=>{const infer=$('mode').value==='infer';$('maskField').hidden=infer;$('imageFile').accept='image/jpeg,image/png';$('modeNote').textContent=infer?'上传 JPG / PNG 后调用板端模型，图片处理在板端完成。处理前会关闭本网页启动的 HDMI。':'使用你上传的掩膜提取轮廓，不执行模型推理。';};
 $('imageFile').onchange=()=>{$('fileLabel').textContent=$('imageFile').files[0]?.name||'选择原始图片';if(pldAutoSegment&&$('mode').value==='infer'&&!busy&&!preparing&&$('imageFile').files.length)$('run').onclick();};
 $('thickness').oninput=()=>{$('widthValue').textContent=$('thickness').value+' px';};
 document.querySelectorAll('[data-view]').forEach(b=>{b.onclick=async()=>{currentView=b.dataset.view;try{await render();}catch(e){message(e.message,true);}};b.onkeydown=e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key))return;const tabs=[...document.querySelectorAll('[data-view]')].filter(t=>!t.disabled);const i=tabs.indexOf(b);tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length].focus();e.preventDefault();};});
@@ -306,7 +243,7 @@ async function refreshHistory(force=false) {
 $('refreshHistory').onclick=()=>refreshHistory(true).catch(e=>message(e.message,true));
 
 let timingReport=null;
-const timingLabels={request_receive_parse:'请求体接收与 JSON 解析（与接收总计重叠）',upload_decode_validate:'上传数据还原、解码与校验（与接收总计重叠）',preview_remaining:'后台生成其余预览',preview_build:'生成首屏两张预览',request_to_preview_ready:'服务端请求至预览就绪',prepare_upload:'浏览器图片准备（含缩图、转换及编码）',submit_roundtrip:'上传提交往返（含服务端接收校验）',until_done:'点击到获知完成（含轮询）',preview_load:'两张预览下载、解码与绘制等待',click_to_preview:'点击到预览就绪总计',request_to_job_start:'服务端接收、解析、解码及任务启动',stop_hdmi:'停止 HDMI',input_write:'写入推理输入',runtime_verify:'运行包校验',inference_launch:'推理进程启动',inference_wait:'等待推理进程结束',inference_subprocess:'推理子进程总计（含初始化与退出）',persistent_worker_startup:'推理硬件会话初始化',persistent_worker_request:'常驻进程本次请求',persistent_worker_total:'常驻进程调用总计',result_load:'读取推理结果',mask_remap:'掩膜回映射',contour_process:'轮廓提取与统计',view_composition:'生成对比视图',png_batch_wall:'剩余 PNG 保存等待',zip_payload:'ZIP 写入图片',report_write:'统计报告写入',zip_report_append:'ZIP 追加报告',zip_package:'ZIP 打包总计',job_total:'后台任务总计',request_to_job_complete:'服务端请求至 ZIP 完成总计'};
+const timingLabels={request_receive_parse:'请求体接收与 JSON 解析（与接收总计重叠）',upload_decode_validate:'上传数据还原、解码与校验（与接收总计重叠）',preview_remaining:'后台生成其余预览',preview_build:'生成首屏两张预览',request_to_preview_ready:'服务端请求至预览就绪',prepare_upload:'浏览器读取上传文件',submit_roundtrip:'上传提交往返（含服务端接收校验）',until_done:'点击到获知完成（含轮询）',preview_load:'首屏图片下载、解码与显示更新',click_to_preview:'点击到预览就绪总计',request_to_job_start:'服务端接收、解析、解码及任务启动',stop_hdmi:'停止 HDMI',input_write:'写入推理输入',runtime_verify:'运行包校验',inference_launch:'推理进程启动',inference_wait:'等待推理进程结束',inference_subprocess:'推理子进程总计（含初始化与退出）',persistent_worker_startup:'推理硬件会话初始化',persistent_worker_request:'常驻进程本次请求',persistent_worker_total:'常驻进程调用总计',result_load:'读取推理结果',mask_remap:'掩膜回映射',contour_process:'轮廓提取与统计',view_composition:'生成对比视图',png_batch_wall:'剩余 PNG 保存等待',zip_payload:'ZIP 写入图片',report_write:'统计报告写入',zip_report_append:'ZIP 追加报告',zip_package:'ZIP 打包总计',job_total:'后台任务总计',request_to_job_complete:'服务端请求至 ZIP 完成总计'};
 function timingText(job,clientTimes) {
   const stats=job.statistics||{};
   const stages=stats.final_stage_seconds||(job.state==='error'?job.stage_seconds:null)||stats.stage_seconds||job.stage_seconds||{};

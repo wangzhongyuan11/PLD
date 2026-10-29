@@ -1,5 +1,6 @@
 """Small LAN entry around the existing ACDC and dual-model applications."""
 import argparse
+from contextlib import nullcontext
 import http.client
 import json
 from pathlib import Path
@@ -345,7 +346,7 @@ class Handler(BaseHTTPRequestHandler):
         controller = self.server.controller
         # Keep the old hub and its SAMEORIGIN iframe on this entry's origin.
         # Its own generation check continues to reject stale pages.
-        with controller.proxy_lock:
+        with controller.proxy_lock if self.command == 'POST' else nullcontext():
             with controller.lock:
                 match = re.match(r'^/(skin|camus)/g/(\d+)/(.*)', self.path)
                 if not match or controller.phase != 'ready' or match[1] != controller.model:
