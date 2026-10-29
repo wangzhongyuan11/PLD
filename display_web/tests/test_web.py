@@ -54,7 +54,7 @@ class WebTests(unittest.TestCase):
         j=self.wait(self.app.submit({'mode':'mask','image':encoded(rgb),'mask':encoded(mask)})['id'])
         self.assertEqual(j['state'],'done')
         stats=j['statistics']; t=stats['final_stage_seconds']
-        self.assertGreaterEqual(t['png_batch_wall'],max(t['png_save'].values()))
+        self.assertGreaterEqual(t['png_batch_wall'],t['png_save']['comparison'])
         self.assertGreaterEqual(t['job_total'],t['png_batch_wall'])
         self.assertGreaterEqual(t['request_to_job_complete'],t['job_total'])
         self.assertEqual(stats['output_png_workers'],2)

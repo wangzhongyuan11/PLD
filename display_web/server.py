@@ -151,14 +151,15 @@ def decode_upload(value, is_mask=False):
 
 class Console:
     def __init__(self, data, runtime=None, token=None, portable=False, boot_id=None,
-                 persistent_b_worker=False, display_agent=None):
+                 persistent_b_worker=False, display_agent=None, processing_only=False):
         self.data = Path(data).resolve(); self.data.mkdir(parents=True, exist_ok=True)
         self.runtime = Path(runtime).resolve() if runtime else None
         self.token = token if token is not None else persistent_token(self.data)
         self.portable = portable
         self.persistent_b_worker = persistent_b_worker
+        self.processing_only = processing_only
         self.b_worker = None
-        self.verifier = RuntimeVerifier(self.runtime) if self.runtime else None
+        self.verifier = RuntimeVerifier(self.runtime) if self.runtime and not processing_only else None
         self.warmup_state = "not_started"
         self.warmup_seconds = None
         self.warmup_thread = None
@@ -181,10 +182,11 @@ class Console:
         self.runtime_error = None
         if self.board and self.runtime:
             try:
-                self.verify_deployment()
-                inference_command(self.runtime, Path("check.jpg"), Path("check_out"), self.portable)
-                if self.persistent_b_worker:
-                    runtime_manifest_sha256(self.runtime)
+                if not self.processing_only:
+                    self.verify_deployment()
+                    inference_command(self.runtime, Path("check.jpg"), Path("check_out"), self.portable)
+                    if self.persistent_b_worker:
+                        runtime_manifest_sha256(self.runtime)
                 self.runtime_ok = True
             except Exception as exc:
                 self.runtime_error = str(exc)
@@ -212,7 +214,8 @@ class Console:
     def _warmup(self):
         started = time.perf_counter()
         try:
-            self.verify_deployment()
+            if not self.processing_only:
+                self.verify_deployment()
             command = inference_command(self.runtime, self.data/'warmup-unused.jpg',
                                         self.data/'warmup-unused-output', self.portable)
             if self.b_worker is None: self.b_worker = PersistentBWorker(self.runtime)
@@ -388,7 +391,7 @@ class Console:
                 source = folder / "input.jpg"
                 stage = time.perf_counter(); source.write_bytes(raw)
                 stages["input_write"] = time.perf_counter() - stage
-                if self.persistent_b_worker and self.b_worker is not None:
+                if not self.processing_only and self.persistent_b_worker and self.b_worker is not None:
                     # A live worker holds in-memory code from the manifest it was
                     # launched with. Refuse it after any deployment change.
                     try:
@@ -396,8 +399,9 @@ class Console:
                     except PersistentWorkerError as exc:
                         self.fault = str(exc)
                         raise
-                stage = time.perf_counter(); stages["runtime_check_kind"] = self.verify_deployment()
-                stages["runtime_verify"] = time.perf_counter() - stage
+                if not self.processing_only:
+                    stage = time.perf_counter(); stages["runtime_check_kind"] = self.verify_deployment()
+                    stages["runtime_verify"] = time.perf_counter() - stage
                 command = inference_command(self.runtime, source, folder / "inference", self.portable)
                 if self.persistent_b_worker:
                     stage = time.perf_counter()
@@ -435,7 +439,10 @@ class Console:
                         raise RuntimeError(self.fault)
                     stages["inference_backend"] = "subprocess"
                 stage = time.perf_counter()
-                b = load_result(folder / "inference/frame_000001.json", source, decoded_rgb=rgb)
+                if self.processing_only:
+                    b = load_result(folder / "inference/frame_000001.json", source, decoded_rgb=rgb, verify=False)
+                else:
+                    b = load_result(folder / "inference/frame_000001.json", source, decoded_rgb=rgb)
                 stages["result_load"] = time.perf_counter() - stage
                 stage = time.perf_counter()
                 mask = b.original_mask()
@@ -488,11 +495,12 @@ class Console:
             stages["preview_remaining"] = time.perf_counter()-remaining_started
             stages["preview_images"] = preview_details
             self.update(ident, preview_views=list(views))
-            left = rgb if rgb is not None else np.repeat((mask.astype(np.uint8)*255)[:, :, None], 3, axis=2)
-            stage = time.perf_counter()
-            arrays["comparison"] = np.concatenate((fit_rgb(left, 640, 480), fit_rgb(result["outlined"], 640, 480)), axis=1)
-            stages["view_composition"] = time.perf_counter() - stage
-            views.append("comparison")
+            if not self.processing_only:
+                left = rgb if rgb is not None else np.repeat((mask.astype(np.uint8)*255)[:, :, None], 3, axis=2)
+                stage = time.perf_counter()
+                arrays["comparison"] = np.concatenate((fit_rgb(left, 640, 480), fit_rgb(result["outlined"], 640, 480)), axis=1)
+                stages["view_composition"] = time.perf_counter() - stage
+                views.append("comparison")
 
             def save_png_group(group):
                 for key, array in group:
@@ -504,16 +512,18 @@ class Console:
             # ZIP/history still wait for every output to close successfully.
             items = [(key, arrays[key]) for key in views if key not in png_timings]
             png_batch_started = time.perf_counter()
-            with ThreadPoolExecutor(max_workers=PNG_SAVE_WORKERS,
-                                    thread_name_prefix="pld-png") as pool:
-                futures = [pool.submit(save_png_group, items[index::PNG_SAVE_WORKERS])
-                           for index in range(PNG_SAVE_WORKERS)]
-                for future in futures:
-                    future.result()
-            stages["png_batch_wall"] = time.perf_counter()-png_batch_started
+            if items:
+                with ThreadPoolExecutor(max_workers=PNG_SAVE_WORKERS,
+                                        thread_name_prefix="pld-png") as pool:
+                    futures = [pool.submit(save_png_group, items[index::PNG_SAVE_WORKERS])
+                               for index in range(PNG_SAVE_WORKERS)]
+                    for future in futures:
+                        future.result()
+            if not self.processing_only:
+                stages["png_batch_wall"] = time.perf_counter()-png_batch_started
             stages["png_save"] = {key: png_timings[key] for key in views}
             stats["processing_seconds"] = time.perf_counter()-job_start
-            stats["processing_scope"] = "旧口径：任务线程启动到全部 PNG 写出；不含上传/浏览器、report/ZIP/历史提交；推理模式包含停止HDMI、校验和B子进程"
+            stats["processing_scope"] = "任务线程启动到全部 PNG 写出；不含上传/浏览器、report/ZIP/历史提交"
             stats["data_source"] = "历史板测掩膜，无原始 JPG；未重新推理" if mode == "demo" else "用户图片及掩膜；未执行模型推理" if mode == "mask" else "本次板端 FPGA 推理"
             stats["output_png_compress_level"] = PNG_COMPRESS_LEVEL
             stats["output_png_workers"] = PNG_SAVE_WORKERS

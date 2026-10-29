@@ -8,7 +8,6 @@ HERE=Path(__file__).resolve().parent
 CONFIG=dict(original_release='/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017',workspace='/home/xilinx/jupyter_notebooks/PLD_Dev',data='/home/xilinx/skin8_web_data')
 BASE=Path(CONFIG['original_release'])
 CORE_ROOT=Path(CONFIG['workspace'])
-BUILD=HERE
 DATA=Path(CONFIG['data'])
 sys.path.insert(0,str(CORE_ROOT))
 
@@ -25,6 +24,7 @@ def prepare_core_software():
     startup_stage('pure_core_imports')
 
 def runtime_identity(kind):
+    if kind=='skin':return 'skin8-processing-only'
     return hashlib.sha256((HERE/'models'/kind/'manifest.json').read_bytes()+
                           hashlib.sha256((HERE/'skin8.bit').read_bytes()).digest()).hexdigest()
 
@@ -39,26 +39,31 @@ class Core:
         from types import SimpleNamespace
         from pynq import Overlay,MMIO,allocate
         from overlay_metadata import enable_metadata_cache
-        enable_metadata_cache()
+        enable_metadata_cache(verify=kind!='skin')
         from frame_driver import FrameSession
         from pynq.pl_server.global_state import load_global_state, global_state_file_exists, bitstream_hash
         trace.mark('pynq_frame_driver_imports')
         root=BASE/'skin/role_a_final/int8' if kind=='skin' else BASE/'camus/model/int8_export'
         raw=(root/'model_spec.json').read_bytes()
         manifest=json.loads((HERE/'models'/kind/'manifest.json').read_text())
-        if hashlib.sha256(raw).hexdigest()!=manifest['spec_sha256']:raise ValueError('model spec mismatch')
+        if kind!='skin' and hashlib.sha256(raw).hexdigest()!=manifest['spec_sha256']:raise ValueError('model spec mismatch')
         spec=json.loads(raw)
         self.model=SimpleNamespace(layers=spec['layers'],spec_sha256=manifest['spec_sha256'])
-        trace.mark('model_verify')
+        trace.mark('model_load' if kind=='skin' else 'model_verify')
         bit=HERE/'skin8.bit'
         # Overlay(download=False) updates process-local device metadata; its
         # is_loaded() is insufficient to identify a download by another process.
-        loaded=(global_state_file_exists() and load_global_state().bitfile_hash==bitstream_hash(bit))
+        loaded=(global_state_file_exists() and
+                (load_global_state().bitfile_name==str(bit) if kind=='skin' else
+                 load_global_state().bitfile_hash==bitstream_hash(bit)))
         self.overlay=Overlay(str(bit),download=False)
         trace.mark('metadata_bind')
         if not loaded:self.overlay.download()
         trace.mark('program_overlay')
-        self.session=FrameSession(HERE/'models'/kind,MMIO(0x43c00000,0x1000),allocate)
+        if kind=='skin':
+            self.session=FrameSession(HERE/'models'/kind,MMIO(0x43c00000,0x1000),allocate,verify=False)
+        else:
+            self.session=FrameSession(HERE/'models'/kind,MMIO(0x43c00000,0x1000),allocate)
         trace.mark('frame_session')
     def run(self,q):
         head,t=self.session.run(q,timeout=10)
@@ -74,8 +79,6 @@ class Core:
 
 class SkinWorker:
     def __init__(self,runtime,*args,**kwargs):self.core=None;self.runtime=runtime;self.failure=None
-    def check_manifest(self):
-        assert (HERE/'skin8.bit').is_file()
     def run(self,argv,log_path):
         from persistent_worker import PersistentWorkerError
         if self.failure:raise PersistentWorkerError(self.failure)
@@ -96,8 +99,8 @@ class SkinWorker:
             result=self.core.run(q[0]);head=result['head'][None];inference=result['host_timing']['seconds']
             rect=[g['left'],g['top'],g['resized_width'],g['resized_height']]
             spec=self.core.model.spec_sha256
-            metadata=dict(g,model_spec_sha256=spec,input_sha256=hashlib.sha256(q.tobytes()).hexdigest(),image_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),valid_rect=rect,valid_pixels=rect[2]*rect[3])
-            report=dict(status='success',shape=[1,1,256,256],dtype='int8',layout='NCHW',comparison='>=',model_name='soup_v5_a050',model_spec_sha256=spec,model_manifest_sha256='e47eb18b94369451b36790971f4e0db62b2d128f424937e00f2768e866a30936',threshold_q=-1,threshold_probability=.45,head_output_scale=self.core.model.layers[-1]['output_scale'],frame_id=1,valid_rect=rect,input_metadata=metadata,output_sha256=hashlib.sha256(head.tobytes()).hexdigest(),online_b_seconds=prep+inference,inference_seconds=inference,preprocess_seconds=prep,bit_sha256=hashlib.sha256((BUILD/'skin8.bit').read_bytes()).hexdigest(),abi_version='SKIN8-v0',execution_backend='skin8_125',execution_phases=result['host_timing'],source_name=source.name)
+            metadata=dict(g,model_spec_sha256=spec,valid_rect=rect,valid_pixels=rect[2]*rect[3])
+            report=dict(status='success',processing_only=True,shape=[1,1,256,256],dtype='int8',layout='NCHW',comparison='>=',model_name='soup_v5_a050',model_spec_sha256=spec,model_manifest_sha256='e47eb18b94369451b36790971f4e0db62b2d128f424937e00f2768e866a30936',threshold_q=-1,threshold_probability=.45,head_output_scale=self.core.model.layers[-1]['output_scale'],frame_id=1,valid_rect=rect,input_metadata=metadata,online_b_seconds=prep+inference,inference_seconds=inference,preprocess_seconds=prep,abi_version='SKIN8-v0',execution_backend='skin8_125',execution_phases=result['host_timing'],source_name=source.name)
             (out/'frame_000001.bin').write_bytes(head.tobytes());(out/'frame_000001.json').write_text(json.dumps(report,indent=2))
             Path(log_path).write_text('SKIN8_SKIN_INFERENCE_COMPLETED_NOT_REFERENCE_CHECKED\n'+json.dumps(result['host_timing'],indent=2))
         return dict(model_reused=reused,hardware_reused=reused,startup_seconds=startup,request_seconds=time.perf_counter()-started,worker_pid=os.getpid(),alive_after_reply=True)
@@ -115,7 +118,7 @@ def serve_skin(display_agent=None):
     guard_skin(old)
     old.PersistentBWorker=SkinWorker
     token=Path(json.loads((BASE/'hub/config.json').read_text())['token_file']).read_text().strip()
-    app=old.Console(DATA/'skin',BASE/'skin',token=token,persistent_b_worker=True,display_agent=display_agent)
+    app=old.Console(DATA/'skin',BASE/'skin',token=token,persistent_b_worker=True,display_agent=display_agent,processing_only=True)
     startup_stage('skin_console_init')
     app.runtime_identity=runtime_identity('skin')
     warmup=app._warmup

@@ -71,16 +71,16 @@ def validate_metadata(metadata):
 
 
 class SegmentationResult:
-    def __init__(self, head, metadata, rgb=None):
+    def __init__(self, head, metadata, rgb=None, *, verify=True):
         # Deep-copy metadata and head: caller may reuse its next result buffers.
         self.metadata = json.loads(json.dumps(metadata))
-        left, top, width, height = validate_metadata(self.metadata)
+        left, top, width, height = validate_metadata(self.metadata) if verify else self.metadata['valid_rect']
         q = np.asarray(head)
-        if q.dtype != np.int8 or q.shape != (1, 1, 256, 256):
+        if verify and (q.dtype != np.int8 or q.shape != (1, 1, 256, 256)):
             raise ValueError("head must be signed np.int8 [1,1,256,256]")
-        if (q == -128).any():
+        if verify and (q == -128).any():
             raise ValueError("-128 is outside the frozen [-127,127] quantization range")
-        if hashlib.sha256(q.tobytes()).hexdigest() != self.metadata["output_sha256"]:
+        if verify and hashlib.sha256(q.tobytes()).hexdigest() != self.metadata["output_sha256"]:
             raise ValueError("head SHA256 mismatch; wrong or incomplete frame")
         self.head = q.copy()
         self.mask256 = np.zeros((256, 256), dtype=bool)
@@ -94,7 +94,7 @@ class SegmentationResult:
         if rgb is not None:
             self.rgb = require_rgb(rgb).copy()
             g = self.metadata["input_metadata"]
-            if self.rgb.shape[:2] != (g["original_height"], g["original_width"]):
+            if verify and self.rgb.shape[:2] != (g["original_height"], g["original_width"]):
                 raise ValueError("RGB dimensions must match EXIF-oriented original image")
 
     def original_mask(self):
@@ -154,25 +154,28 @@ class SegmentationResult:
         return np.asarray(canvas).copy()
 
 
-def load_result(result_path, image_path=None, *, decoded_rgb=None):
+def load_result(result_path, image_path=None, *, decoded_rgb=None, verify=None):
     """Read frame_XXXXXX.json + .bin; verify source file identity if supplied."""
     path = Path(result_path)
     if path.suffix.lower() not in (".json", ".bin"):
         raise ValueError("--result must name a frame .json or .bin")
     metadata = json.loads(path.with_suffix(".json").read_text(encoding="utf-8"))
-    validate_metadata(metadata)
+    if verify is None:
+        verify = not metadata.get('processing_only', False)
+    if verify:
+        validate_metadata(metadata)
     raw = path.with_suffix(".bin").read_bytes()
-    if len(raw) != 65536:
+    if verify and len(raw) != 65536:
         raise ValueError("B head file must contain exactly 65536 bytes")
     rgb = None
     if decoded_rgb is not None and image_path is None:
         raise ValueError("Cached RGB requires its original source file")
     if image_path is not None:
         source = Path(image_path)
-        if hashlib.sha256(source.read_bytes()).hexdigest() != metadata["input_metadata"]["image_sha256"]:
+        if verify and hashlib.sha256(source.read_bytes()).hexdigest() != metadata["input_metadata"]["image_sha256"]:
             raise ValueError("Original image SHA256 mismatch; select the JPEG used for this result")
         rgb = read_rgb(source) if decoded_rgb is None else require_rgb(decoded_rgb)
-    return SegmentationResult(np.frombuffer(raw, dtype=np.int8).reshape(1, 1, 256, 256), metadata, rgb)
+    return SegmentationResult(np.frombuffer(raw, dtype=np.int8).reshape(1, 1, 256, 256), metadata, rgb, verify=verify)
 
 
 def save_result_images(result, destination, view="cutout"):
