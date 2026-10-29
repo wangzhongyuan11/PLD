@@ -32,6 +32,11 @@ def agent_fixture(tmp_path,monkeypatch):
 def test_stop_immediately_after_show_acknowledges_cleanup_before_exit(tmp_path,monkeypatch):
     agent,script=agent_fixture(tmp_path,monkeypatch)
     session=agent.start([sys.executable,'-u',str(script),str(tmp_path/'ok')],tmp_path/'frame.log')
+    # Early cancellation before software readiness now skips rendering entirely.
+    # This test specifically exercises stop after a show command was sent.
+    deadline=time.monotonic()+5
+    while not session.command_sent and time.monotonic()<deadline:time.sleep(.01)
+    assert session.command_sent
     session.terminate()
     assert session.wait(5)==0
     assert (tmp_path/'ok.closed').exists()
@@ -73,6 +78,31 @@ def test_park_requires_closed_display_and_reuses_child_afterwards(tmp_path,monke
     agent.close()
 
 
+def test_async_close_before_readiness_cancels_launch(tmp_path,monkeypatch):
+    agent,_=agent_fixture(tmp_path,monkeypatch)
+    from unittest.mock import Mock,patch
+    agent.process=Mock();agent.process.poll.return_value=None
+    def send(body):
+        assert body['action']=='quit'
+        agent.process.returncode=0
+    with patch.object(agent,'prepare'),patch.object(agent,'send',side_effect=send):
+        session=agent.start(['python','unused.py'],tmp_path/'frame.log')
+        agent.close()
+    assert session.cancelled.is_set() and session.wait(1)==0
+
+
+def test_async_launch_retains_callers_module_path(tmp_path,monkeypatch):
+    agent,script=agent_fixture(tmp_path,monkeypatch)
+    imports=tmp_path/'caller_modules';imports.mkdir()
+    (imports/'pld_caller_fixture.py').write_text('VALUE="from caller"\n')
+    script.write_text("from pathlib import Path\nimport pld_caller_fixture\ndef main(argv=None,stop=None):\n Path(argv[0]).write_text(pld_caller_fixture.VALUE)\n")
+    session=agent.start([sys.executable,str(script),str(tmp_path/'path.txt')],tmp_path/'frame.log',
+                        pythonpath=[str(imports)]+sys.path)
+    assert session.wait(5)==0
+    assert (tmp_path/'path.txt').read_text()=='from caller'
+    agent.close()
+
+
 @contextmanager
 def shared_fixture(tmp_path,monkeypatch):
     _,script=agent_fixture(tmp_path,monkeypatch)
@@ -97,10 +127,14 @@ def test_two_models_share_one_child_and_close_waits_for_renderer_cleanup(tmp_pat
         first=module.WarmHDMI(tmp_path/'first.log',shared_socket=path)
         second=module.WarmHDMI(tmp_path/'second.log',shared_socket=path)
         session=first.start([sys.executable,str(script),str(tmp_path/'first')],tmp_path/'one.log')
+        deadline=time.monotonic()+5
+        while not (tmp_path/'first.opened').exists() and time.monotonic()<deadline:time.sleep(.01)
+        assert (tmp_path/'first.opened').exists()
         pid=first.process.pid
         first.close()
         assert (tmp_path/'first.closed').exists() and session.returncode==0
         session=second.start([sys.executable,str(script),str(tmp_path/'second')],tmp_path/'two.log')
+        assert second.ready.wait(5)
         assert second.process.pid==pid
         session.update('label');session.terminate();assert session.wait(5)==0
         second.park();second.close()
@@ -112,6 +146,9 @@ def test_shared_broker_rejects_second_owner_without_stopping_first(tmp_path,monk
         first=module.WarmHDMI(tmp_path/'first.log',shared_socket=path)
         second=module.WarmHDMI(tmp_path/'second.log',shared_socket=path)
         session=first.start([sys.executable,str(script),str(tmp_path/'first')],tmp_path/'one.log')
+        deadline=time.monotonic()+5
+        while not (tmp_path/'first.opened').exists() and time.monotonic()<deadline:time.sleep(.01)
+        assert (tmp_path/'first.opened').exists()
         rejected=second.start([sys.executable,str(script),str(tmp_path/'second')],tmp_path/'two.log')
         assert rejected.wait(5)==1 and session.poll() is None
         with pytest.raises(RuntimeError):second.close()

@@ -26,7 +26,7 @@ class SharedWorker:
         self.stdout=self.socket.makefile('r')
         self.finished=threading.Event();self.returncode=None;self.pid=None
 
-    def poll(self):return self.returncode if self.finished.is_set() else None
+    def poll(self):return self.returncode
 
     def eof(self):
         if self.returncode is None:self.returncode=1
@@ -41,6 +41,9 @@ class DisplaySession:
     def __init__(self, agent, ident):
         self.agent = agent; self.ident = ident
         self.finished = threading.Event(); self.returncode = None
+        self.cancelled = threading.Event(); self.launch_lock = threading.Lock()
+        self.command_sent = False; self.failure = ''
+        self.pending_view = None
 
     def poll(self):
         if self.returncode is None and self.agent.process.poll() is not None:
@@ -48,9 +51,15 @@ class DisplaySession:
             self.finished.set()
         return self.returncode
 
-    def terminate(self): self.agent.send(dict(action='stop', id=self.ident))
+    def terminate(self):
+        with self.launch_lock:
+            self.cancelled.set()
+            if self.command_sent: self.agent.send(dict(action='stop', id=self.ident))
 
-    def update(self, view):self.agent.send(dict(action='update',id=self.ident,view=view))
+    def update(self, view):
+        with self.launch_lock:
+            if self.command_sent: self.agent.send(dict(action='update',id=self.ident,view=view))
+            else: self.pending_view = view
 
     def wait(self, timeout=None):
         if not self.finished.wait(timeout):
@@ -105,23 +114,64 @@ class WarmHDMI:
         with self.lock:
             if not self.process or self.process.poll() is not None:
                 raise RuntimeError('resident HDMI process unavailable; release unconfirmed')
-            self.process.stdin.write(json.dumps(body)+'\n'); self.process.stdin.flush()
+            try:
+                self.process.stdin.write(json.dumps(body)+'\n'); self.process.stdin.flush()
+            except (OSError, ValueError) as exc:
+                raise RuntimeError('resident HDMI channel closed; release unconfirmed') from exc
 
-    def start(self, command, log, *, pythonpath=None):
+    def start(self, command, log, ready_path=None, first_frame_timeout=30, *, pythonpath=None):
         self.prepare()
-        if not self.ready.wait(90): raise RuntimeError('resident HDMI initialization timed out')
         if self.error: raise RuntimeError(self.error)
         if self.session and self.session.poll() is None: raise RuntimeError('HDMI already active')
         self.session = DisplaySession(self, uuid.uuid4().hex)
-        self.send(dict(action='show', id=self.session.ident, command=[str(x) for x in command], log=str(log),
-                       pythonpath=list(sys.path) if pythonpath is None else pythonpath))
+        # HTTP acknowledges the intent immediately. Software warmup is bounded
+        # in this launcher, outside the application's status/HTTP lock.
+        threading.Thread(target=self.launch, args=(self.session, command, log, ready_path, first_frame_timeout,
+                               list(sys.path) if pythonpath is None else list(pythonpath)),
+                         name='hdmi-launch', daemon=True).start()
         return self.session
+
+    def launch(self, session, command, log, ready_path, first_frame_timeout, pythonpath):
+        try:
+            deadline = time.monotonic()+90
+            while not self.ready.wait(.05):
+                if session.cancelled.is_set():
+                    session.returncode = 0; session.finished.set(); return
+                if time.monotonic() >= deadline:
+                    raise RuntimeError('resident HDMI initialization timed out')
+            with session.launch_lock:
+                if session.cancelled.is_set():
+                    session.returncode = 0; session.finished.set(); return
+                if self.error: raise RuntimeError(self.error)
+                self.send(dict(action='show', id=session.ident, command=[str(x) for x in command], log=str(log),
+                               pythonpath=pythonpath))
+                session.command_sent = True
+                if session.pending_view is not None:
+                    self.send(dict(action='update', id=session.ident, view=session.pending_view))
+            if ready_path is not None:
+                deadline = time.monotonic()+first_frame_timeout
+                while not session.finished.wait(.05):
+                    if Path(ready_path).is_file(): return
+                    if time.monotonic() >= deadline:
+                        # Do not kill the process, free DDR, or acknowledge idle:
+                        # the renderer may still be blocked inside a driver.
+                        session.failure = 'HDMI first frame timed out; hardware release unconfirmed'
+                        self.error = session.failure
+                        session.terminate()
+                        return
+        except Exception as exc:
+            self.error = session.failure = str(exc)
+            session.returncode = 1; session.finished.set()
 
     def close(self):
         if self.process is None: return
         if self.process.poll() is not None:
             if self.process.returncode: raise RuntimeError('resident HDMI process failed')
             return
+        if self.session and self.session.poll() is None:
+            # Finish/cancel the asynchronous launch before closing its channel.
+            self.session.terminate()
+            self.session.wait(timeout=90)
         self.send(dict(action='quit'))
         self.process.wait(timeout=90)
         if self.process.returncode: raise RuntimeError('resident HDMI did not close normally')

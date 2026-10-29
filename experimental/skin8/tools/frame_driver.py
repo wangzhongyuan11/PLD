@@ -8,14 +8,14 @@ import math
 import time
 from pathlib import Path
 import numpy as np
-from board_image import build_image
+from board_image import build_image, PreparedArtifacts
 
 
 _quarantined_sessions=[]
 
 
 class FrameSession:
-    def __init__(self, directory, mmio, allocate, *, verify=True):
+    def __init__(self, directory, mmio, allocate, prepared=None, *, verify=True):
         self.directory=Path(directory);self.mmio=mmio;self.buffers={};self.active=False;self.closed=False
         self.faulted=False
         self.verify=verify
@@ -24,12 +24,13 @@ class FrameSession:
         # Preflight frozen artifacts before making physical allocations.
         dummy={'input':(0x1000000,0x100000),'arena':(0x2000000,0x1000000),'weights':(0x4000000,0x100000),
                'luts':(0x5000000,0x10000),'descriptors':(0x6000000,0x100000),'head':(0x7000000,0x100000)}
-        image=build_image(self.directory,dummy,verify=verify)
+        self.prepared = prepared if prepared is not None else PreparedArtifacts(self.directory, verify=verify)
+        image=build_image(self.directory,dummy,self.prepared)
         try:
             for name,size in image['required_sizes'].items():
                 self.buffers[name]=allocate(shape=(size,),dtype=np.uint8)
             regions={name:(int(buf.physical_address),int(buf.nbytes)) for name,buf in self.buffers.items()}
-            image=build_image(self.directory,regions,verify=verify)
+            image=build_image(self.directory,regions,self.prepared)
             self.count=image['count'];self.manifest=image['manifest']
             for name,buf in self.buffers.items():
                 buf[:]=0

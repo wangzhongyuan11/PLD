@@ -80,9 +80,15 @@ class SwitchTests(unittest.TestCase):
         self.board.props=Mock(side_effect=AssertionError('service query for a result read'))
         self.board.status=Mock(side_effect=AssertionError('owner query for a result read'))
         self.c.proxy('skin',self.c.generation,'GET','/files/result/mask.png',None,'application/json')
-        self.c.proxy('skin',self.c.generation,'POST','/api/jobs',b'{}','application/json')
         with self.assertRaises(RuntimeError):
             self.c.proxy('skin',self.c.generation-1,'GET','/api/status',None,'application/json')
+    def test_upload_also_requires_other_hardware_owner_release(self):
+        self.switch('skin');self.board.states['camus']='active'
+        with self.assertRaises(RuntimeError):
+            self.c.proxy('skin',self.c.generation,'POST','/api/jobs',b'{}','application/json')
+        self.assertFalse(self.c.proxy_busy)
+        self.board.status=Mock(return_value=dict(suspended=True,hardware_released=True,hdmi='off'))
+        self.assertEqual(self.c.proxy('skin',self.c.generation,'POST','/api/jobs',b'{}','application/json')[0],200)
     def test_close_releases_both(self):
         self.switch('skin');self.c.close();self.assertTrue(all(v=='inactive' for v in self.board.states.values()))
         with self.assertRaises(RuntimeError):self.c.switch('camus')

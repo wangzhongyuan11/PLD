@@ -43,7 +43,11 @@ class PromptTests(unittest.TestCase):
         a=labels(row);self.assertEqual(a[16,16],2);self.assertEqual(a[0,0],1)
     def test_decode_limits(self):
         b=io.BytesIO();Image.new('RGB',(1025,1024)).save(b,format='PNG')
-        with self.assertRaises(ValueError):decode_image(base64.b64encode(b.getvalue()).decode())
+        image=decode_image(base64.b64encode(b.getvalue()).decode())
+        self.assertEqual(image.shape,(1023,1024,3))
+        b=io.BytesIO();Image.new('RGB',(4000,3001)).save(b,format='PNG')
+        with patch.object(Image,'MAX_IMAGE_PIXELS',None),self.assertRaises(ValueError):
+            decode_image(base64.b64encode(b.getvalue()).decode())
     def test_cache_scoped_by_generation(self):
         class C:generation=1
         class M:controller=C()
@@ -103,6 +107,8 @@ class BridgeTests(unittest.TestCase):
         manager=Manager.__new__(Manager)
         manager.controller=SimpleNamespace(generation=1,lock=threading.RLock(),interactive_busy=True)
         manager.guard=threading.Lock();manager.job=None
+        manager.changed=threading.Condition(manager.guard)
+        manager.image_slot=None
         manager.display_cache_key=None;manager.display_cache=None
         manager.service=SegmentationService(FakePredictor());manager.predictor=Predictor(manager)
         image=np.zeros((24,32,3),np.uint8)
@@ -113,7 +119,7 @@ class BridgeTests(unittest.TestCase):
         self.assertFalse(first['identity']['display_cache_hit'])
         self.assertTrue(second['identity']['display_cache_hit'])
         self.assertEqual(first['outputs']['original_png'],second['outputs']['original_png'])
-        self.assertEqual(len(second['outputs']),5)
+        self.assertEqual(set(second['outputs']),{'original_png','overlay_png','labels_png','target_mask_png'})
         self.assertLessEqual(sum(second['timings_ms'].values()),second['elapsed_ms']+.02)
         manager.clear();self.assertIsNone(manager.display_cache)
     def test_switch_and_other_posts_blocked_during_interactive(self):

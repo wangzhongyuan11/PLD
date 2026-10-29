@@ -151,6 +151,8 @@ class Controller:
         self.stage = ''
         self.metrics = {}
         self.switch_started = None
+        self.boot = dict(state='idle', completed=[], target=None, default_model=None, elapsed_seconds=None)
+        self.boot_started = None
         self.display = DisplayControl(self)
 
     def save_settings(self):
@@ -170,7 +172,11 @@ class Controller:
 
     def snapshot(self):
         with self.lock:
-            return dict(model=self.model, target=self.target, phase=self.phase,
+            boot = dict(self.boot, completed=list(self.boot['completed']))
+            if boot['state'] == 'running' and self.boot_started is not None:
+                boot['elapsed_seconds'] = time.monotonic()-self.boot_started
+            return dict(boot=boot, model=self.model, target=self.target,
+                        phase='preparing' if self.boot['state']=='running' else self.phase,
                         error=self.error, url=self.url, stage=self.stage,
                         settings=dict(self.settings), display=self.display.snapshot(), stages_seconds=dict(self.metrics),
                         elapsed_seconds=(time.monotonic()-self.switch_started
@@ -180,7 +186,7 @@ class Controller:
         if target not in MODELS:
             raise ValueError('未知模型')
         with self.lock:
-            if self.stopping or self.proxy_lock.locked() or (self.thread and self.thread.is_alive()):
+            if self.boot['state']=='running' or self.stopping or self.proxy_lock.locked() or (self.thread and self.thread.is_alive()):
                 raise RuntimeError('正在切换，请稍候')
             if self.phase == 'error':
                 raise RuntimeError('切换失败，请检查服务后重启入口')
@@ -194,6 +200,66 @@ class Controller:
             self.thread = threading.Thread(target=self._switch, args=(target,), daemon=True)
             self.thread.start()
             return self.snapshot()
+
+    def start_boot_preparation(self):
+        """Prepare services sequentially through the existing hardware lifecycle."""
+        with self.lock:
+            if (self.stopping or self.boot['state'] != 'idle' or self.phase != 'idle'
+                    or self.proxy_lock.locked() or (self.thread and self.thread.is_alive())):
+                raise RuntimeError('启动准备已经执行或当前入口不允许启动')
+            default = self.settings['last_model']
+            self.boot.update(state='running', default_model=default, target='acdc')
+            self.boot_started = time.monotonic()
+            self.display.cancel()
+            self.thread = threading.Thread(target=self._prepare_boot, args=(default,), daemon=True)
+            self.thread.start()
+
+    def _prepare_boot(self, default):
+        try:
+            # A cold board has no ACDC engine. Establish its resident handoff
+            # first: otherwise switching dual -> ACDC uses the old stop path
+            # and discards the dual services that were just prepared.
+            order = ['acdc'] + [m for m in ('skin', 'camus') if m != default]
+            if order[-1] != default: order.append(default)
+            for target in order:
+                with self.lock:
+                    if self.stopping: raise RuntimeError('启动准备已停止')
+                    self.boot['target'] = self.target = target
+                    self.phase = 'switching'
+                self._switch(target)
+                if self.phase != 'ready':
+                    raise RuntimeError(self.error or '模型准备失败')
+                if target == 'acdc':
+                    state = self.board.health()
+                    if (state.get('lifecycle') != 'pause-resume-v1' or
+                            state.get('resident_handoff') != 'resident-hub-v1' or
+                            not self.board.can_park_heart()):
+                        raise RuntimeError('ACDC 缺少常驻暂停支持，请先核对部署版本')
+                else:
+                    state = self.board.hub()
+                    if (state.get('lifecycle') != 'resident-hub-v1' or
+                            state.get('backend', {}).get('lifecycle') != 'pause-resume-v1'):
+                        raise RuntimeError('双模型缺少常驻暂停支持，请先核对部署版本')
+                with self.lock:
+                    if target not in self.boot['completed']: self.boot['completed'].append(target)
+            for unit in (ENGINE, WEB, HUB, 'pld-web.service', 'pld-camus.service'):
+                if not self.board.running(unit):
+                    raise RuntimeError(unit + ' 未保留常驻进程，不能宣布全部准备完成')
+            with self.lock:
+                if self.stopping: raise RuntimeError('启动准备已停止')
+                self.boot['state'] = 'ready'
+                self.phase = 'ready'
+            self.display.restore(default)
+        except Exception as exc:
+            with self.lock:
+                self.boot['state'] = 'error'
+                self.phase = 'error'
+                self.error = '开机准备未完成：' + str(exc)
+            print('BOOT_PREPARATION_ERROR', str(exc), flush=True)
+        finally:
+            with self.lock:
+                if self.boot_started is not None:
+                    self.boot['elapsed_seconds'] = time.monotonic()-self.boot_started
 
     def wait(self, check, seconds=300):
         deadline = time.monotonic() + seconds
@@ -218,7 +284,7 @@ class Controller:
                         state = board.hub()
                         if state['phase'] == 'error':
                             raise RuntimeError(state.get('error') or '原入口报告故障')
-                        return (state['phase'] in ('ready','paused') and not state.get('evaluation_busy')
+                        return (state['phase'] in ('ready','paused') and not state.get('evaluation_busy') and not state.get('proxy_busy')
                                 and not state.get('interactive_busy')
                                 and not state.get('backend', {}).get('active'))
                     self.wait(dual_idle)
@@ -302,12 +368,13 @@ class Controller:
                 self.model = target
                 self.url = url
                 self.phase = 'ready'
-                self.settings['last_model'] = target
-                self.save_settings()
+                if self.boot['state'] != 'running':
+                    self.settings['last_model'] = target
+                    self.save_settings()
                 self.metrics['total'] = time.monotonic()-self.switch_started
                 print('ENTRY_SWITCH_TIMING', json.dumps(dict(model=target, stages=self.metrics)), flush=True)
                 self.switch_started = None
-            self.display.restore(target)
+            if self.boot['state'] != 'running': self.display.restore(target)
         except Exception as exc:
             with self.lock:
                 self.phase = 'error'
@@ -346,10 +413,16 @@ class Handler(BaseHTTPRequestHandler):
         controller = self.server.controller
         # Keep the old hub and its SAMEORIGIN iframe on this entry's origin.
         # Its own generation check continues to reject stale pages.
+        # Only mutations participate in hardware/lifecycle serialization. A
+        # slow display request must not queue status, previews or downloads.
+        started = time.monotonic()
         with controller.proxy_lock if self.command == 'POST' else nullcontext():
+            lock_wait = time.monotonic() - started
+            if self.command == 'POST':
+                print('ENTRY_PROXY_WAIT', round(lock_wait, 6), self.path, flush=True)
             with controller.lock:
                 match = re.match(r'^/(skin|camus)/g/(\d+)/(.*)', self.path)
-                if not match or controller.phase != 'ready' or match[1] != controller.model:
+                if controller.boot['state']=='running' or not match or controller.phase != 'ready' or match[1] != controller.model:
                     return self.send(409, {'error': '模型已切换，请等待新页面'})
             board = controller.board
             prefix = f'/{match[1]}/g/{match[2]}/'
@@ -397,6 +470,7 @@ class Handler(BaseHTTPRequestHandler):
                         self.send_header(key, response.getheader(key))
                 self.send_header('Cache-Control', 'no-store')
                 self.send_header('X-Frame-Options', 'SAMEORIGIN')
+                self.send_header('X-PLD-Proxy-Wait-Seconds', str(round(lock_wait, 6)))
                 self.end_headers()
                 while True:
                     chunk = response.read(128 * 1024)
@@ -432,7 +506,6 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send(200, self.server.controller.display.task(body))
             if self.path == '/entry/settings':
                 result=self.server.controller.display.settings(body)
-                if body.get('auto_hdmi') is True:self.server.controller.display.restore(self.server.controller.model)
                 return self.send(200,result)
             self.send(202, self.server.controller.switch(body['model']))
         except (ValueError, KeyError, TypeError) as exc:
@@ -457,7 +530,7 @@ def main():
         threading.Thread(target=server.shutdown, daemon=True).start()
     signal.signal(signal.SIGTERM, stop)
     signal.signal(signal.SIGINT, stop)
-    controller.switch(controller.settings['last_model'])
+    controller.start_boot_preparation()
     try:
         server.serve_forever()
     finally:

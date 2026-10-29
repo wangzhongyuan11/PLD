@@ -40,7 +40,11 @@ def compose(images, titles=None, width=640, height=480):
 def skin_frame(folder):
     folder = Path(folder)
     def read(name):
-        with Image.open(folder/(name+'.png')) as im:
+        # Completed jobs already have bounded previews. Replay old jobs via the
+        # full image only when that preview is absent; exports stay untouched.
+        path = folder/('preview_'+name+'.png')
+        if not path.is_file(): path = folder/(name+'.png')
+        with Image.open(path) as im:
             return thumbnail(im, nearest=name in ('mask', 'contour'))
     original = read('original') if (folder/'original.png').exists() else read('mask')
     titles = ['Original' if (folder/'original.png').exists() else 'Mask replay (no original)',

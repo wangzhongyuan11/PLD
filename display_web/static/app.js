@@ -42,11 +42,16 @@ async function refreshStatus() {
     $('connection').textContent=status.warmup==='running' ? '开机预热中 · 请稍候' : status.mode==='board' ? 'PYNQ 板端服务' : '电脑本地服务';
     $('mode').querySelector('[value=infer]').disabled=!status.inference_available;
     $('hdmiState').textContent=status.hdmi==='showing' ? '正在显示 · 四宫格' : status.hdmi==='starting' ? '正在启动 HDMI…' : status.hdmi_available ? '已就绪，等待显示' : '电脑预览模式 · 未启用 HDMI';
+    if($('hdmiTiming')) {
+      const seconds=status.hdmi_job===current?.id ? status.hdmi_timing?.request_to_first_frame_submit_seconds : null;
+      $('hdmiTiming').textContent=Number.isFinite(seconds)?'上传至 HDMI 首帧提交：'+seconds.toFixed(2)+' 秒（软件记录）':'HDMI 首帧耗时单独记录；结果包耗时不含显示启动。';
+    }
     if(status.warmup==='running') message('正在提前初始化模型与 FPGA，完成后即可处理图片。');
     else if(previousWarmup==='running' && status.warmup==='ready') message('开机预热完成，可以开始处理图片。');
     previousWarmup=status.warmup;
     if(status.fault) message(status.fault,true);
     if(status.runtime_error) message('板端计算包未就绪：'+status.runtime_error,true);
+    if(status.display_notification?.job===current?.id && status.display_notification?.error) message('分割结果已保留，自动显示通知失败：'+status.display_notification.error,true);
     buttons();
     if(!busy && !preparing && status.active) void resumeActive(status.active);
   } catch(e) { $('connection').textContent='服务未连接'; message(e.message,true); }
@@ -71,7 +76,7 @@ function resultStatistics(job) {
   if($('timeLabel')) $('timeLabel').textContent=complete?'完整结果包总耗时':'预览就绪耗时';
   const seconds=complete ? (s.request_to_job_complete_seconds ?? s.processing_seconds) : s.preview_ready_seconds;
   $('time').textContent=Number.isFinite(seconds) ? seconds.toFixed(2)+' s' : '—';
-  $('timingNote').textContent=complete ? '服务端总时：请求接收到完整结果包生成。网页与下载结果均保留上传图片的尺寸。' : '当前显示服务端预览就绪耗时。原尺寸图片与结果包正在后台生成，完成后可下载和发送到 HDMI。';
+  $('timingNote').textContent=complete ? '服务端总时：请求接收到完整结果包生成，不含 HDMI 启动。首帧提交耗时见 HDMI 区域；下载结果保留上传图片的尺寸。' : '当前显示服务端预览就绪耗时。原尺寸图片与结果包正在后台生成，完成后可下载和发送到 HDMI。';
   $('sourceNote').textContent=s.data_source;
 }
 async function watchCurrent(clientTimes, clickStarted) {
@@ -253,7 +258,9 @@ function timingText(job,clientTimes) {
   lines.push('','服务端测量');
   for(const [k,label] of Object.entries(timingLabels)) if(Number.isFinite(stages[k])) lines.push(label+'：'+stages[k].toFixed(3)+' 秒');
   if(!Object.keys(stages).length) lines.push('这条记录没有服务端分阶段数据，请更新后重新处理。');
-  for(const [key,label] of [['model_reused','本次复用模型'],['hardware_reused','本次复用 FPGA 环境']]) if(typeof stages[key]==='boolean') lines.push(label+'：'+(stages[key]?'是':'否'));
+  for(const [key,label] of [['model_reused','本次复用模型'],['hardware_reused','本次复用 FPGA 环境'],['artifacts_reused','本次复用参数缓存']]) if(typeof stages[key]==='boolean') lines.push(label+'：'+(stages[key]?'是':'否'));
+  if(stages.core_startup_stages) for(const [key,value] of Object.entries(stages.core_startup_stages)) if(Number.isFinite(value)) lines.push('计算环境准备 / '+key+'：'+value.toFixed(3)+' 秒（已含在初始化中）');
+  if(job.display_notification?.error) lines.push('自动显示通知失败：'+job.display_notification.error);
   if(stages.runtime_check_kind) lines.push('运行包校验方式：'+(stages.runtime_check_kind==='metadata_unchanged'?'文件属性未变，复用完整校验结果':'完整 SHA256 校验'));
   if(stats.output_png_backend) lines.push('PNG 编码方式：'+stats.output_png_backend);
   if(stages.inference_backend) lines.push('推理方式：'+stages.inference_backend);

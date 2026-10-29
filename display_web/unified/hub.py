@@ -98,16 +98,18 @@ class Controller:
         self.generation=0;self.thread=None;self.stopping=False
         self.metrics={};self.last_backend={}
         self.parked=False
+        self.proxy_busy=False
+        self.proxy_idle=threading.Event();self.proxy_idle.set()
     def snapshot(self):
         with self.lock:return dict(model=self.model,target=self.target,phase=self.phase,error=self.error,
-            generation=self.generation,interactive_busy=getattr(self,'interactive_busy',False),evaluation_busy=getattr(self,'evaluation_busy',False),memory=memory(),switch=self.metrics,backend=self.last_backend,
+            generation=self.generation,interactive_busy=getattr(self,'interactive_busy',False),evaluation_busy=getattr(self,'evaluation_busy',False),proxy_busy=self.proxy_busy,memory=memory(),switch=self.metrics,backend=self.last_backend,
             lifecycle='resident-hub-v1',owner_pid=os.getpid(),hardware_released=self.parked)
     def lifecycle(self,action,target=None):
         if action=='resume':return self.switch(target,resume=True)
         if action!='pause':raise ValueError('未知生命周期操作')
         with self.lock:
             if self.parked:return self.snapshot()
-            if self.stopping or self.phase!='ready' or getattr(self,'interactive_busy',False) or getattr(self,'evaluation_busy',False):
+            if self.stopping or self.proxy_busy or self.phase!='ready' or getattr(self,'interactive_busy',False) or getattr(self,'evaluation_busy',False):
                 raise RuntimeError('当前任务或切换未完成')
             self.phase='pausing';self.generation+=1
         try:
@@ -124,6 +126,7 @@ class Controller:
         if target not in UNITS:raise ValueError('未知模型')
         with self.lock:
             if self.stopping:raise RuntimeError('入口正在停止')
+            if self.proxy_busy:raise RuntimeError('操作正在提交，请稍候再切换')
             if getattr(self,'evaluation_busy',False):raise RuntimeError('评测进行中，请等待恢复模型')
             if self.parked and not resume:raise RuntimeError('入口已暂停，请通过统一入口选择模型')
             if getattr(self,'interactive_busy',False):raise RuntimeError('交互任务处理中，请完成后切换模型')
@@ -194,26 +197,35 @@ class Controller:
             with self.lock:self.phase='error';self.error=str(exc)
             print('SWITCH_ERROR',str(exc),flush=True)
     def proxy(self,model,generation,method,path,body,kind):
-        if method=='GET':
-            with self.lock:
-                if self.phase!='ready' or self.model!=model or generation!=self.generation:
-                    raise RuntimeError('模型已切换或正在初始化，请等待新页面')
-            return self.board.request(model,method,path,body,kind)
+        mutation=method=='POST'
         with self.lock:
+            if self.stopping:raise RuntimeError('入口正在停止')
             if getattr(self,'evaluation_busy',False):raise RuntimeError('评测独占硬件，等待恢复模型')
             if self.phase!='ready' or self.model!=model or generation!=self.generation:raise RuntimeError('模型已切换或正在初始化，请等待新页面')
-            if method=='POST' and getattr(self,'interactive_busy',False):raise RuntimeError('交互任务处理中，请稍候')
-            # Serialize submit/control vs switch. Switching cannot overtake an
-            # upload accepted by the backend but not yet returned to the hub.
-            if path.split('?',1)[0]!='/api/jobs':
+            if mutation and (self.proxy_busy or getattr(self,'interactive_busy',False)):raise RuntimeError('任务或操作正在提交，请稍候')
+            if mutation:
+                # Reserve admission while network I/O runs without the state
+                # lock. Switch/evaluation/ROI cannot overtake an unacked POST.
+                self.proxy_busy=True;self.proxy_idle.clear()
+        try:
+            # Reads never acquire hardware; retain the local preview fast path.
+            # Every mutation still confirms the other owner's release.
+            if mutation:
                 other='camus' if model=='skin' else 'skin'
                 if self.board.props(other)['ActiveState']!='inactive':
                     state=self.board.status(other)
                     if not (state.get('suspended') and state.get('hardware_released') and state.get('hdmi')=='off'):
                         raise RuntimeError('另一个模型未释放硬件，请检查占用')
+            with self.lock:
+                if self.phase!='ready' or self.model!=model or generation!=self.generation:
+                    raise RuntimeError('模型已切换，请等待新页面')
             return self.board.request(model,method,path,body,kind)
+        finally:
+            if mutation:
+                with self.lock:self.proxy_busy=False;self.proxy_idle.set()
     def close(self):
         with self.lock:self.stopping=True
+        if not self.proxy_idle.wait(60):raise RuntimeError('代理操作未结束，保留当前服务与硬件现场')
         if getattr(self,'evaluation',None) and self.evaluation.thread:
             self.evaluation.cancelled.set();self.evaluation.thread.join()
         if hasattr(self,'interactive') and self.interactive.thread:self.interactive.thread.join()
