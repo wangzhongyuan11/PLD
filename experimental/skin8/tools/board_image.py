@@ -8,17 +8,57 @@ import struct
 from pathlib import Path
 
 
-def build_image(directory, regions):
-    directory=Path(directory)
-    manifest=json.loads((directory/'manifest.json').read_text())
-    schedule=json.loads((directory/'descriptors.json').read_text())
-    descriptors=schedule['descriptors']
-    def artifact(name):
-        data=(directory/name).read_bytes()
-        record=manifest['artifacts'][name]
-        if len(data)!=record['bytes'] or hashlib.sha256(data).hexdigest()!=record['sha256']:
-            raise ValueError('artifact integrity failure: '+name)
+class PreparedArtifacts:
+    """Verified CPU bytes only; never retains MMIO, DMA buffers or addresses.
+
+    A changed file invalidates this frozen snapshot instead of mixing versions.
+    The cache belongs to one worker and is discarded on service shutdown.
+    """
+    def __init__(self, directory):
+        self.directory = Path(directory).absolute()
+        self.files = {}
+        self.signatures = {}
+        self.manifest = json.loads(self._read('manifest.json'))
+        self.schedule = json.loads(self._read('descriptors.json'))
+
+    def _signature(self, name):
+        path = self.directory / name
+        stat = path.stat()
+        return (str(path.resolve()), stat.st_dev, stat.st_ino, stat.st_size,
+                stat.st_mtime_ns, stat.st_ctime_ns)
+
+    def _read(self, name):
+        before = self._signature(name)
+        data = (self.directory / name).read_bytes()
+        if before != self._signature(name):
+            raise ValueError('artifact changed while reading: ' + name)
+        self.signatures[name] = before
         return data
+
+    def check_unchanged(self):
+        for name, signature in self.signatures.items():
+            if self._signature(name) != signature:
+                raise ValueError('frozen artifact changed; restart worker: ' + name)
+
+    def artifact(self, name):
+        if name not in self.files:
+            data = self._read(name)
+            record = self.manifest['artifacts'][name]
+            if len(data) != record['bytes'] or hashlib.sha256(data).hexdigest() != record['sha256']:
+                raise ValueError('artifact integrity failure: ' + name)
+            self.files[name] = data
+        return self.files[name]
+
+
+def build_image(directory, regions, prepared=None):
+    prepared = prepared if prepared is not None else PreparedArtifacts(directory)
+    if prepared.directory != Path(directory).absolute():
+        raise ValueError('prepared artifacts belong to another model directory')
+    prepared.check_unchanged()
+    manifest=prepared.manifest
+    schedule=prepared.schedule
+    descriptors=schedule['descriptors']
+    artifact=prepared.artifact
     weights=bytearray();weight_offsets=[]
     tables=bytearray()
     for layer in range(15):
@@ -76,5 +116,6 @@ def build_image(directory, regions):
         row[48:112]=artifact(d['params_file'])[d['params_offset']:d['params_offset']+64]
         if len(row)!=128:raise ValueError('short parameter block')
         binary.extend(row)
+    prepared.check_unchanged()
     return {'weights':bytes(weights),'luts':bytes(tables),'descriptors':bytes(binary),
             'first_input':first,'required_sizes':sizes,'count':len(descriptors),'manifest':manifest}

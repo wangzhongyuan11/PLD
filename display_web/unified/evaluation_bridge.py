@@ -38,7 +38,7 @@ class Manager:
         from PIL import Image
         c=self.controller
         with c.lock:
-            if c.stopping or c.phase!='ready' or getattr(c,'interactive_busy',False) or getattr(c,'evaluation_busy',False):raise RuntimeError('当前模型或任务未就绪')
+            if c.stopping or c.phase!='ready' or getattr(c,'interactive_busy',False) or getattr(c,'evaluation_busy',False) or getattr(c,'proxy_busy',False):raise RuntimeError('当前模型或任务未就绪')
             if body.get('model')!=c.model or body.get('generation')!=c.generation:raise ValueError('模型已改变，请刷新')
             repeat=body.get('repeat',1);warmup=body.get('warmup',0)
             if type(repeat)!=int or not 1<=repeat<=10 or type(warmup)!=int or not 0<=warmup<=2:raise ValueError('重复次数1–10，预热0–2')

@@ -3,6 +3,7 @@ import signal
 import sys
 import time
 import threading
+import json
 from pathlib import Path
 from PIL import Image
 import numpy as np
@@ -24,15 +25,29 @@ def main(argv=None, stop=None):
         sys.path.insert(0, str(hub))
         from interactive_hdmi import run
         return run(folder, hub, stop_requested)
+    from latency import Stages
+    trace = Stages('skin_hdmi_first_frame')
     screen = skin_frame(folder)
+    trace.mark('preview_decode_compose')
     touch = TouchInput();touch_view = QuadTouch(screen);screen = touch_view.frame()
+    if stop_requested.is_set():
+        touch.close(); return
     from video_overlay import video_overlay
     from hdmi_buttons import DebouncedButtons, handle_press
     screens = [screen, screen, screen]
     base = video_overlay()
+    trace.mark('video_overlay')
     display = PynqHdmiDisplay(base.video.hdmi_out)
     try:
-        display.start(); display.show(screen)
+        display.start()
+        trace.mark('video_start')
+        display.show(screen)
+        trace.mark('first_frame_submit')
+        timing = dict(trace.snapshot(), first_frame_monotonic=time.monotonic(),
+                      scope='renderer start through first frame submission; not physical screen observation')
+        temporary = folder/'hdmi.timing.json.tmp'
+        temporary.write_text(json.dumps(timing), encoding='utf-8')
+        temporary.replace(folder/'hdmi.timing.json')
         (folder / "hdmi.ready").write_text("ready")
         debounce = DebouncedButtons(base.buttons.read(), time.monotonic())
         while not stop_requested.is_set():
