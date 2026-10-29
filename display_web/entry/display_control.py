@@ -5,6 +5,7 @@ import re
 import threading
 import time
 import uuid
+from collections import OrderedDict
 
 
 class DisplayControl:
@@ -17,6 +18,9 @@ class DisplayControl:
         self.closed = threading.Event()
         self.thread = None
         self.restored = None
+        self.begins = OrderedDict()
+        self.completed = OrderedDict()
+        self.last_request = None
         self.result_path = controller.state_dir/'last_results.json' if controller.state_dir else None
         self.last_results = {}
         if self.result_path and self.result_path.exists():
@@ -39,6 +43,11 @@ class DisplayControl:
         self.restored = None
         self.changed.set()
 
+    @staticmethod
+    def remember(cache, key, value):
+        cache[key] = value
+        while len(cache) > 64: cache.popitem(last=False)
+
     def task(self, body):
         c = self.controller
         with c.lock:
@@ -59,14 +68,30 @@ class DisplayControl:
             if c.phase != 'ready' or c.model != body.get('model'):
                 return {}
             if action == 'begin':
+                request_id = body.get('request_id')
+                if request_id is not None:
+                    if not isinstance(request_id, str) or not re.fullmatch('[0-9a-f]{32}', request_id):
+                        raise ValueError('无效通知编号')
+                    previous = self.begins.get(request_id)
+                    if previous:
+                        if any(previous.get(k) != body.get(k) for k in ('model', 'job', 'view', 'identity')):
+                            raise ValueError('通知编号与任务不符')
+                        # A lost HTTP reply must not cancel a newer task or
+                        # resurrect an intent invalidated by stop/switch.
+                        return dict(token=previous['token'])
                 self.cancel()
+                self.error = ''
                 self.current = dict(model=c.model, job=body['job'], view=body.get('view'),
                                     identity=body.get('identity'),token=uuid.uuid4().hex)
+                if request_id: self.remember(self.begins, request_id, dict(self.current))
                 return dict(token=self.current['token'])
             if action in ('done', 'failed'):
+                previous = self.completed.get(body.get('token'))
+                if previous and previous['job'] == body.get('job'):
+                    return dict(previous['reply'])
                 if (not self.current or body.get('token') != self.current['token']
                         or body.get('job') != self.current['job']):
-                    return {}
+                    return dict(accepted=False, reason='任务已失效或被取消')
                 completed=dict(self.current,job=body.get('display_job') or self.current['job'])
                 if action=='done':
                     if completed['view']=='interactive':
@@ -83,7 +108,9 @@ class DisplayControl:
                     self.current = None
                 else:
                     self.cancel()
-                return dict(queued=self.pending is not None)
+                reply = dict(accepted=True, queued=self.pending is not None)
+                self.remember(self.completed, body['token'], dict(job=body['job'], reply=reply))
+                return reply
             raise ValueError('未知任务通知')
 
     def settings(self, body):
@@ -98,7 +125,8 @@ class DisplayControl:
             return dict(c.settings)
 
     def snapshot(self):
-        return dict(pending=dict(self.pending) if self.pending else None, error=self.error,restored=self.restored)
+        return dict(pending=dict(self.pending) if self.pending else None, error=self.error,
+                    restored=self.restored, last_request=self.last_request)
 
     def restore(self, model):
         c=self.controller
@@ -142,38 +170,62 @@ class DisplayControl:
     def run(self):
         while not self.closed.is_set():
             self.changed.wait(.2); self.changed.clear()
-            c = self.controller
-            try:
-                with c.proxy_lock:
-                    with c.lock:
-                        request = self.pending
-                        if not request or c.phase != 'ready' or not c.settings['auto_hdmi']:
-                            continue
-                        if c.model != request['model']:
-                            self.cancel(); continue
-                    if request['model'] == 'acdc':
-                        status = c.board.health()
-                        busy = status.get('active_job') or status.get('hdmi') in ('starting', 'restoring')
-                    else:
-                        hub = c.board.hub()
-                        status = c.board.request(8765, '/'+request['model']+'/g/'+str(hub['generation'])+'/api/status')
-                        busy = (hub.get('interactive_busy') or hub.get('evaluation_busy')
-                                or status.get('active') or status.get('warmup') == 'running')
-                    if busy: continue
-                    with c.lock:
-                        if self.pending is not request or c.phase != 'ready': continue
-                        self.pending = None
-                    started = time.monotonic()
+            if not self.closed.is_set(): self.dispatch()
+
+    def dispatch(self):
+        """One bounded attempt; retain intent until an acknowledgement arrives."""
+        c = self.controller
+        request = None
+        started = time.monotonic()
+        try:
+            with c.proxy_lock:
+                with c.lock:
+                    request = self.pending
+                    if not request or c.phase != 'ready' or not c.settings['auto_hdmi']: return
+                    if c.model != request['model']:
+                        self.cancel(); return
+                    if time.monotonic() < request.get('retry_at', 0): return
+                if request['model'] == 'acdc':
+                    status = c.board.health()
+                    busy = status.get('active_job') or status.get('hdmi') in ('starting', 'restoring')
+                else:
+                    hub = c.board.hub()
+                    if hub.get('model') != request['model'] or hub.get('phase') != 'ready': return
+                    status = c.board.request(8765, '/'+request['model']+'/g/'+str(hub['generation'])+'/api/status')
+                    busy = (hub.get('interactive_busy') or hub.get('evaluation_busy') or hub.get('proxy_busy')
+                            or status.get('active') or status.get('warmup') == 'running')
+                if status.get('fault'): raise RuntimeError(status['fault'])
+                # Reconcile an ambiguous HTTP timeout before retrying show.
+                reconciled = (request['model'] == 'skin' and status.get('hdmi_job') == request['job']
+                              and status.get('hdmi_view') == (request['view'] or 'quad')
+                              and status.get('hdmi') in ('starting', 'showing'))
+                if busy and not reconciled: return
+                with c.lock:
+                    if self.pending is not request or c.phase != 'ready' or not c.settings['auto_hdmi']: return
+                if not reconciled:
                     if request['model'] == 'acdc':
                         c.board.request(8092, '/api/v2/hdmi',
                             dict(action='show', job=request['job'], _automatic=True))
                     else:
                         c.board.request(8765, '/'+request['model']+'/g/'+str(hub['generation'])+'/api/hdmi',
                             dict(action='show', id=request['job'], view=request['view'] or 'quad', _automatic=True))
-                    print('AUTO_HDMI_REQUEST', request['model'], request['job'],
-                          round(time.monotonic()-started, 3), flush=True)
-            except (OSError, RuntimeError, ValueError, http.client.HTTPException) as exc:
+                elapsed = time.monotonic()-started
                 with c.lock:
-                    self.error = str(exc)
-                    self.pending = None
-                print('AUTO_HDMI_ERROR', str(exc), flush=True)
+                    if self.pending is request:
+                        self.pending = None
+                        self.error = ''
+                        self.last_request = dict(model=request['model'], job=request['job'],
+                                                 request_seconds=elapsed, reconciled=reconciled)
+                print('AUTO_HDMI_REQUEST', request['model'], request['job'], round(elapsed, 3), flush=True)
+        except (OSError, RuntimeError, ValueError, http.client.HTTPException) as exc:
+            with c.lock:
+                if request is not None and self.pending is request:
+                    failures = request.get('failures', 0) + 1
+                    request.update(failures=failures, retry_at=time.monotonic()+.5)
+                    # Skin show is idempotent and exposes job/view for recovery.
+                    # Other backends retain their existing fail-closed behavior.
+                    retry = (request['model'] == 'skin' and failures < 2
+                             and isinstance(exc, (OSError, http.client.HTTPException)))
+                    self.error = ('自动显示暂未确认，正在核对：' if retry else '自动显示失败：') + str(exc)
+                    if not retry: self.pending = None
+            print('AUTO_HDMI_ERROR', str(exc), flush=True)

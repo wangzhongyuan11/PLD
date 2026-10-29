@@ -29,6 +29,11 @@ def agent_fixture(tmp_path,monkeypatch):
 def test_stop_immediately_after_show_acknowledges_cleanup_before_exit(tmp_path,monkeypatch):
     agent,script=agent_fixture(tmp_path,monkeypatch)
     session=agent.start([sys.executable,'-u',str(script),str(tmp_path/'ok')],tmp_path/'frame.log')
+    # Early cancellation before software readiness now skips rendering entirely.
+    # This test specifically exercises stop after a show command was sent.
+    deadline=time.monotonic()+5
+    while not session.command_sent and time.monotonic()<deadline:time.sleep(.01)
+    assert session.command_sent
     session.terminate()
     assert session.wait(5)==0
     assert (tmp_path/'ok.closed').exists()

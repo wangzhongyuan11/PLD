@@ -1,5 +1,6 @@
 """Small LAN entry around the existing ACDC and dual-model applications."""
 import argparse
+from contextlib import nullcontext
 import http.client
 import json
 from pathlib import Path
@@ -208,7 +209,7 @@ class Controller:
                         state = board.hub()
                         if state['phase'] == 'error':
                             raise RuntimeError(state.get('error') or '原入口报告故障')
-                        return (state['phase'] in ('ready','paused') and not state.get('evaluation_busy')
+                        return (state['phase'] in ('ready','paused') and not state.get('evaluation_busy') and not state.get('proxy_busy')
                                 and not state.get('interactive_busy')
                                 and not state.get('backend', {}).get('active'))
                     self.wait(dual_idle)
@@ -333,7 +334,13 @@ class Handler(BaseHTTPRequestHandler):
         controller = self.server.controller
         # Keep the old hub and its SAMEORIGIN iframe on this entry's origin.
         # Its own generation check continues to reject stale pages.
-        with controller.proxy_lock:
+        # Only mutations participate in hardware/lifecycle serialization. A
+        # slow display request must not queue status, previews or downloads.
+        started = time.monotonic()
+        with controller.proxy_lock if self.command == 'POST' else nullcontext():
+            lock_wait = time.monotonic() - started
+            if self.command == 'POST':
+                print('ENTRY_PROXY_WAIT', round(lock_wait, 6), self.path, flush=True)
             with controller.lock:
                 match = re.match(r'^/(skin|camus)/g/(\d+)/(.*)', self.path)
                 if not match or controller.phase != 'ready' or match[1] != controller.model:
@@ -384,6 +391,7 @@ class Handler(BaseHTTPRequestHandler):
                         self.send_header(key, response.getheader(key))
                 self.send_header('Cache-Control', 'no-store')
                 self.send_header('X-Frame-Options', 'SAMEORIGIN')
+                self.send_header('X-PLD-Proxy-Wait-Seconds', str(round(lock_wait, 6)))
                 self.end_headers()
                 while True:
                     chunk = response.read(128 * 1024)
@@ -419,7 +427,6 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send(200, self.server.controller.display.task(body))
             if self.path == '/entry/settings':
                 result=self.server.controller.display.settings(body)
-                if body.get('auto_hdmi') is True:self.server.controller.display.restore(self.server.controller.model)
                 return self.send(200,result)
             self.send(202, self.server.controller.switch(body['model']))
         except (ValueError, KeyError, TypeError) as exc:

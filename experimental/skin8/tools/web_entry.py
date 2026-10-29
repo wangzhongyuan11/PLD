@@ -29,7 +29,7 @@ def runtime_identity(kind):
                           hashlib.sha256((HERE/'skin8.bit').read_bytes()).digest()).hexdigest()
 
 class Core:
-    def __init__(self,kind):
+    def __init__(self,kind,prepared=None):
         from latency import Stages
         trace=Stages('skin8_'+kind+'_core')
         OWNER.acquire()
@@ -58,8 +58,9 @@ class Core:
         trace.mark('metadata_bind')
         if not loaded:self.overlay.download()
         trace.mark('program_overlay')
-        self.session=FrameSession(HERE/'models'/kind,MMIO(0x43c00000,0x1000),allocate)
+        self.session=FrameSession(HERE/'models'/kind,MMIO(0x43c00000,0x1000),allocate,prepared=prepared)
         trace.mark('frame_session')
+        self.startup_timing=trace.snapshot()
     def run(self,q):
         head,t=self.session.run(q,timeout=10)
         return dict(head=head,host_timing=dict(seconds=t['input_to_owned_head_seconds'],**t))
@@ -73,7 +74,8 @@ class Core:
 
 
 class SkinWorker:
-    def __init__(self,runtime,*args,**kwargs):self.core=None;self.runtime=runtime;self.failure=None
+    def __init__(self,runtime,*args,**kwargs):
+        self.core=None;self.runtime=runtime;self.failure=None;self.prepared=None
     def check_manifest(self):
         assert (HERE/'skin8.bit').is_file()
     def run(self,argv,log_path):
@@ -86,7 +88,10 @@ class SkinWorker:
     def _run(self,argv,log_path):
         from reference.preprocess import decode_rgb,letterbox_int8
         started=time.perf_counter();reused=self.core is not None
-        if not self.core:self.core=Core('skin')
+        artifacts_reused=self.prepared is not None
+        if not self.core:
+            self.core=Core('skin',prepared=self.prepared)
+            self.prepared=self.core.session.prepared
         startup=time.perf_counter()-started
         if '--warmup-only' not in argv:
             source=Path(argv[0]);out=Path(argv[argv.index('--output')+1]);out.mkdir(parents=True,exist_ok=False)
@@ -100,10 +105,15 @@ class SkinWorker:
             report=dict(status='success',shape=[1,1,256,256],dtype='int8',layout='NCHW',comparison='>=',model_name='soup_v5_a050',model_spec_sha256=spec,model_manifest_sha256='e47eb18b94369451b36790971f4e0db62b2d128f424937e00f2768e866a30936',threshold_q=-1,threshold_probability=.45,head_output_scale=self.core.model.layers[-1]['output_scale'],frame_id=1,valid_rect=rect,input_metadata=metadata,output_sha256=hashlib.sha256(head.tobytes()).hexdigest(),online_b_seconds=prep+inference,inference_seconds=inference,preprocess_seconds=prep,bit_sha256=hashlib.sha256((BUILD/'skin8.bit').read_bytes()).hexdigest(),abi_version='SKIN8-v0',execution_backend='skin8_125',execution_phases=result['host_timing'],source_name=source.name)
             (out/'frame_000001.bin').write_bytes(head.tobytes());(out/'frame_000001.json').write_text(json.dumps(report,indent=2))
             Path(log_path).write_text('SKIN8_SKIN_INFERENCE_COMPLETED_NOT_REFERENCE_CHECKED\n'+json.dumps(result['host_timing'],indent=2))
-        return dict(model_reused=reused,hardware_reused=reused,startup_seconds=startup,request_seconds=time.perf_counter()-started,worker_pid=os.getpid(),alive_after_reply=True)
-    def release_hardware(self,*args):self.close()
-    def close(self):
+        return dict(model_reused=reused,hardware_reused=reused,artifacts_reused=artifacts_reused,
+                    core_startup_stages={} if reused else self.core.startup_timing['stages_seconds'],
+                    startup_seconds=startup,request_seconds=time.perf_counter()-started,worker_pid=os.getpid(),alive_after_reply=True)
+    def release_hardware(self,*args):
+        # Keep verified CPU bytes across HDMI, but release every hardware buffer.
         if self.core:self.core.close();self.core=None
+    def close(self):
+        self.release_hardware()
+        self.prepared=None
 
 
 def serve_skin(display_agent=None):

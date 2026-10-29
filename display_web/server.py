@@ -168,10 +168,12 @@ class Console:
         self.boot_id = boot_id or current_boot_id()
         self.restore_history()
         self.active = None
+        self.latest_job = None
         self.suspended = False
         self.hdmi = None
         self.hdmi_job = None
         self.hdmi_view = None
+        self.hdmi_metrics = None
         self.display_agent = display_agent
         if display_agent is None and self.board and os.environ.get('PLD_WARM_HDMI') == '1':
             from warm_hdmi import WarmHDMI
@@ -255,11 +257,26 @@ class Console:
             if self.hdmi is not None and not running and self.hdmi.returncode != 0:
                 self.fault = "HDMI 子进程异常退出，请检查板端日志并重启服务确认硬件状态"
             ready = running and (self.data / self.hdmi_job / "hdmi.ready").exists()
+            failure = getattr(self.hdmi, 'failure', '') if self.hdmi is not None else ''
+            if isinstance(failure, str) and failure: self.fault = failure
+            if ready and self.hdmi_metrics is None:
+                try:
+                    timing = json.loads((self.data/self.hdmi_job/'hdmi.timing.json').read_text(encoding='utf-8'))
+                    job = self.jobs[self.hdmi_job]
+                    completed = job.get('zip_complete_monotonic')
+                    if completed is not None:
+                        delta = max(0, timing['first_frame_monotonic']-completed)
+                        timing['result_to_first_frame_submit_seconds'] = delta
+                        timing['request_to_first_frame_submit_seconds'] = job['statistics']['request_to_job_complete_seconds']+delta
+                    self.hdmi_metrics = timing
+                except (OSError, ValueError, KeyError): pass
             return {"mode": "board" if self.board else "local", "inference_available": self.runtime_ok and not self.fault and self.warmup_state != "running",
                     "warmup": self.warmup_state, "warmup_seconds": self.warmup_seconds,
                     "hdmi_available": self.board and not self.fault and self.warmup_state != "running", "active": self.active,
                     "hdmi": "showing" if ready else "starting" if running else "off",
                     "hdmi_view": self.hdmi_view if running else None,
+                    "hdmi_job": self.hdmi_job if running else None, "hdmi_timing": self.hdmi_metrics,
+                    "display_notification": dict(job=self.latest_job, **(self.jobs.get(self.latest_job, {}).get('display_notification') or {})),
                     "fault": self.fault, "runtime_error": self.runtime_error}
 
     def job(self, ident):
@@ -277,6 +294,7 @@ class Console:
         width = body.get("thickness", 2)
         if type(width) is not int or not 1 <= width <= 8: raise ValueError("线宽须为 1–8 的整数")
         with self.lock:
+            self.status()  # Surface asynchronous display faults before admission.
             if self.suspended:raise RuntimeError('模型已暂停，请先通过统一入口选择皮肤镜')
             if self.warmup_state == "running": raise RuntimeError("模型和 FPGA 正在预热，请稍候")
             if self.active: raise RuntimeError("已有任务处理中，请等待完成")
@@ -301,6 +319,7 @@ class Console:
                                 "mode": mode, "name": str(body.get("name", "ISIC_0000003 · 真实掩膜回放"))[:120],
                                 "thickness": width, "created": time.time()}
             self.active = ident
+            self.latest_job = ident
             completion = None if body.get('auto_display') is False else Completion('skin', ident, 'outlined',getattr(self,'runtime_identity',None))
             threading.Thread(target=self._run,
                              args=(ident, mode, raw, rgb, mask, width,
@@ -324,6 +343,7 @@ class Console:
                 self.fault = "HDMI 异常退出，请检查板端日志后重启服务"
                 raise RuntimeError(self.fault)
             self.hdmi = None; self.hdmi_job = None; self.hdmi_view = None
+            self.hdmi_metrics = None
 
     def close(self):
         """Stop the optional idle B worker without disturbing HDMI ownership."""
@@ -357,13 +377,28 @@ class Console:
                     self.fault = "推理硬件释放未确认，禁止启动 HDMI；请检查日志并重启服务"
                     raise RuntimeError(self.fault) from exc
             (folder / "hdmi.ready").unlink(missing_ok=True)
+            (folder / "hdmi.timing.json").unlink(missing_ok=True)
+            self.hdmi_metrics = None
             command=[sys.executable, str(ROOT / "hdmi_worker.py"), str(folder), view]
-            if self.display_agent:self.hdmi=self.display_agent.start(command,folder/'hdmi.log')
+            if self.display_agent:self.hdmi=self.display_agent.start(command,folder/'hdmi.log',ready_path=folder/'hdmi.ready')
             else:
                 with (folder / "hdmi.log").open("w", encoding="utf-8") as log:
                     self.hdmi = subprocess.Popen(command, stdout=log, stderr=log)
             self.hdmi_job, self.hdmi_view = ident, view
+            if not self.display_agent:
+                threading.Thread(target=self._watch_hdmi, args=(self.hdmi, folder), daemon=True).start()
             return self.status()
+
+    def _watch_hdmi(self, process, folder, timeout=120):
+        deadline = time.monotonic()+timeout
+        while time.monotonic() < deadline:
+            with self.lock:
+                if self.hdmi is not process or process.poll() is not None or (folder/'hdmi.ready').exists(): return
+            time.sleep(.1)
+        with self.lock:
+            if self.hdmi is process and process.poll() is None and not (folder/'hdmi.ready').exists():
+                self.fault = 'HDMI 首帧提交超时，硬件释放尚未确认；已禁止新硬件操作'
+                process.terminate()
 
     def _run(self, ident, mode, raw, rgb, mask, width, request_started, upload_stages=None, completion=None):
         folder = self.data / ident; folder.mkdir()
@@ -410,6 +445,8 @@ class Console:
                         raise
                     stages["model_reused"] = response.get("model_reused", False)
                     stages["hardware_reused"] = response.get("hardware_reused", False)
+                    stages["artifacts_reused"] = response.get("artifacts_reused", False)
+                    stages["core_startup_stages"] = response.get("core_startup_stages", {})
                     stages["persistent_worker_startup"] = response["startup_seconds"]
                     stages["persistent_worker_request"] = response["request_seconds"]
                     stages["persistent_worker_pid"] = response["worker_pid"]
@@ -558,7 +595,8 @@ class Console:
             stats["job_total_seconds"] = stages["job_total"]
             stats["request_to_job_complete_seconds"] = stages["request_to_job_complete"]
             completed = self.job(ident)
-            completed.update(state="done", package_ready=True, stage="完整结果包已就绪", progress=100, views=views, statistics=stats)
+            completed.update(state="done", package_ready=True, stage="完整结果包已就绪", progress=100, views=views, statistics=stats,
+                             zip_complete_monotonic=time.monotonic())
             # Commit only after every output is complete. Interrupted jobs never
             # appear as successful history after a service restart.
             temp = folder/'job.json.tmp'
@@ -570,7 +608,8 @@ class Console:
                         stage_seconds=stages, png_save_seconds=png_timings)
         finally:
             with self.lock: self.active = None
-            if completion: completion.finish(self.job(ident).get('state') == 'done')
+            if completion:
+                self.update(ident, display_notification=completion.finish(self.job(ident).get('state') == 'done'))
 
 
 class Handler(BaseHTTPRequestHandler):
