@@ -224,6 +224,7 @@ class TimingAndIsolationTests(unittest.TestCase):
         manager.controller = SimpleNamespace(generation=1, lock=threading.RLock(),
                                              interactive_busy=True, phase='ready', stopping=False)
         manager.guard = threading.Lock()
+        manager.changed = threading.Condition(manager.guard)
         manager.job = None
         manager.image_slot = None
         manager.display_cache_key = None
@@ -237,7 +238,7 @@ class TimingAndIsolationTests(unittest.TestCase):
         second = manager.snapshot('b' * 32)['result']
         self.assertEqual(set(first['baseline']['outputs']), {'labels_png', 'target_mask_png', 'overlay_png'})
         self.assertEqual(set(second['baseline']['outputs']), {'labels_png', 'target_mask_png', 'overlay_png'})
-        self.assertEqual(len(second['outputs']), 5)
+        self.assertEqual(set(second['outputs']), {'labels_png','target_mask_png','overlay_png','original_png'})
         self.assertEqual(second['baseline']['outputs']['labels_png'], first['baseline']['outputs']['labels_png'])
         self.assertTrue(second['baseline']['cache_hit'])
 

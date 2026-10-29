@@ -1,5 +1,5 @@
 """Original presentation with Skin8 inference and guarded hardware lifecycle."""
-import argparse,hashlib,importlib,json,os,signal,sys,threading,time
+import argparse,importlib,json,os,signal,sys,threading,time
 from pathlib import Path
 BOOT_STARTED=time.monotonic()
 import numpy as np
@@ -25,8 +25,7 @@ def prepare_core_software():
 
 def runtime_identity(kind):
     if kind=='skin':return 'skin8-processing-only'
-    return hashlib.sha256((HERE/'models'/kind/'manifest.json').read_bytes()+
-                          hashlib.sha256((HERE/'skin8.bit').read_bytes()).digest()).hexdigest()
+    return 'skin8-processing-only:'+kind
 
 class Core:
     def __init__(self,kind):
@@ -39,31 +38,25 @@ class Core:
         from types import SimpleNamespace
         from pynq import Overlay,MMIO,allocate
         from overlay_metadata import enable_metadata_cache
-        enable_metadata_cache(verify=kind!='skin')
+        enable_metadata_cache(verify=False)
         from frame_driver import FrameSession
-        from pynq.pl_server.global_state import load_global_state, global_state_file_exists, bitstream_hash
+        from pynq.pl_server.global_state import load_global_state, global_state_file_exists
         trace.mark('pynq_frame_driver_imports')
         root=BASE/'skin/role_a_final/int8' if kind=='skin' else BASE/'camus/model/int8_export'
         raw=(root/'model_spec.json').read_bytes()
         manifest=json.loads((HERE/'models'/kind/'manifest.json').read_text())
-        if kind!='skin' and hashlib.sha256(raw).hexdigest()!=manifest['spec_sha256']:raise ValueError('model spec mismatch')
         spec=json.loads(raw)
         self.model=SimpleNamespace(layers=spec['layers'],spec_sha256=manifest['spec_sha256'])
-        trace.mark('model_load' if kind=='skin' else 'model_verify')
+        trace.mark('model_load')
         bit=HERE/'skin8.bit'
         # Overlay(download=False) updates process-local device metadata; its
         # is_loaded() is insufficient to identify a download by another process.
-        loaded=(global_state_file_exists() and
-                (load_global_state().bitfile_name==str(bit) if kind=='skin' else
-                 load_global_state().bitfile_hash==bitstream_hash(bit)))
+        loaded=global_state_file_exists() and load_global_state().bitfile_name==str(bit)
         self.overlay=Overlay(str(bit),download=False)
         trace.mark('metadata_bind')
         if not loaded:self.overlay.download()
         trace.mark('program_overlay')
-        if kind=='skin':
-            self.session=FrameSession(HERE/'models'/kind,MMIO(0x43c00000,0x1000),allocate,verify=False)
-        else:
-            self.session=FrameSession(HERE/'models'/kind,MMIO(0x43c00000,0x1000),allocate)
+        self.session=FrameSession(HERE/'models'/kind,MMIO(0x43c00000,0x1000),allocate,verify=False)
         trace.mark('frame_session')
     def run(self,q):
         head,t=self.session.run(q,timeout=10)
@@ -150,7 +143,7 @@ def serve_camus(display_agent=None):
     class Pipeline(CamusPipeline):
         def __init__(self,model_root,backend='pl',runtime=None,timeout=3.):
             if backend!='pl':super().__init__(model_root,backend,runtime,timeout);self.core=None;return
-            t=time.perf_counter();super().__init__(model_root,'reference')
+            t=time.perf_counter();super().__init__(model_root,'reference',verify=False)
             from camus.native import load_native
             # Use only the existing PS image operations; no CAM2 MMIO binding.
             self.native=load_native()

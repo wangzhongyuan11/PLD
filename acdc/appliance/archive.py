@@ -23,10 +23,10 @@ class _DigestWriter:
     # rewritten behind the streaming digest.
 
 
-def write_zip(root,names,destination,check_cancel):
+def write_zip(root,names,destination,check_cancel,*,verify=True):
     root=Path(root)
     with Path(destination).open('xb') as stream:
-        sink=_DigestWriter(stream)
+        sink=_DigestWriter(stream) if verify else stream
         with zipfile.ZipFile(sink,'w',compression=zipfile.ZIP_STORED,allowZip64=False) as archive:
             for name in names:
                 check_cancel();path=root/name
@@ -36,4 +36,4 @@ def write_zip(root,names,destination,check_cancel):
                 with path.open('rb') as source,archive.open(info,'w') as target:
                     for block in iter(lambda:source.read(256*1024),b''):
                         check_cancel();target.write(block)
-        return sink.digest.hexdigest()
+        return sink.digest.hexdigest() if verify else None

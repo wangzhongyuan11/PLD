@@ -20,9 +20,10 @@ from .reconstruct import Collector
 
 
 class NumericalPipeline:
-    def __init__(self,backend,kernel,exp_table,*,binding,policy='strict'):
+    def __init__(self,backend,kernel,exp_table,*,binding,policy='strict',verify=True):
         self.backend=backend;self.kernel=kernel;self.table=exp_table
         self.binding=binding;self.policy=policy
+        self.verify=verify
 
     def run(self,ed,es,output,*,cancel=None,progress=None,overlap=True,save_heads=False,phase_ready=None):
         import nibabel as nib
@@ -60,7 +61,7 @@ class NumericalPipeline:
                 def prepare_input(z):
                     prepared=time.perf_counter()
                     x,neighbors=inputs.get(z)
-                    return x,neighbors,hashlib.sha256(x.tobytes()).hexdigest(),time.perf_counter()-prepared
+                    return x,neighbors,hashlib.sha256(x.tobytes()).hexdigest() if self.verify else None,time.perf_counter()-prepared
 
                 with ThreadPoolExecutor(max_workers=1,thread_name_prefix='v2-input') as prefetch, \
                      ThreadPoolExecutor(max_workers=1,thread_name_prefix='v2-restore') as restoring:
@@ -76,20 +77,21 @@ class NumericalPipeline:
                             runtime_sha256=self.backend.runtime_sha,shape=[1,3,256,256],dtype='int8',layout='NCHW',input_scale=1/127)
                         tick=time.perf_counter();head,meta=self.backend.infer(x,request,cancel)
                         seconds=time.perf_counter()-tick
-                        for key in ('architecture_id','execution_profile','preprocessing_id','run_id','phase','orientation',
-                                    'center_index','neighbor_indices','total_slices','geometry_sha256','model_sha256','runtime_sha256'):
-                            if meta.get(key)!=request[key]:raise ContractError('V2 inference response mismatch: '+key)
-                        if (meta.get('cached_response') or meta.get('head_scale')!=self.backend.head_scale
-                                or meta.get('backend')!=self.backend.kind or meta.get('synthetic') is not self.backend.synthetic
-                                or meta.get('status')!='completed' or meta.get('shape')!=list(HEAD_SHAPE)
-                                or meta.get('dtype')!='int8' or meta.get('layout')!='NCHW'):
-                            raise ContractError('unexpected inference source/scale or reused response')
-                        head=checked_int8(head,HEAD_SHAPE)
+                        if self.verify:
+                            for key in ('architecture_id','execution_profile','preprocessing_id','run_id','phase','orientation',
+                                        'center_index','neighbor_indices','total_slices','geometry_sha256','model_sha256','runtime_sha256'):
+                                if meta.get(key)!=request[key]:raise ContractError('V2 inference response mismatch: '+key)
+                            if (meta.get('cached_response') or meta.get('head_scale')!=self.backend.head_scale
+                                    or meta.get('backend')!=self.backend.kind or meta.get('synthetic') is not self.backend.synthetic
+                                    or meta.get('status')!='completed' or meta.get('shape')!=list(HEAD_SHAPE)
+                                    or meta.get('dtype')!='int8' or meta.get('layout')!='NCHW'):
+                                raise ContractError('unexpected inference source/scale or reused response')
+                            head=checked_int8(head,HEAD_SHAPE)
                         if previous is not None:previous.result()
                         if overlap:previous=restoring.submit(collector.add,head,z,inputs.spec)
                         else:collector.add(head,z,inputs.spec)
                         records.append(dict(phase=phase,center_index=z,input_sha256=input_sha,
-                            head_sha256=hashlib.sha256(head.tobytes()).hexdigest(),seconds=seconds,
+                            head_sha256=hashlib.sha256(head.tobytes()).hexdigest() if self.verify else None,seconds=seconds,
                             input_prepare_seconds=input_seconds,inference_begin_seconds=tick-began,
                             inference_end_seconds=tick+seconds-began,
                             device_timing={k:meta[k] for k in ('input_validation_seconds','input_layout_seconds',

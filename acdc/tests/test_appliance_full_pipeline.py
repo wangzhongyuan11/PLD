@@ -51,6 +51,11 @@ def test_assets_ready_requires_both_phases_mpr_and_zip(tmp_path):
             for phase in ('ED','ES'):
                 assert (out/'viewer'/phase/'volume.json').is_file()
                 assert all((out/'mpr'/phase/(plane+'.png')).is_file() for plane in ('axial','coronal','sagittal'))
+        if row['status']=='preview_ready':
+            preview=json.loads((out/'preview.json').read_text())
+            assert preview['phase']=='ED'
+            assert all((out/'mpr/ED'/(plane+'.png')).is_file() for plane in ('axial','coronal','sagittal'))
+            assert not (out/'result.zip').exists()
     result=FullPipeline(numerical,mesh,application_sha='a'*64).run(*paths,out,progress=progress,upload_seconds=.25)
     assert events[-1]=='assets_ready' and result['server_upload_to_assets_seconds']>=.25
     assert result['browser_interactive_seconds'] is None

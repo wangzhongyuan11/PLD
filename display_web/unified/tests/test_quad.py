@@ -64,10 +64,10 @@ class QuadTests(unittest.TestCase):
                 server.jobs['j']['state']='done';server.start_hdmi('j','quad')
             self.assertEqual(events,['stop','close','launch'])
             self.assertTrue(server.released)
-    def test_quad_failure_never_marks_pipeline_success(self):
+    def test_web_pipeline_does_not_wait_for_hdmi_quad(self):
         web=self.fake_web();camus_quad.install(web)
-        with patch.object(camus_quad,'build_views',side_effect=OSError('disk full')):
-            with self.assertRaises(OSError):web.CamusPipeline().run('input','output')
+        with patch.object(camus_quad,'build_views',side_effect=AssertionError('quad must be deferred')):
+            self.assertEqual(web.CamusPipeline().run('input','output')['end_to_end_seconds'],1.)
     def test_camus_preview_keeps_label_files_unchanged(self):
         import hashlib
         with tempfile.TemporaryDirectory() as temp:

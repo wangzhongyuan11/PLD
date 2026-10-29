@@ -30,7 +30,8 @@ class JobManager:
     def __init__(self,pipeline,root,*,initialization=None,backend_factory=None,display_agent=None,backend_check=None,resident_handoff=False):
         self.pipeline=pipeline;self.root=Path(root).resolve();self.root.mkdir(parents=True,exist_ok=True)
         (self.root/'inputs').mkdir(exist_ok=True);(self.root/'jobs').mkdir(exist_ok=True)
-        self.lock=threading.Lock();self.active=None;self.states=OrderedDict();self.thread=None
+        self.lock=threading.RLock();self.active=None;self.states=OrderedDict();self.thread=None
+        self.changed=threading.Condition(self.lock);self.versions={}
         self.initialization=initialization or {}
         self.backend_factory=backend_factory;self.hdmi=None;self.hdmi_thread=None
         self.hdmi_state='off';self.hdmi_error='';self.released=False
@@ -99,7 +100,9 @@ class JobManager:
             self.active['stage']='computing';cancel=self.active['cancel']
             self.states[job]=dict(run_id=job,status='queued')
         def progress(state):
-            with self.lock:self.states[job]=dict(state)
+            with self.changed:
+                self.states[job]=dict(state);self.versions[job]=self.versions.get(job,0)+1
+                self.changed.notify_all()
         def run():
             completion=Completion('acdc',job,identity=self.pipeline.backend.model_sha+':'+str(self.pipeline.backend.runtime_sha)) if auto_display else None
             try:
@@ -110,7 +113,8 @@ class JobManager:
                     if self.states[job].get('status') not in ('failed','cancelled'):
                         self.states[job]=dict(run_id=job,status='failed',error=f'{type(exc).__name__}: {exc}')
             finally:
-                with self.lock:self.active=None
+                with self.changed:
+                    self.active=None;self.changed.notify_all()
                 if completion:completion.finish(self.status(job).get('status')=='assets_ready')
         self.thread=threading.Thread(target=run,name='acdc-v2-job',daemon=False);self.thread.start()
         return dict(run_id=job,status='queued')
@@ -119,12 +123,22 @@ class JobManager:
         checked_job(job)
         with self.lock:
             self._expire()
-            if job in self.states:return dict(self.states[job])
+            if job in self.states:
+                state=dict(self.states[job],version=self.versions.get(job,0))
+                preview=self.root/'jobs'/job/'preview.json'
+                if preview.is_file():state.update(preview_ready=True)
+                return state
         path=self.root/'jobs'/job/'status.json'
         state=json.loads(path.read_text('utf-8'))
         if state['status'] not in ('assets_ready','failed','cancelled'):
             return dict(run_id=job,status='interrupted',error='engine restarted before completion')
         return state
+
+    def wait_status(self,job,version):
+        with self.changed:
+            self.changed.wait_for(lambda:self.versions.get(job,0)!=version or
+                self.states.get(job,{}).get('status') in ('assets_ready','failed','cancelled'),timeout=1.)
+            return self.status(job)
 
     def cancel(self,job):
         checked_job(job)
@@ -140,6 +154,7 @@ class JobManager:
         if op=='release':return self.release(job,message.get('reservation'))
         if op=='start':return self.start(job,message.get('reservation'),message.get('suffixes'),message.get('upload_seconds'),message.get('auto_display',True))
         if op=='status':return self.status(job)
+        if op=='wait_status':return self.wait_status(job,message.get('version',-1))
         if op=='cancel':return self.cancel(job)
         if op=='hdmi':return self.show_hdmi(job,message.get('action','show'))
         if op=='lifecycle':return self.lifecycle(message.get('action'))

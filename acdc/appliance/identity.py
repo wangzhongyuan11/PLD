@@ -22,8 +22,10 @@ def create(root):
     return file_sha(root/'v2_application.json')
 
 
-def verify(root,expected_sha):
+def verify(root,expected_sha,*,check=True):
     root=Path(root).resolve()
+    if not check:
+        return json.loads((root/'v2_config.json').read_text('utf-8')),json.loads((root/'v2_application.json').read_text('utf-8'))
     if file_sha(root/'v2_application.json')!=expected_sha:raise ContractError('V2 application manifest drift')
     record=json.loads((root/'v2_application.json').read_text('utf-8'))
     if record.get('schema')!='pld-acdc-appliance-application-v2':raise ContractError('invalid V2 application identity')

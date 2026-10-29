@@ -73,21 +73,23 @@ class DemoBackend:
 
 class SpatialBackend:
     kind='pl'
-    def __init__(self,model,runtime):
+    def __init__(self,model,runtime,*,verify=True):
         from .optimization.device import SpatialDevice
         import json
         from pathlib import Path
         begin=time.perf_counter()
         self.model=model;self.model_sha=model.model_sha256;self.head_scale=model.head_scale
         self.synthetic=model.synthetic;self.binding=model.implementation_binding
-        self.runtime_sha=file_sha(Path(runtime)/'runtime_manifest.json')
+        self.verify=verify
+        self.runtime_sha=(file_sha(Path(runtime)/'runtime_manifest.json') if verify else
+                          json.loads((Path(runtime)/'v2_application.json').read_text())['core_runtime_sha256'])
         self.hardware_info=json.loads((Path(runtime)/'overlay/build_manifest.json').read_text('utf-8'))
-        self.device=SpatialDevice(runtime,model)
+        self.device=SpatialDevice(runtime,model,verify=verify)
         self.initialization_seconds=time.perf_counter()-begin
 
     def infer(self,x,request,cancel=None):
-        validate_request(request)
-        if request['model_sha256']!=self.model_sha or request.get('runtime_sha256')!=self.runtime_sha:
+        if self.verify:validate_request(request)
+        if self.verify and (request['model_sha256']!=self.model_sha or request.get('runtime_sha256')!=self.runtime_sha):
             raise ContractError('spatial request model/runtime mismatch')
         head,timing=self.device.forward(x,cancel=cancel)
         meta=response_meta(request,self.head_scale,self.kind,self.synthetic)

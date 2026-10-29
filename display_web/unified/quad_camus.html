@@ -15,7 +15,7 @@ button:disabled{opacity:.5;cursor:wait}input{margin:8px}#views{display:grid;grid
 <label>像素间距 Y（mm）<input id="sy" type="number" min="0" step="any"></label>
 <label>X（mm）<input id="sx" type="number" min="0" step="any"></label><p>无间距时显示像素面积；单帧不计算 EF。</p>
 <button id="run" disabled>开始分割</button> <span id="status">就绪</span><p id="error"></p></section>
-<p>显示增强仅影响预览，不改变模型输入。仅用于工程教学与算法演示，不作为临床诊断依据。</p><section id="result" hidden><div id="views"></div><p><a id="download">下载原始结果 ZIP（四宫格预览单独展示）</a></p><div id="hdmi" hidden><select id="hdmiView"><option value="quad" selected>四宫格</option><option value="overlay">叠加图</option><option value="segmentation">四分类图</option><option value="label">标签图</option></select> <button id="showHdmi">显示到板卡 HDMI</button> <button id="stopHdmi">停止 HDMI</button><span id="hdmiStatus"></span><p>HDMI 与推理共享 FPGA，切换时自动释放并重新加载位流。</p></div><div id="metrics"></div><details><summary>执行耗时与版本</summary><div id="report"></div></details></section>
+<p>全部图像处理与推理在板端完成。仅用于工程教学与算法演示，不作为临床诊断依据。</p><section id="result" hidden><div id="views"></div><p><a id="download">下载原始结果 ZIP（四宫格预览单独展示）</a></p><div id="hdmi" hidden><select id="hdmiView"><option value="quad" selected>四宫格</option><option value="overlay">叠加图</option><option value="segmentation">四分类图</option><option value="label">标签图</option></select> <button id="showHdmi">显示到板卡 HDMI</button> <button id="stopHdmi">停止 HDMI</button><span id="hdmiStatus"></span><p>HDMI 与推理共享 FPGA，切换时自动释放并重新加载位流。</p></div><div id="metrics"></div><details><summary>执行耗时与版本</summary><div id="report"></div></details></section>
 </main><script>
 const $=id=>document.getElementById(id);let ready=false,latestJob=null,realPl=false;
 async function api(url,options){const r=await fetch(url,options);const v=await r.json();if(!r.ok)throw Error(v.error||r.status);return v;}
@@ -41,17 +41,27 @@ return lines.join('\n');
 api('/api/status').then(s=>{const names={reference:'本机整数参考',emulator:'分块软件模拟器',pl:'真实 PL'};$('backend').textContent=s.model+' · '+names[s.backend];realPl=s.backend==='pl';ready=s.ready;$('run').disabled=!ready;}).catch(e=>{$('error').textContent=e.message;});
 async function hdmi(action){$('showHdmi').disabled=true;$('stopHdmi').disabled=true;$('error').textContent='';try{let r=await api('/api/hdmi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,id:latestJob,view:$('hdmiView').value})});for(let n=0;r.hdmi==='starting'&&n<50;n++){await new Promise(r=>setTimeout(r,1000));r=await api('/api/status');}$('hdmiStatus').textContent=({showing:' 已提交到 HDMI',starting:' 正在初始化',off:' 已停止',error:' HDMI 异常'})[r.hdmi]||r.hdmi;if(r.hdmi==='error')throw Error('HDMI 初始化异常，请检查板端日志');}catch(e){$('error').textContent=e.message;}finally{$('showHdmi').disabled=false;$('stopHdmi').disabled=false;}}
 $('showHdmi').onclick=()=>hdmi('show');$('stopHdmi').onclick=()=>hdmi('stop');
-$('run').onclick=async()=>{const start=performance.now();$('run').disabled=true;$('error').textContent='';$('result').hidden=true;
-try{const files=Array.from($('files').files);if(!files.length)throw Error('请选择输入文件');if(files.reduce((n,f)=>n+f.size,0)>23*1024*1024)throw Error('文件合计需小于 23 MiB');
-const primary=files.find(f=>f.name.toLowerCase().endsWith('.mhd'))||files.find(f=>!f.name.toLowerCase().endsWith('.raw'));if(!primary)throw Error('RAW 需要对应 MHD');
+async function showPrimary(job){
+ const root='/files/'+job.id+'/';$('views').replaceChildren();
+ const images=[];
+ for(const [title,name] of [['原图','original.png'],['分割叠加','overlay.png']]){const box=document.createElement('div'),text=document.createElement('strong'),img=document.createElement('img');text.textContent=title;img.src=root+name;img.alt=title;box.append(text,img);$('views').append(box);images.push(img);}
+ $('result').hidden=false;$('download').hidden=true;$('hdmi').hidden=true;
+ await Promise.all(images.map(img=>img.decode()));
+}
+$('run').onclick=async()=>{const start=performance.now();$('run').disabled=true;$('error').textContent='';$('result').hidden=true;$('metrics').replaceChildren();$('report').textContent='';
+try{const files=Array.from($('files').files);if(!files.length)throw Error('请选择输入文件');if(files.reduce((n,f)=>n+f.size,0)>23*1024*1024)throw Error('文件合计需小于23 MiB');
+const primary=files.find(f=>f.name.toLowerCase().endsWith('.mhd'))||files.find(f=>!f.name.toLowerCase().endsWith('.raw'));if(!primary)throw Error('RAW需要对应MHD');
 const payload={input_name:primary.name,files:await Promise.all(files.map(async f=>({name:f.name,data_base64:await encoded(f)})))};
 if($('sy').value||$('sx').value){payload.spacing=[Number($('sy').value),Number($('sx').value)];if(!payload.spacing.every(v=>Number.isFinite(v)&&v>0))throw Error('请填写两个正数间距');}
-$('status').textContent='上传与分割中…';let j=await api('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-for(;;){j=await api('/api/jobs/'+j.id);if(j.state==='done'||j.state==='error')break;await new Promise(r=>setTimeout(r,300));}
-if(j.state==='error')throw Error(j.error);const clientSeconds=(performance.now()-start)/1000;latestJob=j.id;$('hdmi').hidden=!realPl;const root='/files/'+j.id+'/';const report=await api(root+'report.json');$('views').replaceChildren();
-for(const [title,name] of [['原图','quad_original.png'],['显示增强 · 1%自动对比度','quad_enhanced.png'],['多结构分割掩膜','segmentation.png'],['分割叠加','overlay.png']]){const box=document.createElement('div');const text=document.createElement('strong');text.textContent=title;const img=document.createElement('img');img.src=root+name;img.alt=title;box.append(text,img);$('views').append(box);}
-$('download').href=root+'result.zip';$('download').download='camus_result.zip';const table=document.createElement('table');const head=document.createElement('tr');for(const text of ['结构','像素数','面积（mm²）']){const th=document.createElement('th');th.textContent=text;th.style.padding='8px 18px';head.append(th);}table.append(head);for(const [key,name] of [['background','背景'],['lv_cavity','左心室腔'],['myocardium','心肌'],['left_atrium','左心房']]){const value=report.output.areas[key];const row=document.createElement('tr');for(const text of [name,value.pixels,value.area_mm2===undefined?'未提供间距':value.area_mm2.toFixed(2)]){const cell=document.createElement('td');cell.textContent=String(text);cell.style.padding='8px 18px';row.append(cell);}table.append(row);}$('metrics').replaceChildren(table);$('report').textContent=formatExecutionDetails(j,report,clientSeconds);$('result').hidden=false;$('status').textContent='分割完成，结果包已就绪';
-}catch(e){$('error').textContent=e.message;$('status').textContent='任务未完成';}finally{$('run').disabled=!ready;}};
+let job=await api('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}),shown=false;
+while(true){if(job.preview_ready&&!shown){await showPrimary(job);shown=true;$('status').textContent='预览已显示，结果包继续生成';}if(job.state==='done'||job.state==='error')break;job=await api('/api/jobs/'+job.id+'?wait='+(shown?'done':'preview'));}
+if(job.state==='error')throw Error(job.error);if(!shown)await showPrimary(job);
+latestJob=job.id;const root='/files/'+job.id+'/';const report=await api(root+'report.json');
+for(const [title,name] of [['多结构分割','segmentation.png'],['标签','label.png']]){const box=document.createElement('div'),text=document.createElement('strong'),img=document.createElement('img');text.textContent=title;img.src=root+name;img.alt=title;box.append(text,img);$('views').append(box);}
+$('download').href=root+'result.zip';$('download').hidden=false;$('hdmi').hidden=!realPl;
+const table=document.createElement('table'),head=document.createElement('tr');for(const text of ['结构','像素数','面积（mm²）']){const th=document.createElement('th');th.textContent=text;th.style.padding='8px 18px';head.append(th);}table.append(head);for(const [key,name] of [['background','背景'],['lv_cavity','左心室腔'],['myocardium','心肌'],['left_atrium','左心房']]){const value=report.output.areas[key],row=document.createElement('tr');for(const text of [name,value.pixels,value.area_mm2===undefined?'未提供间距':value.area_mm2.toFixed(2)]){const cell=document.createElement('td');cell.textContent=String(text);cell.style.padding='8px 18px';row.append(cell);}table.append(row);}$('metrics').replaceChildren(table);
+$('report').textContent=formatExecutionDetails(job,report,(performance.now()-start)/1000);$('status').textContent='结果包已就绪';
+}catch(error){$('error').textContent=error.message;$('status').textContent='任务未完成';}finally{$('run').disabled=!ready;}};
 
 // The board entry owns preferences; iframe reloads do not reset them.
 let pldAutoSegment=false;

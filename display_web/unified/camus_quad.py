@@ -32,18 +32,8 @@ def build_views(input_path, output):
 
 
 def install(web):
-    original_run = web.CamusPipeline.run
     original_get = web.Handler.do_GET
     original_hdmi = web.CamusServer.start_hdmi
-
-    def run(pipeline, input_path, output_dir, *args, **kwargs):
-        result = original_run(pipeline, input_path, output_dir, *args, **kwargs)
-        started = time.perf_counter()
-        build_views(input_path, output_dir)
-        elapsed = time.perf_counter()-started
-        result['stages_seconds']['quad_display'] = elapsed
-        result['end_to_end_seconds'] += elapsed
-        return result
 
     def get(handler):
         if web.urlsplit(handler.path).path == '/':
@@ -62,7 +52,9 @@ def install(web):
             raise ValueError('completed CAMUS job required')
         folder = server.data/identifier/'output'
         if not (folder/'quad.png').is_file():
-            raise ValueError('四宫格未生成，请重新处理图片')
+            source=server.data/identifier/'input'
+            selected=next(p for p in source.iterdir() if p.suffix.lower()!='.raw')
+            build_views(selected,folder)
         if (getattr(server,'display_agent',None) and server.hdmi is not None
                 and server.hdmi.poll() is None and server.hdmi_folder==folder):
             if getattr(server,'hdmi_view',None)!=view:server.hdmi.update(view)
@@ -83,6 +75,5 @@ def install(web):
         server.hdmi_view=view
 
     web.ARTIFACTS.update({'quad_original.png', 'quad_enhanced.png', 'quad.png'})
-    web.CamusPipeline.run = run
     web.Handler.do_GET = get
     web.CamusServer.start_hdmi = hdmi

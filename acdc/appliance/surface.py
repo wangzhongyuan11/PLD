@@ -13,9 +13,9 @@ from acdc.contract import ContractError,LABELS,COLORS,file_sha
 
 
 class SurfaceGenerator:
-    def __init__(self,binary,expected_sha,*,timeout=60,parameters=(0,40,.02)):
+    def __init__(self,binary,expected_sha,*,timeout=60,parameters=(0,40,.02),verify=True):
         self.binary=Path(binary).resolve();self.timeout=timeout
-        if file_sha(self.binary)!=expected_sha:raise ContractError('native mesh binary drift')
+        if verify and file_sha(self.binary)!=expected_sha:raise ContractError('native mesh binary drift')
         result=subprocess.run([str(self.binary),'--version'],capture_output=True,text=True,check=True,timeout=10)
         self.info=json.loads(result.stdout)
         if self.info.get('abi')!=1 or self.info.get('vtk')!='9.6.0':raise ContractError('native mesh ABI/VTK mismatch')

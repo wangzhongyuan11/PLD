@@ -119,7 +119,18 @@ def handler(app):
                     self.file(static/('index.html' if path=='/' else path[1:]));return
                 if path=='/api/v2/health':self.send(200,dict(app.health(),max_upload_bytes=MAX_UPLOAD));return
                 match=re.fullmatch(r'/api/v2/jobs/([0-9a-f]{32})',path)
-                if match:self.send(200,app.client.request(op='status',job=match[1]));return
+                if match:
+                    query=parse_qs(urlsplit(self.path).query)
+                    message=dict(op='status',job=match[1])
+                    if 'wait' in query:message.update(op='wait_status',version=int(query.get('version',['-1'])[0]))
+                    self.send(200,app.client.request(**message));return
+                match=re.fullmatch(r'/api/v2/jobs/([0-9a-f]{32})/preview(?:/(axial|coronal|sagittal)\.png)?',path)
+                if match:
+                    root=app.root/'jobs'/checked_job(match[1])
+                    preview=json.loads((root/'preview.json').read_text('utf-8'))
+                    if match[2]:self.file(root/'mpr'/preview['phase']/(match[2]+'.png'))
+                    else:self.send(200,preview)
+                    return
                 match=re.fullmatch(r'/api/v2/jobs/([0-9a-f]{32})/assets/(.+)',path)
                 if match:
                     root,manifest=app.result(match[1]);name=match[2]

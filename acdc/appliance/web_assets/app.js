@@ -13,7 +13,7 @@ function enabled(c){return $('class'+c).checked;}
 function uploadBuffer(data,target){const b=gl.createBuffer();gl.bindBuffer(target,b);gl.bufferData(target,data,gl.STATIC_DRAW);return b;}
 function freeMeshes(){for(const phase of Object.values(state.phases)){for(const item of phase.images||[])item.image.close();if(gl)for(const meshes of Object.values(phase.meshes||{}))for(const m of meshes)for(const key of ['p','n','indexBuffer','wire'])if(m[key])gl.deleteBuffer(m[key]);}}
 function clearJobDisplay(){
- ++state.generation;for(const c of state.controllers)c?.abort();freeMeshes();state.phases={};state.job=null;
+ ++state.generation;for(const c of state.controllers)c?.abort();freeMeshes();state.phases={};state.job=null;state.previewJob=null;state.jobVersion=-1;
  for(let i=0;i<3;i++){const c=$('mpr'+i);c.getContext('2d').clearRect(0,0,c.width,c.height);$('slice'+i).textContent='—';}
  if(gl){gl.depthMask(true);gl.clearColor(.025,.039,.055,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);}
  $('orientation').getContext('2d').clearRect(0,0,88,80);$('meshstatus').textContent='等待本次完整结果';$('renderfps').textContent='—';
@@ -108,15 +108,25 @@ async function loadJob(job){
  }
  $('status').textContent='两期全部完成：MPR、平滑三维、统计及 ZIP 已就绪';$('progress').value=1;
 }
+async function loadPreview(job){
+ const preview=await json('/api/v2/jobs/'+job+'/preview');
+ const images=await Promise.all(planes.map(async plane=>createImageBitmap(await(await request('/api/v2/jobs/'+job+'/preview/'+plane+'.png')).blob())));
+ if(state.job!==job){images.forEach(image=>image.close());return;}
+ for(let i=0;i<images.length;i++){const canvas=$('mpr'+i);canvas.getContext('2d').drawImage(images[i],0,0,canvas.width,canvas.height);images[i].close();}
+ state.previewJob=job;state.previewSeconds=state.started===null?null:(performance.now()-state.started)/1000;
+ $('timing').textContent='首屏 MPR：'+(state.previewSeconds===null?'已就绪':state.previewSeconds.toFixed(2)+' s')+'；三维与导出继续生成';
+}
 async function poll(job){
- while(state.busy&&state.job===job){const row=await json('/api/v2/jobs/'+job);$('status').textContent=row.status+(row.phase?' · '+row.phase:'')+(row.phase_total?' '+(row.phase_completed||0)+'/'+row.phase_total:'');
+ while(state.busy&&state.job===job){const row=await json('/api/v2/jobs/'+job+'?wait=1&version='+encodeURIComponent(state.jobVersion??-1));state.jobVersion=row.version;$('status').textContent=row.status+(row.phase?' · '+row.phase:'')+(row.phase_total?' '+(row.phase_completed||0)+'/'+row.phase_total:'');
   if(row.phase_total)$('progress').value=(row.phase==='ES'?.5:0)+.5*(row.phase_completed||0)/row.phase_total;
+  if(row.preview_ready&&state.previewJob!==job)await loadPreview(job);
   if(row.status==='assets_ready'){await loadJob(job);return;}
   if(['failed','cancelled','interrupted','upload_expired'].includes(row.status))throw Error(row.error||row.status);
-  await new Promise(resolve=>setTimeout(resolve,250));
+
  }
 }
 async function refreshHealth(){
+ if(state.busy)return;
  try{const health=await json('/api/v2/health');state.health=health;
   $('backend').textContent=health.status==='ready'?'PYNQ-Z2 / PL 就绪':health.status==='busy'?'PYNQ-Z2 / 正在处理':health.status==='fault'?'板卡会话故障':'板卡初始化中';
   $('start').disabled=state.busy||!health.ready||health.backend!=='pl'||health.synthetic||!!health.active_job;

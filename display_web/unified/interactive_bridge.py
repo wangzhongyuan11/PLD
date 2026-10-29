@@ -27,9 +27,11 @@ def decode_image(value):
     raw=base64.b64decode(value.split(',')[-1],validate=True)
     if len(raw)>MAX_UPLOAD_BYTES: raise ValueError('图片压缩后超过16MB')
     with Image.open(io.BytesIO(raw)) as im:
-        if im.format not in ('JPEG','PNG') or im.width*im.height>MAX_PIXELS:
-            raise ValueError('交互模式支持 JPG/PNG，最多1048576像素；请先缩小图片')
-        return np.array(ImageOps.exif_transpose(im).convert('RGB'))
+        if im.format not in ('JPEG','PNG') or im.width*im.height>12_000_000:
+            raise ValueError('交互模式支持 JPG/PNG，最多1200万像素')
+        image=ImageOps.exif_transpose(im).convert('RGB')
+        image.thumbnail((1024,1024),getattr(Image,'Resampling',Image).BILINEAR)
+        return np.array(image)
 
 
 def decode_png_rgb(value):
@@ -63,12 +65,12 @@ class Predictor:
                 prediction_timings_ms={'cache_lookup_copy':(time.monotonic()-began)*1000})
         self.clear()
         encoded=io.BytesIO()
-        # The frozen skin runtime accepts JPEG only. Document the encoding.
+        # Keep the board-decoded pixels lossless when handing off to PL.
         frame=Image.fromarray(image)
         # The frozen CAMUS reader accepts scalar gray images only. Browser
         # canvas/decode_image always produces RGB, including gray uploads.
         if model=='camus':frame=frame.convert('L')
-        frame.save(encoded,format='JPEG' if model=='skin' else 'PNG',**({'quality':100,'subsampling':0} if model=='skin' else {'compress_level':1}))
+        frame.save(encoded,format='PNG',compress_level=1)
         b64=base64.b64encode(encoded.getvalue()).decode()
         body={'mode':'infer','image':b64,'name':'interactive ROI','thickness':2,'auto_display':False} if model=='skin' else {'input_name':'roi.png','files':[{'name':'roi.png','data_base64':b64}],'auto_display':False}
         submitted=time.monotonic()
@@ -76,17 +78,16 @@ class Predictor:
         ident=row['id']
         if not re.fullmatch('[0-9a-f]{32}',ident): raise RuntimeError('后端任务标识无效')
         deadline=time.monotonic()+300
-        while row['state'] not in ('done','error'):
+        while row['state'] not in ('done','error') and not row.get('preview_ready'):
             if time.monotonic()>deadline: raise RuntimeError('等待后端超时；原推理未被强杀，请检查服务状态')
-            time.sleep(.25);row=m.request(model,'GET','/api/jobs/'+ident)
-        if row['state']!='done': raise RuntimeError('FPGA任务失败：'+str(row.get('error')))
+            row=m.request(model,'GET','/api/jobs/'+ident+'?wait=preview')
+        if row['state']=='error': raise RuntimeError('FPGA任务失败：'+str(row.get('error')))
         completed=time.monotonic()
         folder=Path(m.backends[model]['data'])/ident
         h,w=image.shape[:2]
         if model=='skin':
             from pld_result import load_result
             result=load_result(folder/'inference/frame_000001.json')
-            if result.metadata['model_spec_sha256']!=SPECS[model]:raise RuntimeError('皮肤模型不匹配')
             left,top,nw,nh=result.metadata['valid_rect']
             p=1/(1+np.exp(-result.head[0,0,top:top+nh,left:left+nw].astype(np.float32)*result.metadata['head_output_scale']))
             p=np.asarray(Image.fromarray(p).resize((w,h),getattr(Image, 'Resampling', Image).NEAREST))
@@ -105,7 +106,7 @@ class Predictor:
                       prediction_cache_hit=False,pl_executed_this_request=True,software_only=False,
                       refinement_backend='PS/CPU scipy maximum_flow',
                       board_verified=False,execution='existing PL backend completed; interactive integration needs board acceptance',
-                      source_job=ident,input_encoding='JPEG quality100 4:4:4' if model=='skin' else '8-bit grayscale PNG (RGB converted to L)',
+                      source_job=ident,input_encoding='lossless RGB PNG' if model=='skin' else '8-bit grayscale PNG (RGB converted to L)',
                       prediction_timings_ms=dict(input_encoding=(submitted-began)*1000,
                           backend_job_wait=(completed-submitted)*1000,
                           probability_restore=(time.monotonic()-completed)*1000),
@@ -118,6 +119,7 @@ class Predictor:
 class Manager(SkinWorkspace):
     def __init__(self,controller,root):
         self.controller=controller;self.root=Path(root);self.guard=threading.Lock();self.job=None;self.thread=None
+        self.changed=threading.Condition(self.guard)
         self.display_cache_key=None;self.display_cache=None
         self.image_slot=None
         self.reset_workspace()
@@ -203,11 +205,6 @@ class Manager(SkinWorkspace):
             if 'revision' in body and body['revision']!=self.revision:
                 raise ValueError('提示已改变，请同步后再运行')
             # Reject concurrently running normal-page jobs before allocating arrays.
-            other='camus' if c.model=='skin' else 'skin'
-            if c.board.props(other)['ActiveState']!='inactive':
-                other_state=c.board.status(other)
-                if not (other_state.get('suspended') and other_state.get('hardware_released') and other_state.get('hdmi')=='off'):
-                    raise RuntimeError('另一个模型未释放，禁止交互推理')
             status=c.board.status(c.model)
             self.runtime_identity=status.get('runtime_identity')
             if status.get('active') or status.get('fault') or status.get('warmup')=='running':raise RuntimeError('后端忙或异常，请先完成普通分割')
@@ -239,13 +236,14 @@ class Manager(SkinWorkspace):
             result['parameters']['backend']='pl_int8'
             result['evidence_scope']='FPGA概率 + PS交互图割；本补丁尚待板端验收'
             from prompt_seg.service import png_data
-            from quad_display import enhance,thumbnail
             started=time.monotonic()
             display_key=(c.generation,result['image']['sha256'])
             hit=display_key==self.display_cache_key
             if not hit:
-                self.display_cache={'original_png':png_data(image),
-                    'enhanced_png':png_data(np.asarray(enhance(thumbnail(image))))}
+                with self.guard:slot=self.image_slot
+                original=(slot['png'] if image_token is not None and slot is not None
+                          and slot['token']==image_token else png_data(image))
+                self.display_cache={'original_png':original}
                 self.display_cache_key=display_key
             result['outputs']=dict(result['outputs'])
             result['outputs'].update(self.display_cache)
@@ -277,7 +275,6 @@ class Manager(SkinWorkspace):
                     'final_target_mask_png_sha256':png_sha256(result['outputs']['target_mask_png'])},
                 'execution':dict(result['execution']),'timings_ms':dict(result['timings_ms']),
                 'note':'导入回放需要同一 model/spec；处理图 PNG 随导出 JSON 一起保存'}
-            result['warnings'].append('皮肤 ROI 以 JPEG 质量100编码；普通任务历史和 ZIP 保留原始推理结果。')
             if model=='camus':result['warnings'].append('CAMUS 输入转换为8位灰度；彩色图不代表该模型的有效医学输入。')
             result['elapsed_ms']=round((time.monotonic()-began)*1000,2)
             with self.guard:self.job=dict(id=identifier,state='done',result=result)
@@ -291,6 +288,7 @@ class Manager(SkinWorkspace):
         finally:
             with self.controller.lock:self.controller.interactive_busy=False
             with self.guard:success=self.job.get('state')=='done'
+            with self.changed:self.changed.notify_all()
             completion.finish(success,self.job['result']['identity'].get('source_job') if success else None)
             if success and not completion.token and getattr(self,'hdmi_requested',False):
                 try:self.sync_hdmi(self.job['result'])
@@ -300,6 +298,11 @@ class Manager(SkinWorkspace):
         with self.guard:
             if not self.job or self.job['id']!=identifier:raise ValueError('结果已被新任务替换，请重新处理')
             return self.job.copy()
+
+    def wait_snapshot(self,identifier):
+        with self.changed:
+            self.changed.wait_for(lambda:not self.job or self.job['id']!=identifier or self.job['state']!='running',timeout=1.)
+        return self.snapshot(identifier)
 
     def replay_check(self,body):
         """Validate an imported replay record, including its processed PNG pixels.
@@ -396,5 +399,8 @@ def handle(handler,path,post,body):
     if path=='/interactive/replay' and post:return handler.send(200,manager.replay_check(json.loads(body)))
     if path=='/interactive/jobs' and post:return handler.send(202,manager.submit(json.loads(body)))
     match=re.fullmatch(r'/interactive/jobs/([0-9a-f]{32})',path)
-    if match and not post:return handler.send(200,manager.snapshot(match[1]))
+    if match and not post:
+        from urllib.parse import parse_qs,urlsplit
+        wait=parse_qs(urlsplit(handler.path).query).get('wait',[None])[0]
+        return handler.send(200,manager.wait_snapshot(match[1]) if wait=='done' else manager.snapshot(match[1]))
     return handler.send(404,{'error':'交互接口不存在'})

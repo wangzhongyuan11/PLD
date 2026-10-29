@@ -27,7 +27,7 @@ def save_png(image, path):
     Path(path).write_bytes(b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',header)+chunk(b'IDAT',compressed)+chunk(b'IEND',b''))
 
 
-def save_views(output,gray,labels,processed,native=None):
+def save_views(output,gray,labels,processed,native=None,*,on_preview=None):
     if native is None:
         jobs=[('label_raw.png',label_display_png,(labels,)),('label.png',label_display_png,(processed,)),
               ('segmentation.png',segmentation_rgb,(processed,)),('overlay.png',overlay_rgb,(gray,processed))]
@@ -43,8 +43,16 @@ def save_views(output,gray,labels,processed,native=None):
             t=time.perf_counter();save_png(image,output/name)
             result[name]=dict(render=render_time,encode_write=time.perf_counter()-t)
         return result
+    if on_preview is not None:
+        original=np.clip(gray,0,255).astype(np.uint8)
+        primary=[('original.png',lambda:original,()),next(item for item in jobs if item[0]=='overlay.png')]
+        with ThreadPoolExecutor(max_workers=2,thread_name_prefix='camus-first-preview') as pool:
+            first={name:row for part in pool.map(lambda item:group([item]),primary) for name,row in part.items()}
+        on_preview()
+        jobs=[item for item in jobs if item[0]!='overlay.png']
+    else:first={}
     with ThreadPoolExecutor(max_workers=2,thread_name_prefix='camus-png') as pool:
         futures=[pool.submit(group,jobs[index::2]) for index in range(2)]
-        details={name:row for future in futures for name,row in future.result().items()}
+        details={**first,**{name:row for future in futures for name,row in future.result().items()}}
         if native is not None:details['overlay.png']['render']+=elapsed
         return details

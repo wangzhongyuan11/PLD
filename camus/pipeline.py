@@ -25,10 +25,10 @@ def protect_output(path, model_root):
 
 
 class CamusPipeline:
-    def __init__(self, model_root, backend='reference', runtime=None, timeout=3.):
+    def __init__(self, model_root, backend='reference', runtime=None, timeout=3., *, verify=True):
         started = time.perf_counter()
         if backend not in ('reference', 'emulator', 'pl'): raise ValueError('unknown CAMUS backend')
-        self.model = load_model(model_root)
+        self.model = load_model(model_root,verify=verify)
         self.backend, self.device, self.jobs = backend, None, 0
         if backend == 'pl':
             if runtime is None: raise ValueError('PL backend requires --runtime')
@@ -45,7 +45,7 @@ class CamusPipeline:
     def __enter__(self): return self
     def __exit__(self, *_): self.close()
 
-    def run(self, input_path, output_dir, spacing=None, html=True):
+    def run(self, input_path, output_dir, spacing=None, html=True, *, on_preview=None):
         started = time.perf_counter(); output = protect_output(output_dir, self.model.root); stages = {}
         t = time.perf_counter(); prep = self.native.preprocess(input_path) if self.native is not None else preprocess(input_path)
         stages['input_read_preprocess'] = time.perf_counter()-t
@@ -74,7 +74,7 @@ class CamusPipeline:
         np.savez_compressed(output/'labels_native.npz', labels_raw=labels, labels_processed=processed.labels)
         stages['head_labels_write'] = time.perf_counter()-t
         t = time.perf_counter()
-        png_details = save_views(output,prep.raw_gray,labels,processed.labels,self.native)
+        png_details = save_views(output,prep.raw_gray,labels,processed.labels,self.native,on_preview=on_preview)
         stages['png_encoding'] = time.perf_counter()-t
         report = dict(schema='pld-camus-result-v1', backend=self.backend,
             evidence_scope='real PL execution' if self.backend == 'pl' else 'host software '+self.backend+'; no PL execution',
