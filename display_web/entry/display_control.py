@@ -65,7 +65,7 @@ class DisplayControl:
                 c.save_settings()
                 self.cancel()
                 return dict(auto_hdmi=c.settings['auto_hdmi'])
-            if c.phase != 'ready' or c.model != body.get('model'):
+            if c.boot['state']=='running' or c.phase != 'ready' or c.model != body.get('model'):
                 return {}
             if action == 'begin':
                 request_id = body.get('request_id')
@@ -132,7 +132,7 @@ class DisplayControl:
         c=self.controller
         with c.lock:
             saved=self.last_results.get(model)
-            if not saved or not c.settings['auto_hdmi'] or self.current or self.pending:return
+            if c.boot['state']=='running' or not saved or not c.settings['auto_hdmi'] or self.current or self.pending:return
         try:
             if model=='acdc':
                 status=c.board.health()
@@ -149,7 +149,7 @@ class DisplayControl:
             with c.lock:
                 if identity!=saved.get('identity') or not complete:
                     self.last_results.pop(model,None);self.save_results();return
-                if c.model!=model or c.phase!='ready' or self.current or self.pending:return
+                if c.boot['state']=='running' or c.model!=model or c.phase!='ready' or self.current or self.pending:return
                 self.pending=dict(saved,token=uuid.uuid4().hex)
                 self.restored=dict(model=model,job=saved['job'])
                 self.changed.set()
@@ -181,7 +181,7 @@ class DisplayControl:
             with c.proxy_lock:
                 with c.lock:
                     request = self.pending
-                    if not request or c.phase != 'ready' or not c.settings['auto_hdmi']: return
+                    if c.boot['state']=='running' or not request or c.phase != 'ready' or not c.settings['auto_hdmi']: return
                     if c.model != request['model']:
                         self.cancel(); return
                     if time.monotonic() < request.get('retry_at', 0): return
@@ -201,7 +201,7 @@ class DisplayControl:
                               and status.get('hdmi') in ('starting', 'showing'))
                 if busy and not reconciled: return
                 with c.lock:
-                    if self.pending is not request or c.phase != 'ready' or not c.settings['auto_hdmi']: return
+                    if c.boot['state']=='running' or self.pending is not request or c.phase != 'ready' or not c.settings['auto_hdmi']: return
                 if not reconciled:
                     if request['model'] == 'acdc':
                         c.board.request(8092, '/api/v2/hdmi',
