@@ -99,7 +99,7 @@ class Surface:
             if a==4:return '/interactive/jobs',context
             return '/interactive/hdmi',dict(context,action='leave')
         if start is None:return None
-        end=self.point(x,y,True);params=json.loads(json.dumps(self.state['parameters']))
+        end=self.point(x,y,True);params=dict(self.state['parameters'],roi=None,box=None,points=[])
         tool=self.state['tool']
         if tool in ('foreground','background'):
             if self.point(x,y) is None:return None
@@ -109,7 +109,6 @@ class Surface:
                 x1=max(start['x'],end['x'])+1,y1=max(start['y'],end['y'])+1)
             if rect['x1']-rect['x0']<2 or rect['y1']-rect['y0']<2:return None
             params[tool]=rect
-            if tool=='roi':params['points']=[];params['box']=None
         return '/interactive/control',dict(context,parameters=params)
 
     def frame(self):

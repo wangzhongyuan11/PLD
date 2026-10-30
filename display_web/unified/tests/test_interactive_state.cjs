@@ -35,5 +35,25 @@ const tick=()=>new Promise(setImmediate);
  await el('clearMarks').onclick();await tick();
  assert.equal(shared.image_token,imageToken);assert.equal(shared.parameters.roi,null);assert.equal(shared.parameters.box,null);assert.deepEqual(shared.parameters.points,[]);
  assert.equal(calls.filter(c=>c.path==='/interactive/jobs').length,jobs);
+ for(const tool of ['foreground','background','roi','box']) {
+  shared.parameters.roi={x0:2,y0:2,x1:90,y1:45};
+  shared.parameters.box={x0:5,y0:5,x1:70,y1:35};
+  shared.parameters.points=[{x:20,y:20,label:'foreground'},{x:30,y:20,label:'background'}];
+  shared.tool=tool;shared.revision++;await vm.runInContext('refresh()',context);
+  el('source').onpointerdown({clientX:140,clientY:165,pointerId:1});
+  el('source').onpointerup({clientX:500,clientY:345,pointerId:1});await tick();
+  assert.equal(shared.parameters.roi===null,tool!=='roi');
+  assert.equal(shared.parameters.box===null,tool!=='box');
+  assert.deepEqual(shared.parameters.points,['foreground','background'].includes(tool)?[{x:80,y:40,label:tool}]:[]);
+  assert.equal(shared.parameters.threshold,.45);
+ }
+ const previous=JSON.stringify(shared.parameters),controlCount=calls.filter(c=>c.path==='/interactive/control').length;
+ el('source').onpointerdown({clientX:320,clientY:255,pointerId:1});
+ el('source').onpointerup({clientX:320,clientY:255,pointerId:1});await tick();
+ el('source').onpointerdown({clientX:320,clientY:255,pointerId:1});
+ el('source').onpointercancel();await tick();
+ assert.equal(JSON.stringify(shared.parameters),previous);
+ assert.equal(calls.filter(c=>c.path==='/interactive/control').length,controlCount);
+ assert.equal(calls.filter(c=>c.path==='/interactive/jobs').length,jobs);
  console.log('PASS: skin tool buttons, pointer tap/drag, shared HDMI state, stale-result clearing, clear-all marks, removed controls');
 })().catch(e=>{console.error(e);process.exitCode=1;});

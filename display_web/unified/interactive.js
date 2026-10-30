@@ -17,7 +17,7 @@ for(const tool of tools)$(tool).onclick=()=>act(async()=>{await api('/interactiv
 canvas.onpointerdown=e=>{if(!image||acting||state?.busy)return;const p=coordinate(e);if(!p.inside)return;drag={start:p,end:p,tool:state.tool,revision:state.revision};canvas.setPointerCapture(e.pointerId);};
 canvas.onpointermove=e=>{if(!drag)return;drag.end=coordinate(e,true);draw();};
 canvas.onpointercancel=()=>{drag=null;draw();};
-canvas.onpointerup=e=>{if(!drag)return;const d=drag,end=coordinate(e,true);drag=null;draw();if(d.revision!==state.revision)return;const p=JSON.parse(JSON.stringify(state.parameters));if(d.tool==='roi'||d.tool==='box'){const r=rect(d.start,end);if(r.x1-r.x0<2||r.y1-r.y0<2)return;p[d.tool]=r;if(d.tool==='roi'){p.points=[];p.box=null;}}else{if(!coordinate(e).inside)return;p.points.push({x:end.x,y:end.y,label:d.tool});}act(async()=>{await api('/interactive/control',{...context(),parameters:p});});};
+canvas.onpointerup=e=>{if(!drag)return;const d=drag,end=coordinate(e,true);drag=null;draw();if(d.revision!==state.revision)return;const p={...state.parameters,roi:null,box:null,points:[]};if(d.tool==='roi'||d.tool==='box'){const r=rect(d.start,end);if(r.x1-r.x0<2||r.y1-r.y0<2)return;p[d.tool]=r;}else{if(!coordinate(e).inside)return;p.points.push({x:end.x,y:end.y,label:d.tool});}act(async()=>{await api('/interactive/control',{...context(),parameters:p});});};
 $('file').onchange=()=>act(async()=>{const file=$('file').files[0];if(!file)return;if(file.size>16*1024*1024)throw Error('图片须小于16MB');const image=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);});await api('/interactive/images',{model:'skin',generation:state.generation,image,auto_segment:pldAutoSegment});$('file').value='';});
 $('clearMarks').onclick=()=>act(async()=>{drag=null;await api('/interactive/control',{...context(),parameters:{...state.parameters,roi:null,box:null,points:[]}});});
 $('run').onclick=()=>act(async()=>{await api('/interactive/jobs',context());});
@@ -56,7 +56,7 @@ if(typeof window!=='undefined'){
  `;document.head.append(style);
  let active=false,checking=false,operations=0,base=null,step='',targets=[],tool=null,noticeTimer,timer,lastSpeech='',utterance=null;
  const notice=document.createElement('div');notice.id='pldTourNotice';notice.hidden=true;notice.setAttribute('role','status');document.body.append(notice);
- const descriptions={roi:['ROI · 只处理选定区域','在原图上拖出青色区域，圈住需要分析的范围。区域外输出背景。改变 ROI 会清除已有点和目标框，请重新标记并点击运行。'],foreground:['前景点 · 希望保留的区域','选择前景点工具，在希望保留的病灶内部点击，绿色点表示保留提示。不要把点放在边界上；添加后点击运行 / 更新分割。'],background:['背景点 · 希望排除的区域','选择背景点工具，在不希望保留的皮肤或误分区域点击，红色点表示排除提示。添加后点击运行 / 更新分割。'],box:['目标框 · 提示目标范围','在原图拖出黄色框，包围希望保留的目标。目标框用于约束交互修正，不等同于 ROI 裁剪，也不是已经生成的分割轮廓。随后点击运行 / 更新分割。']};
+ const descriptions={roi:['ROI · 只处理选定区域','在原图上拖出青色区域，圈住需要分析的范围。区域外输出背景。每次新点选或拖框都会清除之前的全部框和点，只保留本次标记；完成后点击运行。'],foreground:['前景点 · 希望保留的区域','选择前景点工具，在希望保留的病灶内部点击，绿色点表示保留提示。不要把点放在边界上；添加后点击运行 / 更新分割。'],background:['背景点 · 希望排除的区域','选择背景点工具，在不希望保留的皮肤或误分区域点击，红色点表示排除提示。添加后点击运行 / 更新分割。'],box:['目标框 · 提示目标范围','在原图拖出黄色框，包围希望保留的目标。目标框用于约束交互修正，不等同于 ROI 裁剪，也不是已经生成的分割轮廓。随后点击运行 / 更新分割。']};
  function tell(s){notice.textContent=s;notice.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>notice.hidden=true,4500)}
  function busy(){return operations>0||C.busy()}
  function silence(){if(utterance&&window.speechSynthesis){window.speechSynthesis.cancel();utterance=null}}
