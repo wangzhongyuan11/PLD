@@ -68,6 +68,12 @@ async function main() {
     board_job: { model: 'skin', id: 'existing-job' }, result: { views: [{ name: 'mask.png', fileID: 'cloud://mask' }] } };
   taskPage.retry({ currentTarget: { dataset: {} } });
   taskPage.retry({ currentTarget: { dataset: { fresh: true } } });
+  assert.strictEqual(retryCalls.length, 1); // repeated tap cannot create duplicate tasks
+  const freshPage = loadPage('task', { redirectTo() {}, showToast() {} }, {
+    createTask: opts => { retryCalls.push(opts); return Promise.resolve('fresh-task'); },
+  });
+  freshPage.data.task = taskPage.data.task;
+  freshPage.retry({ currentTarget: { dataset: { fresh: true } } });
   assert.strictEqual(retryCalls[0].resume_job.id, 'existing-job');
   assert.strictEqual(retryCalls[0].result.views[0].fileID, 'cloud://mask');
   assert.strictEqual(retryCalls[1].resume_job, null);

@@ -4,11 +4,13 @@
 
 .picked-img {
   width: 100%;
-  height: 420rpx;
+  display: block;
   background: #eef1f3;
   border-radius: 12rpx;
-  margin-bottom: 12rpx;
 }
+
+.roi-surface { position: relative; margin-bottom: 12rpx; line-height: 0; }
+.roi-box { position: absolute; border: 2px solid #00e0b0; background: rgba(0,224,176,.12); box-sizing: border-box; pointer-events: none; }
 
 .small {
   font-size: 24rpx;

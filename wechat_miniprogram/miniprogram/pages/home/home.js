@@ -114,7 +114,7 @@ Page({
       wx.showToast({ title: "板卡不在线，请检查桥接", icon: "none" });
       return;
     }
-    if (board.phase === "switching" || this.data.switchTarget) {
+    if (board.phase === "switching" || board.phase === "preparing" || this.data.switchTarget) {
       wx.showToast({ title: "正在切换中，请稍候", icon: "none" });
       return;
     }

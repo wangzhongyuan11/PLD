@@ -16,6 +16,7 @@ Component({
   },
 
   methods: {
+    openContract: function () { wx.openPrivacyContract({ fail: function (err) { console.error(err); } }); },
     onAgree: function () {
       app.agreePrivacy();
     },

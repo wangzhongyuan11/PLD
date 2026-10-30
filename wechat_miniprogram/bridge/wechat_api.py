@@ -9,6 +9,7 @@ The bridge keeps every secret in its local config file; nothing here logs them.
 import http.client
 import json
 import queue
+import select
 import threading
 import time
 import uuid
@@ -51,13 +52,29 @@ class WechatCloud:
     # ---------------- http plumbing ----------------
 
     def _request(self, scheme, host, port, method, path, body=None,
-                 headers=None, timeout=None):
+                 headers=None, timeout=None, replay_safe=False):
+        # Reads may reconnect once. Mutations must reconcile their own outcome:
+        # a lost reply does not mean the server failed to apply the operation.
+        try:
+            return self._request_once(scheme, host, port, method, path, body, headers, timeout)
+        except (OSError, http.client.HTTPException):
+            if not (replay_safe or method == "GET"):
+                raise
+            return self._request_once(scheme, host, port, method, path, body, headers, timeout,
+                                      fresh=True)
+
+    def _request_once(self, scheme, host, port, method, path, body=None,
+                      headers=None, timeout=None, fresh=False):
         conn_cls = http.client.HTTPSConnection if scheme == "https" else http.client.HTTPConnection
         pooled = (scheme, host, port) == (self.api_scheme, self.api_host, self.api_port)
         conn = None
-        if pooled:
+        if pooled and not fresh:
             try:
-                conn = self._api_pool.get_nowait()
+                conn, idle_since = self._api_pool.get_nowait()
+                if time.monotonic() - idle_since > 15 or (conn.sock is not None and
+                        select.select([conn.sock], [], [], 0)[0]):
+                    conn.close()
+                    conn = None
             except queue.Empty:
                 pass
         if conn is None:
@@ -71,7 +88,7 @@ class WechatCloud:
             data = resp.read()
             if pooled and not resp.will_close:
                 try:
-                    self._api_pool.put_nowait(conn)
+                    self._api_pool.put_nowait((conn, time.monotonic()))
                     conn = None
                 except queue.Full:
                     pass
@@ -83,7 +100,7 @@ class WechatCloud:
     def close(self):
         while True:
             try:
-                self._api_pool.get_nowait().close()
+                self._api_pool.get_nowait()[0].close()
             except queue.Empty:
                 return
 
@@ -91,7 +108,7 @@ class WechatCloud:
     def _raise_network(exc):
         raise WechatApiError("微信服务端网络错误：%s" % exc, kind="network") from exc
 
-    def _api_post_json(self, path, payload, params=None, retry=True):
+    def _api_post_json(self, path, payload, params=None, retry=True, replay_safe=False):
         params = dict(params or {})
         if "access_token" in params and not params["access_token"]:
             del params["access_token"]
@@ -102,7 +119,9 @@ class WechatCloud:
                    "Content-Length": str(len(body))}
         try:
             status, _, data = self._request(self.api_scheme, self.api_host,
-                                            self.api_port, "POST", url, body, headers)
+                                            self.api_port, "POST", url, body, headers,
+                                            replay_safe=replay_safe or path in (
+                                                "/tcb/databasequery", "/tcb/batchdownloadfile", "/tcb/uploadfile"))
         except (OSError, http.client.HTTPException) as exc:
             self._raise_network(exc)
         if status != 200:
@@ -116,7 +135,7 @@ class WechatCloud:
                         self._token = None
                 if "access_token" in params:
                     params["access_token"] = self.access_token()
-                return self._api_post_json(path, payload, params, retry=False)
+                return self._api_post_json(path, payload, params, retry=False, replay_safe=replay_safe)
             raise WechatApiError("微信接口错误 %s：%s" % (errcode, result.get("errmsg", "")),
                                  errcode=errcode)
         return result
@@ -216,7 +235,7 @@ class WechatCloud:
              "query": 'db.collection(%s).doc(%s).update({data:%s})'
                       % (json.dumps(collection), json.dumps(doc_id),
                          json.dumps(fields, ensure_ascii=False, separators=(",", ":")))},
-            params={"access_token": token})
+            params={"access_token": token}, replay_safe=True)
         # 实测（2026-10-25）：databaseupdate 返回 matched/modified，没有 updated 字段；
         # 误读会让 claim 永远返回 0，任务被置 running 却从不执行。
         return int(result.get("matched") or result.get("modified") or 0)
@@ -264,7 +283,7 @@ class WechatCloud:
             status, _, _ = self._request(target.scheme, target.hostname, port,
                                          "POST", path, body,
                                          {"Content-Type": "multipart/form-data; boundary=%s" % boundary},
-                                         timeout=max(self.timeout, 120))
+                                         timeout=max(self.timeout, 120), replay_safe=True)
         except (OSError, http.client.HTTPException) as exc:
             self._raise_network(exc)
         if status not in (200, 204):
