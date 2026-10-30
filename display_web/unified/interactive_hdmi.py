@@ -95,11 +95,11 @@ class Surface:
         if ay<48 and y<48:
             a=next((i for i,(lo,hi) in enumerate(((0,100),(100,200),(200,300),(300,400),(400,520),(520,640))) if lo<=ax<hi),None)
             if a is None:return None
-            if a<4:return '/interactive/control',dict(context,tool=TOOLS[a])
+            if a<4:return '/interactive/control',dict(context,tool=TOOLS[a],**({} if TOOLS[a]==self.state['tool'] else dict(parameters=dict(self.state['parameters'],roi=None,box=None,points=[]))))
             if a==4:return '/interactive/jobs',context
             return '/interactive/hdmi',dict(context,action='leave')
         if start is None:return None
-        end=self.point(x,y,True);params=json.loads(json.dumps(self.state['parameters']))
+        end=self.point(x,y,True);params=dict(self.state['parameters'],roi=None,box=None,points=[dict(p) for p in self.state['parameters']['points'] if p['label']==self.state['tool']] if self.state['tool'] in ('foreground','background') else [])
         tool=self.state['tool']
         if tool in ('foreground','background'):
             if self.point(x,y) is None:return None
@@ -109,7 +109,6 @@ class Surface:
                 x1=max(start['x'],end['x'])+1,y1=max(start['y'],end['y'])+1)
             if rect['x1']-rect['x0']<2 or rect['y1']-rect['y0']<2:return None
             params[tool]=rect
-            if tool=='roi':params['points']=[];params['box']=None
         return '/interactive/control',dict(context,parameters=params)
 
     def frame(self):

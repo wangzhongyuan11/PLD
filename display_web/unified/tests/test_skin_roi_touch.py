@@ -96,6 +96,36 @@ def test_hdmi_unchanged_state_and_updated_image_do_not_show_stale_thumbnails():
     assert tuple(surface.frame()[point[0],point[1]+320])==(15,28,40)
 
 
+@pytest.mark.parametrize('tool',('foreground','background','roi','box'))
+def test_hdmi_mark_accumulates_same_mode_points_and_replaces_rectangles(tool):
+    m=manager();m.tool=tool
+    m.parameters.update(roi=dict(x0=2,y0=2,x1=90,y1=45),
+        box=dict(x0=5,y0=5,x1=70,y1=35),
+        points=[dict(x=20,y=20,label='foreground'),dict(x=30,y=20,label='background')])
+    surface=Surface();surface.image=Image.new('RGB',(100,50),'red');surface.update(m.state('a'*32))
+    ox,oy,rw,rh=surface.geometry()
+    surface.gesture('down',ox+30,oy+30)
+    path,body=surface.gesture('up',ox+220,oy+120)
+    assert path=='/interactive/control'
+    state=m.control(body);p=state['parameters']
+    assert (p['roi'] is None)==(tool!='roi')
+    assert (p['box'] is None)==(tool!='box')
+    assert len(p['points'])==(2 if tool in ('foreground','background') else 0)
+    if p['points']:assert p['points'][0]['label']==tool
+    assert p['threshold']==.45 and m.image_slot['token']=='a'*32
+
+
+def test_cancelled_or_empty_hdmi_rectangle_preserves_previous_marks():
+    m=manager();m.tool='box';m.parameters['points']=[dict(x=20,y=20,label='foreground')]
+    surface=Surface();surface.image=Image.new('RGB',(100,50),'red');surface.update(m.state('a'*32))
+    ox,oy,rw,rh=surface.geometry()
+    surface.gesture('down',ox+30,oy+30)
+    assert surface.gesture('up',ox+30,oy+30) is None
+    surface.gesture('down',ox+30,oy+30)
+    assert surface.gesture('cancel',ox+50,oy+50) is None
+    assert m.parameters['points']==[dict(x=20,y=20,label='foreground')]
+
+
 def test_drag_input_keeps_motion_release_and_partial_packets(monkeypatch):
     reader=DragInput();reader.fd=42;reader.axes=(0,1);reader.ranges=[(0,4096),(0,4096)]
     events=[(3,0,1024),(3,1,1024),(1,330,1),(0,0,0),
