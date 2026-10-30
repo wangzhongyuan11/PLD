@@ -1,5 +1,11 @@
 # 三模型统一入口
 
+板端部署时，在仓库根目录执行一次 `sudo python3 scripts/install_pynq_boot_order.py install`。
+该配置让入口、ACDC engine、皮肤/CAMUS 后端和共享 HDMI 等待 `bootpy.service` 与
+`clear_pl_statefile.service` 完成，避免开机闪灯加载的 `base.bit` 覆盖已初始化的计算位流。
+仅添加 `After`，保留系统开机功能；不会在后续模型切换时重新启动这些一次性服务，也不会立即重启 PLD。
+回退命令为 `sudo python3 scripts/install_pynq_boot_order.py rollback`；它只移除内容匹配的专用 drop-in。
+
 板端入口：**http://192.168.2.99:8088/**。本版本在入口服务每次启动时顺序准备三个模型，再恢复上次成功选择的模型（首次默认心脏 2.5D）。准备过程中显示进度、暂不开放操作页面或自动上屏；全部完成后才按原偏好恢复显示。顶部按钮可切换皮肤镜、CAMUS，并切回心脏 2.5D。所有浏览器共享当前板卡模型，切换前先下载需要保留的结果。
 
 启动准备要求三个后端支持常驻暂停协议。为避免冷启动丢弃已准备的服务，先初始化 ACDC，再准备皮肤镜和 CAMUS；默认 ACDC 时最后额外恢复一次 ACDC。中间步骤不改写默认模型，任一步失败或常驻服务退出则报告错误。源码整合及主机验证见 [开机预热集成记录](../../docs/validation/BOOT_PREWARM_INTEGRATION_20261030.md)；尚未证明板端冷开机时间、内存余量或演示性能。
