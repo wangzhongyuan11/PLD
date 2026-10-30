@@ -45,7 +45,7 @@
   },
   "appid": "wxadaa7f8991e1721a",
   "projectname": "PLD-miniprogram",
-  "libVersion": "2.20.1",
+  "libVersion": "3.17.5",
   "condition": {
     "search": {
       "list": []

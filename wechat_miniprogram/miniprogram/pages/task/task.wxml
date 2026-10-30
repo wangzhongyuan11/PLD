@@ -31,11 +31,20 @@
 
     <block wx:if="{{task.status === 'error'}}">
       <view class="err-box">{{task.error || '任务失败'}}</view>
-      <button class="primary-btn" style="margin-top:16rpx" bindtap="retry">{{task.board_completed ? '重传结果' : '重新提交'}}</button>
-      <button wx:if="{{task.board_completed}}" class="plain-btn" style="margin-top:16rpx" data-fresh="{{true}}" bindtap="retry">重新运行</button>
+      <button class="primary-btn" style="margin-top:16rpx" bindtap="retry">{{task.board_job ? (task.board_completed ? '重传结果' : '接回原任务') : '重新提交'}}</button>
+      <button wx:if="{{task.board_job}}" class="plain-btn" style="margin-top:16rpx" data-fresh="{{true}}" bindtap="retry">重新运行</button>
     </block>
   </view>
 
+  <view wx:if="{{previews.length}}" class="card">
+    <view class="card-title">{{previews[0].label}}</view>
+    <view class="hint">{{task.status === 'error' ? '任务未完成，已生成的预览仍可查看。' : '预览已就绪，高清视图和完整文件继续生成。'}}预览为压缩显示图。</view>
+    <image class="view-img" src="{{previews[0].fileID}}" mode="widthFix"
+           data-fid="{{previews[0].fileID}}" bindtap="previewView" />
+    <button class="plain-btn" data-fid="{{previews[0].fileID}}" disabled="{{!!busy}}" bindtap="saveView">保存预览</button>
+  </view>
+
+  <view wx:if="{{task.params.roi}}" class="card hint">本次为 ROI 裁剪分割，结果视图和面积占比针对选区，不能作为全图面积占比。</view>
   <block wx:if="{{task.status === 'done' || views.length || files.length || zipFile}}">
     <view class="card">
       <view class="card-title">结果指标</view>
@@ -52,7 +61,7 @@
         <view class="row view-head">
           <text class="view-label">{{item.label}}</text>
           <button class="plain-btn small" data-fid="{{item.fileID}}"
-                  disabled="{{busy === item.fileID}}"
+                  disabled="{{!!busy}}"
                   bindtap="saveView">保存到相册</button>
         </view>
         <image class="view-img" src="{{item.fileID}}" mode="widthFix"

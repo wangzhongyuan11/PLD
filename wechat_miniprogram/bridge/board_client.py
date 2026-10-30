@@ -431,12 +431,19 @@ class BoardClient:
 
     def acdc_file(self, job_id, name):
         path = "/api/v2/jobs/%s/assets/%s" % (job_id, quote(name, safe="/"))
+        return self._acdc_bytes(path)
+
+    def acdc_preview(self, job_id, quick=False):
+        kind = "quick-preview" if quick else "preview"
+        return self._acdc_bytes("/api/v2/jobs/%s/%s/axial.png" % (job_id, kind))
+
+    def _acdc_bytes(self, path):
         try:
             status, _, data = self._request(self.acdc_port, "GET", path)
         except (OSError, http.client.HTTPException) as exc:
             raise BoardError("板卡连接失败：%s" % exc, "offline") from exc
         if status != 200:
-            raise BoardError("ACDC 文件 %s 获取失败 HTTP %d" % (name, status),
+            raise BoardError("ACDC 文件获取失败 HTTP %d" % status,
                              "not_found", status)
         return data
 

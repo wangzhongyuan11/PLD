@@ -20,6 +20,7 @@ import logging.handlers
 import sys
 import threading
 import time
+import uuid
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -74,6 +75,8 @@ class Bridge:
         self.async_results = cfg.get("async_results", True)
         self._result_executor = None
         self._transfers = {}
+        self._session = uuid.uuid4().hex
+        self._uncertain_claim = None
 
     # ---------------- board heartbeat ----------------
 
@@ -92,6 +95,7 @@ class Bridge:
                          model=entry.get("model"), phase=entry.get("phase"),
                          stage=entry.get("stage") or None,
                          error=entry.get("error") or None)
+            state["boot"] = entry.get("boot") or {}
             return state
         # entry absent or unreachable: fall back to the dual-model hub
         try:
@@ -158,6 +162,13 @@ class Bridge:
                 continue
             timeout_ms = self.task_timeouts.get(doc.get("type"), 900) * 1000
             started = doc.get("started_at") or doc.get("created_at") or now_ms
+            # This is a single bridge installation. On startup, attach to an
+            # accepted board job instead of submitting the input a second time.
+            if force and doc.get("board_job") and doc.get("bridge_session") != self._session:
+                self.cloud.update_doc("tasks", doc["_id"], {
+                    "status": "pending", "resume_job": doc["board_job"],
+                    "updated_at": now_ms})
+                continue
             if now_ms - started > timeout_ms + 300000:
                 self._fail_task(doc, "桥接程序中断，任务未完成；请重新提交")
                 log.info("恢复清理过期 running 任务 %s", doc.get("_id"))
@@ -274,16 +285,35 @@ class Bridge:
 
     def claim_task(self, doc):
         from_status = doc.get("status")
-        return bool(self.cloud.update_where(
-            "tasks", {"_id": doc["_id"], "status": from_status},
-            {"status": "running",
-             "started_at": int(time.time() * 1000)}))
+        claim = uuid.uuid4().hex
+        fields = {"status": "running", "claim_id": claim,
+                  "bridge_session": self._session, "started_at": int(time.time() * 1000)}
+        try:
+            return bool(self.cloud.update_where(
+                "tasks", {"_id": doc["_id"], "status": from_status}, fields))
+        except WechatApiError:
+            self._uncertain_claim = dict(doc, claim_id=claim)
+            # Never replay a conditional claim after losing its acknowledgement.
+            rows = self.cloud.query_docs("tasks", {"_id": doc["_id"]}, None, 1)
+            if rows and rows[0].get("claim_id") == claim:
+                self._uncertain_claim = None
+                return True
+            self._uncertain_claim = None
+            raise
 
     def process_task(self):
-        doc = self.pick_task()
+        if self._uncertain_claim:
+            old = self._uncertain_claim
+            rows = self.cloud.query_docs("tasks", {"_id": old["_id"]}, None, 1)
+            doc = rows[0] if rows and rows[0].get("status") == "running" and rows[0].get("claim_id") == old["claim_id"] else None
+            self._uncertain_claim = None
+            claimed = doc is not None
+        else:
+            doc = self.pick_task()
+            claimed = False
         if doc is None:
             return None
-        if not self.claim_task(doc):
+        if not claimed and not self.claim_task(doc):
             return None
         if "result" in doc and doc.get("result") is None:
             # 旧版小程序创建的任务带 result:null，嵌套结果回传必失败且无法原地
@@ -324,9 +354,12 @@ class Bridge:
 
     def _fail_task(self, doc, message):
         try:
+            fields = {"status": "error", "error": str(message)[:500],
+                      "updated_at": int(time.time() * 1000)}
+            if doc.get("board_job"):
+                fields["board_job"] = doc["board_job"]
             self.cloud.update_doc("tasks", doc["_id"],
-                                  {"status": "error", "error": str(message)[:500],
-                                   "updated_at": int(time.time() * 1000)})
+                                  fields)
         except WechatApiError:
             pass
 
@@ -386,7 +419,7 @@ class Bridge:
                 raise TaskFailure("板端提交失败：%s" % exc)
 
     def _poll_with_retry(self, task_id, poll, is_done, is_failed, error_of,
-                         deadline, progress_of=None):
+                         deadline, progress_of=None, on_update=None):
         offline_since = None
         while True:
             try:
@@ -403,13 +436,15 @@ class Bridge:
             if progress_of:
                 stage, percent = progress_of(job)
                 self._write_progress(task_id, stage, None, percent)
+            if on_update and not is_failed(job):
+                on_update(job)
             if is_done(job):
                 return job
             if is_failed(job):
                 raise TaskFailure("板端任务失败：%s" % (error_of(job) or "未知错误"))
             if self.clock() >= deadline:
                 raise TaskFailure("任务超时（板端未在限定时间内完成）")
-            self.sleep(self.poll_interval)
+            self.sleep(min(.3, self.poll_interval))
 
     def _finish_task(self, task, items, metrics, extra=None):
         if self.async_results:
@@ -440,7 +475,8 @@ class Bridge:
                     uploaded[name] = previous["zip"]
         if previous.get("report"):
             uploaded["report.json"] = previous["report"]
-        result = {"views": [], "files": [], "metrics": metrics, "zip": None, "report": None}
+        result = {"views": [], "files": [], "metrics": metrics, "zip": None, "report": None,
+                  "previews": previous.get("previews") or []}
         if extra:
             result.update(extra)
 
@@ -505,6 +541,61 @@ class Bridge:
             {"board_job": task["board_job"], "board_completed": True,
              "updated_at": int(time.time() * 1000)})
 
+    def _accepted(self, task, job_id):
+        if not job_id:
+            raise TaskFailure("板端未返回任务编号，请先检查板端状态")
+        job = {"model": task["type"], "id": job_id}
+        task["board_job"] = job
+        # Idempotent checkpoint: do not submit again if only this write fails.
+        fields = {"board_job": job, "board_completed": False,
+                  "updated_at": int(time.time()*1000)}
+        try:
+            self.cloud.update_doc("tasks", task["_id"], fields)
+        except WechatApiError:
+            self.cloud.update_doc("tasks", task["_id"], fields)
+
+    def _early_preview(self, task, model, job_id, job):
+        if task.get("_preview_done") or self.clock() < task.get("_preview_retry", 0):
+            return
+        done = job.get("state") == "done" or job.get("status") == ACDC_DONE_STATUS
+        if not (done or job.get("preview_ready") or job.get("quick_preview_ready")):
+            return
+        try:
+            if model == "skin":
+                # Public preview aliases can contain JPEG bytes despite .png.
+                views = job.get("preview_views") or []
+                view = next((v for v in ("outlined", "comparison", "mask", "original") if v in views), None)
+                if not view and not done:
+                    return
+                view = view or next(iter(job.get("views") or []), "outlined")
+                raw = self.board.skin_file(job_id, ("" if done else "preview_") + view + ".png")
+                label = "ROI 分割预览" if (task.get("params") or {}).get("roi") else "分割预览"
+            elif model == "camus":
+                raw = self.board.camus_file(job_id, "overlay.png")
+                label = "CAMUS 分割预览"
+            else:
+                quick = bool(job.get("quick_preview_ready") and not job.get("preview_ready"))
+                raw = self.board.acdc_preview(job_id, quick=quick)
+                label = "ED 中心切片快速预览" if quick else "ED 轴位预览"
+            from PIL import Image
+            with Image.open(io.BytesIO(raw)) as image:
+                image.thumbnail((768, 768))
+                out = io.BytesIO()
+                image.convert("RGB").save(out, "JPEG", quality=80)
+            key = task.get("key") or task["_id"]
+            fid = self.cloud.upload_bytes("tasks/%s/out/mobile_preview.jpg" % key, out.getvalue())
+            result = dict(task.get("result") or {})
+            result["previews"] = [{"name": "mobile_preview.jpg", "label": label, "fileID": fid}]
+            self.cloud.update_doc("tasks", task["_id"], {"result": result,
+                "updated_at": int(time.time()*1000)})
+            task["result"] = result
+            task["_preview_done"] = True
+            log.info("手机首张预览 %s bridge_to_preview_seconds=%.3f bytes=%d",
+                     task["_id"], self.clock()-task.get("_began", self.clock()), len(out.getvalue()))
+        except (BoardError, WechatApiError, OSError, ValueError) as exc:
+            task["_preview_retry"] = self.clock() + 10
+            log.warning("预览暂不可用，继续等待完整结果 %s：%s", task["_id"], exc)
+
     def _download_results(self, files, read, task_id):
         began = self.clock()
         with ThreadPoolExecutor(max_workers=self.result_workers) as pool:
@@ -520,11 +611,14 @@ class Bridge:
         if not job_id:
             name, raw = self._download_inputs(task)[0]
             self._write_progress(task["_id"], "准备图片", name)
-            jpg = preprocess.prepare_skin_image(raw)
+            jpg = preprocess.prepare_skin_image(raw, (task.get("params") or {}).get("roi"))
             thickness = (task.get("params") or {}).get("thickness") or 2
+            if (task.get("params") or {}).get("roi"):
+                name = "ROI_" + name
             job = self._submit_with_retry(task["_id"], lambda: self.board.skin_submit(
                 jpg, thickness=thickness, name=name))
             job_id = job.get("id")
+            self._accepted(task, job_id)
         deadline = self.clock() + self.task_timeouts["skin"]
         job = self._poll_with_retry(
             task["_id"],
@@ -533,7 +627,8 @@ class Bridge:
             lambda j: j.get("state") == "error",
             lambda j: j.get("error"),
             deadline,
-            progress_of=lambda j: (j.get("stage"), j.get("progress")))
+            progress_of=lambda j: (j.get("stage"), j.get("progress")),
+            on_update=lambda j: self._early_preview(task, "skin", job_id, j))
         views = job.get("views") or []
         self._completed(task, job_id)
         files = [("%s.png" % v, SKIN_VIEW_LABELS.get(v, v)) for v in views]
@@ -542,7 +637,7 @@ class Bridge:
         stats = job.get("statistics") or {}
         metrics = []
         if "area_percent" in stats:
-            metrics.append({"label": "病变面积占比",
+            metrics.append({"label": "ROI 内病变面积占比" if (task.get("params") or {}).get("roi") else "病变面积占比",
                             "value": "%.2f%%" % float(stats["area_percent"])})
         if "foreground_pixels" in stats:
             metrics.append({"label": "前景像素",
@@ -574,6 +669,7 @@ class Bridge:
             job = self._submit_with_retry(task["_id"], lambda: self.board.camus_submit(
                 blobs, input_name, params.get("spacing")))
             job_id = job.get("id")
+            self._accepted(task, job_id)
         deadline = self.clock() + self.task_timeouts["camus"]
         job = self._poll_with_retry(
             task["_id"],
@@ -583,7 +679,8 @@ class Bridge:
             lambda j: j.get("error") or j.get("close_error"),
             deadline,
             progress_of=lambda j: ("CAMUS 推理中" if j.get("state") == "running"
-                                   else "排队中", None))
+                                   else "排队中", None),
+            on_update=lambda j: self._early_preview(task, "camus", job_id, j))
         self._completed(task, job_id)
         items = self._download_results(CAMUS_FILES, lambda name: self.board.camus_file(job_id, name), task["_id"])
         report = next(data for name, _, data in items if name == "report.json")
@@ -612,7 +709,7 @@ class Bridge:
                     metrics.append({"label": "面积 %s" % cls, "value": value})
                 result_info = job.get("result") or {}
                 if result_info.get("end_to_end_seconds") is not None:
-                    metrics.append({"label": "端到端耗时",
+                    metrics.append({"label": "板端处理耗时",
                                     "value": "%.2f s" % float(result_info["end_to_end_seconds"])})
             except (ValueError, TypeError):
                 pass
@@ -648,6 +745,7 @@ class Bridge:
 
             job = self._submit_with_retry(task["_id"], submit)
             job_id = job.get("run_id") or job.get("id")
+            self._accepted(task, job_id)
         deadline = self.clock() + self.task_timeouts["acdc"]
         try:
             job = self._poll_with_retry(
@@ -657,7 +755,8 @@ class Bridge:
                 lambda j: j.get("status") in ACDC_BAD_STATUS,
                 lambda j: j.get("error"),
                 deadline,
-                progress_of=lambda j: (self._acdc_stage(j), None))
+                progress_of=lambda j: (self._acdc_stage(j), None),
+                on_update=lambda j: self._early_preview(task, "acdc", job_id, j))
         except TaskFailure as exc:
             if "超时" in exc.message:
                 self.board.acdc_cancel(job_id)
@@ -714,7 +813,7 @@ class Bridge:
     # ---------------- main loops ----------------
 
     def run_forever(self):
-        self.recover_stale_tasks()
+        self.recover_stale_tasks(force=True)
 
         def beat():
             while not self._stop.is_set():

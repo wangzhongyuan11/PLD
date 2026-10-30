@@ -14,11 +14,11 @@ App({
       });
     }
     this._privacyListeners = [];
-    this._privacyResolve = null;
+    this._privacyResolvers = [];
     const self = this;
     if (wx.onNeedPrivacyAuthorization) {
       wx.onNeedPrivacyAuthorization(function (resolve) {
-        self._privacyResolve = resolve;
+        self._privacyResolvers.push(resolve);
         self._privacyListeners.forEach(function (fn) { fn(true); });
       });
     }
@@ -26,6 +26,7 @@ App({
 
   registerPrivacy: function (fn) {
     if (this._privacyListeners.indexOf(fn) < 0) this._privacyListeners.push(fn);
+    if (this._privacyResolvers.length) fn(true);
     var self = this;
     return function () {
       var i = self._privacyListeners.indexOf(fn);
@@ -35,17 +36,13 @@ App({
 
   agreePrivacy: function () {
     this._privacyListeners.forEach(function (fn) { fn(false); });
-    if (this._privacyResolve) {
-      this._privacyResolve({ event: "agree", buttonId: "agree-btn" });
-      this._privacyResolve = null;
-    }
+    var pending = this._privacyResolvers.splice(0);
+    pending.forEach(function (resolve) { resolve({ event: "agree", buttonId: "agree-btn" }); });
   },
 
   refusePrivacy: function () {
     this._privacyListeners.forEach(function (fn) { fn(false); });
-    if (this._privacyResolve) {
-      this._privacyResolve({ event: "disagree" });
-      this._privacyResolve = null;
-    }
+    var pending = this._privacyResolvers.splice(0);
+    pending.forEach(function (resolve) { resolve({ event: "disagree" }); });
   },
 });
