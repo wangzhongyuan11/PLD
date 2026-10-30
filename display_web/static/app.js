@@ -293,3 +293,100 @@ if(typeof window!=='undefined'){
  });
  if(window.parent!==window)window.parent.postMessage({type:'pld-preferences-request'},entryOrigin);
 }
+
+/* PLD_ANIMATED_GUIDE_BEGIN */
+;(() => {
+ 'use strict';
+ const el=id=>document.getElementById(id);
+ if(el('pldTourToggle')||!el('imageFile')||!el('run'))return;
+ const style=document.createElement('style');style.textContent=`
+ #pldTourRoot{position:fixed;inset:0;z-index:2147483000;pointer-events:none}
+ #pldTourRoot[hidden],#pldTourCard button[hidden]{display:none!important}
+ #pldTourSpot{position:fixed;border:3px solid #79ecff;border-radius:14px;box-shadow:0 0 0 100vmax #07172bbf,0 0 25px #5edcff;transition:top .24s,left .24s,width .24s,height .24s;animation:pldPulse 1.7s infinite}
+ #pldTourCard{position:fixed;width:min(340px,calc(100vw - 24px));padding:20px;border-radius:18px;background:#123347;color:white;box-shadow:0 12px 42px #0005;pointer-events:auto;font:15px/1.7 system-ui;box-sizing:border-box}
+ #pldTourCard strong{font-size:21px;color:white}#pldTourCard p{margin:8px 0;color:#e1f7ff}
+ #pldTourArrow{font-size:30px;color:#79ecff;display:block;animation:pldArrow .9s ease-in-out infinite alternate}
+ #pldTourCard button{background:#79ecff;color:#123347;border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
+ #pldTourToggle{position:relative;z-index:2147483002}#pldTourNotice{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:2147483003;max-width:85vw;padding:10px 18px;background:#15384d;color:white;border-radius:12px;pointer-events:none}
+ @keyframes pldPulse{50%{border-color:white}}@keyframes pldArrow{to{transform:translateY(-6px)}}
+ @media(prefers-reduced-motion:reduce){#pldTourSpot,#pldTourArrow{animation:none;transition:none}}
+ `;document.head.append(style);
+ const toggle=document.createElement('button');toggle.id='pldTourToggle';toggle.type='button';toggle.className='quiet';toggle.textContent='开启新手引导';toggle.setAttribute('aria-pressed','false');
+ (document.querySelector('.heading')||el('run').parentElement).append(toggle);
+ const root=document.createElement('div');root.id='pldTourRoot';root.hidden=true;
+ root.innerHTML='<div id="pldTourSpot"></div><section id="pldTourCard" role="status" aria-live="polite"><span id="pldTourArrow" aria-hidden="true">↑</span><strong id="pldTourTitle"></strong><p id="pldTourText"></p><button type="button" id="pldTourDone" hidden>知道了，暂不下载</button></section>';
+ document.body.append(root);
+ const notice=document.createElement('div');notice.id='pldTourNotice';notice.hidden=true;notice.setAttribute('role','status');document.body.append(notice);
+ let active=false,checking=false,actions=0,step='',target=null,startId=null,sawTask=false,noticeTimer,focusBefore;
+ function tell(text){notice.textContent=text;notice.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>notice.hidden=true,4000)}
+ function occupied(s=status){return !!(busy||preparing||actions||s?.active||s?.warmup==='running'||s?.hdmi==='starting')}
+ function stop(){active=false;root.hidden=true;toggle.textContent='开启新手引导';toggle.setAttribute('aria-pressed','false');step='';target=null;(focusBefore?.isConnected?focusBefore:toggle).focus()}
+ function layout(){
+  if(!active||!target)return;const r=target.getBoundingClientRect(),spot=el('pldTourSpot'),card=el('pldTourCard');
+  Object.assign(spot.style,{left:(r.left-6)+'px',top:(r.top-6)+'px',width:(r.width+12)+'px',height:(r.height+12)+'px'});
+  const w=card.offsetWidth||340,h=card.offsetHeight||180;
+  card.style.left=Math.max(12,Math.min(innerWidth-w-12,r.left))+'px';
+  const below=r.bottom+22+h<innerHeight;
+  card.style.top=Math.max(12,Math.min(innerHeight-h-12,below?r.bottom+22:r.top-h-22))+'px';
+  el('pldTourArrow').textContent=below?'↑':'↓';
+ }
+ function show(key,id,title,text,done=false){
+  const changed=step!==key;step=key;target=el(id);if(!target){stop();tell('当前页面控件不兼容，已退出引导。');return}
+  el('pldTourTitle').textContent=title;el('pldTourText').textContent=text;el('pldTourDone').hidden=!done;
+  if(changed){target.scrollIntoView({block:'center',behavior:'auto'});if(['mode','run','download'].includes(id)&&!target.disabled)target.focus();}
+  layout();
+ }
+ function update(){
+  if(!active)return;
+  if(busy||preparing||status?.active){sawTask=true;show('working','progress','Step 3 · 正在切割',current?.preview_ready?'分割预览已显示，完整结果包仍在生成，请等待。':'请等待分割完成，无需重复点击。处理中不能切换引导模式。');return}
+  if(current?.state==='error'&&current.id!==startId){stop();tell('本次处理失败，已退出引导。请查看原页面错误信息。');return}
+  if(current?.state==='done'&&current.id!==startId){show('download','download','Step 4 · 保存完整结果','点击高亮的“下载结果包”，保存分割结果。也可以选择“知道了”，直接结束引导。',true);return}
+  if(el('mode').value!=='infer'){show('mode','mode','准备 · 选择模型分割','请选择“板端 FPGA 分割”，然后继续选择照片。');return}
+  if(!el('imageFile').files.length){show('file','drop','Step 1 · 选择照片','点击高亮区域选择照片。选择后继续下一步；若已开启自动分割，将自动进入处理阶段。');return}
+  show('run','run','Step 2 · 开始切割','点击高亮的“开始处理”，运行皮肤镜分割。');
+ }
+ async function switchMode(){
+  if(checking)return;
+  if(occupied()){tell('当前操作尚未结束，不能切换引导模式。请完成后重新点击。');return}
+  checking=true;toggle.textContent='检查板卡状态…';let timer;
+  try{
+   const s=await Promise.race([api('/api/status'),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('状态读取超时')),5000)})]);
+   if(occupied(s)){tell('板卡正在处理或准备，请结束后重新点击。');return}
+   if(s.fault||s.runtime_error||s.inference_available!==true){tell('板卡尚未就绪，暂不能切换引导。');return}
+   if(active){stop();return}
+   active=true;focusBefore=document.activeElement;startId=current?.id;sawTask=false;step='';root.hidden=false;update();
+  }catch(e){tell('无法确认板卡空闲，未切换引导。请检查连接后重试。')}
+  finally{clearTimeout(timer);checking=false;toggle.textContent=active?'退出新手引导':'开启新手引导';toggle.setAttribute('aria-pressed',String(active))}
+ }
+ toggle.addEventListener('click',switchMode);
+ el('pldTourDone').addEventListener('click',()=>{if(occupied()){tell('当前操作尚未结束，请稍候。');return}stop()});
+ function allowed(node){
+  if(toggle.contains(node))return true;
+  if(step==='download'&&el('pldTourDone').contains(node))return true;
+  return step!=='working'&&target?.contains(node);
+ }
+ // Capture gate blocks other controls without overwriting their disabled state.
+ // It also blocks links, drops and keyboard activation; existing handlers remain intact.
+ for(const type of ['click','pointerdown','mousedown','touchstart','dragover','drop','keydown','focusin']){
+  document.addEventListener(type,e=>{
+   if(!active)return;
+   if(type==='keydown'&&e.key==='Tab'){
+    const candidates=[toggle,...(step!=='working'&&target?[target.id==='drop'?el('imageFile'):target]:[]),...(step==='download'?[el('pldTourDone')]:[])].filter(n=>!n.disabled);
+    const i=candidates.indexOf(document.activeElement),next=(i+(e.shiftKey?-1:1)+candidates.length)%candidates.length;
+    e.preventDefault();e.stopImmediatePropagation();candidates[next].focus();return;
+   }
+   if(!allowed(e.target)){e.preventDefault();e.stopImmediatePropagation();if(type==='focusin')toggle.focus();}
+  },{capture:true,passive:false});
+ }
+ for(const id of ['run','demo','download','showHdmi','stopHdmi']){
+  const n=el(id),original=n?.onclick;if(typeof original!=='function')continue;
+  n.onclick=async function(...args){actions++;try{return await original.apply(this,args)}finally{actions--;update()}};
+ }
+ // Cover history downloads initiated while ordinary mode is active.
+ if(typeof downloadHistory==='function'){const original=downloadHistory;downloadHistory=async function(...args){actions++;try{return await original.apply(this,args)}finally{actions--;update()}}}
+ let timer=setInterval(update,200);
+ window.addEventListener('resize',layout);window.addEventListener('scroll',layout,true);
+ window.addEventListener('pagehide',()=>{clearInterval(timer);clearTimeout(noticeTimer);timer=null});
+ window.addEventListener('pageshow',()=>{if(timer===null)timer=setInterval(update,200)});
+})();
+/* PLD_ANIMATED_GUIDE_END */
