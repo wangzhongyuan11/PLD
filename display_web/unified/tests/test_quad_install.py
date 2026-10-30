@@ -14,6 +14,27 @@ spec.loader.exec_module(installer)
 
 
 class InstallTests(unittest.TestCase):
+    def test_legacy_backup_does_not_remove_unrecorded_hud_modules(self):
+        with tempfile.TemporaryDirectory() as temp:
+            hub=Path(temp)/'hub';skin=Path(temp)/'skin';hub.mkdir();skin.mkdir()
+            (skin/'server.py').write_text('fixture')
+            (hub/'installation.json').write_text(json.dumps({'backends':{'skin':{'source':str(skin)}}}))
+            targets=installer.destinations(hub)
+            backup=hub/'backup_quad_legacy';backup.mkdir();record={}
+            for key,target in targets.items():
+                target.parent.mkdir(parents=True,exist_ok=True)
+                if key.endswith('/telemetry_hud.py'):
+                    target.write_bytes(b'unrecorded module must survive')
+                    continue
+                target.write_bytes(b'new')
+                saved=backup/key;saved.parent.mkdir(parents=True,exist_ok=True);saved.write_bytes(b'old')
+                record[key]=dict(old=hashlib.sha256(b'old').hexdigest(),new=hashlib.sha256(b'new').hexdigest())
+            (backup/'record.json').write_text(json.dumps(record))
+            with patch.object(installer.sys,'platform','linux'),patch.object(installer.os,'geteuid',return_value=0,create=True),patch.object(installer,'stop_safely'),patch.object(installer,'call'),patch.object(sys,'argv',['install_quad.py','--hub',str(hub),'--rollback',str(backup)]):
+                installer.main()
+            for key,target in targets.items():
+                self.assertEqual(target.read_bytes(),b'unrecorded module must survive' if key.endswith('/telemetry_hud.py') else b'old')
+
     def test_failed_shutdown_prevents_replacement(self):
         with patch.object(installer,'call',return_value='ActiveState=active\nMainPID=12\nResult=success\n'):
             with self.assertRaises(RuntimeError):installer.stop_safely()

@@ -15,11 +15,13 @@ from PIL import Image, ImageDraw
 from .mpr import MPRVolume
 from .native import load_native
 from .surface_hdmi import load_mesh, render
+from display_web.telemetry_hud import load_telemetry, annotate
 
 
 class HeartView:
     def __init__(self, folder, kernel):
         self.folder = Path(folder)
+        self.telemetry = load_telemetry(self.folder, 'acdc')
         self.volumes = {p: MPRVolume(self.folder/'viewer'/p, kernel) for p in ('ED', 'ES')}
         self.meta = {p: json.loads((self.folder/'viewer'/p/'volume.json').read_text()) for p in self.volumes}
         self.phase = 'ED'
@@ -94,7 +96,8 @@ class HeartView:
             screen[48:480,:,:]=render(self.meshes[phase],self.yaw,self.pitch,phase,preview=preview,size=(640,432))
         elif self.quad:
             screen[288:480,320:640,:]=render(self.meshes[phase],self.yaw,self.pitch,phase,preview=preview,size=(320,192))
-        return screen
+        mode = self.phase + (' / four views' if self.quad else ' / surface' if self.surface else ' / '+self.planes[self.plane])
+        return annotate(screen, self.telemetry, y=48, mode=mode)
 
 
 startup.mark("module_imports")

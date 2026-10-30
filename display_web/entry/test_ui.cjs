@@ -3,7 +3,7 @@ const html=fs.readFileSync(__dirname+'/index.html','utf8');
 const elements=new Map();
 function fresh(){return {hidden:true,disabled:true,src:'',setAttribute(){},replaceWith(view){elements.set(this.id,view);}};}
 function element(id){if(!elements.has(id))elements.set(id,Object.assign(fresh(),{id}));return elements.get(id);}
-const context=vm.createContext({document:{getElementById:element,createElement:fresh},location:{hostname:'192.168.2.99'},setInterval(){},fetch:async()=>({ok:true,json:async()=>({phase:'ready',model:'acdc',url:'8092/'})})});
+const context=vm.createContext({document:{body:{style:{}},getElementById:element,createElement:fresh},location:{hostname:'192.168.2.99'},setInterval(){},fetch:async()=>({ok:true,json:async()=>({phase:'ready',model:'acdc',url:'8092/'})})});
 vm.runInContext(html.match(/<script>([\s\S]*?)<\/script>/)[1],context);
 const tick=()=>new Promise(setImmediate);
 (async()=>{
@@ -46,5 +46,14 @@ const tick=()=>new Promise(setImmediate);
  assert.equal(element('workspace').hidden,true);
  assert.equal(element('error').textContent,'开机准备失败');
  assert(element('status').textContent.includes('开机准备未完成'));
+ let opens=0;element('errorDialog').showModal=()=>{opens++;element('errorDialog').open=true;};element('errorDialog').open=false;
+ vm.runInContext("presentError('新的错误');presentError('新的错误')",context);
+ assert.equal(opens,1);assert.equal(element('errorDetail').textContent,'新的错误');
+ vm.runInContext("render({phase:'ready',model:'skin',url:'/skin/g/3/',recovery_demo:{state:'running',simulated:true,events:[{code:'SIM_TIMEOUT',elapsed_seconds:.6,message:'模拟任务超时'}]}})",context);
+ assert.equal(element('demoRecover').disabled,true);assert.equal(element('demoFail').disabled,true);
+ assert(element('demoLog').textContent.includes('[模拟][SIM_TIMEOUT]'));
+ vm.runInContext("render({phase:'ready',model:'skin',url:'/skin/g/3/',recovery_demo:{state:'failed',simulated:true,error:'模拟输出校验失败',run_id:'demo',events:[]}})",context);
+ assert.equal(element('demoFail').disabled,false);assert(element('demoStatus').textContent.includes('已停止重试'));
+ assert.equal(element('errorDetail').textContent,'模拟输出校验失败');
  console.log('PASS: cardiac URL, original dual URL, fresh iframe per transition, switch blanking, return');
 })().catch(e=>{console.error(e);process.exitCode=1;});

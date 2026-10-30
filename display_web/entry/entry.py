@@ -15,6 +15,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 from display_control import DisplayControl
+from recovery_demo import RecoveryDemo
 ENGINE = 'pld-acdc-v2-engine.service'
 WEB = 'pld-acdc-v2-web.service'
 HUB = 'pld-hub.service'
@@ -145,6 +146,7 @@ class Controller:
         self.boot = dict(state='idle', completed=[], target=None, default_model=None, elapsed_seconds=None)
         self.boot_started = None
         self.display = DisplayControl(self)
+        self.recovery_demo = RecoveryDemo(self.state_dir)
 
     def save_settings(self):
         if self.state_dir:
@@ -169,7 +171,8 @@ class Controller:
             return dict(boot=boot, model=self.model, target=self.target,
                         phase='preparing' if self.boot['state']=='running' else self.phase,
                         error=self.error, url=self.url, stage=self.stage,
-                        settings=dict(self.settings), display=self.display.snapshot(), stages_seconds=dict(self.metrics),
+                        settings=dict(self.settings), display=self.display.snapshot(),
+                        recovery_demo=self.recovery_demo.snapshot(), stages_seconds=dict(self.metrics),
                         elapsed_seconds=(time.monotonic()-self.switch_started
                                          if self.switch_started is not None else None))
 
@@ -190,6 +193,17 @@ class Controller:
             self.url = ''
             self.thread = threading.Thread(target=self._switch, args=(target,), daemon=True)
             self.thread.start()
+            return self.snapshot()
+
+    def start_recovery_demo(self, body):
+        # This demonstration has no hardware references and never marks a real
+        # job recovered. Existing fault gates and unique ownership stay intact.
+        with self.lock:
+            if self.stopping or self.boot['state'] == 'running' or self.phase != 'ready':
+                raise RuntimeError('请等待模型准备完成后运行模拟演示')
+            if set(body) - {'scenario'}:
+                raise ValueError('模拟演示只接受场景参数')
+            self.recovery_demo.start(body.get('scenario', 'recover'))
             return self.snapshot()
 
     def start_boot_preparation(self):
@@ -480,7 +494,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         try:
-            if self.path not in ('/entry/switch', '/entry/task', '/entry/settings'):
+            if self.path not in ('/entry/switch', '/entry/task', '/entry/settings', '/entry/recovery-demo'):
                 return self.proxy()
             if self.headers.get('Origin') != 'http://' + self.headers.get('Host', ''):
                 return self.send(403, {'error': '不允许跨站切换'})
@@ -488,6 +502,10 @@ class Handler(BaseHTTPRequestHandler):
             if not 0 < size <= 2048:
                 raise ValueError('请求大小无效')
             body = json.loads(self.rfile.read(size))
+            if not isinstance(body, dict):
+                raise ValueError('请求必须为 JSON 对象')
+            if self.path == '/entry/recovery-demo':
+                return self.send(202, self.server.controller.start_recovery_demo(body))
             if self.path == '/entry/task':
                 if self.client_address[0] != '127.0.0.1':
                     return self.send(403, {'error': '任务通知仅供板内使用'})
@@ -522,6 +540,7 @@ def main():
     try:
         server.serve_forever()
     finally:
+        controller.recovery_demo.close()
         controller.display.close()
         server.server_close()
         if controller.thread:

@@ -25,9 +25,12 @@ def main(argv=None, stop=None):
     except ModuleNotFoundError:from display_lease import CamusDisplayLease
     from display_web.pld_hdmi import PynqHdmiDisplay,fit_rgb
     from display_web.touch_display import TouchInput,QuadTouch
+    try:from display_web.telemetry_hud import load_telemetry,annotate
+    except ModuleNotFoundError:from telemetry_hud import load_telemetry,annotate
     try:from display_web.video_overlay import video_overlay
     except ModuleNotFoundError:from video_overlay import video_overlay
     folder = args.result.resolve()
+    telemetry = load_telemetry(folder, 'camus')
     view=args.view
     def frame(selected):
         with Image.open(folder/(selected+'.png')) as im:rgb=np.asarray(im.convert('RGB')).copy()
@@ -40,8 +43,8 @@ def main(argv=None, stop=None):
         base = video_overlay()
         display = PynqHdmiDisplay(base.video.hdmi_out)
         display.start()
-        quad=QuadTouch(screen) if view=='quad' else None
-        shown=quad.frame() if quad else screen
+        quad=QuadTouch(screen,telemetry) if view=='quad' else None
+        shown=quad.frame() if quad else annotate(screen,telemetry)
         display.show(shown)
         ready.write_text(json.dumps(dict(view=view, resolution=[640,480],
             frame_sha256=hashlib.sha256(shown.tobytes()).hexdigest(),
@@ -53,14 +56,14 @@ def main(argv=None, stop=None):
                 stop.display_update=None
                 selected=update.get('view')
                 if selected not in ('quad','overlay','segmentation','label','label_raw'):raise ValueError('invalid display update')
-                view=selected;screen=frame(view);quad=QuadTouch(screen) if view=='quad' else None
-                display.show(quad.frame() if quad else screen)
+                view=selected;screen=frame(view);quad=QuadTouch(screen,telemetry) if view=='quad' else None
+                display.show(quad.frame() if quad else annotate(screen,telemetry))
                 ready.write_text(json.dumps(dict(view=view,resolution=[640,480],scope='frame update submitted')))
             for x,y in touch.poll():
                 if quad:display.show(quad.tap(x,y))
                 else:
                     views=('overlay','segmentation','label','label_raw')
-                    view=views[(views.index(view)+1)%len(views)];display.show(frame(view))
+                    view=views[(views.index(view)+1)%len(views)];display.show(annotate(frame(view),telemetry))
                 print('CAMUS_TOUCH',x,y,view,flush=True)
     finally:
         try:

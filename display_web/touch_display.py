@@ -86,9 +86,10 @@ class TouchInput:
 
 
 class QuadTouch:
-    def __init__(self, screen):
+    def __init__(self, screen, telemetry=None):
         self.original = Image.fromarray(screen)
         self.selected = None
+        self.telemetry = telemetry
 
     def tap(self, x, y):
         self.selected = None if self.selected is not None else (int(y >= 240)*2 + int(x >= 320))
@@ -107,6 +108,12 @@ class QuadTouch:
         draw = ImageDraw.Draw(image)
         draw.rectangle((0, 460, 640, 480), fill=(15, 28, 40))
         draw.text((10, 464), label, fill='white')
+        if self.telemetry is not None:
+            try:from .telemetry_hud import annotate
+            except ImportError:from telemetry_hud import annotate
+            # Annotate after enlargement; never zoom the metadata into a panel.
+            draw.text((10, 447), label, fill='white')
+            return annotate(np.asarray(image), self.telemetry)
         return np.asarray(image).copy()
 
 

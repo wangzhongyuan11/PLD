@@ -25,6 +25,7 @@ def main(argv=None, stop=None):
     # Reuse C's display transport without changing its binary-mask/UI contract.
     from display_web.pld_hdmi import PynqHdmiDisplay,fit_rgb
     from display_web.touch_display import TouchInput
+    from display_web.telemetry_hud import load_telemetry,annotate
     try:from display_web.video_overlay import video_overlay
     except ModuleNotFoundError:from video_overlay import video_overlay
     try:from display_web.display_lease import CamusDisplayLease
@@ -32,7 +33,8 @@ def main(argv=None, stop=None):
     ready=folder/'hdmi.ready.json';display=None;lease=CamusDisplayLease()
     try:
         rgb=np.asarray(Image.open(source).convert('RGB'))
-        screen=fit_rgb(rgb,640,480,nearest=args.view in ('label','label_raw','segmentation'))
+        telemetry=load_telemetry(folder,'camus')
+        screen=annotate(fit_rgb(rgb,640,480,nearest=args.view in ('label','label_raw','segmentation')),telemetry)
         base=video_overlay();display=PynqHdmiDisplay(base.video.hdmi_out)
         display.start();display.show(screen)
         evidence=dict(scope='HDMI overlay/configure/frame submission; physical screen appearance requires observation',
@@ -47,7 +49,7 @@ def main(argv=None, stop=None):
                 for x,y in touch.poll():
                     selected=(selected+1)%len(views)
                     with Image.open(folder/(views[selected]+'.png')) as im:
-                        display.show(fit_rgb(np.asarray(im.convert('RGB')),640,480,nearest=selected!=0))
+                        display.show(annotate(fit_rgb(np.asarray(im.convert('RGB')),640,480,nearest=selected!=0),telemetry))
                     print('TOUCH_TAP',x,y,views[selected],flush=True)
         finally:touch.close()
     finally:

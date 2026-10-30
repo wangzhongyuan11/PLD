@@ -10,6 +10,17 @@
 
 ## 获取与准备
 
+竞赛审阅可从下表进入。GitHub 仓库已公开；模型、数据、位流及完整运行包从 Release 按许可和哈希取得，源码仓库与冻结交付分别核对。
+
+| 内容 | 入口 |
+|---|---|
+| 当前三模型界面、开机准备、停止与回退 | [统一入口说明](display_web/entry/README.md) |
+| RTL、BD/IP 构建与 PS7 配置 | [RTL](rtl/)、[Vivado Tcl](vivado/)、[PS7 配置](vivado/ps7_config.tcl)、[工具链与构建说明](docs/validation/VIVADO_ENVIRONMENT.md) |
+| 数值、运行包及板端验收 | [正式交付清单](delivery/current.json)、[板端验证](docs/validation/EVALUATION.md) |
+| HDMI 状态栏、异常弹窗与恢复演示候选 | [P0 优化说明](docs/P0_DEMO_HUD_RECOVERY.md) |
+
+此 P0 候选只增加软件展示和文档，不需要重新综合硬件。候选的主机测试不代替实板验证；在板上启用前按其说明核对源码、模型与运行时身份，并保留原服务目录。
+
 克隆本仓库，从 [唯一正式 Release](https://github.com/wangzhongyuan11/PLD/releases/tag/pld-dual-20261017) 下载 `pld_dual_20261017_assets.zip`，放入 `out/`。这是模型、冻结运行时、配对硬件证据及小型公开回归样本，不能用私人备份替代。
 
 ```powershell

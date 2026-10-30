@@ -9,9 +9,9 @@ import subprocess
 import sys
 import time
 
-SKIN = ('static/index.html','static/app.js','static/style.css','hdmi_worker.py','quad_display.py')
+SKIN = ('static/index.html','static/app.js','static/style.css','hdmi_worker.py','quad_display.py','telemetry_hud.py')
 HUB = ('backend_launcher.py','accepted_backends.json','camus_quad.py','quad_display.py',
-       'quad_camus.html','quad_camus_hdmi.py')
+       'quad_camus.html','quad_camus_hdmi.py','telemetry_hud.py')
 UNITS = ('pld-hub.service','pld-web.service','pld-camus.service')
 
 
@@ -65,6 +65,10 @@ def main():
         if backup.parent != root or not backup.name.startswith('backup_quad_'):
             raise ValueError('Backup must be backup_quad_* inside the hub directory')
         record = json.loads((backup/'record.json').read_text())
+        # Old backups predate this optional module. Restore precisely their
+        # original member set; never remove a file they did not back up.
+        if set(record) == set(targets)-{'skin/telemetry_hud.py','hub/telemetry_hud.py'}:
+            targets = {key:value for key,value in targets.items() if key in record}
         if set(record) != set(targets):raise ValueError('Backup member mismatch')
         for key,target in targets.items():
             item = record[key]
