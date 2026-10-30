@@ -5,6 +5,7 @@ import struct
 import time
 import zlib
 import numpy as np
+from PIL import Image
 from .result import label_display_png, segmentation_rgb, overlay_rgb
 
 
@@ -28,6 +29,24 @@ def save_png(image, path):
 
 
 def save_views(output,gray,labels,processed,native=None,*,on_preview=None):
+    first={}
+    if on_preview is not None:
+        # Render only the displayed pixels before allocating the full view set.
+        tick=time.perf_counter()
+        step=max(1,(max(gray.shape)+511)//512)
+        small_gray=np.ascontiguousarray(np.clip(gray[::step,::step],0,255).astype(np.uint8))
+        small_labels=np.ascontiguousarray(processed[::step,::step])
+        overlay=(native.render_views(small_gray,small_labels,small_labels)['overlay.png'] if native is not None
+                 else np.asarray(overlay_rgb(small_gray,small_labels)))
+        primary={'preview_original.jpg':small_gray,'preview_overlay.jpg':overlay}
+        render_seconds=time.perf_counter()-tick
+        def save_primary(item):
+            name,pixels=item;t=time.perf_counter()
+            Image.fromarray(pixels).save(output/name,format='JPEG',quality=90,subsampling=0)
+            return name,dict(render=render_seconds if name=='preview_overlay.jpg' else 0.,encode_write=time.perf_counter()-t)
+        with ThreadPoolExecutor(max_workers=2,thread_name_prefix='camus-first-preview') as pool:
+            first=dict(pool.map(save_primary,primary.items()))
+        on_preview()
     if native is None:
         jobs=[('label_raw.png',label_display_png,(labels,)),('label.png',label_display_png,(processed,)),
               ('segmentation.png',segmentation_rgb,(processed,)),('overlay.png',overlay_rgb,(gray,processed))]
@@ -45,12 +64,7 @@ def save_views(output,gray,labels,processed,native=None,*,on_preview=None):
         return result
     if on_preview is not None:
         original=np.clip(gray,0,255).astype(np.uint8)
-        primary=[('original.png',lambda:original,()),next(item for item in jobs if item[0]=='overlay.png')]
-        with ThreadPoolExecutor(max_workers=2,thread_name_prefix='camus-first-preview') as pool:
-            first={name:row for part in pool.map(lambda item:group([item]),primary) for name,row in part.items()}
-        on_preview()
-        jobs=[item for item in jobs if item[0]!='overlay.png']
-    else:first={}
+        jobs.insert(0,('original.png',lambda:original,()))
     with ThreadPoolExecutor(max_workers=2,thread_name_prefix='camus-png') as pool:
         futures=[pool.submit(group,jobs[index::2]) for index in range(2)]
         details={**first,**{name:row for future in futures for name,row in future.result().items()}}

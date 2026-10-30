@@ -30,7 +30,7 @@ function buttons() {
   $('showHdmi').disabled=busy || !status.hdmi_available || !current || current.state!=='done';
   $('stopHdmi').disabled=!['starting','showing'].includes(status.hdmi);
   $('download').disabled=busy || !current || current.state!=='done';
-  document.querySelectorAll('[data-view]').forEach(b => { b.disabled=!(current?.preview_ready || current?.state==='done') || !(current?.preview_ready ? current.preview_views : current?.views)?.includes(b.dataset.view); });
+  document.querySelectorAll('[data-view]').forEach(b => { b.disabled=!(current?.preview_ready || current?.state==='done') || !(current?.preview_ready ? current.preview_views : current?.views)?.includes(b.dataset.view) && !(current?.client_composite && b.dataset.view==='outlined'); });
   $('download').textContent=busy && current?.preview_ready ? '结果包生成中…' : '下载结果包';
 }
 async function refreshStatus() {
@@ -92,13 +92,13 @@ async function watchCurrent(clientTimes, clickStarted) {
   };
   while(true) {
     stage(current);buttons();
-    if(current.preview_ready && !rendered) {
+    if(current.preview_ready && !rendered && (!current.client_composite || localOriginal?.id===current.id || current.state!=='running')) {
       resultStatistics(current);firstRender();
     } else if(rendered) {
       void updateAuxiliary(current).catch(error=>message(error.message,true));
     }
     if(current.state!=='running') break;
-    current=await api('/api/jobs/'+current.id+'?wait='+(rendered?'done':'preview'));
+    current=await api('/api/jobs/'+current.id+'?wait='+(rendered||current.preview_ready?'done':'preview'));
   }
   if(clickStarted!==null) clientTimes.until_done=(performance.now()-clickStarted)/1000;
   if(!rendered && current.state==='done') firstRender();
@@ -108,7 +108,7 @@ async function watchCurrent(clientTimes, clickStarted) {
   showTimings(current,clientTimes);
   if(current.state==='error') throw new Error((current.preview_ready?'预览已保留，但完整结果包生成失败：':'')+current.error);
   resultStatistics(current);
-  message('完整结果包已生成，可以下载或发送到 HDMI。网页与下载文件均保留上传尺寸。');
+  message('完整结果包已生成，可以下载或发送到 HDMI。首屏为轻量预览，下载文件保留处理尺寸。');
 }
 async function resumeActive(id) {
   if(busy) return;
@@ -117,7 +117,8 @@ async function resumeActive(id) {
   catch(e){message(e.message,true);}
   finally {busy=false;buttons();}
 }
-async function start(body, clickStarted=performance.now()) {
+let localOriginal=null;
+async function start(body, clickStarted=performance.now(), originalFile=null) {
   if(busy) throw new Error('已有任务正在处理，请稍候');
   busy=true;current=null;currentView='outlined';buttons();message('正在处理，请稍候…');
   const submitStarted=performance.now();
@@ -126,6 +127,8 @@ async function start(body, clickStarted=performance.now()) {
   timingReport=null;$('downloadTimings').disabled=true;
   try {
     current=await api('/api/jobs',body);
+    if(localOriginal) URL.revokeObjectURL(localOriginal.url);
+    localOriginal=originalFile?{id:current.id,url:URL.createObjectURL(originalFile)}:null;
     clientTimes.submit_roundtrip=(performance.now()-submitStarted)/1000;
     await watchCurrent(clientTimes,clickStarted);
   } catch(e){message(e.message,true);}
@@ -145,6 +148,27 @@ function viewAsset(job,name) {
   if(!viewAssets.has(key)) viewAssets.set(key,historyAsset(job.id,name).then(blob=>{
     const url=URL.createObjectURL(blob);imageUrls.push(url);return url;
   }));
+  return viewAssets.get(key);
+}
+function clientOverlay(job,original) {
+  const key=job.id+'/client-outlined';
+  if(!viewAssets.has(key)) viewAssets.set(key,(async()=>{
+    const photo=document.createElement('img');photo.src=original;
+    const mask=job.preview_contour_base64?new Blob([Uint8Array.from(atob(job.preview_contour_base64),c=>c.charCodeAt(0))],{type:'image/png'}):await historyAsset(job.id,'preview_contour.png');
+    const [contour]=await Promise.all([createImageBitmap(mask),photo.decode()]);
+    try {
+      const layer=document.createElement('canvas');layer.width=contour.width;layer.height=contour.height;
+      const ctx=layer.getContext('2d');ctx.drawImage(contour,0,0);
+      const pixels=ctx.getImageData(0,0,layer.width,layer.height);
+      for(let p=0;p<pixels.data.length;p+=4){const edge=pixels.data[p]!==0;pixels.data[p]=255;pixels.data[p+1]=220;pixels.data[p+2]=0;pixels.data[p+3]=edge?255:0;}
+      ctx.putImageData(pixels,0,0);
+      const canvas=document.createElement('canvas'),scale=Math.min(1,512/Math.max(layer.width,layer.height));
+      canvas.width=Math.max(1,Math.round(layer.width*scale));canvas.height=Math.max(1,Math.round(layer.height*scale));
+      const output=canvas.getContext('2d');output.drawImage(photo,0,0,canvas.width,canvas.height);output.drawImage(layer,0,0,canvas.width,canvas.height);
+      const blob=await new Promise((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(Error('预览合成失败')),'image/jpeg',.9));
+      const url=URL.createObjectURL(blob);imageUrls.push(url);return url;
+    } finally {contour.close();}
+  })());
   return viewAssets.get(key);
 }
 async function updateAuxiliary(job,version=renderVersion) {
@@ -168,7 +192,9 @@ async function render() {
   }
   const left=job.views.includes('original')?'original':'mask';
   const filename=name=>(job.preview_ready && job.preview_views?.includes(name)?'preview_':'')+name+'.png';
-  const urls=await Promise.all([viewAsset(job,filename(left)),viewAsset(job,filename('outlined'))]);
+  const original=left==='original'&&localOriginal?.id===job.id?localOriginal.url:null;
+  const urls=await Promise.all([original||viewAsset(job,job.client_composite?left+'.png':filename(left)),
+    original&&job.client_composite?clientOverlay(job,original):viewAsset(job,job.client_composite?'outlined.png':filename('outlined'))]);
   if(version!==renderVersion) return;
   const images=[$('leftImage'),$('rightImage')];
   await Promise.all(images.map(async(image,index)=>{if(image.src!==urls[index]){image.src=urls[index];await image.decode();}}));
@@ -191,7 +217,7 @@ $('run').onclick=async()=>{
     $('uploadNote').textContent=prepared.note;
     const {note,...files}=prepared;
     preparing=false;
-    await start({mode,thickness:Number($('thickness').value),name:file.name,...files},clickStarted);
+    await start({mode,thickness:Number($('thickness').value),name:file.name,...files,client_composite:true},clickStarted,file);
   } catch(e) {$('uploadNote').textContent='上传准备未完成，原文件未修改。';message(e.message,true);}
   finally {preparing=false;buttons();}
 };

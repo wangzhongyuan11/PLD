@@ -12,6 +12,27 @@ class PreviewTests(unittest.TestCase):
  request=test_web.WebTests.request
  wait=test_web.WebTests.wait
 
+ def test_client_composite_publishes_exact_contour_before_full_photos(self):
+  entered=threading.Event();release=threading.Event();original=server.save_lossless_png
+  rgb=np.full((30,40,3),100,np.uint8);mask=np.zeros((30,40),np.uint8);mask[5:20,8:30]=255
+  def save(array,path):
+   if path.name=='original.png':
+    entered.set()
+    if not release.wait(6):raise TimeoutError('blocked full photo')
+   original(array,path)
+  with patch('server.save_lossless_png',side_effect=save):
+   j=self.app.submit({'mode':'mask','image':test_web.encoded(rgb),'mask':test_web.encoded(mask),'client_composite':True})
+   try:
+    self.assertTrue(entered.wait(5));j=self.app.job(j['id'])
+    self.assertTrue(j['client_composite']);self.assertEqual(j['preview_views'],['contour'])
+    code,raw=self.request('/files/'+j['id']+'/preview_contour.png');self.assertEqual(code,200)
+    import base64
+    self.assertEqual(base64.b64decode(j['preview_contour_base64']),raw)
+    np.testing.assert_array_equal(np.asarray(Image.open(io.BytesIO(raw))),server.process(mask,rgb)['contour'].astype(np.uint8)*255)
+    self.assertEqual(self.request('/files/'+j['id']+'/original.png')[0],404)
+   finally:release.set()
+   done=self.wait(j['id']);self.assertEqual(done['state'],'done');self.assertIsNone(done['preview_contour_base64'])
+
  def test_first_screen_does_not_wait_for_remaining_previews(self):
   entered=threading.Event();release=threading.Event();original=server.save_lossless_png
   def save(array,path):
@@ -47,8 +68,8 @@ class PreviewTests(unittest.TestCase):
     self.assertTrue(entered.wait(5));ident=j['id'];j=self.app.job(ident)
     self.assertEqual(j['state'],'running');self.assertTrue(j['preview_ready']);self.assertFalse(j['package_ready'])
     code,raw=self.request('/files/'+ident+'/preview_outlined.png');self.assertEqual(code,200)
-    self.assertEqual(Image.open(io.BytesIO(raw)).size,(1200,600))
-    self.assertEqual(raw,(Path(self.temp.name)/ident/'outlined.png').read_bytes())
+    self.assertEqual(Image.open(io.BytesIO(raw)).size,(512,256))
+    self.assertEqual(raw,(Path(self.temp.name)/ident/'preview_outlined.jpg').read_bytes())
     self.assertEqual(self.request('/files/'+ident+'/preview_outlined.png',token=False)[0],401)
     for name in ['original.png','results.zip','report.json','preview_comparison.png','input.jpg']:
      self.assertEqual(self.request('/files/'+ident+'/'+name)[0],404)
@@ -89,7 +110,7 @@ class PreviewTests(unittest.TestCase):
  def test_preview_failure_never_publishes_partial_previews(self):
   original=server.save_lossless_png
   def save(array,path):
-   if path.name=='outlined.png':raise OSError('preview failed')
+   if path.name in ('outlined.png','preview_outlined.png'):raise OSError('preview failed')
    original(array,path)
   with patch('server.save_lossless_png',side_effect=save):
    j=self.wait(self.app.submit({'mode':'demo'})['id'])

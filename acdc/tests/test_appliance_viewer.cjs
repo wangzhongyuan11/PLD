@@ -11,16 +11,18 @@ const context=vm.createContext({console,Float32Array,Uint32Array,Uint8Array,Math
  CardiacSurfaceView:class{constructor(){this.gl=gl;}render(){}},
  history:{replaceState(){}},location:{search:''},performance:{now:()=>1000},crypto:{},
  requestAnimationFrame:fn=>fn(),setTimeout,clearTimeout,setInterval(){},
- createImageBitmap:async()=>({close(){closed++;}}),
+ createImageBitmap:async()=>({width:256,height:200,close(){closed++;}}),
  fetch:async url=>{
   if(url==='/api/v2/health')return {ok:true,json:async()=>({ready:true,status:'ready',backend:'pl',synthetic:false,max_upload_bytes:1e8})};
+  if(url.endsWith('/quick-preview'))return {ok:true,json:async()=>({phase:'ED',center_index:3,grid:'model_input'})};
+  if(url.endsWith('/preview'))return {ok:true,json:async()=>({phase:'ED',...volume()})};
   if(holdA&&url.includes('/'+'a'.repeat(32)+'/')&&url.includes('/ED/volume.json'))await new Promise(resolve=>releaseA=resolve);
   if(url.endsWith('volume.json'))return {ok:true,json:async()=>volume()};
   if(url.endsWith('statistics.json'))return {ok:true,json:async()=>statistics};
   if(url.endsWith('.png'))return {ok:true,blob:async()=>({})};
   return {ok:true,arrayBuffer:async()=>url.endsWith('.u32')?new Uint32Array([0,1,2]).buffer:new Float32Array([0,0,0,1,0,0,0,1,0]).buffer};
  }});
-vm.runInContext(fs.readFileSync(path.join(__dirname,'../appliance/web_assets/app.js'),'utf8')+'\nthis.api={loadJob,state,selectPhase,clearJobDisplay};',context);
+vm.runInContext(fs.readFileSync(path.join(__dirname,'../appliance/web_assets/app.js'),'utf8')+'\nthis.api={loadJob,state,selectPhase,clearJobDisplay,loadQuickPreview,loadPreview};',context);
 (async()=>{
  await context.api.loadJob('c'.repeat(32));
  assert.equal(buffers,6);assert.equal(context.api.state.phases.ES.meshes.smooth[0].indices.length,3);
@@ -33,5 +35,13 @@ vm.runInContext(fs.readFileSync(path.join(__dirname,'../appliance/web_assets/app
  assert.equal(context.api.state.job,null);assert.equal(Object.keys(context.api.state.phases).length,0);
  assert.ok(context.api.state.generation>oldGeneration);assert.equal(element('download').href,undefined);
  assert.equal(element('timing').textContent,'上传到完整可交互：测量中');
- console.log('PASS: V2 indexed preload, phase reuse and stale-job GPU ownership');
+ context.api.state.job='d'.repeat(32);context.api.state.started=0;
+ for(let i=0;i<3;i++){element('mpr'+i).width=400;element('mpr'+i).height=400;}
+ await context.api.loadQuickPreview('d'.repeat(32));
+ assert.equal(context.api.state.quickPreviewJob,'d'.repeat(32));
+ assert.match(element('slice0').textContent,/模型网格预览/);
+ assert.equal(Object.keys(context.api.state.phases).length,0);assert.equal(element('download').href,undefined);
+ await context.api.loadPreview('d'.repeat(32));
+ assert.equal(element('slice0').textContent,'0.5 mm');assert.match(element('coordinates').textContent,/RAS/);
+ console.log('PASS: V2 preload and ownership; single-slice preview precedes native MPR without completing the job');
 })().catch(e=>{console.error(e);process.exitCode=1;});

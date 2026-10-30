@@ -13,6 +13,7 @@ import numpy as np
 from acdc.contract import atomic_json,file_sha,is_sha,ContractError
 from .mpr import MPRVolume
 from .archive import write_zip
+from .png import rgba_png
 
 
 class FullPipeline:
@@ -24,6 +25,23 @@ class FullPipeline:
     def run(self,ed,es,output,*,cancel=None,progress=None,upload_seconds=0.):
         output=Path(output);cancel=cancel or threading.Event();progress=progress or (lambda _:None)
         began=time.perf_counter();phase_reports={}
+
+        def slice_ready(x,head,z,box):
+            # Display the first genuine PL head in its input grid. This is a
+            # single working slice, separate from reconstructed native MPR.
+            y,left=box['top'],box['left'];h,w=box['resized_hw']
+            gray=np.rint((x[0,1,y:y+h,left:left+w].astype(np.float32)+127)*(255/254)).clip(0,255).astype(np.uint8)
+            labels=np.argmax(head[0,:,y:y+h,left:left+w],axis=0)
+            colors=np.array([[0,0,0],[255,0,0],[0,255,0],[0,0,255]],np.float32)
+            rgb=np.repeat(gray[:,:,None],3,axis=2).astype(np.float32)
+            foreground=labels!=0
+            rgb[foreground]=rgb[foreground]*.5+colors[labels[foreground]]*.5
+            pixels=np.empty((*gray.shape,4),np.uint8);pixels[:,:,:3]=np.rint(rgb).astype(np.uint8);pixels[:,:,3]=255
+            (output/'quick_axial.png').write_bytes(rgba_png(pixels))
+            atomic_json(output/'quick_preview.json',dict(phase='ED',center_index=z,plane='axial',
+                grid='model_input',shape=list(gray.shape),seconds=time.perf_counter()-began,
+                scope='single working slice; native MPR, volume statistics and ED/ES reconstruction pending'))
+            update('quick_preview_ready',phase='ED',quick_preview_ready=True)
 
         def update(status,**values):
             state=dict(run_id=output.name,status=status,**values)
@@ -74,7 +92,7 @@ class FullPipeline:
                 futures={}
                 def phase_ready(phase):
                     futures[phase]=displays.submit(prepare_display,phase)
-                report=self.numerics.run(ed,es,output,cancel=cancel,progress=progress,phase_ready=phase_ready)
+                report=self.numerics.run(ed,es,output,cancel=cancel,progress=progress,phase_ready=phase_ready,slice_ready=slice_ready)
                 for phase in ('ED','ES'):
                     update('meshing',phase=phase)
                     phase_reports[phase]=futures[phase].result()

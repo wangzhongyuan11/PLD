@@ -126,6 +126,13 @@ def handler(app):
                     message=dict(op='status',job=match[1])
                     if 'wait' in query:message.update(op='wait_status',version=int(query.get('version',['-1'])[0]))
                     self.send(200,app.client.request(**message));return
+                match=re.fullmatch(r'/api/v2/jobs/([0-9a-f]{32})/quick-preview(?:/(axial)\.png)?',path)
+                if match:
+                    root=app.root/'jobs'/checked_job(match[1])
+                    preview=json.loads((root/'quick_preview.json').read_text('utf-8'))
+                    if match[2]:self.file(root/'quick_axial.png')
+                    else:self.send(200,preview)
+                    return
                 match=re.fullmatch(r'/api/v2/jobs/([0-9a-f]{32})/preview(?:/(axial|coronal|sagittal)\.png)?',path)
                 if match:
                     root=app.root/'jobs'/checked_job(match[1])

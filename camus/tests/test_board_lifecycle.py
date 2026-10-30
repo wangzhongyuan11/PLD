@@ -10,6 +10,31 @@ from camus.web import CamusServer
 
 
 class BoardLifecycleTests(unittest.TestCase):
+    def test_light_preview_routes_work_before_full_artifacts(self):
+        import threading
+        from urllib.request import urlopen
+        from urllib.error import HTTPError
+        with tempfile.TemporaryDirectory() as tmp:
+            pipeline=Mock();pipeline.backend='reference';pipeline.model.root=Path(tmp)/'model/int8_export'
+            server=CamusServer(('127.0.0.1',0),pipeline,Path(tmp)/'jobs')
+            identifier='c'*32;folder=server.data/identifier/'output';folder.mkdir(parents=True)
+            (folder/'preview_original.jpg').write_bytes(b'light-original')
+            (folder/'preview_overlay.jpg').write_bytes(b'light-overlay')
+            (folder/'original.png').write_bytes(b'full-original')
+            server.jobs[identifier]=dict(state='running',preview_ready=True,
+                preview_files={'original':'preview_original.jpg','overlay':'preview_overlay.jpg'})
+            thread=threading.Thread(target=server.serve_forever);thread.start()
+            base='http://127.0.0.1:'+str(server.server_port)+'/files/'+identifier+'/'
+            try:
+                self.assertEqual(urlopen(base+'original.png').read(),b'light-original')
+                self.assertEqual(urlopen(base+'preview_overlay.jpg').read(),b'light-overlay')
+                with self.assertRaises(HTTPError) as exc:urlopen(base+'head.bin')
+                self.assertEqual(exc.exception.code,404)
+                server.jobs[identifier]['state']='done'
+                self.assertEqual(urlopen(base+'original.png').read(),b'full-original')
+                self.assertEqual(urlopen(base+'preview_original.jpg').read(),b'light-original')
+            finally:server.shutdown();thread.join();server.server_close()
+
     def test_prepared_display_agent_is_reused_instead_of_creating_a_second_process(self):
         with tempfile.TemporaryDirectory() as tmp:
             pipeline=Mock();pipeline.backend='pl';pipeline.model.root=Path(tmp)/'model/int8_export'

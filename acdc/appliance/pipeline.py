@@ -25,7 +25,7 @@ class NumericalPipeline:
         self.binding=binding;self.policy=policy
         self.verify=verify
 
-    def run(self,ed,es,output,*,cancel=None,progress=None,overlap=True,save_heads=False,phase_ready=None):
+    def run(self,ed,es,output,*,cancel=None,progress=None,overlap=True,save_heads=False,phase_ready=None,slice_ready=None):
         import nibabel as nib
         output=Path(output);output.mkdir(parents=True,exist_ok=False)
         cancel=cancel or threading.Event();progress=progress or (lambda _:None)
@@ -56,6 +56,9 @@ class NumericalPipeline:
                 volume,inputs,prepare_begin,prepare=next_volume.result() if next_volume is not None else prepare_volume(path)
                 next_volume=None
                 nz=volume.working_shape[2]
+                order=list(range(nz))
+                if phase=='ED' and slice_ready is not None:
+                    center=nz//2;order=[center]+[z for z in order if z!=center]
                 collector=Collector(volume,self.kernel,self.table)
                 # One additional gray/working volume only; never preallocate a
                 # second four-channel collector while ED restoration is alive.
@@ -70,12 +73,12 @@ class NumericalPipeline:
 
                 with ThreadPoolExecutor(max_workers=1,thread_name_prefix='v2-input') as prefetch, \
                      ThreadPoolExecutor(max_workers=1,thread_name_prefix='v2-restore') as restoring:
-                    pending=prefetch.submit(prepare_input,0) if overlap else None
+                    pending=prefetch.submit(prepare_input,order[0]) if overlap else None
                     previous=None
-                    for z in range(nz):
+                    for index,z in enumerate(order):
                         check_cancel()
                         x,neighbors,input_sha,input_seconds=pending.result() if overlap else prepare_input(z)
-                        if overlap and z+1<nz:pending=prefetch.submit(prepare_input,z+1)
+                        if overlap and index+1<nz:pending=prefetch.submit(prepare_input,order[index+1])
                         request=dict(architecture_id=ARCHITECTURE,execution_profile=PROFILE,preprocessing_id=PREPROCESSING,
                             run_id=run_id,phase=phase,orientation='axial',center_index=z,neighbor_indices=neighbors,
                             total_slices=nz,geometry_sha256=volume.geometry_sha,model_sha256=self.backend.model_sha,
@@ -92,6 +95,8 @@ class NumericalPipeline:
                                     or meta.get('dtype')!='int8' or meta.get('layout')!='NCHW'):
                                 raise ContractError('unexpected inference source/scale or reused response')
                             head=checked_int8(head,HEAD_SHAPE)
+                        if phase=='ED' and index==0 and slice_ready is not None:
+                            slice_ready(x,head,z,inputs.spec)
                         if previous is not None:previous.result()
                         if overlap:previous=restoring.submit(collector.add,head,z,inputs.spec)
                         else:collector.add(head,z,inputs.spec)
@@ -105,7 +110,7 @@ class NumericalPipeline:
                         if save_heads:
                             folder=output/'heads'/phase;folder.mkdir(parents=True,exist_ok=True)
                             head.tofile(folder/f'{z:04}.bin')
-                        update('infer_restore',phase=phase,phase_completed=z+1,phase_total=nz,
+                        update('infer_restore',phase=phase,phase_completed=index+1,phase_total=nz,
                                completed_slices=len(records))
                     if previous is not None:previous.result()
                 inference_window=time.perf_counter()-inference_started

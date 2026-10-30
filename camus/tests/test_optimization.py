@@ -46,6 +46,24 @@ class OptimizationTests(unittest.TestCase):
             with self.assertRaisesRegex(OSError,'full'):save_views(Path(tmp),a,a,a)
             self.assertFalse((Path(tmp)/'result.zip').exists())
 
+    def test_light_preview_precedes_full_views_and_preserves_export_pixels(self):
+        rng=np.random.default_rng(42)
+        gray=rng.integers(0,256,(650,900),dtype=np.uint8)
+        labels=rng.integers(0,4,gray.shape,dtype=np.uint8)
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);called=[]
+            def ready():
+                called.append(True)
+                self.assertFalse((root/'overlay.png').exists())
+                self.assertFalse((root/'label.png').exists())
+                for name in ('preview_original.jpg','preview_overlay.jpg'):
+                    with Image.open(root/name) as image:self.assertLessEqual(max(image.size),512)
+            save_views(root,gray,labels,labels,on_preview=ready)
+            self.assertEqual(called,[True])
+            for name,expected in [('original.png',gray),('overlay.png',overlay_rgb(gray,labels)),
+                                  ('label.png',label_display_png(labels)),('segmentation.png',segmentation_rgb(labels))]:
+                with Image.open(root/name) as image:np.testing.assert_array_equal(np.array(image),expected)
+
     def test_holes_with_foreign_classes_remain_and_global_ratio_is_preserved(self):
         a=np.ones((100,100),np.uint8)
         a[10:12,10:12]=0;a[20:22,20:22]=2;a[30:32,30:32]=3

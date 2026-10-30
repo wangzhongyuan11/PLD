@@ -23,7 +23,8 @@ except ModuleNotFoundError:from display_completion import Completion, user_displ
 
 MAX_BODY = 32 * 1024 * 1024
 ARTIFACTS = {'overlay.png','segmentation.png','label.png','label_raw.png','labels_native.npz',
-             'head.bin','head.json','report.json','result.zip','preview.html','original.png'}
+             'head.bin','head.json','report.json','result.zip','preview.html','original.png',
+             'preview_original.jpg','preview_overlay.jpg'}
 
 
 def decode_upload(payload):
@@ -118,7 +119,8 @@ class CamusServer(ThreadingHTTPServer):
                 self.released=False
             def preview_ready():
                 with self.changed:
-                    job.update(preview_ready=True,preview_seconds=time.perf_counter()-job['_started'])
+                    job.update(preview_ready=True,preview_seconds=time.perf_counter()-job['_started'],
+                               preview_files={'original':'preview_original.jpg','overlay':'preview_overlay.jpg'})
                     self.changed.notify_all()
             result = self.pipeline.run(self.data/job['id']/'input'/selected,
                                        self.data/job['id']/'output', spacing,on_preview=preview_ready)
@@ -182,10 +184,13 @@ class Handler(BaseHTTPRequestHandler):
         if match and match[2] in ARTIFACTS:
             with self.server.guard:
                 job=self.server.jobs.get(match[1],{});state=job.get('state')
-                preview=job.get('preview_ready') and match[2] in ('original.png','overlay.png')
-            file = self.server.data/match[1]/'output'/match[2]
+                preview=job.get('preview_ready') and match[2] in ('original.png','overlay.png','preview_original.jpg','preview_overlay.jpg')
+            name=match[2]
+            if preview and state!='done' and name in ('original.png','overlay.png'):
+                name=job.get('preview_files',{}).get(name[:-4],name)
+            file = self.server.data/match[1]/'output'/name
             if (state == 'done' or preview) and file.is_file() and not file.is_symlink():
-                kind = 'image/png' if file.suffix == '.png' else 'application/json' if file.suffix == '.json' else 'application/zip' if file.suffix == '.zip' else 'application/octet-stream'
+                kind = 'image/jpeg' if file.suffix == '.jpg' else 'image/png' if file.suffix == '.png' else 'application/json' if file.suffix == '.json' else 'application/zip' if file.suffix == '.zip' else 'application/octet-stream'
                 return self.send_bytes(file.read_bytes(), kind=kind)
         self.json(dict(error='not found'), 404)
 

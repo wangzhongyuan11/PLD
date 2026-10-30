@@ -71,15 +71,15 @@ class CamusPipeline:
         stages['native_reconstruction_postprocess'] = time.perf_counter()-t
         native_details = dict(reconstruction=restore_seconds,postprocess=time.perf_counter()-post_started)
         output.mkdir(parents=True, exist_ok=False)
+        t = time.perf_counter()
+        png_details = save_views(output,prep.raw_gray,labels,processed.labels,self.native,on_preview=on_preview)
+        stages['png_encoding'] = time.perf_counter()-t
         t = time.perf_counter(); (output/'head.bin').write_bytes(result['head'].tobytes())
         head_meta = dict(dtype='int8', layout='NCHW', shape=list(self.model.head_shape), scale=self.model.head_scale,
                          bytes=result['head'].nbytes, spec_sha256=MODEL_SPEC_SHA256)
         (output/'head.json').write_text(json.dumps(head_meta, indent=2)+'\n', encoding='utf-8')
         np.savez_compressed(output/'labels_native.npz', labels_raw=labels, labels_processed=processed.labels)
         stages['head_labels_write'] = time.perf_counter()-t
-        t = time.perf_counter()
-        png_details = save_views(output,prep.raw_gray,labels,processed.labels,self.native,on_preview=on_preview)
-        stages['png_encoding'] = time.perf_counter()-t
         report = dict(schema='pld-camus-result-v1', backend=self.backend,
             evidence_scope='real PL execution' if self.backend == 'pl' else 'host software '+self.backend+'; no PL execution',
             model=dict(spec_sha256=MODEL_SPEC_SHA256, input_shape=self.model.input_shape, head=head_meta),
@@ -97,7 +97,7 @@ class CamusPipeline:
         t = time.perf_counter()
         with zipfile.ZipFile(output/'result.zip', 'w', compression=zipfile.ZIP_STORED) as archive:
             for p in sorted(output.iterdir()):
-                if p.name != 'result.zip': archive.write(p, p.name)
+                if p.name != 'result.zip' and not p.name.startswith('preview_'): archive.write(p, p.name)
         stages['zip_payload'] = time.perf_counter()-t
         report['seconds_to_metadata_finalize'] = time.perf_counter()-started
         report['timing_scope'] = 'sequential wall stages; PL network includes DMA/compute wait; final metadata append excluded from seconds_to_metadata_finalize'

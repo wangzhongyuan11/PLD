@@ -345,6 +345,8 @@ class Console:
             ident = uuid.uuid4().hex
             self.jobs[ident] = {"id": ident, "state": "running", "stage": "准备数据", "progress": 10,
                                 "mode": mode, "name": str(body.get("name", "ISIC_0000003 · 真实掩膜回放"))[:120],
+                                "client_composite": body.get('client_composite') is True and rgb is not None and
+                                    (raw.startswith(b'\xff\xd8') or raw.startswith(b'\x89PNG') and raw[25] in (0,2)),
                                 "thickness": width, "created": time.time()}
             self.active = ident
             self.latest_job = ident
@@ -527,18 +529,35 @@ class Console:
                 stats["historical_b_time"] = mode == "demo"
             else:
                 stats["area_scope"] = "上传掩膜的原图像素网格"
-            # Publish completed lossless views early, then reuse their exact
-            # bytes for export and HDMI instead of encoding five thumbnails too.
+            # Bound first-screen pixels; full-size export/HDMI files follow.
+            preview_files = {}
+            client_composite = self.job(ident).get('client_composite', False)
             def save_preview(key):
                 array = arrays[key]
                 started = time.perf_counter()
-                save_lossless_png(array, folder / (key+".png"))
-                elapsed = time.perf_counter()-started
-                png_timings[key] = elapsed
-                preview_details[key] = {"resize":0., "encode_write":elapsed}
+                h, w = array.shape[:2]
+                photo = rgb is not None and key in ('original', 'outlined')
+                if not (client_composite and key == 'contour') and (max(h, w) > 512 or photo):
+                    pixels = array.astype(np.uint8)*255 if array.dtype == bool else array
+                    image = Image.fromarray(pixels)
+                    image.thumbnail((512, 512), getattr(Image, 'Resampling', Image).BILINEAR)
+                    array = np.asarray(image)
+                    filename = 'preview_'+key+('.jpg' if photo else '.png')
+                else:
+                    filename = key+'.png'
+                resized = time.perf_counter()-started
+                tick = time.perf_counter()
+                if photo:
+                    Image.fromarray(array).save(folder / filename, format='JPEG', quality=90, subsampling=0)
+                else:
+                    save_lossless_png(array, folder / filename)
+                elapsed = time.perf_counter()-tick
+                if filename == key+'.png': png_timings[key] = elapsed
+                preview_files[key] = filename
+                preview_details[key] = {"resize":resized, "encode_write":elapsed}
             preview_started = time.perf_counter()
             preview_details = {}
-            preview_views = ["original" if rgb is not None else "mask", "outlined"]
+            preview_views = ['contour'] if client_composite else ["original" if rgb is not None else "mask", "outlined"]
             with ThreadPoolExecutor(max_workers=PNG_SAVE_WORKERS,thread_name_prefix="pld-preview") as pool:
                 list(pool.map(save_preview,preview_views))
             stages["preview_build"] = time.perf_counter() - preview_started
@@ -547,16 +566,23 @@ class Console:
             stats["stage_seconds"] = dict(stages)
             stats["preview_ready_seconds"] = stages["request_to_preview_ready"]
             stats["data_source"] = "历史板测掩膜回放" if mode == "demo" else "用户图片及掩膜" if mode == "mask" else "本次板端 FPGA 推理"
+            contour_bytes = (folder/preview_files['contour']).read_bytes() if client_composite else b''
+            inline_contour = base64.b64encode(contour_bytes).decode('ascii') if 0 < len(contour_bytes) <= 32768 else None
             self.update(ident, preview_ready=True, package_ready=False, preview_full_resolution=True,
-                        preview_views=preview_views, views=list(views),
+                        preview_views=preview_views, preview_files=dict(preview_files), preview_contour_base64=inline_contour, views=list(views),
                         statistics=json.loads(json.dumps(stats)), progress=82,
                         stage="预览已就绪，后台生成原尺寸图片和结果包")
             remaining_started = time.perf_counter()
-            with ThreadPoolExecutor(max_workers=PNG_SAVE_WORKERS,thread_name_prefix="pld-preview") as pool:
-                list(pool.map(save_preview,[key for key in views if key not in preview_views]))
+            def save_full(key):
+                tick = time.perf_counter()
+                save_lossless_png(arrays[key], folder / (key+'.png'))
+                png_timings[key] = time.perf_counter()-tick
+            with ThreadPoolExecutor(max_workers=PNG_SAVE_WORKERS,thread_name_prefix="pld-png") as pool:
+                list(pool.map(save_full,[key for key in views if key not in png_timings]))
             stages["preview_remaining"] = time.perf_counter()-remaining_started
             stages["preview_images"] = preview_details
-            self.update(ident, preview_views=list(views))
+            preview_files.update({key:key+'.png' for key in views if key not in preview_files})
+            self.update(ident, preview_views=list(views), preview_files=dict(preview_files))
             if not self.processing_only:
                 left = rgb if rgb is not None else np.repeat((mask.astype(np.uint8)*255)[:, :, None], 3, axis=2)
                 stage = time.perf_counter()
@@ -623,7 +649,7 @@ class Console:
             stats["request_to_job_complete_seconds"] = stages["request_to_job_complete"]
             completed = self.job(ident)
             completed.update(state="done", package_ready=True, stage="完整结果包已就绪", progress=100, views=views, statistics=stats,
-                             zip_complete_monotonic=time.monotonic())
+                             zip_complete_monotonic=time.monotonic(), preview_contour_base64=None)
             # Commit only after every output is complete. Interrupted jobs never
             # appear as successful history after a service restart.
             temp = folder/'job.json.tmp'
@@ -682,8 +708,9 @@ class Handler(BaseHTTPRequestHandler):
                 ready_preview = job.get("preview_ready") and name in previews
                 ready_export = job["state"] == "done" and name in allowed
                 if not (ready_preview or ready_export): raise KeyError("文件尚不可用")
-                if ready_preview and job.get('preview_full_resolution'):
-                    name = name[len('preview_'):]
+                if ready_preview:
+                    key = name[len('preview_'):-len('.png')]
+                    name = job.get('preview_files', {}).get(key, name[len('preview_'):] if job.get('preview_full_resolution') else name)
                 f = self.app.data / ident / name
                 return self.send(200, f.read_bytes(), mimetypes.guess_type(name)[0] or "application/octet-stream")
             raise KeyError("页面不存在")

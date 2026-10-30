@@ -15,7 +15,7 @@ button:disabled{opacity:.5;cursor:wait}input{margin:8px}#views{display:grid;grid
 <label>像素间距 Y（mm）<input id="sy" type="number" min="0" step="any"></label>
 <label>X（mm）<input id="sx" type="number" min="0" step="any"></label><p>无间距时显示像素面积；单帧不计算 EF。</p>
 <button id="run" disabled>开始分割</button> <span id="status">就绪</span><p id="error"></p></section>
-<p>全部图像处理与推理在板端完成。仅用于工程教学与算法演示，不作为临床诊断依据。</p><section id="result" hidden><div id="views"></div><p><a id="download">下载原始结果 ZIP（四宫格预览单独展示）</a></p><div id="hdmi" hidden><select id="hdmiView"><option value="quad" selected>四宫格</option><option value="overlay">叠加图</option><option value="segmentation">四分类图</option><option value="label">标签图</option></select> <button id="showHdmi">显示到板卡 HDMI</button> <button id="stopHdmi">停止 HDMI</button><span id="hdmiStatus"></span><p>HDMI 与推理共享 FPGA，切换时自动释放并重新加载位流。</p></div><div id="metrics"></div><details><summary>执行耗时与版本</summary><div id="report"></div></details></section>
+<p>首屏使用轻量预览，下载结果保留原生尺寸。仅用于工程教学与算法演示，不作为临床诊断依据。</p><section id="result" hidden><div id="views"></div><p><a id="download">下载原始结果 ZIP（四宫格预览单独展示）</a></p><div id="hdmi" hidden><select id="hdmiView"><option value="quad" selected>四宫格</option><option value="overlay">叠加图</option><option value="segmentation">四分类图</option><option value="label">标签图</option></select> <button id="showHdmi">显示到板卡 HDMI</button> <button id="stopHdmi">停止 HDMI</button><span id="hdmiStatus"></span><p>HDMI 与推理共享 FPGA，切换时自动释放并重新加载位流。</p></div><div id="metrics"></div><details><summary>执行耗时与版本</summary><div id="report"></div></details></section>
 </main><script>
 const $=id=>document.getElementById(id);let ready=false,latestJob=null,realPl=false;
 async function api(url,options){const r=await fetch(url,options);const v=await r.json();if(!r.ok)throw Error(v.error||r.status);return v;}
@@ -44,7 +44,7 @@ $('showHdmi').onclick=()=>hdmi('show');$('stopHdmi').onclick=()=>hdmi('stop');
 async function showPrimary(job){
  const root='/files/'+job.id+'/';$('views').replaceChildren();
  const images=[];
- for(const [title,name] of [['原图','original.png'],['分割叠加','overlay.png']]){const box=document.createElement('div'),text=document.createElement('strong'),img=document.createElement('img');text.textContent=title;img.src=root+name;img.alt=title;box.append(text,img);$('views').append(box);images.push(img);}
+ for(const [title,key] of [['原图','original'],['分割叠加','overlay']]){const box=document.createElement('div'),text=document.createElement('strong'),img=document.createElement('img');text.textContent=title;img.src=root+(job.preview_files?.[key]||key+'.png');img.alt=title;box.append(text,img);$('views').append(box);images.push(img);}
  $('result').hidden=false;$('download').hidden=true;$('hdmi').hidden=true;
  await Promise.all(images.map(img=>img.decode()));
 }

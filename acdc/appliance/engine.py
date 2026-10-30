@@ -127,6 +127,7 @@ class JobManager:
                 state=dict(self.states[job],version=self.versions.get(job,0))
                 preview=self.root/'jobs'/job/'preview.json'
                 if preview.is_file():state.update(preview_ready=True)
+                if preview.with_name('quick_preview.json').is_file():state.update(quick_preview_ready=True)
                 return state
         path=self.root/'jobs'/job/'status.json'
         state=json.loads(path.read_text('utf-8'))
