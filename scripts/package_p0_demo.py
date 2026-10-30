@@ -18,6 +18,7 @@ FILES = (
     'display_web/telemetry_hud.py', 'display_web/hud_build_info.example.json',
     'display_web/tests/test_telemetry_hud.py', 'display_web/unified/install_quad.py',
     'display_web/unified/tests/test_quad_install.py',
+    'display_web/unified/camus_quad.py',
     'display_web/unified/quad_camus_hdmi.py', 'scripts/package_dual_model_web.py',
     'scripts/package_quad_view.py', 'scripts/package_p0_demo.py',
     'docs/P0_DEMO_HUD_RECOVERY.md', 'docs/validation/P0_DEMO_20261030.md',
