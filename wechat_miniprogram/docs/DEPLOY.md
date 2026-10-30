@@ -92,13 +92,19 @@ D:/conda/python.exe bridge.py --config config.json
 
 日志：控制台 + `bridge/logs/bridge.log`。看到"桥接已启动"即可。
 
-**开机自启（可选）**：管理员 PowerShell 运行一次
+**登录自启（可选，无需管理员）**：`bridge/bridge_autostart.vbs` 保留本机 `D:\conda`、`D:\PLD小程序` 的启动路径。其他安装位置先修改脚本中的 Python、桥接和配置绝对路径，再将脚本复制到
+当前用户的「启动」文件夹（`%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\PLD桥接自启.vbs`）。本机曾安装该副本；从 Git 拉取不会自动安装自启。
+登录 Windows 后桥接以无窗口方式自动运行（pythonw）。停用：删除该文件副本；
+手动启动/重启：双击 `bridge/start_detached.cmd`；停止：任务管理器结束该桥接对应的 `pythonw.exe`。
+
+备选（管理员）：计划任务方式
 
 ```powershell
 schtasks /create /tn PLDBridge /tr "D:\conda\python.exe D:\PLD小程序\bridge\bridge.py --config D:\PLD小程序\bridge\config.json" /sc onlogon /rl limited /f
 ```
 
-注意：桥接所在电脑关机 = 小程序不可用（板卡本身不受任何影响）。
+注意：桥接所在电脑关机/睡眠 = 小程序不可用（板卡本身不受任何影响）；
+演示期间建议把电脑电源计划设为「接通电源时永不睡眠」。
 
 ## 5. 小程序端
 
