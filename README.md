@@ -18,6 +18,7 @@
 | RTL、BD/IP 构建与 PS7 配置 | [RTL](rtl/)、[Vivado Tcl](vivado/)、[PS7 配置](vivado/ps7_config.tcl)、[工具链与构建说明](docs/validation/VIVADO_ENVIRONMENT.md) |
 | 数值、运行包及板端验收 | [正式交付清单](delivery/current.json)、[板端验证](docs/validation/EVALUATION.md) |
 | HDMI 状态栏、异常弹窗与恢复演示候选 | [P0 优化说明](docs/P0_DEMO_HUD_RECOVERY.md) |
+| CPU/软件基线对比叠层与报告导入 | [演示指标说明](docs/DEMO_METRICS.md) |
 
 此 P0 候选只增加软件展示和文档，不需要重新综合硬件。候选的主机测试不代替实板验证；在板上启用前按其说明核对源码、模型与运行时身份，并保留原服务目录。
 

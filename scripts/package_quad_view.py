@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SKIN = ('static/index.html','static/app.js','static/style.css','hdmi_worker.py','quad_display.py')
 HUB = ('backend_launcher.py','accepted_backends.json','camus_quad.py','quad_display.py',
        'quad_camus.html','quad_camus_hdmi.py')
-ADDITIONS = ('skin/telemetry_hud.py', 'hub/telemetry_hud.py')
+ADDITIONS = tuple(kind+'/'+name for kind in ('skin','hub') for name in ('telemetry_hud.py','demo_metrics.py'))
 
 
 def package(output=None):
@@ -30,7 +30,7 @@ def package(output=None):
     # New display-only dependency. Only absent or exact candidate bytes may be
     # installed; unrelated existing files retain the original refusal behavior.
     for key in ADDITIONS:
-        data = (ROOT/'display_web/telemetry_hud.py').read_bytes()
+        data = (ROOT/'display_web'/key.split('/')[-1]).read_bytes()
         manifest[key] = dict(new=hashlib.sha256(data).hexdigest(),old=[None])
         members['payload/'+key] = data
     members['patch_manifest.json'] = (json.dumps(manifest,indent=2)+'\n').encode()

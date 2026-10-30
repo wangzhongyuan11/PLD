@@ -90,12 +90,20 @@ class QuadTouch:
         self.original = Image.fromarray(screen)
         self.selected = None
         self.telemetry = telemetry
+        self.metrics_open = False
 
     def tap(self, x, y):
+        if self.telemetry is not None and (y < 68 or self.metrics_open):
+            self.metrics_open = not self.metrics_open
+            return self.frame()
         self.selected = None if self.selected is not None else (int(y >= 240)*2 + int(x >= 320))
         return self.frame()
 
     def frame(self):
+        if self.metrics_open:
+            try:from .demo_metrics import draw_comparison
+            except ImportError:from demo_metrics import draw_comparison
+            return draw_comparison(np.asarray(self.original),self.telemetry.get('comparison'))
         if self.selected is None:
             image = self.original.copy()
             label = 'Touch a panel to enlarge'

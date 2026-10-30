@@ -26,6 +26,7 @@ def main(argv=None, stop=None):
     from display_web.pld_hdmi import PynqHdmiDisplay,fit_rgb
     from display_web.touch_display import TouchInput
     from display_web.telemetry_hud import load_telemetry,annotate
+    from display_web.demo_metrics import draw_comparison
     try:from display_web.video_overlay import video_overlay
     except ModuleNotFoundError:from video_overlay import video_overlay
     try:from display_web.display_lease import CamusDisplayLease
@@ -42,11 +43,17 @@ def main(argv=None, stop=None):
                       frame_sha256=hashlib.sha256(screen.tobytes()).hexdigest())
         ready.write_text(json.dumps(evidence,indent=2)+'\n',encoding='utf-8')
         print(json.dumps(evidence),flush=True)
-        touch=TouchInput();views=['overlay','segmentation','label','label_raw'];selected=views.index(args.view)
+        touch=TouchInput();views=['overlay','segmentation','label','label_raw'];selected=views.index(args.view);metrics_open=False
         deadline=time.monotonic()+args.duration
         try:
             while not stop.wait(.02) and time.monotonic()<deadline:
                 for x,y in touch.poll():
+                    if y<68 or metrics_open:
+                        metrics_open=not metrics_open
+                        with Image.open(folder/(views[selected]+'.png')) as im:
+                            base_frame=fit_rgb(np.asarray(im.convert('RGB')),640,480,nearest=selected!=0)
+                        display.show(draw_comparison(base_frame,telemetry.get('comparison')) if metrics_open else annotate(base_frame,telemetry))
+                        continue
                     selected=(selected+1)%len(views)
                     with Image.open(folder/(views[selected]+'.png')) as im:
                         display.show(annotate(fit_rgb(np.asarray(im.convert('RGB')),640,480,nearest=selected!=0),telemetry))

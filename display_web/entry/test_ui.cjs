@@ -55,5 +55,8 @@ const tick=()=>new Promise(setImmediate);
  vm.runInContext("render({phase:'ready',model:'skin',url:'/skin/g/3/',recovery_demo:{state:'failed',simulated:true,error:'模拟输出校验失败',run_id:'demo',events:[]}})",context);
  assert.equal(element('demoFail').disabled,false);assert(element('demoStatus').textContent.includes('已停止重试'));
  assert.equal(element('errorDetail').textContent,'模拟输出校验失败');
+ element('metricsButton').onclick();
+ assert.equal(element('metricsFrame').src,'/entry/metrics/view');
+ assert.equal(element('workspace').src,'/skin/g/3/');
  console.log('PASS: cardiac URL, original dual URL, fresh iframe per transition, switch blanking, return');
 })().catch(e=>{console.error(e);process.exitCode=1;});

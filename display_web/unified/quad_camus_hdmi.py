@@ -27,11 +27,14 @@ def main(argv=None, stop=None):
     from display_web.touch_display import TouchInput,QuadTouch
     try:from display_web.telemetry_hud import load_telemetry,annotate
     except ModuleNotFoundError:from telemetry_hud import load_telemetry,annotate
+    try:from display_web.demo_metrics import draw_comparison
+    except ModuleNotFoundError:from demo_metrics import draw_comparison
     try:from display_web.video_overlay import video_overlay
     except ModuleNotFoundError:from video_overlay import video_overlay
     folder = args.result.resolve()
     telemetry = load_telemetry(folder, 'camus')
     view=args.view
+    metrics_open=False
     def frame(selected):
         with Image.open(folder/(selected+'.png')) as im:rgb=np.asarray(im.convert('RGB')).copy()
         return fit_rgb(rgb,640,480,nearest=selected in ('label','label_raw','segmentation'))
@@ -56,11 +59,14 @@ def main(argv=None, stop=None):
                 stop.display_update=None
                 selected=update.get('view')
                 if selected not in ('quad','overlay','segmentation','label','label_raw'):raise ValueError('invalid display update')
-                view=selected;screen=frame(view);quad=QuadTouch(screen,telemetry) if view=='quad' else None
+                view=selected;screen=frame(view);quad=QuadTouch(screen,telemetry) if view=='quad' else None;metrics_open=False
                 display.show(quad.frame() if quad else annotate(screen,telemetry))
                 ready.write_text(json.dumps(dict(view=view,resolution=[640,480],scope='frame update submitted')))
             for x,y in touch.poll():
                 if quad:display.show(quad.tap(x,y))
+                elif y<68 or metrics_open:
+                    metrics_open=not metrics_open
+                    display.show(draw_comparison(frame(view),telemetry.get('comparison')) if metrics_open else annotate(frame(view),telemetry))
                 else:
                     views=('overlay','segmentation','label','label_raw')
                     view=views[(views.index(view)+1)%len(views)];display.show(annotate(frame(view),telemetry))

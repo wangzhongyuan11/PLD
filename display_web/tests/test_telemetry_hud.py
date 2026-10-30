@@ -88,6 +88,11 @@ class TelemetryTests(unittest.TestCase):
         self.assertEqual(info['network_seconds'], .2)
         self.assertEqual(info['task_scope'], 'To metadata')
         self.assertIn('Argmax', info['threshold'])
+        report['model']['spec_sha256']='a'*64;report['runtime_sha256']='b'*64
+        self.write('report.json',report)
+        info=load_telemetry(self.root,'camus')
+        self.assertEqual(info['model_sha256'],'a'*64)
+        self.assertEqual(info['runtime_sha256'],'b'*64)
 
     def test_acdc_volume_uses_slice_median_and_separate_volume_time(self):
         report = dict(schema='pld-acdc-appliance-numerics-v2', status='numerics_completed', backend='pl',
@@ -128,6 +133,14 @@ class TelemetryTests(unittest.TestCase):
         self.assertTrue(np.array_equal(quad[:68], enlarged[:68]))
         self.assertTrue(np.array_equal(quad[-16:], enlarged[-16:]))
         self.assertTrue(np.array_equal(view.tap(100,100), quad))
+
+    def test_comparison_overlay_can_close_without_losing_enlarged_panel(self):
+        view=QuadTouch(np.full((480,640,3),55,np.uint8),self.skin())
+        enlarged=view.tap(400,100);selected=view.selected
+        view.tap(50,20);self.assertTrue(view.metrics_open)
+        view.tap(400,200);self.assertFalse(view.metrics_open)
+        self.assertEqual(view.selected,selected)
+        self.assertTrue(np.array_equal(view.frame(),enlarged))
 
 
 if __name__ == '__main__':

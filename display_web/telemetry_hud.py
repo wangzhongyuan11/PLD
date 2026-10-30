@@ -36,7 +36,7 @@ def _sha(value):
     return isinstance(value, str) and re.fullmatch('[0-9a-f]{64}', value) is not None
 
 
-def load_telemetry(folder, model, build_info=None):
+def _load_task_telemetry(folder, model, build_info=None):
     """Known schemas only. Single-job latency is never inverted into live FPS.
 
     Build usage is static, and only displayed for an exact model/runtime pair.
@@ -126,6 +126,14 @@ def load_telemetry(folder, model, build_info=None):
     return info
 
 
+def load_telemetry(folder,model,build_info=None,*,metrics_path=None):
+    info=_load_task_telemetry(folder,model,build_info)
+    try:from .demo_metrics import for_task
+    except ImportError:from demo_metrics import for_task
+    info['comparison']=for_task(info,metrics_path)
+    return info
+
+
 def telemetry_lines(info):
     def millis(value):
         number = _number(value)
@@ -191,7 +199,7 @@ def annotate(screen, info, y=0, mode=None):
             line = line[:-1]
         draw.text((8, y+2+i*16), line, font=font,
                   fill=(125, 232, 206, 255) if i == 0 else (236, 243, 248, 255))
-    footer = 'Teaching and algorithm demo only - not for clinical diagnosis'
+    footer = 'Teaching demo / no clinical diagnosis | Tap HUD: CPU-FPGA metrics'
     font = _font(11)
     draw.rectangle((0, base.height-16, base.width, base.height), fill=(8, 22, 34, 255))
     draw.text((8, base.height-15), footer, font=font, fill=(242, 203, 137, 255))

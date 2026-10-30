@@ -11,11 +11,14 @@ import sys
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import urlsplit,parse_qs
 
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT.parent))
 sys.path.insert(0, str(ROOT))
 from display_control import DisplayControl
 from recovery_demo import RecoveryDemo
+from demo_metrics import catalog_status
 ENGINE = 'pld-acdc-v2-engine.service'
 WEB = 'pld-acdc-v2-web.service'
 HUB = 'pld-hub.service'
@@ -483,6 +486,16 @@ class Handler(BaseHTTPRequestHandler):
                 conn.close()
 
     def do_GET(self):
+        parsed=urlsplit(self.path)
+        if parsed.path == '/entry/metrics/view':
+            return self.send(200,(ROOT/'metrics.html').read_bytes(),'text/html; charset=utf-8')
+        if parsed.path == '/entry/metrics':
+            model=parse_qs(parsed.query).get('model',[None])[0]
+            if model is not None and model not in MODELS:
+                return self.send(400,dict(error='未知模型'))
+            status=catalog_status()
+            if model is not None:status['records']=[r for r in status['records'] if r['model']==model]
+            return self.send(200,status)
         if self.path == '/':
             return self.send(200, (ROOT / 'index.html').read_bytes(), 'text/html; charset=utf-8')
         if self.path == '/entry/status':

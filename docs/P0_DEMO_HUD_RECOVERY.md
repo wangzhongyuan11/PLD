@@ -27,7 +27,7 @@ Windows 命令中的 Git Bash 和 Vivado 路径须在使用者机器核实；历
 
 没有证据的字段显示 unmeasured 或 unreported。已保存任务的注记标明 saved task，不表示硬件此刻仍运行该计算核心；计算完成后显示 overlay 已占用 PL。
 
-`display_web/hud_build_info.example.json` 是格式模板，所有占位值默认无效。部署者从对应布线后报告填写真实值，在显示子进程环境设置 `PLD_HUD_BUILD_INFO` 指向私有配置。皮肤镜以 model_spec_sha256 + bit_sha256 绑定；ACDC 以 model_sha256 + runtime_sha256 绑定。当前 CAMUS 结果缺少运行时 SHA256，因此只显示已有证据，资源保持未报告，直到单独扩展生产者合同并验收。不能使用附件中的示例数值填充模板。配置中的数值是人工整理的构建摘要，哈希匹配不代替对原报告内容的审查。
+`display_web/hud_build_info.example.json` 是格式模板，所有占位值默认无效。部署者从对应布线后报告填写真实值，在显示子进程环境设置 `PLD_HUD_BUILD_INFO` 指向私有配置。皮肤镜以 model_spec_sha256 + bit_sha256 绑定；ACDC 以 model_sha256 + runtime_sha256 绑定。CAMUS 新结果补充配套 bit 的 runtime_sha256；旧结果缺少身份时资源仍保持未报告。不能使用附件中的示例数值填充模板。配置中的数值是人工整理的构建摘要，哈希匹配不代替对原报告内容的审查。
 
 ## 入口异常与恢复演示
 

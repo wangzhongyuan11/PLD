@@ -21,6 +21,11 @@ FILES = (
     'display_web/unified/quad_camus_hdmi.py', 'scripts/package_dual_model_web.py',
     'scripts/package_quad_view.py', 'scripts/package_p0_demo.py',
     'docs/P0_DEMO_HUD_RECOVERY.md', 'docs/validation/P0_DEMO_20261030.md',
+    'display_web/demo_metrics.py','display_web/demo_metrics_input.example.json',
+    'display_web/entry/metrics.html','display_web/entry/test_metrics.cjs','display_web/entry/test_metrics_gateway.py',
+    'perf_eval/demo.py','perf_eval/tests/test_demo.py','scripts/prepare_demo_metrics.py',
+    'camus/pipeline.py','camus/tests/test_display_identity.py','acdc/tests/test_hdmi_touch.py',
+    'docs/DEMO_METRICS.md',
 )
 
 

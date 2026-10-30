@@ -16,12 +16,14 @@ from .mpr import MPRVolume
 from .native import load_native
 from .surface_hdmi import load_mesh, render
 from display_web.telemetry_hud import load_telemetry, annotate
+from display_web.demo_metrics import draw_comparison
 
 
 class HeartView:
     def __init__(self, folder, kernel):
         self.folder = Path(folder)
         self.telemetry = load_telemetry(self.folder, 'acdc')
+        self.metrics_open = False
         self.volumes = {p: MPRVolume(self.folder/'viewer'/p, kernel) for p in ('ED', 'ES')}
         self.meta = {p: json.loads((self.folder/'viewer'/p/'volume.json').read_text()) for p in self.volumes}
         self.phase = 'ED'
@@ -40,6 +42,9 @@ class HeartView:
         return None
 
     def tap(self, x, y):
+        if 48 <= y < 116 or (self.metrics_open and y >= 48):
+            self.metrics_open = not self.metrics_open
+            return None
         if y < 48:
             button = min(5, x//107)
             if button == 0 and not self.quad:
@@ -97,6 +102,7 @@ class HeartView:
         elif self.quad:
             screen[288:480,320:640,:]=render(self.meshes[phase],self.yaw,self.pitch,phase,preview=preview,size=(320,192))
         mode = self.phase + (' / four views' if self.quad else ' / surface' if self.surface else ' / '+self.planes[self.plane])
+        if self.metrics_open:return draw_comparison(screen,self.telemetry.get('comparison'),y=48)
         return annotate(screen, self.telemetry, y=48, mode=mode)
 
 
@@ -127,7 +133,7 @@ def main(argv=None, stop=None):
             for action,x,y in touch.poll_events():
                 if action=='down':
                     anchor=(x,y);moved=False
-                    rotate=(view.surface and y>=48) or (view.quad and x>=320 and y>=264)
+                    rotate=not view.metrics_open and ((view.surface and y>=116) or (view.quad and x>=320 and y>=264))
                 elif action=='move' and anchor is not None:
                     dx,dy=x-anchor[0],y-anchor[1]
                     if abs(dx)+abs(dy)>2:moved=True
