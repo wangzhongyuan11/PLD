@@ -95,11 +95,11 @@ class Surface:
         if ay<48 and y<48:
             a=next((i for i,(lo,hi) in enumerate(((0,100),(100,200),(200,300),(300,400),(400,520),(520,640))) if lo<=ax<hi),None)
             if a is None:return None
-            if a<4:return '/interactive/control',dict(context,tool=TOOLS[a])
+            if a<4:return '/interactive/control',dict(context,tool=TOOLS[a],**({} if TOOLS[a]==self.state['tool'] else dict(parameters=dict(self.state['parameters'],roi=None,box=None,points=[]))))
             if a==4:return '/interactive/jobs',context
             return '/interactive/hdmi',dict(context,action='leave')
         if start is None:return None
-        end=self.point(x,y,True);params=dict(self.state['parameters'],roi=None,box=None,points=[])
+        end=self.point(x,y,True);params=dict(self.state['parameters'],roi=None,box=None,points=[dict(p) for p in self.state['parameters']['points'] if p['label']==self.state['tool']] if self.state['tool'] in ('foreground','background') else [])
         tool=self.state['tool']
         if tool in ('foreground','background'):
             if self.point(x,y) is None:return None

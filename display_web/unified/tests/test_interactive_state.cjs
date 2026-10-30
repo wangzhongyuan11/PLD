@@ -44,7 +44,7 @@ const tick=()=>new Promise(setImmediate);
   el('source').onpointerup({clientX:500,clientY:345,pointerId:1});await tick();
   assert.equal(shared.parameters.roi===null,tool!=='roi');
   assert.equal(shared.parameters.box===null,tool!=='box');
-  assert.deepEqual(shared.parameters.points,['foreground','background'].includes(tool)?[{x:80,y:40,label:tool}]:[]);
+  assert.deepEqual(shared.parameters.points,['foreground','background'].includes(tool)?[{x:tool==='foreground'?20:30,y:20,label:tool},{x:80,y:40,label:tool}]:[]);
   assert.equal(shared.parameters.threshold,.45);
  }
  const previous=JSON.stringify(shared.parameters),controlCount=calls.filter(c=>c.path==='/interactive/control').length;

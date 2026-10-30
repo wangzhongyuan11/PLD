@@ -97,7 +97,7 @@ def test_hdmi_unchanged_state_and_updated_image_do_not_show_stale_thumbnails():
 
 
 @pytest.mark.parametrize('tool',('foreground','background','roi','box'))
-def test_new_hdmi_mark_replaces_all_previous_points_and_rectangles(tool):
+def test_hdmi_mark_accumulates_same_mode_points_and_replaces_rectangles(tool):
     m=manager();m.tool=tool
     m.parameters.update(roi=dict(x0=2,y0=2,x1=90,y1=45),
         box=dict(x0=5,y0=5,x1=70,y1=35),
@@ -110,7 +110,7 @@ def test_new_hdmi_mark_replaces_all_previous_points_and_rectangles(tool):
     state=m.control(body);p=state['parameters']
     assert (p['roi'] is None)==(tool!='roi')
     assert (p['box'] is None)==(tool!='box')
-    assert len(p['points'])==(1 if tool in ('foreground','background') else 0)
+    assert len(p['points'])==(2 if tool in ('foreground','background') else 0)
     if p['points']:assert p['points'][0]['label']==tool
     assert p['threshold']==.45 and m.image_slot['token']=='a'*32
 
