@@ -107,7 +107,7 @@ def comparison_rows(record):
     unit = 'slice/s' if record and record['model']=='acdc' else 'frame/s'
     rows=[]
     definitions=[('Active processing ('+unit+')',('processing_fps',)),
-                 ('Latency median / P95 (ms)',('median_ms','p95_ms')),
+                 ('Network median / P95 (ms)',('median_ms','p95_ms')),
                  ('Wall loop throughput ('+unit+')',('throughput_fps',)),
                  ('Effective throughput (GMAC/s)',('gmac_s',)),
                  ('Power (W; see method below)',('power_w',)),
@@ -161,6 +161,7 @@ def draw_comparison(screen,selection,y=0):
         percentages=record['fpga'].get('resource_percent',{})
         usage=' | '.join(name.upper()+(' --' if percentages.get(name) is None else f' {percentages[name]:.1f}%') for name in ('lut','ff','bram','dsp'))
         text(10,foot+64,'Build utilization: '+usage)
+        text(10,foot+80,'Network latency includes PL/DMA; excludes init, decode, labels and exports.')
     else:
         text(10,foot,'-- = unmeasured | LUT/FF/BRAM/DSP are static build utilization.')
         text(10,foot+16,'A single-sample benchmark is not sustained performance evidence.')
