@@ -45,7 +45,9 @@ def test_heart_controls_phase_plane_slice_and_cursor(tmp_path,monkeypatch):
     (tmp_path/'statistics.json').write_text(json.dumps({'phases':{p:{'classes':{c:{'mL':2.5} for c in ('LV','RV','MYO')}} for p in ('ED','ES')}}))
     view=HeartView(tmp_path,Kernel());assert view.frame().shape==(480,640,3)
     view.tap(150,20);assert view.phase=='ES'
-    view.tap(30,100);assert not view.quad and view.plane==0
+    view.tap(30,80);assert view.metrics_open
+    view.tap(30,150);assert not view.metrics_open and view.quad
+    view.tap(30,150);assert not view.quad and view.plane==0
     view.tap(580,20);assert view.positions['ES'][2]==8
     view.tap(320,250);assert view.positions['ES'][0]!=4
     view.tap(250,20);assert view.quad

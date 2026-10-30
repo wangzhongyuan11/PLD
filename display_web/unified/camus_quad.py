@@ -6,6 +6,8 @@ import time
 import numpy as np
 from PIL import Image
 from quad_display import thumbnail, enhance, compose
+try:from display_web.camus_display_identity import write_runtime_identity
+except ModuleNotFoundError:from camus_display_identity import write_runtime_identity
 
 ROOT = Path(__file__).resolve().parent
 
@@ -35,6 +37,7 @@ def install(web):
     def run(pipeline, input_path, output_dir, *args, **kwargs):
         result = original_run(pipeline, input_path, output_dir, *args, **kwargs)
         started = time.perf_counter()
+        write_runtime_identity(pipeline,output_dir)
         build_views(input_path, output_dir)
         elapsed = time.perf_counter()-started
         result['stages_seconds']['quad_display'] = elapsed
