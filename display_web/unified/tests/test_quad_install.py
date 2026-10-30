@@ -23,7 +23,7 @@ class InstallTests(unittest.TestCase):
             backup=hub/'backup_quad_legacy';backup.mkdir();record={}
             for key,target in targets.items():
                 target.parent.mkdir(parents=True,exist_ok=True)
-                if key.endswith(('/telemetry_hud.py','/demo_metrics.py')):
+                if key.endswith(('/telemetry_hud.py','/demo_metrics.py','/camus_display_identity.py')):
                     target.write_bytes(b'unrecorded module must survive')
                     continue
                 target.write_bytes(b'new')
@@ -33,7 +33,7 @@ class InstallTests(unittest.TestCase):
             with patch.object(installer.sys,'platform','linux'),patch.object(installer.os,'geteuid',return_value=0,create=True),patch.object(installer,'stop_safely'),patch.object(installer,'call'),patch.object(sys,'argv',['install_quad.py','--hub',str(hub),'--rollback',str(backup)]):
                 installer.main()
             for key,target in targets.items():
-                self.assertEqual(target.read_bytes(),b'unrecorded module must survive' if key.endswith(('/telemetry_hud.py','/demo_metrics.py')) else b'old')
+                self.assertEqual(target.read_bytes(),b'unrecorded module must survive' if key.endswith(('/telemetry_hud.py','/demo_metrics.py','/camus_display_identity.py')) else b'old')
 
     def test_failed_shutdown_prevents_replacement(self):
         with patch.object(installer,'call',return_value='ActiveState=active\nMainPID=12\nResult=success\n'):

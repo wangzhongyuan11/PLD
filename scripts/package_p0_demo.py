@@ -24,7 +24,8 @@ FILES = (
     'display_web/demo_metrics.py','display_web/demo_metrics_input.example.json',
     'display_web/entry/metrics.html','display_web/entry/test_metrics.cjs','display_web/entry/test_metrics_gateway.py',
     'perf_eval/demo.py','perf_eval/tests/test_demo.py','scripts/prepare_demo_metrics.py',
-    'camus/pipeline.py','camus/tests/test_display_identity.py','acdc/tests/test_hdmi_touch.py',
+    'camus/pipeline.py','display_web/camus_display_identity.py',
+    'display_web/unified/tests/test_camus_display_identity.py','acdc/tests/test_hdmi_touch.py',
     'docs/DEMO_METRICS.md',
 )
 

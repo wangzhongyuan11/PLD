@@ -9,9 +9,9 @@ import subprocess
 import sys
 import time
 
-SKIN = ('static/index.html','static/app.js','static/style.css','hdmi_worker.py','quad_display.py','telemetry_hud.py','demo_metrics.py')
+SKIN = ('static/index.html','static/app.js','static/style.css','hdmi_worker.py','quad_display.py','telemetry_hud.py','demo_metrics.py','camus_display_identity.py')
 HUB = ('backend_launcher.py','accepted_backends.json','camus_quad.py','quad_display.py',
-       'quad_camus.html','quad_camus_hdmi.py','telemetry_hud.py','demo_metrics.py')
+       'quad_camus.html','quad_camus_hdmi.py','telemetry_hud.py','demo_metrics.py','camus_display_identity.py')
 UNITS = ('pld-hub.service','pld-web.service','pld-camus.service')
 
 
@@ -67,7 +67,7 @@ def main():
         record = json.loads((backup/'record.json').read_text())
         # Old backups predate this optional module. Restore precisely their
         # original member set; never remove a file they did not back up.
-        optional={kind+'/'+name for kind in ('skin','hub') for name in ('telemetry_hud.py','demo_metrics.py')}
+        optional={kind+'/'+name for kind in ('skin','hub') for name in ('telemetry_hud.py','demo_metrics.py','camus_display_identity.py')}
         if set(record)<=set(targets) and set(targets)-set(record)<=optional:
             targets = {key:value for key,value in targets.items() if key in record}
         if set(record) != set(targets):raise ValueError('Backup member mismatch')

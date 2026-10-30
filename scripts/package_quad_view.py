@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SKIN = ('static/index.html','static/app.js','static/style.css','hdmi_worker.py','quad_display.py')
 HUB = ('backend_launcher.py','accepted_backends.json','camus_quad.py','quad_display.py',
        'quad_camus.html','quad_camus_hdmi.py')
-ADDITIONS = tuple(kind+'/'+name for kind in ('skin','hub') for name in ('telemetry_hud.py','demo_metrics.py'))
+ADDITIONS = tuple(kind+'/'+name for kind in ('skin','hub') for name in ('telemetry_hud.py','demo_metrics.py','camus_display_identity.py'))
 
 
 def package(output=None):

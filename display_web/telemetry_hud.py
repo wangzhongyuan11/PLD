@@ -78,9 +78,14 @@ def _load_task_telemetry(folder, model, build_info=None):
         timings = report.get('timings_seconds', {})
         if not isinstance(source, dict) or not isinstance(timings, dict):
             return info
+        runtime_sha=report.get('runtime_sha256')
+        if not _sha(runtime_sha):
+            try:from .camus_display_identity import read_runtime_identity
+            except ImportError:from camus_display_identity import read_runtime_identity
+            runtime_sha=read_runtime_identity(folder,source.get('spec_sha256'))
         info.update(mode='Full image / '+_text(report.get('backend', 'unknown'), 12),
                     threshold='Argmax / 4 classes', model_sha256=source.get('spec_sha256'),
-                    runtime_sha256=report.get('runtime_sha256'),
+                    runtime_sha256=runtime_sha,
                     task_seconds=_number(report.get('seconds_to_metadata_finalize')))
         # This task scope excludes the final metadata append (see pipeline.py).
         info['task_scope'] = 'To metadata'

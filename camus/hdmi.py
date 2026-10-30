@@ -25,8 +25,6 @@ def main(argv=None, stop=None):
     # Reuse C's display transport without changing its binary-mask/UI contract.
     from display_web.pld_hdmi import PynqHdmiDisplay,fit_rgb
     from display_web.touch_display import TouchInput
-    from display_web.telemetry_hud import load_telemetry,annotate
-    from display_web.demo_metrics import draw_comparison
     try:from display_web.video_overlay import video_overlay
     except ModuleNotFoundError:from video_overlay import video_overlay
     try:from display_web.display_lease import CamusDisplayLease
@@ -34,8 +32,7 @@ def main(argv=None, stop=None):
     ready=folder/'hdmi.ready.json';display=None;lease=CamusDisplayLease()
     try:
         rgb=np.asarray(Image.open(source).convert('RGB'))
-        telemetry=load_telemetry(folder,'camus')
-        screen=annotate(fit_rgb(rgb,640,480,nearest=args.view in ('label','label_raw','segmentation')),telemetry)
+        screen=fit_rgb(rgb,640,480,nearest=args.view in ('label','label_raw','segmentation'))
         base=video_overlay();display=PynqHdmiDisplay(base.video.hdmi_out)
         display.start();display.show(screen)
         evidence=dict(scope='HDMI overlay/configure/frame submission; physical screen appearance requires observation',
@@ -43,20 +40,14 @@ def main(argv=None, stop=None):
                       frame_sha256=hashlib.sha256(screen.tobytes()).hexdigest())
         ready.write_text(json.dumps(evidence,indent=2)+'\n',encoding='utf-8')
         print(json.dumps(evidence),flush=True)
-        touch=TouchInput();views=['overlay','segmentation','label','label_raw'];selected=views.index(args.view);metrics_open=False
+        touch=TouchInput();views=['overlay','segmentation','label','label_raw'];selected=views.index(args.view)
         deadline=time.monotonic()+args.duration
         try:
             while not stop.wait(.02) and time.monotonic()<deadline:
                 for x,y in touch.poll():
-                    if y<68 or metrics_open:
-                        metrics_open=not metrics_open
-                        with Image.open(folder/(views[selected]+'.png')) as im:
-                            base_frame=fit_rgb(np.asarray(im.convert('RGB')),640,480,nearest=selected!=0)
-                        display.show(draw_comparison(base_frame,telemetry.get('comparison')) if metrics_open else annotate(base_frame,telemetry))
-                        continue
                     selected=(selected+1)%len(views)
                     with Image.open(folder/(views[selected]+'.png')) as im:
-                        display.show(annotate(fit_rgb(np.asarray(im.convert('RGB')),640,480,nearest=selected!=0),telemetry))
+                        display.show(fit_rgb(np.asarray(im.convert('RGB')),640,480,nearest=selected!=0))
                     print('TOUCH_TAP',x,y,views[selected],flush=True)
         finally:touch.close()
     finally:

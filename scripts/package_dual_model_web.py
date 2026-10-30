@@ -7,7 +7,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'display_web/unified'
-SHARED = ('display_completion.py', 'display_lease.py', 'warm_hdmi.py', 'video_overlay.py', 'overlay_metadata.py', 'latency.py', 'telemetry_hud.py', 'demo_metrics.py')
+SHARED = ('display_completion.py', 'display_lease.py', 'warm_hdmi.py', 'video_overlay.py', 'overlay_metadata.py', 'latency.py', 'telemetry_hud.py', 'demo_metrics.py', 'camus_display_identity.py')
 FILES = (
     'interactive_bridge.py', 'interactive.html', 'interactive.js',
     'interactive_workspace.py', 'interactive_hdmi.py',

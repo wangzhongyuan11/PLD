@@ -1,7 +1,6 @@
 """Shared input-to-artifacts CAMUS pipeline for CLI, web and benchmarks."""
 from __future__ import annotations
 import json
-import hashlib
 from pathlib import Path
 import time
 import zipfile
@@ -31,16 +30,8 @@ class CamusPipeline:
         if backend not in ('reference', 'emulator', 'pl'): raise ValueError('unknown CAMUS backend')
         self.model = load_model(model_root)
         self.backend, self.device, self.jobs = backend, None, 0
-        self.runtime_sha256 = None
         if backend == 'pl':
             if runtime is None: raise ValueError('PL backend requires --runtime')
-            # Display identity only; the existing accelerator still verifies the
-            # full runtime and ABI before it can acquire hardware. Hash before
-            # allocation so an I/O error cannot strand an initialized device.
-            identity = hashlib.sha256()
-            with (Path(runtime)/'overlay/dma_top.bit').open('rb') as stream:
-                for block in iter(lambda:stream.read(1024*1024),b''):identity.update(block)
-            self.runtime_sha256 = identity.hexdigest()
             from .accelerator import CamusTileAccelerator
             self.device = CamusTileAccelerator(runtime, self.model.root, timeout)
         elif backend == 'emulator': self.device = EmulatedTileAccelerator()
@@ -86,7 +77,6 @@ class CamusPipeline:
         png_details = save_views(output,prep.raw_gray,labels,processed.labels,self.native)
         stages['png_encoding'] = time.perf_counter()-t
         report = dict(schema='pld-camus-result-v1', backend=self.backend,
-            runtime_sha256=getattr(self,'runtime_sha256',None),
             evidence_scope='real PL execution' if self.backend == 'pl' else 'host software '+self.backend+'; no PL execution',
             model=dict(spec_sha256=MODEL_SPEC_SHA256, input_shape=self.model.input_shape, head=head_meta),
             input=dict(path=str(Path(input_path).resolve()), kind=prep.source.source_kind, native_hw=list(prep.raw_gray.shape),
