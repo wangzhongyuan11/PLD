@@ -1,0 +1,60 @@
+{
+  "passed": true,
+  "scope": "actual board, 8x8 first-layer input, full 15-layer topology, independent per-layer reference",
+  "models": {
+    "skin": {
+      "schema": "pld-stage3-connected-graph-v1",
+      "model": "skin",
+      "model_spec_sha256": "fe137ca5b128fc1983fabad9bee39b3208cda4256e0d04c4e27cef5c07666aef",
+      "evidence": "board_actual_perf10_mixed",
+      "input_kind": "caller-provided quantized first input",
+      "input_sha256": "764a8c4114fcd2365aa99926068874bb33a3228bd758666d26b74945f122f85e",
+      "input_shape": [
+        3,
+        8,
+        8
+      ],
+      "head_shape": [
+        1,
+        8,
+        8
+      ],
+      "head_sha256": "99ef568dae57cf066f530acd2d496435d8ba31afc0736057a4fa7d559ecdcaa6",
+      "diagnostic_hashes": true,
+      "layers": 15,
+      "nonconv_commands": 14,
+      "all_layers_bit_exact": true,
+      "seconds": 0.1539042580000114,
+      "tracked_feature_bytes_peak": 2496,
+      "memory_scope": "selected live graph tensors only; excludes device, params, reference, Python and RSS",
+      "qualification": "full topology at stated spatial size; no Fmax/resource/board/8FPS/web2s evidence"
+    },
+    "camus": {
+      "schema": "pld-stage3-connected-graph-v1",
+      "model": "camus",
+      "model_spec_sha256": "68b4f425cc3612ad72d5e83955c2018981edee912fbc0937e9ac8c1718e7b5ae",
+      "evidence": "board_actual_perf10_mixed",
+      "input_kind": "caller-provided quantized first input",
+      "input_sha256": "07585f6a3e69a0e9b721e39d3f8893b7b4324a5c0c2bb803a45a2b7018db5ff9",
+      "input_shape": [
+        1,
+        8,
+        8
+      ],
+      "head_shape": [
+        4,
+        8,
+        8
+      ],
+      "head_sha256": "3d305f2e47bf218ee0362ec2ada137aeffb9a223f21c1e707e6d8ef6826e52fa",
+      "diagnostic_hashes": true,
+      "layers": 15,
+      "nonconv_commands": 6,
+      "all_layers_bit_exact": true,
+      "seconds": 0.2099976179999885,
+      "tracked_feature_bytes_peak": 4672,
+      "memory_scope": "selected live graph tensors only; excludes device, params, reference, Python and RSS",
+      "qualification": "full topology at stated spatial size; no Fmax/resource/board/8FPS/web2s evidence"
+    }
+  }
+}

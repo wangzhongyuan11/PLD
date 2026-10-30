@@ -1,0 +1,18 @@
+[Unit]
+Description=PLD Perf10 candidate, original release retained
+After=network.target
+Conflicts=pld-hub.service pld-web.service pld-camus.service pld-reuse9-web.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/xilinx/jupyter_notebooks/pld/releases/pld_perf10_20261020
+ExecStart=/bin/bash -lc 'exec /usr/local/share/pynq-venv/bin/python3 -u /home/xilinx/jupyter_notebooks/pld/releases/pld_perf10_20261020/launch.py'
+Restart=no
+TimeoutStopSec=120
+SendSIGKILL=no
+KillMode=mixed
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,20 @@
+{
+  "tag": "pld-perf10-candidate-20261020",
+  "assets": [
+    {
+      "name": "PLD_Dev_Source_OriginalBytes_20261020.zip",
+      "bytes": 1920871,
+      "sha256": "f7f696f9f2660b921b4a0b4d3f4122739f6b2ebe751ea7497677899e7804b1f4"
+    },
+    {
+      "name": "PLD_Perf10_Deploy_20261020.zip",
+      "bytes": 11222053,
+      "sha256": "1127b5e3d208ce3fa61fbd989228858d94cdfadfe734bbcafc38dc04138b1c7b"
+    },
+    {
+      "name": "PLD_Perf10_Board_Handoff_20261020_Published.zip",
+      "bytes": 13777021,
+      "sha256": "e27909d85fc2397d2de886261700c9e606038f43ee1475d624e75745ec342832"
+    }
+  ]
+}
