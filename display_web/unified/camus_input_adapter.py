@@ -58,6 +58,8 @@ def install(web):
             raise prep.PreprocessError('Cannot read NPZ input: ' + str(exc)) from exc
 
     def execute(server, job, selected, spacing):
+        if Path(selected).suffix.lower()=='.pldc':
+            return original_execute(server,job,selected,spacing)
         # This block is strictly before stop_hdmi, device reinitialization and
         # network.forward. Only failures here are recoverable input errors.
         try:

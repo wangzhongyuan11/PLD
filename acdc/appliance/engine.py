@@ -86,7 +86,7 @@ class JobManager:
 
     def start(self,job,token,suffixes,upload_seconds,auto_display=True):
         checked_job(job)
-        if (not isinstance(suffixes,list) or len(suffixes)!=2 or any(s not in ('.nii','.nii.gz') for s in suffixes)
+        if (not isinstance(suffixes,list) or len(suffixes)!=2 or any(s not in ('.nii','.nii.gz','.plda') for s in suffixes)
                 or not isinstance(upload_seconds,(int,float)) or not 0<=upload_seconds<=90
                 or type(auto_display) is not bool):
             raise ContractError('invalid upload metadata')

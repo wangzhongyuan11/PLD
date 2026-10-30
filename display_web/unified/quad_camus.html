@@ -10,7 +10,7 @@ button:disabled{opacity:.5;cursor:wait}input{margin:8px}#views{display:grid;grid
 <header><h1>CAMUS 心脏超声多结构分割</h1><p class="tag" id="backend">正在连接…</p>
 <p>灰度单帧输入 · 左心室腔 / 心肌 / 左心房。该入口使用独立 CAMUS 模型。</p></header>
 <p><span style="color:#ec3a3a">■ 左心室腔</span>　<span style="color:#3ab052">■ 心肌</span>　<span style="color:#527eec">■ 左心房</span></p>
-<section><label>输入文件 <input id="files" type="file" multiple accept=".png,.jpg,.jpeg,.npy,.npz,.mhd,.raw,.nii,.gz"></label>
+<section><label>输入文件 <input id="files" type="file" multiple accept=".png,.jpg,.jpeg,.npy,.npz,.mhd,.raw,.nii,.gz,.pldc"></label>
 <p>支持灰度 PNG/JPEG、二维数组、单帧 MHD+RAW；MHD 请同时选择配套 RAW。强度按 0～255 处理。</p>
 <label>像素间距 Y（mm）<input id="sy" type="number" min="0" step="any"></label>
 <label>X（mm）<input id="sx" type="number" min="0" step="any"></label><p>无间距时显示像素面积；单帧不计算 EF。</p>
@@ -29,7 +29,7 @@ const lines=['整体耗时',
 '板端请求处理：'+seconds(job.server_seconds),
 '完整结果生成（含 PNG 和 ZIP）：'+seconds(result.end_to_end_seconds),
 '','各阶段耗时'];
-for(const [key,label] of [['input_read_preprocess','输入读取与预处理'],['network','网络推理（含数据传输）'],['native_reconstruction_postprocess','原生尺寸恢复与后处理'],['head_labels_write','推理结果与标签保存'],['quad_display','四宫格预览与HDMI画面生成'],['png_encoding','PNG 图像编码与保存'],['zip_payload','ZIP 图像与标签打包']])lines.push(label+'：'+seconds(stages[key]));
+for(const [key,label] of [['prepared_input_load','读取电脑预处理输入'],['input_read_preprocess','输入读取与预处理'],['network','网络推理（含数据传输）'],['native_reconstruction_postprocess','原生尺寸恢复与后处理'],['head_labels_write','推理结果与标签保存'],['quad_display','四宫格预览与HDMI画面生成'],['png_encoding','PNG 图像编码与保存'],['zip_payload','ZIP 图像与标签打包']])lines.push(label+'：'+seconds(stages[key]));
 lines.push('','会话初始化：'+seconds(result.session_initialization_seconds??report.session_initialization_seconds),
 '初始化单独列出；会话复用时不重复执行。',
 '','模型与版本',

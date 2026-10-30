@@ -43,7 +43,7 @@ def decode_upload(payload):
         result[name] = data
     selected = payload.get('input_name')
     if selected not in result: raise ValueError('缺少主输入文件')
-    if Path(selected).suffix.lower() not in ('.png','.jpg','.jpeg','.npy','.npz','.mhd','.nii','.gz'):
+    if Path(selected).suffix.lower() not in ('.png','.jpg','.jpeg','.npy','.npz','.mhd','.nii','.gz','.pldc'):
         raise ValueError('请选择灰度图、数组或 MHD/NIfTI')
     return result, selected
 

@@ -42,15 +42,20 @@ class NumericalPipeline:
         next_volume=None
         def prepare_volume(path):
             tick=time.perf_counter()
-            value=load_volume(path,self.kernel,policy=self.policy,binding=self.binding)
-            return value,tick,time.perf_counter()-tick
+            if Path(path).suffix.lower()=='.plda':
+                from .prepared import load
+                value,inputs=load(path)
+            else:
+                value=load_volume(path,self.kernel,policy=self.policy,binding=self.binding)
+                inputs=AxialInputs(value,self.kernel)
+            return value,inputs,tick,time.perf_counter()-tick
 
         try:
             for phase,path in (('ED',ed),('ES',es)):
                 check_cancel();update('preparing',phase=phase)
-                volume,prepare_begin,prepare=next_volume.result() if next_volume is not None else prepare_volume(path)
+                volume,inputs,prepare_begin,prepare=next_volume.result() if next_volume is not None else prepare_volume(path)
                 next_volume=None
-                inputs=AxialInputs(volume,self.kernel);nz=volume.working.shape[2]
+                nz=volume.working_shape[2]
                 collector=Collector(volume,self.kernel,self.table)
                 # One additional gray/working volume only; never preallocate a
                 # second four-channel collector while ED restoration is alive.
@@ -119,7 +124,8 @@ class NumericalPipeline:
                     prepare_begin_monotonic=prepare_begin,inference_begin_monotonic=inference_started,
                     native_restore_begin_monotonic=tick,
                     final_restore_seconds=finish,restore_stages=collector.timings,resized_planes=inputs.resized_planes,
-                    native_shape=list(volume.native.shape),working_shape=list(volume.working.shape))
+                    native_shape=list(volume.native.shape),working_shape=list(volume.working_shape),
+                    input_mode='pc_prepared_int8' if Path(path).suffix.lower()=='.plda' else 'board_preprocess')
                 del collector,volume,inputs,labels
                 if phase_ready is not None:phase_ready(phase)
             atomic_json(output/'statistics.json',paired(stats['ED'],stats['ES']))

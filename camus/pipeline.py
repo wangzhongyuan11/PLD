@@ -47,8 +47,12 @@ class CamusPipeline:
 
     def run(self, input_path, output_dir, spacing=None, html=True, *, on_preview=None):
         started = time.perf_counter(); output = protect_output(output_dir, self.model.root); stages = {}
-        t = time.perf_counter(); prep = self.native.preprocess(input_path) if self.native is not None else preprocess(input_path)
-        stages['input_read_preprocess'] = time.perf_counter()-t
+        t = time.perf_counter();prepared=Path(input_path).suffix.lower()=='.pldc'
+        if prepared:
+            from .prepared import load
+            prep=load(input_path)
+        else:prep = self.native.preprocess(input_path) if self.native is not None else preprocess(input_path)
+        stages['prepared_input_load' if prepared else 'input_read_preprocess'] = time.perf_counter()-t
         source_spacing = prep.source.spacing_yx_mm
         if spacing is not None:
             spacing = tuple(float(v) for v in spacing)

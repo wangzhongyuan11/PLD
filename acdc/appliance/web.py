@@ -5,6 +5,7 @@ from collections import OrderedDict
 from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
 import json
 import math
+import os
 from pathlib import Path
 import re
 import shutil
@@ -28,7 +29,8 @@ class WebApplication:
         self.mpr_lock=threading.Lock();self.volumes=OrderedDict();self.images=OrderedDict()
         try:active=self.client.request(op='health').get('active_job')
         except (OSError,TimeoutError):active=None
-        self.storage=ResultUsage(self.root,active_job=active)
+        self.storage=ResultUsage(self.root,active_job=active,
+            limit=int(os.environ.get('PLD_RESULT_LIMIT_BYTES',4*1024**3)))
 
     def health(self):
         try:return self.client.request(op='health')
@@ -171,7 +173,8 @@ def handler(app):
                         name=query.get(phase,[''])[0].lower()
                         if name.endswith('.nii.gz'):suffixes.append('.nii.gz')
                         elif name.endswith('.nii'):suffixes.append('.nii')
-                        else:raise ContractError('upload explicit ED and ES NIfTI files')
+                        elif name.endswith('.plda'):suffixes.append('.plda')
+                        else:raise ContractError('upload ED and ES NIfTI or PC-prepared .plda files')
                     if shutil.disk_usage(app.root).free<MAX_UPLOAD*2+256*1024*1024:
                         raise ContractError('insufficient board storage')
                     job=uuid.uuid4().hex

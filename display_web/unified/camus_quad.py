@@ -16,7 +16,10 @@ def build_views(input_path, output):
     from camus.png import save_png
     output = Path(output)
     # Display-only reload after inference. Do not change preprocessing or labels.
-    loaded = load_gray_frame(input_path)
+    if Path(input_path).suffix.lower()=='.pldc':
+        from camus.prepared import load
+        loaded=load(input_path).source
+    else:loaded = load_gray_frame(input_path)
     raw = np.clip(loaded.data, 0, 255).astype(np.uint8)
     original = thumbnail(raw)
     enhanced = enhance(original)
