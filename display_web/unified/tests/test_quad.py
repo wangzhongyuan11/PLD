@@ -68,6 +68,53 @@ class QuadTests(unittest.TestCase):
         web=self.fake_web();camus_quad.install(web)
         with patch.object(camus_quad,'build_views',side_effect=AssertionError('quad must be deferred')):
             self.assertEqual(web.CamusPipeline().run('input','output')['end_to_end_seconds'],1.)
+    def test_display_identity_follows_preview_and_preserves_pipeline_contract(self):
+        web=self.fake_web();events=[]
+        result={'stages_seconds':{'network':.2},'end_to_end_seconds':1.}
+        def original(pipeline,input_path,output_dir,spacing=None,*,on_preview=None):
+            self.assertEqual((input_path,output_dir,spacing),('prepared.pldc','output',(.2,.3)))
+            on_preview()
+            events.append('report_and_zip_complete')
+            return result
+        web.CamusPipeline.run=original
+        camus_quad.install(web);pipeline=web.CamusPipeline()
+        with patch.object(camus_quad,'write_runtime_identity',side_effect=lambda *a:events.append('identity')) as identity, \
+                patch.object(camus_quad,'build_views',side_effect=AssertionError('quad must be deferred')):
+            actual=pipeline.run('prepared.pldc','output',(.2,.3),on_preview=lambda:events.append('preview'))
+        identity.assert_called_once_with(pipeline,'output')
+        self.assertIs(actual,result)
+        self.assertEqual(events,['preview','report_and_zip_complete','identity'])
+        self.assertEqual(result,{'stages_seconds':{'network':.2},'end_to_end_seconds':1.})
+    def test_failed_inference_does_not_write_display_identity(self):
+        web=self.fake_web()
+        web.CamusPipeline.run=Mock(side_effect=RuntimeError('inference failed'))
+        camus_quad.install(web)
+        with patch.object(camus_quad,'write_runtime_identity') as identity:
+            with self.assertRaisesRegex(RuntimeError,'inference failed'):
+                web.CamusPipeline().run('input','output')
+        identity.assert_not_called()
+    def test_prepared_input_keeps_the_same_hdmi_views_as_native_pixels(self):
+        import io,json,zipfile
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);prepared=root/'frame.pldc'
+            raw=np.arange(2400,dtype=np.float32).reshape(40,60)%256
+            with zipfile.ZipFile(prepared,'w') as archive:
+                archive.writestr('metadata.json',json.dumps(dict(schema='pld-camus-prepared-v1',
+                    spacing_yx_mm=None,letterbox={},clipped_low=0,clipped_high=0)))
+                for name,array in [('input',np.zeros((1,1,256,256),np.int8)),('native_gray',raw)]:
+                    data=io.BytesIO();np.save(data,array,allow_pickle=False)
+                    archive.writestr(name+'.npy',data.getvalue())
+            outputs=[root/'prepared',root/'native']
+            for folder in outputs:
+                folder.mkdir()
+                for name in ('segmentation.png','overlay.png'):
+                    Image.fromarray(np.zeros((40,60,3),np.uint8)).save(folder/name)
+            with patch('camus.preprocess.load_gray_frame',side_effect=AssertionError('prepared source was decoded again')):
+                camus_quad.build_views(prepared,outputs[0])
+            with patch('camus.preprocess.load_gray_frame',return_value=SimpleNamespace(data=raw)):
+                camus_quad.build_views('frame.png',outputs[1])
+            for name in ('quad_original.png','quad_enhanced.png','quad.png'):
+                self.assertEqual((outputs[0]/name).read_bytes(),(outputs[1]/name).read_bytes())
     def test_camus_preview_keeps_label_files_unchanged(self):
         import hashlib
         with tempfile.TemporaryDirectory() as temp:
@@ -77,8 +124,7 @@ class QuadTests(unittest.TestCase):
                 Image.fromarray(mask).save(folder/name)
             before={name:hashlib.sha256((folder/name).read_bytes()).hexdigest() for name in ['segmentation.png','overlay.png']}
             raw=np.arange(2400,dtype=np.float32).reshape(40,60)%256
-            fake=SimpleNamespace(load_gray_frame=lambda _:SimpleNamespace(data=raw))
-            with patch.dict(sys.modules,{'camus.preprocess':fake}):
+            with patch('camus.preprocess.load_gray_frame',return_value=SimpleNamespace(data=raw)):
                 camus_quad.build_views('fixture',folder)
             with Image.open(folder/'quad.png') as im:
                 self.assertEqual(im.size,(640,480))

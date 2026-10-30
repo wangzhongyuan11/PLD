@@ -3,7 +3,7 @@ const source=fs.readFileSync(path.join(__dirname,'../static/app.js'),'utf8');
 const nodes=new Map(),requests=[];
 function $(id){if(!nodes.has(id))nodes.set(id,{hidden:true,async decode(){}});return nodes.get(id);}
 let releaseMask;
-const c=vm.createContext({$,document:{querySelectorAll:()=>[]},currentView:'outlined',
+const c=vm.createContext({$,document:{querySelectorAll:()=>[]},currentView:'outlined',localOriginal:null,
  current:{id:'a',state:'running',preview_ready:true,preview_views:['original','outlined'],views:['original','mask','outlined','cutout']},
  historyAsset:async(id,name)=>{requests.push(name);if(name.includes('mask'))await new Promise(r=>{releaseMask=r;});return name;},
  imageUrls:[],URL:{createObjectURL:v=>'blob:'+v,revokeObjectURL(){}},message:()=>{}});

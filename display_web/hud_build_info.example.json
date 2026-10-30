@@ -1,0 +1,16 @@
+{
+  "schema": "pld-hud-build-info-v1",
+  "builds": [
+    {
+      "model_sha256": "replace with exact model spec SHA256",
+      "runtime_sha256": "replace with exact bit SHA256 for skin or runtime SHA256 for ACDC",
+      "utilization_report_sha256": "replace with matching routed utilization report SHA256",
+      "core": "replace with verified core name",
+      "clock_mhz": null,
+      "dsp_used": null,
+      "dsp_total": null,
+      "bram_used": null,
+      "bram_total": null
+    }
+  ]
+}

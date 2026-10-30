@@ -94,7 +94,7 @@ def test_block_restoration_matches_reference_for_oblique_geometry(kernel):
     from acdc.reconstruct import Collector as Reference
     affine=np.array([[1.3,.2,0,-1],[.1,1.7,0,-2],[0,.04,2.2,0],[0,0,0,1.]])
     volume=SimpleNamespace(native=np.zeros((17,13,7),np.float32),affine=affine,
-        working=np.zeros((15,14,10),np.float32),geometry_sha='geometry',
+        working=np.zeros((15,14,10),np.float32),working_shape=(15,14,10),geometry_sha='geometry',
         geometry={'working_affine':np.diag([2.,2.,2.,1.]).tolist()})
     scale=.23
     actual=Collector(volume,kernel,make_exp_table(scale),block_x=3)

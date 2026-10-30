@@ -7,6 +7,8 @@ import time
 import numpy as np
 from PIL import Image
 from quad_display import thumbnail, enhance, compose
+try:from display_web.camus_display_identity import write_runtime_identity
+except ModuleNotFoundError:from camus_display_identity import write_runtime_identity
 
 ROOT = Path(__file__).resolve().parent
 
@@ -37,6 +39,15 @@ def build_views(input_path, output):
 def install(web):
     original_get = web.Handler.do_GET
     original_hdmi = web.CamusServer.start_hdmi
+
+    original_run = web.CamusPipeline.run
+
+    def run(pipeline, input_path, output_dir, *args, **kwargs):
+        result = original_run(pipeline, input_path, output_dir, *args, **kwargs)
+        # Annotate only completed inference. Keep preview callbacks and timings
+        # intact; the HDMI path below builds presentation views on demand.
+        write_runtime_identity(pipeline, output_dir)
+        return result
 
     def get(handler):
         if web.urlsplit(handler.path).path == '/':
@@ -78,5 +89,6 @@ def install(web):
         server.hdmi_view=view
 
     web.ARTIFACTS.update({'quad_original.png', 'quad_enhanced.png', 'quad.png'})
+    web.CamusPipeline.run = run
     web.Handler.do_GET = get
     web.CamusServer.start_hdmi = hdmi

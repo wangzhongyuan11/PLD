@@ -10,6 +10,7 @@ import numpy as np
 from pld_hdmi import PynqHdmiDisplay, fit_rgb
 from quad_display import skin_frame
 from touch_display import TouchInput, QuadTouch
+from telemetry_hud import load_telemetry
 
 stop_requested = threading.Event()
 
@@ -29,7 +30,7 @@ def main(argv=None, stop=None):
     trace = Stages('skin_hdmi_first_frame')
     screen = skin_frame(folder)
     trace.mark('preview_decode_compose')
-    touch = TouchInput();touch_view = QuadTouch(screen);screen = touch_view.frame()
+    touch = TouchInput();touch_view = QuadTouch(screen, load_telemetry(folder, 'skin'));screen = touch_view.frame()
     if stop_requested.is_set():
         touch.close(); return
     from video_overlay import video_overlay
