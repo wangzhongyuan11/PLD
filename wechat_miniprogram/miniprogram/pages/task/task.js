@@ -1,10 +1,12 @@
 var api = require("../../utils/api.js");
+var album = require("../../utils/album.js");
 
 Page({
   data: {
     id: "",
     task: null,
     views: [],
+    previews: [],
     metrics: [],
     files: [],
     percent: 0,
@@ -81,6 +83,7 @@ Page({
       statusCls: info.cls,
       time: api.fmtTime(task.created_at),
       views: result.views || [],
+      previews: task.status === "done" ? [] : (result.previews || []),
       metrics: result.metrics || [],
       files: result.files || [],
       zipFile: result.zip || "",
@@ -102,36 +105,15 @@ Page({
   },
 
   saveView: function (e) {
+    if (this.data.busy) return;
     var fileID = e.currentTarget.dataset.fid;
     this.setData({ busy: fileID });
     var self = this;
-    wx.cloud.downloadFile({
-      fileID: fileID,
-      success: function (res) {
-        wx.saveImageToPhotosAlbum({
-          filePath: res.tempFilePath,
-          success: function () {
-            wx.showToast({ title: "已保存到相册", icon: "success" });
-          },
-          fail: function (err) {
-            if (err && err.errMsg && err.errMsg.indexOf("auth") >= 0) {
-              wx.showModal({
-                title: "需要相册权限",
-                content: "请在设置中允许保存到相册",
-                success: function (r) { if (r.confirm) wx.openSetting(); },
-              });
-            } else {
-              wx.showToast({ title: "保存失败", icon: "none" });
-            }
-          },
-          complete: function () { self.setData({ busy: "" }); },
-        });
-      },
-      fail: function () {
-        self.setData({ busy: "" });
-        wx.showToast({ title: "下载失败", icon: "none" });
-      },
-    });
+    album.saveImage(fileID).then(function () {
+      wx.showToast({ title: "已保存到相册", icon: "success" });
+    }).catch(function (err) {
+      wx.showModal({ title: "图片未保存", content: err.message, showCancel: false });
+    }).finally(function () { self.setData({ busy: "" }); });
   },
 
   shareFile: function (e) {
@@ -170,8 +152,9 @@ Page({
   retry: function (e) {
     var self = this;
     var task = this.data.task;
-    if (!task) return;
-    var resume = task.board_completed && !(e && e.currentTarget.dataset.fresh);
+    if (!task || this._retrying) return;
+    this._retrying = true;
+    var resume = task.board_job && !(e && e.currentTarget.dataset.fresh);
     api.createTask({
       type: task.type,
       inputs: task.inputs,
@@ -183,6 +166,7 @@ Page({
     }).then(function (id) {
       wx.redirectTo({ url: "/pages/task/task?id=" + id });
     }).catch(function (err) {
+      self._retrying = false;
       wx.showToast({ title: err.message || "重提失败", icon: "none" });
     });
   },
