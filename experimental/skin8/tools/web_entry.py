@@ -1,5 +1,5 @@
 """Original presentation with Skin8 inference and guarded hardware lifecycle."""
-import argparse,importlib,json,os,signal,sys,threading,time
+import argparse,hashlib,importlib,json,os,signal,sys,threading,time
 from pathlib import Path
 BOOT_STARTED=time.monotonic()
 import numpy as np
@@ -49,6 +49,7 @@ class Core:
         self.model=SimpleNamespace(layers=spec['layers'],spec_sha256=manifest['spec_sha256'])
         trace.mark('model_load')
         bit=HERE/'skin8.bit'
+        self.bit_sha256=hashlib.sha256(bit.read_bytes()).hexdigest()
         # Overlay(download=False) updates process-local device metadata; its
         # is_loaded() is insufficient to identify a download by another process.
         loaded=global_state_file_exists() and load_global_state().bitfile_name==str(bit)
@@ -101,6 +102,7 @@ class SkinWorker:
             spec=self.core.model.spec_sha256
             metadata=dict(g,model_spec_sha256=spec,valid_rect=rect,valid_pixels=rect[2]*rect[3])
             report=dict(status='success',processing_only=True,shape=[1,1,256,256],dtype='int8',layout='NCHW',comparison='>=',model_name='soup_v5_a050',model_spec_sha256=spec,model_manifest_sha256='e47eb18b94369451b36790971f4e0db62b2d128f424937e00f2768e866a30936',threshold_q=-1,threshold_probability=.45,head_output_scale=self.core.model.layers[-1]['output_scale'],frame_id=1,valid_rect=rect,input_metadata=metadata,online_b_seconds=prep+inference,inference_seconds=inference,preprocess_seconds=prep,abi_version='SKIN8-v0',execution_backend='skin8_125',execution_phases=result['host_timing'],source_name=source.name)
+            report['bit_sha256']=self.core.bit_sha256
             (out/'frame_000001.bin').write_bytes(head.tobytes());(out/'frame_000001.json').write_text(json.dumps(report,indent=2))
             Path(log_path).write_text('SKIN8_SKIN_INFERENCE_COMPLETED_NOT_REFERENCE_CHECKED\n'+json.dumps(result['host_timing'],indent=2))
         return dict(model_reused=reused,hardware_reused=reused,artifacts_reused=artifacts_reused,

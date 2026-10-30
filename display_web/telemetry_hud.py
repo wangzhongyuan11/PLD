@@ -64,7 +64,7 @@ def _load_task_telemetry(folder, model, build_info=None):
             info['area_percent'] = float(area)
         frame = _read(folder/'inference/frame_000001.json')
         if mode == 'infer' and frame.get('status') == 'success' and frame.get('dtype') == 'int8':
-            info.update(precision='INT8', core=_text(frame.get('model_name', 'SKIN')),
+            info.update(precision='INT8', core=_text(frame.get('execution_backend') or frame.get('model_name', 'SKIN')),
                         model_sha256=frame.get('model_spec_sha256'), runtime_sha256=frame.get('bit_sha256'),
                         network_seconds=_number(frame.get('inference_seconds')))
             q = frame.get('threshold_q')
