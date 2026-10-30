@@ -5,7 +5,8 @@ const $=id=>{if(!nodes.has(id))nodes.set(id,{replaceChildren(){}});return nodes.
 const events=[],queue=[];
 const context={$,document:{querySelectorAll:()=>tabs,createTextNode:t=>t,createElement:()=>({})},
  current:null,currentView:'outlined',busy:true,preparing:false,status:{hdmi_available:true},
- performance:{now:()=>1000},setTimeout:f=>f(),message:(m,e)=>events.push(['message',m,e]),
+ performance:{now:()=>1000},setTimeout:()=>{throw Error('fixed polling delay');},message:(m,e)=>events.push(['message',m,e]),
+ updateAuxiliary:async()=>{},
  showTimings:(j,t)=>events.push(['timings',j.state,{...t}]),
  api:async()=>{events.push(['poll']);assert(queue.length);return queue.shift();},refreshStatus:async()=>{}};
 vm.createContext(context);
@@ -31,6 +32,9 @@ const done={...preview,state:'done',package_ready:true};
  context.busy=false;context.buttons();assert($('download').disabled);assert(tabs.every(t=>!t.disabled));
  events.length=0;context.current=preview;queue.push(done);const resumed={};await context.watchCurrent(resumed,null);
  assert(!('click_to_preview' in resumed));assert(!('until_done' in resumed));
+ events.length=0;context.current={...preview,client_composite:true,preview_views:['contour']};queue.push({...done,client_composite:true});
+ await context.watchCurrent({},null);
+ assert.equal(events.find(e=>e[0]==='render')[1],'done'); // Reload has no local upload to composite.
  events.length=0;context.current={...done,preview_ready:false};await context.watchCurrent({},null);
  assert.equal(events.filter(e=>e[0]==='render').length,1);
  console.log('PASS: preview renders before completion, tabs enabled, ZIP/HDMI gated, failed package retains preview, resumed timing and legacy jobs');

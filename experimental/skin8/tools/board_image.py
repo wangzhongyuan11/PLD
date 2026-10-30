@@ -9,12 +9,13 @@ from pathlib import Path
 
 
 class PreparedArtifacts:
-    """Verified CPU bytes only; never retains MMIO, DMA buffers or addresses.
+    """Cached CPU bytes only; never retains MMIO, DMA buffers or addresses.
 
     A changed file invalidates this frozen snapshot instead of mixing versions.
     The cache belongs to one worker and is discarded on service shutdown.
     """
-    def __init__(self, directory):
+    def __init__(self, directory, *, verify=True):
+        self.verify = verify
         self.directory = Path(directory).absolute()
         self.files = {}
         self.signatures = {}
@@ -44,14 +45,14 @@ class PreparedArtifacts:
         if name not in self.files:
             data = self._read(name)
             record = self.manifest['artifacts'][name]
-            if len(data) != record['bytes'] or hashlib.sha256(data).hexdigest() != record['sha256']:
+            if self.verify and (len(data) != record['bytes'] or hashlib.sha256(data).hexdigest() != record['sha256']):
                 raise ValueError('artifact integrity failure: ' + name)
             self.files[name] = data
         return self.files[name]
 
 
-def build_image(directory, regions, prepared=None):
-    prepared = prepared if prepared is not None else PreparedArtifacts(directory)
+def build_image(directory, regions, prepared=None, *, verify=True):
+    prepared = prepared if prepared is not None else PreparedArtifacts(directory, verify=verify)
     if prepared.directory != Path(directory).absolute():
         raise ValueError('prepared artifacts belong to another model directory')
     prepared.check_unchanged()

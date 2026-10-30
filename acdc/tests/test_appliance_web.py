@@ -77,6 +77,9 @@ def test_http_upload_mpr_export_and_client_timing(tmp_path):
             time.sleep(.03)
         assert state['status']=='assets_ready',state
         base='/api/v2/jobs/'+job
+        assert state['quick_preview_ready']
+        assert json.loads(call('GET',base+'/quick-preview')[1])['grid']=='model_input'
+        assert call('GET',base+'/quick-preview/axial.png')[1].startswith(b'\x89PNG')
         assert call('GET',base+'/assets/result.zip')[0]==200
         assert call('GET',base+'/assets/viewer/ED/gray.npy')[0]==404
         volume=json.loads(call('GET',base+'/assets/viewer/ED/volume.json')[1])

@@ -49,6 +49,17 @@ class CamusDisplayIdentityTests(unittest.TestCase):
         with (self.folder/'report.json').open('a',encoding='utf-8') as stream:stream.write(' ')
         self.assertIsNone(read_runtime_identity(self.folder,self.model))
 
+    def test_resident_skin8_identity_uses_cached_bit_and_matches_model(self):
+        self.pipeline.device=None
+        self.pipeline.core=SimpleNamespace(bit_sha256=self.bit_sha,model=SimpleNamespace(spec_sha256=self.model))
+        before={p.name:p.read_bytes() for p in self.folder.iterdir()}
+        with patch.object(Path,'read_bytes',side_effect=AssertionError('sidecar reread bitstream')):
+            self.assertEqual(write_runtime_identity(self.pipeline,self.folder),self.bit_sha)
+        for name,data in before.items():self.assertEqual((self.folder/name).read_bytes(),data)
+        self.assertEqual(load_telemetry(self.folder,'camus')['runtime_sha256'],self.bit_sha)
+        self.pipeline.core.model.spec_sha256='b'*64
+        self.assertIsNone(write_runtime_identity(self.pipeline,self.folder))
+
     def test_software_unknown_driver_and_mismatched_manifest_get_no_identity(self):
         self.pipeline.backend='reference'
         self.assertIsNone(write_runtime_identity(self.pipeline,self.folder))

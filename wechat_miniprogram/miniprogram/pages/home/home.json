@@ -1,0 +1,4 @@
+{
+  "navigationBarTitleText": "PLD 分割演示",
+  "usingComponents": { "privacy-guard": "/components/privacy-guard/privacy-guard" }
+}

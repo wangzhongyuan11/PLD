@@ -25,10 +25,10 @@ class Collector:
         if block_x<1:raise ContractError('positive restoration block size required')
         self.block_x=block_x
         self.timings=dict(softmax_seconds=0.,plane_resize_seconds=0.,native_restore_seconds=0.)
-        self.probabilities=np.empty((4,*volume.working.shape),np.float32)
+        self.probabilities=np.empty((4,*volume.working_shape),np.float32)
 
     def add(self,head,z,box):
-        nz=self.volume.working.shape[2]
+        nz=self.volume.working_shape[2]
         if type(z) is not int or not 0<=z<nz or z in self.seen:
             raise ContractError('duplicate or invalid probability plane')
         tick=time.perf_counter();p=self.kernel.softmax(head,self.table)
@@ -41,7 +41,7 @@ class Collector:
 
     def finish(self,*,save_probabilities=False,workers=2):
         tick=time.perf_counter()
-        if self.seen!=set(range(self.volume.working.shape[2])):
+        if self.seen!=set(range(self.volume.working_shape[2])):
             raise ContractError('incomplete working probability volume')
         shape=self.volume.native.shape
         labels=np.empty(shape,np.uint8)

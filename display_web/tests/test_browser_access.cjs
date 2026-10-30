@@ -1,6 +1,5 @@
 const fs=require('node:fs');
 const vm=require('node:vm');
-const zlib=require('node:zlib');
 const assert=require('node:assert/strict');
 const path=require('node:path');
 const full=fs.readFileSync(path.join(__dirname,'../static/app.js'),'utf8');
@@ -26,51 +25,20 @@ const blocked=page('#works-in-memory',{getItem(){throw Error('blocked');},setIte
 vm.runInContext('rememberAccess()',blocked.c);
 assert.equal(vm.runInContext('token',blocked.c),'works-in-memory');
 
-function helperContext(maskRgba){
- const canvas={width:2,height:2,getContext(){return {getImageData(){return {data:maskRgba};}};}};
- const events={};
- const c=vm.createContext({
-   document:{getElementById:()=>null,createElement(tag){if(tag==='canvas')return canvas;throw new Error('unexpected element '+tag);}},
-   location:{hash:'',pathname:'/'},localStorage:storage,sessionStorage:{getItem:()=>null},
-   history:{replaceState(){}},window:{addEventListener:(name,fn)=>{events[name]=fn;}},refreshStatus(){},
-   TextEncoder,CompressionStream,Blob,Response
- });
- vm.runInContext(helperSource,c);c.canvas=canvas;return c;
-}
-const helper=helperContext(new Uint8Array([0,0,0,255,255,255,255,255,255,255,255,255,0,0,0,255]));
-assert.deepEqual(Array.from(helper.uploadSize(4000,3000)),[2000,1500]);
-assert.deepEqual(Array.from(helper.uploadSize(1022,767)),[1022,767]);
 
-async function checkGrayscalePng(){
- const blob=await vm.runInContext('grayscaleMask(canvas)',helper);
- const png=Buffer.from(await blob.arrayBuffer());
- assert.deepEqual(png.subarray(0,8),Buffer.from([137,80,78,71,13,10,26,10]));
- let offset=8,idat=[];
- while(offset<png.length){
-   const length=png.readUInt32BE(offset),type=png.subarray(offset+4,offset+8).toString('ascii');
-   const data=png.subarray(offset+8,offset+8+length),crc=png.readUInt32BE(offset+8+length);
-   assert.equal(crc,zlib.crc32(png.subarray(offset+4,offset+8+length)));
-   if(type==='IDAT')idat.push(data);
-   if(type==='IHDR'){
-     assert.equal(data.readUInt32BE(0),2);assert.equal(data.readUInt32BE(4),2);
-     assert.equal(data[8],8);assert.equal(data[9],0);assert.equal(data[10],0);assert.equal(data[11],0);assert.equal(data[12],0);
-   }
-   offset+=12+length;
-   if(type==='IEND')break;
- }
- assert.deepEqual(zlib.inflateSync(Buffer.concat(idat)),Buffer.from([0,0,255,0,255,0]));
-}
 async function main(){
- await checkGrayscalePng();
- const invalid=helperContext(new Uint8Array(16).fill(0));
- await assert.rejects(()=>vm.runInContext('grayscaleMask(canvas)',invalid),/灰度/);
- const mixed=helperContext(new Uint8Array([0,0,0,255,1,1,1,255,255,255,255,255,0,0,0,255]));
- await assert.rejects(()=>vm.runInContext('grayscaleMask(canvas)',mixed),/混用/);
+ const canvasFailure=()=>{throw Error('browser image processing');};
+ const c=vm.createContext({document:{getElementById:()=>null,createElement:canvasFailure},
+  location:{hash:'',pathname:'/'},localStorage:storage,sessionStorage:{getItem:()=>null},
+  history:{replaceState(){}},window:{addEventListener(){}},createImageBitmap:canvasFailure,
+  FileReader:class{readAsDataURL(file){this.result='data:'+file.type+';base64,'+file.bytes.toString('base64');this.onload();}}});
+ vm.runInContext(helperSource,c);
+ const png={size:8,type:'image/png',bytes:Buffer.from([137,80,78,71,13,10,26,10])};
+ const result=await c.prepareUpload(png,null,'infer');assert.equal(result.image,png.bytes.toString('base64'));
+ const mask={size:2,type:'image/png',bytes:Buffer.from([0,255])};
+ const both=await c.prepareUpload(png,mask,'mask');assert.equal(both.mask,mask.bytes.toString('base64'));
  const html=fs.readFileSync(path.join(__dirname,'../static/index.html'),'utf8');
- assert.match(html,/id="uploadNote"/);
- assert.match(html,/大图上传前自动缩小/);
-assert.match(html,/id="timeLabel"[^<]*服务端处理耗时/);
-assert.match(full,/request_to_job_complete_seconds/);
- console.log('PASS: access code, upload sizing, grayscale PNG, and page hint');
+ assert.match(html,/板端处理/);assert(!html.includes('enhancedImage'));assert(html.includes('cutoutImage'));
+ console.log('PASS: access code, exact original upload bytes, board-side image processing and result panels');
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});

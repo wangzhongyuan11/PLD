@@ -15,15 +15,16 @@ _quarantined_sessions=[]
 
 
 class FrameSession:
-    def __init__(self, directory, mmio, allocate, prepared=None):
+    def __init__(self, directory, mmio, allocate, prepared=None, *, verify=True):
         self.directory=Path(directory);self.mmio=mmio;self.buffers={};self.active=False;self.closed=False
         self.faulted=False
+        self.verify=verify
         if mmio.read(4)!=0x534b3800:raise RuntimeError('wrong Skin8 register ABI')
         if mmio.read(0)&2:raise RuntimeError('FPGA is already busy')
         # Preflight frozen artifacts before making physical allocations.
         dummy={'input':(0x1000000,0x100000),'arena':(0x2000000,0x1000000),'weights':(0x4000000,0x100000),
                'luts':(0x5000000,0x10000),'descriptors':(0x6000000,0x100000),'head':(0x7000000,0x100000)}
-        self.prepared = prepared if prepared is not None else PreparedArtifacts(self.directory)
+        self.prepared = prepared if prepared is not None else PreparedArtifacts(self.directory, verify=verify)
         image=build_image(self.directory,dummy,self.prepared)
         try:
             for name,size in image['required_sizes'].items():
@@ -46,8 +47,8 @@ class FrameSession:
         if not math.isfinite(timeout) or timeout<=0:raise ValueError('timeout must be finite and positive')
         shape=tuple(self.manifest['layers'][0]['input_shape'])
         x=np.asarray(quantized)
-        if x.dtype!=np.int8 or x.shape!=shape:raise ValueError('expected frozen quantized CHW int8 input')
-        if np.any(x==-128):raise ValueError('frozen model input range is -127..127')
+        if self.verify and (x.dtype!=np.int8 or x.shape!=shape):raise ValueError('expected frozen quantized CHW int8 input')
+        if self.verify and np.any(x==-128):raise ValueError('frozen model input range is -127..127')
         if self.mmio.read(0)&2:raise RuntimeError('FPGA is already busy')
         begin=time.perf_counter()
         c,h,w=shape

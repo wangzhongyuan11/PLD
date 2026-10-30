@@ -21,7 +21,7 @@ def _read(path,limit):
 
 
 def write_runtime_identity(pipeline,folder):
-    """Use the manifest already validated by the successful hardware session.
+    """Use the successful session's cached Skin8 identity or CAM2 manifest.
 
     Does not hash/reopen the bitstream, load hardware, rewrite report.json or
     amend its ZIP. Unsupported drivers simply have no display identity.
@@ -29,19 +29,25 @@ def write_runtime_identity(pipeline,folder):
     folder=Path(folder);temporary=folder/'hud_runtime.json.tmp'
     try:
         if getattr(pipeline,'backend',None)!='pl':return None
-        device=getattr(pipeline,'device',None)
-        overlay=getattr(getattr(device,'io',None),'overlay',None)
-        bit_name=getattr(overlay,'bitfile_name',None)
-        if not isinstance(bit_name,(str,Path)):return None
-        bit=Path(bit_name).resolve()
-        if bit.name!='dma_top.bit' or bit.parent.name!='overlay':return None
         raw,report=_read(folder/'report.json',4*1024*1024)
-        _,manifest=_read(bit.parent.parent/'runtime_manifest.json',2*1024*1024)
         model=report.get('model',{}).get('spec_sha256')
         if (report.get('schema')!='pld-camus-result-v1' or report.get('backend')!='pl'
-                or manifest.get('schema')!='camus-runtime-v1'
-                or not _sha(model) or manifest.get('model_spec_sha256')!=model):return None
-        bit_sha=manifest.get('files',{}).get('overlay/dma_top.bit')
+                or not _sha(model)):return None
+        core=getattr(pipeline,'core',None)
+        if core is not None:
+            if getattr(getattr(core,'model',None),'spec_sha256',None)!=model:return None
+            bit_sha=getattr(core,'bit_sha256',None)
+        else:
+            device=getattr(pipeline,'device',None)
+            overlay=getattr(getattr(device,'io',None),'overlay',None)
+            bit_name=getattr(overlay,'bitfile_name',None)
+            if not isinstance(bit_name,(str,Path)):return None
+            bit=Path(bit_name).resolve()
+            if bit.name!='dma_top.bit' or bit.parent.name!='overlay':return None
+            _,manifest=_read(bit.parent.parent/'runtime_manifest.json',2*1024*1024)
+            if (manifest.get('schema')!='camus-runtime-v1'
+                    or manifest.get('model_spec_sha256')!=model):return None
+            bit_sha=manifest.get('files',{}).get('overlay/dma_top.bit')
         if not _sha(bit_sha):return None
         record=dict(schema=SCHEMA,model_spec_sha256=model,bit_sha256=bit_sha,
                     source_report_sha256=hashlib.sha256(raw).hexdigest())

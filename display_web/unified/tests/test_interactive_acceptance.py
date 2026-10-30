@@ -52,6 +52,7 @@ class AcceptanceTests(unittest.TestCase):
         c.model='skin';c.phase='ready';c.generation=7
         m=bridge.Manager.__new__(bridge.Manager)
         m.controller=c;m.guard=threading.Lock();m.job=m.thread=None
+        m.changed=threading.Condition(m.guard)
         m.image_slot=None;m.display_cache_key=m.display_cache=None;m.reset_workspace()
         m.backends={'skin':{'data':str(self.path)}}
         m.predictor=bridge.Predictor(m);m.service=SegmentationService(m.predictor)

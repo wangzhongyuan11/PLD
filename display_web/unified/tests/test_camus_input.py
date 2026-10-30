@@ -43,6 +43,7 @@ class InputTests(unittest.TestCase):
     def server(self,path):
         pipeline=Mock(backend='pl');pipeline.run.return_value={'output_dir':'unused','report':{},'backend':'pl'}
         server=SimpleNamespace(data=self.root,pipeline=pipeline,fault=False,released=False,guard=threading.Lock(),busy=threading.BoundedSemaphore(1),stop_hdmi=Mock())
+        server.changed=threading.Condition(server.guard)
         folder=self.root/'job/input';folder.mkdir(parents=True,exist_ok=True)
         (folder/path.name).write_bytes(path.read_bytes())
         server.busy.acquire();job={'id':'job','state':'queued','_started':time.perf_counter()}

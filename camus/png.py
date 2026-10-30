@@ -5,6 +5,7 @@ import struct
 import time
 import zlib
 import numpy as np
+from PIL import Image
 from .result import label_display_png, segmentation_rgb, overlay_rgb
 
 
@@ -27,7 +28,25 @@ def save_png(image, path):
     Path(path).write_bytes(b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',header)+chunk(b'IDAT',compressed)+chunk(b'IEND',b''))
 
 
-def save_views(output,gray,labels,processed,native=None):
+def save_views(output,gray,labels,processed,native=None,*,on_preview=None):
+    first={}
+    if on_preview is not None:
+        # Render only the displayed pixels before allocating the full view set.
+        tick=time.perf_counter()
+        step=max(1,(max(gray.shape)+511)//512)
+        small_gray=np.ascontiguousarray(np.clip(gray[::step,::step],0,255).astype(np.uint8))
+        small_labels=np.ascontiguousarray(processed[::step,::step])
+        overlay=(native.render_views(small_gray,small_labels,small_labels)['overlay.png'] if native is not None
+                 else np.asarray(overlay_rgb(small_gray,small_labels)))
+        primary={'preview_original.jpg':small_gray,'preview_overlay.jpg':overlay}
+        render_seconds=time.perf_counter()-tick
+        def save_primary(item):
+            name,pixels=item;t=time.perf_counter()
+            Image.fromarray(pixels).save(output/name,format='JPEG',quality=90,subsampling=0)
+            return name,dict(render=render_seconds if name=='preview_overlay.jpg' else 0.,encode_write=time.perf_counter()-t)
+        with ThreadPoolExecutor(max_workers=2,thread_name_prefix='camus-first-preview') as pool:
+            first=dict(pool.map(save_primary,primary.items()))
+        on_preview()
     if native is None:
         jobs=[('label_raw.png',label_display_png,(labels,)),('label.png',label_display_png,(processed,)),
               ('segmentation.png',segmentation_rgb,(processed,)),('overlay.png',overlay_rgb,(gray,processed))]
@@ -43,8 +62,11 @@ def save_views(output,gray,labels,processed,native=None):
             t=time.perf_counter();save_png(image,output/name)
             result[name]=dict(render=render_time,encode_write=time.perf_counter()-t)
         return result
+    if on_preview is not None:
+        original=np.clip(gray,0,255).astype(np.uint8)
+        jobs.insert(0,('original.png',lambda:original,()))
     with ThreadPoolExecutor(max_workers=2,thread_name_prefix='camus-png') as pool:
         futures=[pool.submit(group,jobs[index::2]) for index in range(2)]
-        details={name:row for future in futures for name,row in future.result().items()}
+        details={**first,**{name:row for future in futures for name,row in future.result().items()}}
         if native is not None:details['overlay.png']['render']+=elapsed
         return details

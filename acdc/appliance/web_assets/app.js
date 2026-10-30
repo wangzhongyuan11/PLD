@@ -13,7 +13,7 @@ function enabled(c){return $('class'+c).checked;}
 function uploadBuffer(data,target){const b=gl.createBuffer();gl.bindBuffer(target,b);gl.bufferData(target,data,gl.STATIC_DRAW);return b;}
 function freeMeshes(){for(const phase of Object.values(state.phases)){for(const item of phase.images||[])item.image.close();if(gl)for(const meshes of Object.values(phase.meshes||{}))for(const m of meshes)for(const key of ['p','n','indexBuffer','wire'])if(m[key])gl.deleteBuffer(m[key]);}}
 function clearJobDisplay(){
- ++state.generation;for(const c of state.controllers)c?.abort();freeMeshes();state.phases={};state.job=null;
+ ++state.generation;for(const c of state.controllers)c?.abort();freeMeshes();state.phases={};state.job=null;state.previewJob=null;state.quickPreviewJob=null;state.jobVersion=-1;
  for(let i=0;i<3;i++){const c=$('mpr'+i);c.getContext('2d').clearRect(0,0,c.width,c.height);$('slice'+i).textContent='—';}
  if(gl){gl.depthMask(true);gl.clearColor(.025,.039,.055,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);}
  $('orientation').getContext('2d').clearRect(0,0,88,80);$('meshstatus').textContent='等待本次完整结果';$('renderfps').textContent='—';
@@ -108,15 +108,40 @@ async function loadJob(job){
  }
  $('status').textContent='两期全部完成：MPR、平滑三维、统计及 ZIP 已就绪';$('progress').value=1;
 }
+async function loadPreview(job){
+ const preview=await json('/api/v2/jobs/'+job+'/preview');
+ const images=await Promise.all(planes.map(async plane=>createImageBitmap(await(await request('/api/v2/jobs/'+job+'/preview/'+plane+'.png')).blob())));
+ if(state.job!==job){images.forEach(image=>image.close());return;}
+ for(let i=0;i<images.length;i++){const canvas=$('mpr'+i);canvas.getContext('2d').drawImage(images[i],0,0,canvas.width,canvas.height);images[i].close();}
+ for(let i=0;i<3;i++)$('slice'+i).textContent=preview.initial_mpr[planes[i]].position[axes[i][2]].toFixed(1)+' mm';
+ $('coordinates').textContent='RAS / '+preview.position.map(x=>x.toFixed(1)).join(', ')+' mm';
+ state.previewJob=job;state.previewSeconds=state.started===null?null:(performance.now()-state.started)/1000;
+ $('timing').textContent='首屏 MPR：'+(state.previewSeconds===null?'已就绪':state.previewSeconds.toFixed(2)+' s')+'；三维与导出继续生成';
+}
+async function loadQuickPreview(job){
+ const preview=await json('/api/v2/jobs/'+job+'/quick-preview');
+ const image=await createImageBitmap(await(await request('/api/v2/jobs/'+job+'/quick-preview/axial.png')).blob());
+ if(state.job!==job){image.close();return;}
+ const canvas=$('mpr0'),ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);
+ const scale=Math.min(canvas.width/image.width,canvas.height/image.height),w=image.width*scale,h=image.height*scale;
+ ctx.drawImage(image,(canvas.width-w)/2,(canvas.height-h)/2,w,h);image.close();
+ state.quickPreviewJob=job;state.quickPreviewSeconds=state.started===null?null:(performance.now()-state.started)/1000;
+ $('slice0').textContent='ED 中心层 '+preview.center_index+' · 模型网格预览';
+ $('coordinates').textContent='单层预览；原生空间 MPR 随完整重建更新';
+ $('timing').textContent='首张切片：'+(state.quickPreviewSeconds===null?'已就绪':state.quickPreviewSeconds.toFixed(2)+' s')+'；完整 MPR、三维与导出继续生成';
+}
 async function poll(job){
- while(state.busy&&state.job===job){const row=await json('/api/v2/jobs/'+job);$('status').textContent=row.status+(row.phase?' · '+row.phase:'')+(row.phase_total?' '+(row.phase_completed||0)+'/'+row.phase_total:'');
+ while(state.busy&&state.job===job){const row=await json('/api/v2/jobs/'+job+'?wait=1&version='+encodeURIComponent(state.jobVersion??-1));state.jobVersion=row.version;$('status').textContent=row.status+(row.phase?' · '+row.phase:'')+(row.phase_total?' '+(row.phase_completed||0)+'/'+row.phase_total:'');
   if(row.phase_total)$('progress').value=(row.phase==='ES'?.5:0)+.5*(row.phase_completed||0)/row.phase_total;
+  if(row.quick_preview_ready&&!row.preview_ready&&state.quickPreviewJob!==job)await loadQuickPreview(job);
+  if(row.preview_ready&&state.previewJob!==job)await loadPreview(job);
   if(row.status==='assets_ready'){await loadJob(job);return;}
   if(['failed','cancelled','interrupted','upload_expired'].includes(row.status))throw Error(row.error||row.status);
-  await new Promise(resolve=>setTimeout(resolve,250));
+
  }
 }
 async function refreshHealth(){
+ if(state.busy)return;
  try{const health=await json('/api/v2/health');state.health=health;
   $('backend').textContent=health.status==='ready'?'PYNQ-Z2 / PL 就绪':health.status==='busy'?'PYNQ-Z2 / 正在处理':health.status==='fault'?'板卡会话故障':'板卡初始化中';
   $('start').disabled=state.busy||!health.ready||health.backend!=='pl'||health.synthetic||!!health.active_job;
@@ -169,3 +194,59 @@ if(typeof window!=='undefined'){
 
 const pldChangedInputs=new Set();
 for(const id of ['ed','es'])$(id).onchange=()=>{pldChangedInputs.add(id);if(pldAutoSegment&&pldChangedInputs.size===2&&!state.busy&&state.health?.ready&&$('ed').files.length&&$('es').files.length){pldChangedInputs.clear();$('start').onclick();}};
+
+/* PLD_MULTI_GUIDE_BEGIN */
+;(() => {
+ 'use strict';
+ const C={roi:false,files:['ed','es'],run:'start',progress:'progress',actions:['start','showHdmi','stopHdmi','snapshot'],busy:()=>state.busy||!!state.health?.active_job||['starting','restoring'].includes(state.health?.hdmi),state:()=>({id:state.job,done:!!state.phases.ED&&!!state.phases.ES&&!document.getElementById('download').classList.contains('disabled')}),error:()=>false,idle:async()=>{const h=await json('/api/v2/health');return h.ready&&h.backend==='pl'&&!h.synthetic&&!h.active_job&&!['starting','restoring','error'].includes(h.hdmi)}}, $g=id=>document.getElementById(id);
+ if($g('pldTourToggle'))return;
+ const toggle=document.createElement('button');toggle.id='pldTourToggle';toggle.type='button';toggle.textContent='开启新手引导';toggle.className='quiet';
+ (document.querySelector('header')||document.querySelector('.panel')||document.body).append(toggle);
+ const root=document.createElement('div');root.id='pldTourRoot';root.hidden=true;
+ root.innerHTML='<div id="pldTourSpot"></div><section id="pldTourCard" role="status" aria-live="polite"><span id="pldTourArrow">↑</span><strong id="pldTourTitle"></strong><p id="pldTourText"></p><div id="pldTourDiagram" hidden></div><div id="pldTourChoices"></div><button id="pldTourSpeak" type="button">播放说明</button> <button id="pldTourDone" type="button" hidden>知道了</button></section>';
+ document.body.append(root);
+ const style=document.createElement('style');style.textContent="\n #pldTourRoot{position:fixed;inset:0;z-index:2147483000;pointer-events:none}\n #pldTourRoot[hidden],#pldTourCard button[hidden]{display:none!important}\n #pldTourSpot{position:fixed;border:3px solid #79ecff;border-radius:14px;box-shadow:0 0 0 100vmax #07172bbf,0 0 25px #5edcff;transition:top .24s,left .24s,width .24s,height .24s;animation:pldPulse 1.7s infinite}\n #pldTourCard{position:fixed;width:min(340px,calc(100vw - 24px));padding:20px;border-radius:18px;background:#123347;color:white;box-shadow:0 12px 42px #0005;pointer-events:auto;font:15px/1.7 system-ui;box-sizing:border-box}\n #pldTourCard strong{font-size:21px;color:white}#pldTourCard p{margin:8px 0;color:#e1f7ff}\n #pldTourArrow{font-size:30px;color:#79ecff;display:block;animation:pldArrow .9s ease-in-out infinite alternate}\n #pldTourCard button{background:#79ecff;color:#123347;border:0;border-radius:9px;padding:9px 18px;cursor:pointer}\n #pldTourToggle{position:relative;z-index:2147483002}#pldTourNotice{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:2147483003;max-width:85vw;padding:10px 18px;background:#15384d;color:white;border-radius:12px;pointer-events:none}\n @keyframes pldPulse{50%{border-color:white}}@keyframes pldArrow{to{transform:translateY(-6px)}}\n @media(prefers-reduced-motion:reduce){#pldTourSpot,#pldTourArrow{animation:none;transition:none}}\n "+`
+ #pldTourCard{max-height:60vh;overflow:auto}#pldTourChoices{display:flex;gap:4px;flex-wrap:wrap}#pldTourChoices button{padding:5px 9px;font-size:13px}
+ #pldTourDiagram{position:relative;margin:10px 0}#pldTourDiagram img{width:100%;display:block;border-radius:8px}#pldTourDiagram svg{position:absolute;inset:0;width:100%;height:100%}
+ .teachRect{fill:none;stroke-width:3;stroke-dasharray:8 4;animation:teachDraw 2s infinite}.teachPoint{stroke:white;stroke-width:2;animation:teachDot 1s infinite alternate}
+ @keyframes teachDraw{from{stroke-dashoffset:48}to{stroke-dashoffset:0}}@keyframes teachDot{to{opacity:.4;stroke-width:5}}
+ @media(prefers-reduced-motion:reduce){.teachRect,.teachPoint{animation:none}}
+ `;document.head.append(style);
+ let active=false,checking=false,operations=0,base=null,step='',targets=[],tool=null,noticeTimer,timer,lastSpeech='',utterance=null;
+ const notice=document.createElement('div');notice.id='pldTourNotice';notice.hidden=true;notice.setAttribute('role','status');document.body.append(notice);
+ const descriptions={roi:['ROI · 只处理选定区域','在原图上拖出青色区域，圈住需要分析的范围。区域外输出背景。改变 ROI 会清除已有点和目标框，请重新标记并点击运行。'],foreground:['前景点 · 希望保留的区域','选择前景点工具，在希望保留的病灶内部点击，绿色点表示保留提示。不要把点放在边界上；添加后点击运行 / 更新分割。'],background:['背景点 · 希望排除的区域','选择背景点工具，在不希望保留的皮肤或误分区域点击，红色点表示排除提示。添加后点击运行 / 更新分割。'],box:['目标框 · 提示目标范围','在原图拖出黄色框，包围希望保留的目标。目标框用于约束交互修正，不等同于 ROI 裁剪，也不是已经生成的分割轮廓。随后点击运行 / 更新分割。']};
+ function tell(s){notice.textContent=s;notice.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>notice.hidden=true,4500)}
+ function busy(){return operations>0||C.busy()}
+ function silence(){if(utterance&&window.speechSynthesis){window.speechSynthesis.cancel();utterance=null}}
+ function stop(){active=false;root.hidden=true;step='';targets=[];tool=null;silence();toggle.textContent='开启新手引导';toggle.setAttribute('aria-pressed','false');toggle.focus()}
+ function position(){if(!active||!targets[0])return;const r=targets[0].getBoundingClientRect(),card=$g('pldTourCard'),spot=$g('pldTourSpot');Object.assign(spot.style,{left:r.left-6+'px',top:r.top-6+'px',width:r.width+12+'px',height:r.height+12+'px'});const w=card.offsetWidth||340,h=card.offsetHeight||180;card.style.left=Math.max(12,Math.min(innerWidth-w-12,r.left))+'px';const below=r.bottom+h+22<innerHeight;card.style.top=Math.max(12,Math.min(innerHeight-h-12,below?r.bottom+22:r.top-h-22))+'px';$g('pldTourArrow').textContent=below?'↑':'↓'}
+ function show(key,ids,title,text,done=false){const changed=key!==step;step=key;targets=ids.map($g).filter(Boolean);if(!targets.length){stop();tell('当前页面控件不兼容，已退出引导。');return}if(changed){silence();$g('pldTourTitle').textContent=title;$g('pldTourText').textContent=text;targets[0].scrollIntoView({block:'center',behavior:'auto'})}$g('pldTourDone').hidden=!done;position()}
+ function diagram(name){const box=$g('pldTourDiagram');if(!C.roi||!name){box.hidden=true;return}if(box.dataset.tool!==name){box.dataset.tool=name;const svg=name==='roi'?'<rect class="teachRect" x="28" y="25" width="45" height="53" stroke="#56edff"/>':name==='box'?'<rect class="teachRect" x="37" y="35" width="25" height="32" stroke="#ffe66a"/>':name==='foreground'?'<circle class="teachPoint" cx="49" cy="51" r="3" fill="#30ef82"/>':'<circle class="teachPoint" cx="23" cy="30" r="3" fill="#ff535e"/>';
+ box.innerHTML='<img alt="教学示意，非当前分割结果" src="'+C.picture+'"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">'+svg+'</svg><small>教学示意，不修改实际图片或标记</small>';}box.hidden=false}
+ function update(){if(!active)return;const s=C.state();if(busy()){diagram(null);show('busy',[C.progress],'正在处理 · 请等待','当前操作未结束，暂不能切换引导。请等待完整结果生成。');return}
+ if(C.error()){stop();tell('操作未完成，已退出引导。请查看原页面错误提示。');return}
+ if(C.roi){
+  if(!s.image){diagram(null);show('file',['file'],'Step 1 · 选择照片','选择后可先运行分割，再用点和框修正。');return}
+  if(s.done&&s.id!==base&&!tool){diagram(null);show('tools',['foreground','background','roi','box','run','source'],'Step 3 · 学习交互修正','点击前景点、背景点、ROI 或目标框工具，即可看到作用说明和动画示意。操作后点击运行 / 更新分割。',true);return}
+  if(tool){const d=descriptions[tool];diagram(tool);show('tool-'+tool,['source',tool,'run','foreground','background','roi','box'],d[0],d[1],false);return}
+  diagram(null);show('run',['run'],'Step 2 · 运行分割','点击运行 / 更新分割，完成后学习如何修正结果。');return;
+ }
+ if(s.done&&s.id!==base){show('download',['download'],'最后一步 · 下载完整结果','查看结果后，可点击高亮链接下载完整结果包；也可以点击“知道了”结束引导。',true);return}
+ const missing=C.files.find(id=>!$g(id).files.length);if(missing){show('file-'+missing,[missing],'Step 1 · 准备输入','请选择此工作台所需输入，保持原文件要求；完成后继续下一步。');return}
+ show('run',[C.run],'Step 2 · 开始分析','点击高亮按钮开始处理。若已开启自动分割，会自动进入处理阶段。');
+ }
+ async function toggleMode(){if(checking)return;if(busy()){tell('正在处理，不能切换引导。结束后请重新点击。');return}checking=true;toggle.textContent='检查板卡状态…';let t;
+ try{const ok=await Promise.race([C.idle(),new Promise((_,reject)=>{t=setTimeout(()=>reject(Error('timeout')),5000)})]);if(!ok||busy()){tell('板卡未就绪或正在处理，未切换引导。');return}if(active){stop();return}base=C.state().id;tool=null;active=true;root.hidden=false;step='';update()}catch(e){tell('无法确认板卡空闲，未开启引导。请检查连接后重试。')}finally{clearTimeout(t);checking=false;toggle.textContent=active?'退出新手引导':'开启新手引导';toggle.setAttribute('aria-pressed',String(active))}}
+ toggle.addEventListener('click',toggleMode);$g('pldTourDone').onclick=()=>{if(busy()){tell('请等待当前操作结束。');return}stop()};
+ $g('pldTourSpeak').onclick=()=>{if(!window.speechSynthesis||typeof SpeechSynthesisUtterance==='undefined'){tell('浏览器不支持语音，请阅读文字说明。');return}silence();utterance=new SpeechSynthesisUtterance($g('pldTourTitle').textContent+'。'+$g('pldTourText').textContent);utterance.lang='zh-CN';utterance.rate=.9;utterance.onerror=()=>tell('语音暂不可用，文字与动画仍可使用。');window.speechSynthesis.speak(utterance)};
+ $g('pldTourSpeak').hidden=!C.roi;
+ if(C.roi){for(const name of Object.keys(descriptions)){const b=document.createElement('button');b.type='button';b.textContent={roi:'ROI 说明',foreground:'前景说明',background:'背景说明',box:'目标框说明'}[name];b.onclick=()=>{if(busy()||!C.state().image){tell('请先完成选图与当前操作。');return}tool=name;update()};$g('pldTourChoices').append(b)}
+  // Observe the actual tool click, never dispatch a synthetic mark or change input.
+  for(const name of Object.keys(descriptions))$g(name).addEventListener('click',()=>{if(active){tool=name;setTimeout(update,0)}});
+ }
+ for(const id of C.actions){const n=$g(id),fn=n?.onclick;if(typeof fn!=='function')continue;n.onclick=async function(...args){operations++;try{return await fn.apply(this,args)}finally{operations--;if(C.roi&&id===C.run)tool=null;update()}}}
+ function permitted(n){return toggle.contains(n)||$g('pldTourDone').contains(n)&&!$g('pldTourDone').hidden||C.roi&&($g('pldTourSpeak').contains(n)||$g('pldTourChoices').contains(n))||step!=='busy'&&targets.some(t=>t.contains(n))}
+ for(const type of ['click','pointerdown','mousedown','touchstart','dragover','drop','keydown','focusin'])document.addEventListener(type,e=>{if(!active)return;if(type==='keydown'&&e.key==='Tab'){const items=[toggle,...(step!=='busy'?targets:[]),...root.querySelectorAll('button')].filter(n=>!n.hidden&&!n.disabled&&n.tabIndex>=0);const i=items.indexOf(document.activeElement);e.preventDefault();e.stopImmediatePropagation();items[(i+(e.shiftKey?-1:1)+items.length)%items.length].focus();return}if(!permitted(e.target)){e.preventDefault();e.stopImmediatePropagation();if(type==='focusin')toggle.focus()}},{capture:true,passive:false});
+ timer=setInterval(update,200);window.addEventListener('resize',position);window.addEventListener('scroll',position,true);window.addEventListener('pagehide',()=>{clearInterval(timer);timer=null;silence()});window.addEventListener('pageshow',()=>{if(timer===null)timer=setInterval(update,200)});
+})();
+/* PLD_MULTI_GUIDE_END */

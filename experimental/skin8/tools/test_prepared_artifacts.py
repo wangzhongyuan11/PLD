@@ -78,6 +78,25 @@ def test_invalid_hash_is_not_cached(tmp_path):
     assert '00_params.bin' not in prepared.files
 
 
+def test_processing_only_cache_skips_hashes_and_reallocates_after_display(tmp_path):
+    root=model_fixture(tmp_path); address=0x1000000
+    def allocate(shape,dtype):
+        nonlocal address
+        buf=Buffer(shape[0],address);address+=(shape[0]+4095)//4096*4096
+        return buf
+    with patch('board_image.hashlib.sha256',side_effect=AssertionError('processing-only hash')):
+        image=build_image(root,REGIONS,verify=False)
+        first=FrameSession(root,MMIO(),allocate,verify=False)
+        prepared=first.prepared;first.close()
+        second=FrameSession(root,MMIO(),allocate,prepared=prepared,verify=False)
+        assert second.prepared is prepared and not prepared.verify
+        np.testing.assert_array_equal(second.buffers['weights'],np.frombuffer(image['weights'],np.uint8))
+        assert all(buf.freed for buf in first.buffers.values())
+        assert not any(buf.freed for buf in second.buffers.values())
+        assert all(second.buffers[n] is not first.buffers[n] for n in second.buffers)
+        second.close()
+
+
 def test_two_sessions_share_cpu_bytes_but_not_dma_and_timeout_retains_buffers(tmp_path):
     root=model_fixture(tmp_path); allocated=[]; address=0x1000000
     def allocate(shape,dtype):

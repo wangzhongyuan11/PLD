@@ -29,7 +29,7 @@ def _load_snapshot(path):
         if enabled:gc.enable()
 
 
-def enable_metadata_cache(directory=None):
+def enable_metadata_cache(directory=None, *, verify=True):
     import pynq
     from pynq.pl_server.device import Device
     from pynq.pl_server import embedded_device
@@ -38,23 +38,27 @@ def enable_metadata_cache(directory=None):
     directory = Path(directory or os.environ.get('PLD_METADATA_CACHE', '/var/cache/pld/overlay-metadata'))
     directory.mkdir(parents=True, exist_ok=True, mode=0o700)
     original = device.get_bitfile_metadata
-    sdk = _sha(Path(embedded_device.__file__))
+    sdk = _sha(Path(embedded_device.__file__)) if verify else None
     memory = {}
     snapshots = {}
 
     def get_metadata(bitfile_name, partial=False):
         bit = Path(bitfile_name).resolve(); hwh = bit.with_suffix('.hwh')
         if partial or not hwh.is_file(): return original(bitfile_name, partial=partial)
-        identity = dict(bit=_sha(bit), hwh=_sha(hwh), pynq=pynq.__version__, sdk=sdk)
-        key = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
+        if verify:
+            identity = dict(bit=_sha(bit), hwh=_sha(hwh), pynq=pynq.__version__, sdk=sdk)
+            key = hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
+        else:
+            identity = dict(bit=str(bit), hwh=str(hwh), pynq=pynq.__version__)
+            key = bit.as_posix().strip('/').replace('/', '_')+'-processing'
         if key in memory:
             parser = memory[key]
             if hasattr(parser, '_from_cache'): del parser._from_cache
             return parser
         cache = directory/(key+'.pkl'); manifest = directory/(key+'.json')
-        if cache.exists() and manifest.exists():
-            record = json.loads(manifest.read_text())
-            if record.get('identity') == identity and record.get('sha256') == _sha(cache):
+        if cache.exists() and (not verify or manifest.exists()):
+            record = json.loads(manifest.read_text()) if verify else None
+            if not verify or (record.get('identity') == identity and record.get('sha256') == _sha(cache)):
                 parser = _load_snapshot(cache)
                 # A different bitstream may have been active. Let PYNQ publish
                 # the actual new global state during the real download.
@@ -68,7 +72,7 @@ def enable_metadata_cache(directory=None):
         with temporary.open('wb') as stream: pickle.dump(parser, stream)
         temporary.replace(cache)
         temporary = manifest.with_suffix('.'+str(os.getpid())+'.tmp')
-        temporary.write_text(json.dumps(dict(identity=identity, sha256=_sha(cache))))
+        temporary.write_text(json.dumps(dict(identity=identity, **({'sha256':_sha(cache)} if verify else {}))))
         temporary.replace(manifest)
         print('OVERLAY_METADATA_CACHE fill', bit.name, flush=True)
         memory.clear(); memory[key] = parser

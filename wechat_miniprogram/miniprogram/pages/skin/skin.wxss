@@ -1,0 +1,18 @@
+.picked {
+  margin: 20rpx 0;
+}
+
+.picked-img {
+  width: 100%;
+  display: block;
+  background: #eef1f3;
+  border-radius: 12rpx;
+}
+
+.roi-surface { position: relative; margin-bottom: 12rpx; line-height: 0; }
+.roi-box { position: absolute; border: 2px solid #00e0b0; background: rgba(0,224,176,.12); box-sizing: border-box; pointer-events: none; }
+
+.small {
+  font-size: 24rpx;
+  padding: 6rpx 24rpx;
+}

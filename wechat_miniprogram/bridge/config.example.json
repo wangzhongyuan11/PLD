@@ -1,0 +1,16 @@
+{
+  "app_id": "wxadaa7f8991e1721a",
+  "app_secret": "在这里填入小程序密钥（mp.weixin.qq.com 开发设置）",
+  "env_id": "pld-d7gzvyxp10bdc9437",
+  "board_host": "192.168.2.99",
+  "entry_port": 8088,
+  "hub_port": 8765,
+  "acdc_port": 8092,
+  "hub_token": "在这里填入皮肤镜访问码（与网页一致）",
+  "poll_interval_ms": 1200,
+  "heartbeat_interval_ms": 5000,
+  "switch_timeout_s": 300,
+  "result_workers": 2,
+  "async_results": true,
+  "task_timeouts": { "skin": 900, "camus": 900, "acdc": 1800 }
+}

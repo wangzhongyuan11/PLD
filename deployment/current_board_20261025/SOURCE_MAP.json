@@ -687,9 +687,9 @@
     {
       "board_path": "/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/hub/camus_quad.py",
       "repo_path": "display_web/unified/camus_quad.py",
-      "board_sha256": "e64da426fda0145812a2a3d0f0ea3376d1fb1498df2cbcf8245d91c3b4740fc2",
-      "lf_sha256": "e64da426fda0145812a2a3d0f0ea3376d1fb1498df2cbcf8245d91c3b4740fc2",
-      "bytes": 3846,
+      "board_sha256": "9a82cf1b193b09a7198abfa9d184c9fff482d6074434d039f6e392d4e3bf056d",
+      "lf_sha256": "9a82cf1b193b09a7198abfa9d184c9fff482d6074434d039f6e392d4e3bf056d",
+      "bytes": 4051,
       "role": "application_source"
     },
     {
@@ -1471,9 +1471,9 @@
     {
       "board_path": "/home/xilinx/skin8_candidate_20261023/board_image.py",
       "repo_path": "experimental/skin8/tools/board_image.py",
-      "board_sha256": "23ea2da9abbde8c133c5c190fb5ab8df42c0eee1a42fdf36d73834d17fba11ad",
-      "lf_sha256": "23ea2da9abbde8c133c5c190fb5ab8df42c0eee1a42fdf36d73834d17fba11ad",
-      "bytes": 5338,
+      "board_sha256": "741dc35618eb81a844bdf3e5f7859ff6041dc08236f30ef486360587a043db4b",
+      "lf_sha256": "741dc35618eb81a844bdf3e5f7859ff6041dc08236f30ef486360587a043db4b",
+      "bytes": 5595,
       "role": "application_source"
     },
     {
@@ -1503,9 +1503,9 @@
     {
       "board_path": "/home/xilinx/skin8_candidate_20261023/web_entry.py",
       "repo_path": "experimental/skin8/tools/web_entry.py",
-      "board_sha256": "ed7f721ab2e68f0e4ac4cc04426eeeb8da2116e3b3ff40ba87af24b33bd62b33",
-      "lf_sha256": "ed7f721ab2e68f0e4ac4cc04426eeeb8da2116e3b3ff40ba87af24b33bd62b33",
-      "bytes": 11784,
+      "board_sha256": "d6c603051d28a74f3773da6fff3d0e24a0b60841adbe956e45c1126fdf571384",
+      "lf_sha256": "d6c603051d28a74f3773da6fff3d0e24a0b60841adbe956e45c1126fdf571384",
+      "bytes": 11933,
       "role": "application_source"
     },
     {
@@ -1623,9 +1623,9 @@
     {
       "board_path": "/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/web/server.py",
       "repo_path": "display_web/server.py",
-      "board_sha256": "2d28b1d5b479e9d8957682b70dda43c6e25657d6e2a0901adb8089bdc94a99b0",
-      "lf_sha256": "2d28b1d5b479e9d8957682b70dda43c6e25657d6e2a0901adb8089bdc94a99b0",
-      "bytes": 38253,
+      "board_sha256": "68a432f606b9954ddab357b6885807e416fd87f930b6045d053b21a14e56e304",
+      "lf_sha256": "68a432f606b9954ddab357b6885807e416fd87f930b6045d053b21a14e56e304",
+      "bytes": 37758,
       "role": "application_source"
     },
     {
@@ -1647,9 +1647,9 @@
     {
       "board_path": "/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017/web/static/app.js",
       "repo_path": "display_web/static/app.js",
-      "board_sha256": "75e6f602871a89150b25ad008c93a89cd27a8473f369c627952741fd72d564d3",
-      "lf_sha256": "ea28d304735ddb1eee22575e036346d9327042b71031865054d20f72fedad49b",
-      "bytes": 27336,
+      "board_sha256": "7dd0192775258ad44e7a150f50a88c1cda85c13ae518447d232909c38dd3ff0b",
+      "lf_sha256": "7dd0192775258ad44e7a150f50a88c1cda85c13ae518447d232909c38dd3ff0b",
+      "bytes": 26948,
       "role": "application_source"
     },
     {
@@ -1843,6 +1843,22 @@
       "lf_sha256": "f7d5e940f53cd3f54969cba7f7adbf3fc9cba8cb0fd766c73d82f47de5014d9a",
       "bytes": 38,
       "role": "effective_service_configuration"
+    },
+    {
+      "board_path": "/home/xilinx/jupyter_notebooks/PLD_Dev/camus/native/control.c",
+      "repo_path": "camus/native/control.c",
+      "board_sha256": "e75a3cbaf0d438c15ca78d5015747a47172f5b7cdbe263d557f57b70b0c5d1cb",
+      "lf_sha256": "e75a3cbaf0d438c15ca78d5015747a47172f5b7cdbe263d557f57b70b0c5d1cb",
+      "bytes": 6847,
+      "role": "application_source"
+    },
+    {
+      "board_path": "/home/xilinx/jupyter_notebooks/PLD_Dev/camus/native/ops.c",
+      "repo_path": "camus/native/ops.c",
+      "board_sha256": "f06808507f4ec7460fe3b9dba83c8f17473be9a2dbeec2d86e6506ff1300a108",
+      "lf_sha256": "f06808507f4ec7460fe3b9dba83c8f17473be9a2dbeec2d86e6506ff1300a108",
+      "bytes": 8927,
+      "role": "application_source"
     }
   ],
   "counts": {
@@ -1862,5 +1878,10 @@
   "validation_references": [
     "docs/validation/MODEL_HDMI_OPTIMIZATION_20261025.json",
     "display_web/unified/INTERACTIVE.md"
-  ]
+  ],
+  "latency_followup": {
+    "board_backup": "/home/xilinx/latency_followup_20261025/rollback.json",
+    "scope": "Deduplicate skin PNG exports and descriptor artifact reads; enable existing CAMUS native image operations and fast lossless quad encoding.",
+    "base_revision": "d104af9a1a2ce84c08120ed440fafadfb5f64f83"
+  }
 }

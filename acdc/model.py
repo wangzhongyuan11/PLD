@@ -9,14 +9,14 @@ from .contract import (ARCHITECTURE, PREPROCESSING, SHAPES, LABELS, Concat, Laye
                        ContractError, file_sha, is_sha, safe_member, positive, atomic_json, INPUT_SHAPE,HEAD_SHAPE)
 
 
-def load_bundle(root, *, expected_sha=None, allow_synthetic=False):
+def load_bundle(root, *, expected_sha=None, allow_synthetic=False,verify=True):
     root = Path(root).resolve()
     from .release import release_root, load_release
     published = release_root(root)
     if published is not None:
-        return load_release(published, expected_sha=expected_sha)
+        return load_release(published, expected_sha=expected_sha,verify=verify)
     spec_path = safe_member(root, 'model_spec.json')
-    sha = file_sha(spec_path)
+    sha = file_sha(spec_path) if verify else expected_sha
     if expected_sha is not None and (not is_sha(expected_sha) or sha != expected_sha):
         raise ContractError('model spec SHA mismatch')
     spec = json.loads(spec_path.read_text('utf-8'))
@@ -44,7 +44,7 @@ def load_bundle(root, *, expected_sha=None, allow_synthetic=False):
             raise ContractError('duplicate bundle member')
         members.add(name)
         path = safe_member(root, name)
-        if path.stat().st_size != item['bytes'] or file_sha(path) != item['sha256']:
+        if verify and (path.stat().st_size != item['bytes'] or file_sha(path) != item['sha256']):
             raise ContractError('member size/hash mismatch: '+name)
         if dtype is None:
             return path

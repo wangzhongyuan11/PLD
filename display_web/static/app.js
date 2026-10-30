@@ -30,10 +30,11 @@ function buttons() {
   $('showHdmi').disabled=busy || !status.hdmi_available || !current || current.state!=='done';
   $('stopHdmi').disabled=!['starting','showing'].includes(status.hdmi);
   $('download').disabled=busy || !current || current.state!=='done';
-  document.querySelectorAll('[data-view]').forEach(b => { b.disabled=!(current?.preview_ready || current?.state==='done') || !(current?.preview_ready ? current.preview_views : current?.views)?.includes(b.dataset.view); });
+  document.querySelectorAll('[data-view]').forEach(b => { b.disabled=!(current?.preview_ready || current?.state==='done') || !(current?.preview_ready ? current.preview_views : current?.views)?.includes(b.dataset.view) && !(current?.client_composite && b.dataset.view==='outlined'); });
   $('download').textContent=busy && current?.preview_ready ? '结果包生成中…' : '下载结果包';
 }
 async function refreshStatus() {
+  if(busy) return;
   try {
     status=await api('/api/status');
     rememberAccess();
@@ -59,93 +60,11 @@ async function fileData(file) {
   if(!file) throw new Error('请先选择文件'); if(file.size>8*1024*1024) throw new Error('单个文件不能超过 8 MB');
   return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result.split(',')[1]);r.onerror=()=>reject(new Error('文件读取失败'));r.readAsDataURL(file);});
 }
-// Prepare an in-memory upload copy only. Never write to the selected local files.
-const UPLOAD_PIXELS = 3000000, UPLOAD_BYTES = 8*1024*1024;
-function uploadSize(width, height) {
-  const scale = Math.min(1, Math.sqrt(UPLOAD_PIXELS/(width*height)));
-  return [Math.max(1,Math.floor(width*scale)), Math.max(1,Math.floor(height*scale))];
-}
-async function decodedImage(file) {
-  if(!file) throw new Error('请先选择文件');
-  const sig=new Uint8Array(await file.slice(0,8).arrayBuffer());
-  const jpeg=sig[0]===255 && sig[1]===216;
-  const png=[137,80,78,71,13,10,26,10].every((n,i)=>sig[i]===n);
-  if(!jpeg && !png) throw new Error('仅支持 JPG / PNG 图片');
-  try { return {bitmap:await createImageBitmap(file,{imageOrientation:'from-image'}), jpeg, png}; }
-  catch { throw new Error('图片无法解码或超出浏览器可用内存，请换用较小图片'); }
-}
-function imageCanvas(bitmap,width,height,smooth=true) {
-  const canvas=document.createElement('canvas'); canvas.width=width; canvas.height=height;
-  const ctx=canvas.getContext('2d',{willReadFrequently:!smooth});
-  if(!ctx) throw new Error('浏览器无法创建图像画布');
-  ctx.imageSmoothingEnabled=smooth; ctx.imageSmoothingQuality='high';
-  ctx.drawImage(bitmap,0,0,width,height); return canvas;
-}
-function canvasBlob(canvas,type,quality) {
-  return new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('图片转换失败')),type,quality));
-}
-// Canvas PNGs are RGBA; emit a grayscale PNG so the existing mask validator
-// continues to receive a single-channel binary image, including after resizing.
-function pngChunk(type,data) {
-  const bytes=new Uint8Array(data.length+12), view=new DataView(bytes.buffer);
-  view.setUint32(0,data.length); bytes.set(new TextEncoder().encode(type),4); bytes.set(data,8);
-  let crc=0xffffffff;
-  for(let i=4;i<bytes.length-4;i++) { crc^=bytes[i]; for(let b=0;b<8;b++)crc=(crc>>>1)^((crc&1)?0xedb88320:0); }
-  view.setUint32(bytes.length-4,(crc^0xffffffff)>>>0); return bytes;
-}
-async function grayscaleMask(canvas) {
-  const {width,height}=canvas, rgba=canvas.getContext('2d').getImageData(0,0,width,height).data;
-  const raw=new Uint8Array((width+1)*height); let hasOne=false,has255=false;
-  for(let y=0;y<height;y++) for(let x=0;x<width;x++) {
-    const i=(y*width+x)*4,v=rgba[i];
-    if(rgba[i+1]!==v || rgba[i+2]!==v || rgba[i+3]!==255 || ![0,1,255].includes(v)) throw new Error('掩膜须为不透明的二值图（0/1 或 0/255），不能含灰度或彩色像素');
-    hasOne ||= v===1; has255 ||= v===255;
-    raw[y*(width+1)+x+1]=v?255:0;
-  }
-  if(hasOne && has255) throw new Error('掩膜不能混用 0/1 和 0/255');
-  const compressed=new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('deflate'))).arrayBuffer());
-  const header=new Uint8Array(13), hv=new DataView(header.buffer);
-  hv.setUint32(0,width); hv.setUint32(4,height); header[8]=8;
-  return new Blob([new Uint8Array([137,80,78,71,13,10,26,10]),pngChunk('IHDR',header),pngChunk('IDAT',compressed),pngChunk('IEND',new Uint8Array())],{type:'image/png'});
-}
+// Read the selected bytes; image decoding, resizing and processing run on the board.
 async function prepareUpload(imageFile,maskFile,mode) {
-  let source, mask;
-  try {
-    source=await decodedImage(imageFile);
-    const {width,height}=source.bitmap;
-    if(mode==='mask') {
-      mask=await decodedImage(maskFile);
-      if(!mask.png) throw new Error('配套掩膜须为 PNG');
-      if(mask.bitmap.width!==width || mask.bitmap.height!==height) throw new Error('配套掩膜尺寸须与原图一致（按图片方向显示后的尺寸）');
-    }
-    let [w,h]=uploadSize(width,height), image=imageFile;
-    let converted=w!==width || h!==height || imageFile.size>UPLOAD_BYTES || (mode==='infer' && !source.jpeg);
-    if(converted) {
-      for(let attempt=0;attempt<12;attempt++) {
-        const canvas=imageCanvas(source.bitmap,w,h);
-        try { image=await canvasBlob(canvas,'image/jpeg',0.92); }
-        finally {canvas.width=canvas.height=1;}
-        if(image.size<=UPLOAD_BYTES) break;
-        w=Math.max(1,Math.floor(w*0.8)); h=Math.max(1,Math.floor(h*0.8));
-      }
-      if(image.size>UPLOAD_BYTES) throw new Error('自动压缩后仍超过上传大小，请选择较小图片');
-    }
-    let maskData;
-    if(mask) {
-      // Validate at full resolution first so shrinking cannot hide invalid pixels.
-      const full=imageCanvas(mask.bitmap,width,height,false);
-      let binary;
-      try {binary=await grayscaleMask(full);} finally {full.width=full.height=1;}
-      if(w!==width || h!==height) {
-        const small=imageCanvas(mask.bitmap,w,h,false);
-        try {binary=await grayscaleMask(small);} finally {small.width=small.height=1;}
-      }
-      maskData=await fileData(binary);
-    }
-    const resized=w!==width || h!==height;
-    const note=resized ? `已等比例缩小：${width} × ${height} → ${w} × ${h}${mask?'；配套掩膜已同步缩放':''}。原文件未修改，结果按上传尺寸生成。` : `上传尺寸：${w} × ${h}${converted?'（已转换为 JPG 上传副本）':''}。原文件未修改。`;
-    return {image:await fileData(image), ...(maskData?{mask:maskData}:{}), note};
-  } finally {source?.bitmap.close(); mask?.bitmap.close();}
+  const image=await fileData(imageFile);
+  const mask=mode==='mask' ? await fileData(maskFile) : null;
+  return {image,...(mask?{mask}:{}),note:'原文件已准备好，结果按板端处理尺寸生成。'};
 }
 function stage(j) { $('stage').textContent=j.stage; $('progress').value=j.progress; $('percent').textContent=j.progress+'%'; }
 function resultStatistics(job) {
@@ -161,27 +80,35 @@ function resultStatistics(job) {
   $('sourceNote').textContent=s.data_source;
 }
 async function watchCurrent(clientTimes, clickStarted) {
-  let rendered=false;
+  let rendered=false,renderTask=null,renderError=null;
+  const firstRender=()=>{
+    rendered=true;
+    const started=performance.now();
+    renderTask=render().then(()=>{
+      clientTimes.preview_load=(performance.now()-started)/1000;
+      if(clickStarted!==null) clientTimes.click_to_preview=(performance.now()-clickStarted)/1000;
+      showTimings(current,clientTimes);
+    },error=>{renderError=error;});
+  };
   while(true) {
     stage(current);buttons();
-    if(current.preview_ready && (!rendered || (current.preview_views?.includes('mask') && $('maskImage').hidden))) {
-      resultStatistics(current);
-      const initialPreview=!rendered;const previewStarted=performance.now();await render();rendered=true;
-      if(initialPreview) clientTimes.preview_load=(performance.now()-previewStarted)/1000;
-      if(initialPreview && clickStarted!==null) clientTimes.click_to_preview=(performance.now()-clickStarted)/1000;
-      showTimings(current,clientTimes);
-      message('预览已显示，可切换查看。后台正在生成原尺寸图片和完整结果包，请稍候。');
+    if(current.preview_ready && !rendered && (!current.client_composite || localOriginal?.id===current.id || current.state!=='running')) {
+      resultStatistics(current);firstRender();
+    } else if(rendered) {
+      void updateAuxiliary(current).catch(error=>message(error.message,true));
     }
     if(current.state!=='running') break;
-    await new Promise(r=>setTimeout(r,450));
-    current=await api('/api/jobs/'+current.id);
+    current=await api('/api/jobs/'+current.id+'?wait='+(rendered||current.preview_ready?'done':'preview'));
   }
   if(clickStarted!==null) clientTimes.until_done=(performance.now()-clickStarted)/1000;
+  if(!rendered && current.state==='done') firstRender();
+  if(renderTask) await renderTask;
+  if(renderError) throw renderError;
+  if(rendered) void updateAuxiliary(current).catch(error=>message(error.message,true));
   showTimings(current,clientTimes);
   if(current.state==='error') throw new Error((current.preview_ready?'预览已保留，但完整结果包生成失败：':'')+current.error);
   resultStatistics(current);
-  if(!rendered) await render();
-  message('完整结果包已生成，可以下载或发送到 HDMI。网页显示缩小预览，下载文件保留上传尺寸。');
+  message('完整结果包已生成，可以下载或发送到 HDMI。首屏为轻量预览，下载文件保留处理尺寸。');
 }
 async function resumeActive(id) {
   if(busy) return;
@@ -190,7 +117,8 @@ async function resumeActive(id) {
   catch(e){message(e.message,true);}
   finally {busy=false;buttons();}
 }
-async function start(body, clickStarted=performance.now()) {
+let localOriginal=null;
+async function start(body, clickStarted=performance.now(), originalFile=null) {
   if(busy) throw new Error('已有任务正在处理，请稍候');
   busy=true;current=null;currentView='outlined';buttons();message('正在处理，请稍候…');
   const submitStarted=performance.now();
@@ -199,6 +127,8 @@ async function start(body, clickStarted=performance.now()) {
   timingReport=null;$('downloadTimings').disabled=true;
   try {
     current=await api('/api/jobs',body);
+    if(localOriginal) URL.revokeObjectURL(localOriginal.url);
+    localOriginal=originalFile?{id:current.id,url:URL.createObjectURL(originalFile)}:null;
     clientTimes.submit_roundtrip=(performance.now()-submitStarted)/1000;
     await watchCurrent(clientTimes,clickStarted);
   } catch(e){message(e.message,true);}
@@ -211,37 +141,70 @@ async function historyAsset(id, name) {
   const response=await fetch('/files/'+id+'/'+name,{headers:{Authorization:'Bearer '+token}});
   if(!response.ok) throw new Error('结果文件读取失败'); return response.blob();
 }
-function enhancePreview(image,canvas){
- const scale=Math.min(1,640/image.naturalWidth,480/image.naturalHeight);
- canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
- const ctx=canvas.getContext('2d');ctx.drawImage(image,0,0,canvas.width,canvas.height);
- const frame=ctx.getImageData(0,0,canvas.width,canvas.height),hist=Array.from({length:3},()=>new Uint32Array(256));
- for(let i=0;i<frame.data.length;i+=4)for(let c=0;c<3;c++)hist[c][frame.data[i+c]]++;
- const cut=Math.floor(canvas.width*canvas.height*.01),ranges=hist.map(h=>{let lo=0,hi=255,n=0;while(lo<255&&n+h[lo]<=cut)n+=h[lo++];n=0;while(hi>lo&&n+h[hi]<=cut)n+=h[hi--];return[lo,hi];});
- for(let i=0;i<frame.data.length;i+=4)for(let c=0;c<3;c++){const[lo,hi]=ranges[c];if(hi>lo)frame.data[i+c]=Math.floor(Math.max(0,Math.min(255,(frame.data[i+c]-lo)*255/(hi-lo))));}
- ctx.putImageData(frame,0,0);
+let renderVersion=0,visibleJob=null,primaryDisplayedJob=null;
+const viewAssets=new Map();
+function viewAsset(job,name) {
+  const key=job.id+'/'+name;
+  if(!viewAssets.has(key)) viewAssets.set(key,historyAsset(job.id,name).then(blob=>{
+    const url=URL.createObjectURL(blob);imageUrls.push(url);return url;
+  }));
+  return viewAssets.get(key);
 }
-let renderVersion=0;
+function clientOverlay(job,original) {
+  const key=job.id+'/client-outlined';
+  if(!viewAssets.has(key)) viewAssets.set(key,(async()=>{
+    const photo=document.createElement('img');photo.src=original;
+    const mask=job.preview_contour_base64?new Blob([Uint8Array.from(atob(job.preview_contour_base64),c=>c.charCodeAt(0))],{type:'image/png'}):await historyAsset(job.id,'preview_contour.png');
+    const [contour]=await Promise.all([createImageBitmap(mask),photo.decode()]);
+    try {
+      const layer=document.createElement('canvas');layer.width=contour.width;layer.height=contour.height;
+      const ctx=layer.getContext('2d');ctx.drawImage(contour,0,0);
+      const pixels=ctx.getImageData(0,0,layer.width,layer.height);
+      for(let p=0;p<pixels.data.length;p+=4){const edge=pixels.data[p]!==0;pixels.data[p]=255;pixels.data[p+1]=220;pixels.data[p+2]=0;pixels.data[p+3]=edge?255:0;}
+      ctx.putImageData(pixels,0,0);
+      const canvas=document.createElement('canvas'),scale=Math.min(1,512/Math.max(layer.width,layer.height));
+      canvas.width=Math.max(1,Math.round(layer.width*scale));canvas.height=Math.max(1,Math.round(layer.height*scale));
+      const output=canvas.getContext('2d');output.drawImage(photo,0,0,canvas.width,canvas.height);output.drawImage(layer,0,0,canvas.width,canvas.height);
+      const blob=await new Promise((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(Error('预览合成失败')),'image/jpeg',.9));
+      const url=URL.createObjectURL(blob);imageUrls.push(url);return url;
+    } finally {contour.close();}
+  })());
+  return viewAssets.get(key);
+}
+async function updateAuxiliary(job,version=renderVersion) {
+  if(primaryDisplayedJob!==job.id) return;
+  const filename=name=>(job.preview_ready && job.preview_views?.includes(name)?'preview_':'')+name+'.png';
+  await Promise.all([['mask','maskImage','maskEmpty'],['cutout','cutoutImage','cutoutEmpty']].map(async([name,id,empty])=>{
+    if(!(job.state==='done' || job.preview_views?.includes(name)) || !job.views.includes(name)) return;
+    const url=await viewAsset(job,filename(name));
+    if(version!==renderVersion || visibleJob!==job.id) return;
+    const image=$(id);
+    if(image.src!==url){image.src=url;await image.decode();}
+    if(version!==renderVersion || visibleJob!==job.id) return;
+    image.hidden=false;$(empty).hidden=true;
+  }));
+}
 async function render() {
-  const version=++renderVersion;
-  const job=current, view='outlined';
+  const version=++renderVersion,job=current;
+  if(visibleJob!==job.id) {
+    imageUrls.forEach(URL.revokeObjectURL);imageUrls=[];viewAssets.clear();visibleJob=job.id;primaryDisplayedJob=null;
+    for(const name of ['mask','cutout']) {$(name+'Image').hidden=true;$(name+'Empty').hidden=false;}
+  }
   const left=job.views.includes('original')?'original':'mask';
   const filename=name=>(job.preview_ready && job.preview_views?.includes(name)?'preview_':'')+name+'.png';
-  const hasMask=job.state==='done'||job.preview_views?.includes('mask');
-  const blobs=await Promise.all([historyAsset(job.id,filename(left)),historyAsset(job.id,filename(view)),...(hasMask?[historyAsset(job.id,filename('mask'))]:[])]);
+  const original=left==='original'&&localOriginal?.id===job.id?localOriginal.url:null;
+  const urls=await Promise.all([original||viewAsset(job,job.client_composite?left+'.png':filename(left)),
+    original&&job.client_composite?clientOverlay(job,original):viewAsset(job,job.client_composite?'outlined.png':filename('outlined'))]);
   if(version!==renderVersion) return;
-  imageUrls.forEach(URL.revokeObjectURL); imageUrls=blobs.map(b=>URL.createObjectURL(b));
-  $('leftImage').src=imageUrls[0]; $('rightImage').src=imageUrls[1];
-  await Promise.all([$ ('leftImage').decode(), $('rightImage').decode()]);
+  const images=[$('leftImage'),$('rightImage')];
+  await Promise.all(images.map(async(image,index)=>{if(image.src!==urls[index]){image.src=urls[index];await image.decode();}}));
   if(version!==renderVersion) return;
-  const c=$('enhancedImage');enhancePreview($('leftImage'),c);c.hidden=false;$('enhancedEmpty').hidden=true;
-  $('maskImage').hidden=!hasMask;$('maskEmpty').hidden=hasMask;
-  if(hasMask){$('maskImage').src=imageUrls[2];await $('maskImage').decode();}
   $('leftImage').hidden=false;$('rightImage').hidden=false;$('leftEmpty').hidden=true;$('rightEmpty').hidden=true;
-  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-  $('leftLabel').textContent=left==='original'?'原始图像':'真实板测掩膜 · 非原图'; $('rightLabel').textContent='轮廓叠加';
-  $('leftImage').alt=$('leftLabel').textContent;$('rightImage').alt=labels[currentView];
-  document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.view===currentView)));
+  primaryDisplayedJob=job.id;
+  $('leftLabel').textContent=left==='original'?'原始图像':'真实板测掩膜 · 非原图';$('rightLabel').textContent='轮廓叠加';
+  $('leftImage').alt=$('leftLabel').textContent;$('rightImage').alt='轮廓叠加';
+  document.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-selected',String(button.dataset.view===currentView)));
+  void updateAuxiliary(job,version).catch(error=>message(error.message,true));
 }
 $('demo').onclick=()=>start({mode:'demo',thickness:Number($('thickness').value)});
 $('run').onclick=async()=>{
@@ -254,11 +217,11 @@ $('run').onclick=async()=>{
     $('uploadNote').textContent=prepared.note;
     const {note,...files}=prepared;
     preparing=false;
-    await start({mode,thickness:Number($('thickness').value),name:file.name,...files},clickStarted);
+    await start({mode,thickness:Number($('thickness').value),name:file.name,...files,client_composite:true},clickStarted,file);
   } catch(e) {$('uploadNote').textContent='上传准备未完成，原文件未修改。';message(e.message,true);}
   finally {preparing=false;buttons();}
 };
-$('mode').onchange=()=>{const infer=$('mode').value==='infer';$('maskField').hidden=infer;$('imageFile').accept='image/jpeg,image/png';$('modeNote').textContent=infer?'上传 JPG / PNG 后调用板端模型，PNG 自动转为 JPG 副本。处理前会关闭本网页启动的 HDMI。':'使用你上传的掩膜提取轮廓，不执行模型推理。';};
+$('mode').onchange=()=>{const infer=$('mode').value==='infer';$('maskField').hidden=infer;$('imageFile').accept='image/jpeg,image/png';$('modeNote').textContent=infer?'上传 JPG / PNG 后调用板端模型，图片处理在板端完成。处理前会关闭本网页启动的 HDMI。':'使用你上传的掩膜提取轮廓，不执行模型推理。';};
 $('imageFile').onchange=()=>{$('fileLabel').textContent=$('imageFile').files[0]?.name||'选择原始图片';if(pldAutoSegment&&$('mode').value==='infer'&&!busy&&!preparing&&$('imageFile').files.length)$('run').onclick();};
 $('thickness').oninput=()=>{$('widthValue').textContent=$('thickness').value+' px';};
 document.querySelectorAll('[data-view]').forEach(b=>{b.onclick=async()=>{currentView=b.dataset.view;try{await render();}catch(e){message(e.message,true);}};b.onkeydown=e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key))return;const tabs=[...document.querySelectorAll('[data-view]')].filter(t=>!t.disabled);const i=tabs.indexOf(b);tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length].focus();e.preventDefault();};});
@@ -311,7 +274,7 @@ async function refreshHistory(force=false) {
 $('refreshHistory').onclick=()=>refreshHistory(true).catch(e=>message(e.message,true));
 
 let timingReport=null;
-const timingLabels={request_receive_parse:'请求体接收与 JSON 解析（与接收总计重叠）',upload_decode_validate:'上传数据还原、解码与校验（与接收总计重叠）',preview_remaining:'后台生成其余预览',preview_build:'生成首屏两张预览',request_to_preview_ready:'服务端请求至预览就绪',prepare_upload:'浏览器图片准备（含缩图、转换及编码）',submit_roundtrip:'上传提交往返（含服务端接收校验）',until_done:'点击到获知完成（含轮询）',preview_load:'两张预览下载、解码与绘制等待',click_to_preview:'点击到预览就绪总计',request_to_job_start:'服务端接收、解析、解码及任务启动',stop_hdmi:'停止 HDMI',input_write:'写入推理输入',runtime_verify:'运行包校验',inference_launch:'推理进程启动',inference_wait:'等待推理进程结束',inference_subprocess:'推理子进程总计（含初始化与退出）',persistent_worker_startup:'常驻进程启动',persistent_worker_request:'常驻进程本次请求',persistent_worker_total:'常驻进程调用总计',result_load:'读取推理结果',mask_remap:'掩膜回映射',contour_process:'轮廓提取与统计',view_composition:'生成对比视图',png_batch_wall:'PNG 并行保存整体等待',zip_payload:'ZIP 写入图片',report_write:'统计报告写入',zip_report_append:'ZIP 追加报告',zip_package:'ZIP 打包总计',job_total:'后台任务总计',request_to_job_complete:'服务端请求至 ZIP 完成总计'};
+const timingLabels={request_receive_parse:'请求体接收与 JSON 解析（与接收总计重叠）',upload_decode_validate:'上传数据还原、解码与校验（与接收总计重叠）',preview_remaining:'后台生成其余预览',preview_build:'生成首屏两张预览',request_to_preview_ready:'服务端请求至预览就绪',prepare_upload:'浏览器读取上传文件',submit_roundtrip:'上传提交往返（含服务端接收校验）',until_done:'点击到获知完成（含轮询）',preview_load:'首屏图片下载、解码与显示更新',click_to_preview:'点击到预览就绪总计',request_to_job_start:'服务端接收、解析、解码及任务启动',stop_hdmi:'停止 HDMI',input_write:'写入推理输入',runtime_verify:'运行包校验',inference_launch:'推理进程启动',inference_wait:'等待推理进程结束',inference_subprocess:'推理子进程总计（含初始化与退出）',persistent_worker_startup:'推理硬件会话初始化',persistent_worker_request:'常驻进程本次请求',persistent_worker_total:'常驻进程调用总计',result_load:'读取推理结果',mask_remap:'掩膜回映射',contour_process:'轮廓提取与统计',view_composition:'生成对比视图',png_batch_wall:'剩余 PNG 保存等待',zip_payload:'ZIP 写入图片',report_write:'统计报告写入',zip_report_append:'ZIP 追加报告',zip_package:'ZIP 打包总计',job_total:'后台任务总计',request_to_job_complete:'服务端请求至 ZIP 完成总计'};
 function timingText(job,clientTimes) {
   const stats=job.statistics||{};
   const stages=stats.final_stage_seconds||(job.state==='error'?job.stage_seconds:null)||stats.stage_seconds||job.stage_seconds||{};
@@ -321,7 +284,7 @@ function timingText(job,clientTimes) {
   lines.push('','服务端测量');
   for(const [k,label] of Object.entries(timingLabels)) if(Number.isFinite(stages[k])) lines.push(label+'：'+stages[k].toFixed(3)+' 秒');
   if(!Object.keys(stages).length) lines.push('这条记录没有服务端分阶段数据，请更新后重新处理。');
-  for(const [key,label] of [['model_reused','本次复用模型'],['hardware_reused','本次复用 FPGA 环境'],['artifacts_reused','本次复用已校验参数缓存']]) if(typeof stages[key]==='boolean') lines.push(label+'：'+(stages[key]?'是':'否'));
+  for(const [key,label] of [['model_reused','本次复用模型'],['hardware_reused','本次复用 FPGA 环境'],['artifacts_reused','本次复用参数缓存']]) if(typeof stages[key]==='boolean') lines.push(label+'：'+(stages[key]?'是':'否'));
   if(stages.core_startup_stages) for(const [key,value] of Object.entries(stages.core_startup_stages)) if(Number.isFinite(value)) lines.push('计算环境准备 / '+key+'：'+value.toFixed(3)+' 秒（已含在初始化中）');
   if(job.display_notification?.error) lines.push('自动显示通知失败：'+job.display_notification.error);
   if(stages.runtime_check_kind) lines.push('运行包校验方式：'+(stages.runtime_check_kind==='metadata_unchanged'?'文件属性未变，复用完整校验结果':'完整 SHA256 校验'));
@@ -356,3 +319,100 @@ if(typeof window!=='undefined'){
  });
  if(window.parent!==window)window.parent.postMessage({type:'pld-preferences-request'},entryOrigin);
 }
+
+/* PLD_ANIMATED_GUIDE_BEGIN */
+;(() => {
+ 'use strict';
+ const el=id=>document.getElementById(id);
+ if(el('pldTourToggle')||!el('imageFile')||!el('run'))return;
+ const style=document.createElement('style');style.textContent=`
+ #pldTourRoot{position:fixed;inset:0;z-index:2147483000;pointer-events:none}
+ #pldTourRoot[hidden],#pldTourCard button[hidden]{display:none!important}
+ #pldTourSpot{position:fixed;border:3px solid #79ecff;border-radius:14px;box-shadow:0 0 0 100vmax #07172bbf,0 0 25px #5edcff;transition:top .24s,left .24s,width .24s,height .24s;animation:pldPulse 1.7s infinite}
+ #pldTourCard{position:fixed;width:min(340px,calc(100vw - 24px));padding:20px;border-radius:18px;background:#123347;color:white;box-shadow:0 12px 42px #0005;pointer-events:auto;font:15px/1.7 system-ui;box-sizing:border-box}
+ #pldTourCard strong{font-size:21px;color:white}#pldTourCard p{margin:8px 0;color:#e1f7ff}
+ #pldTourArrow{font-size:30px;color:#79ecff;display:block;animation:pldArrow .9s ease-in-out infinite alternate}
+ #pldTourCard button{background:#79ecff;color:#123347;border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
+ #pldTourToggle{position:relative;z-index:2147483002}#pldTourNotice{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:2147483003;max-width:85vw;padding:10px 18px;background:#15384d;color:white;border-radius:12px;pointer-events:none}
+ @keyframes pldPulse{50%{border-color:white}}@keyframes pldArrow{to{transform:translateY(-6px)}}
+ @media(prefers-reduced-motion:reduce){#pldTourSpot,#pldTourArrow{animation:none;transition:none}}
+ `;document.head.append(style);
+ const toggle=document.createElement('button');toggle.id='pldTourToggle';toggle.type='button';toggle.className='quiet';toggle.textContent='开启新手引导';toggle.setAttribute('aria-pressed','false');
+ (document.querySelector('.heading')||el('run').parentElement).append(toggle);
+ const root=document.createElement('div');root.id='pldTourRoot';root.hidden=true;
+ root.innerHTML='<div id="pldTourSpot"></div><section id="pldTourCard" role="status" aria-live="polite"><span id="pldTourArrow" aria-hidden="true">↑</span><strong id="pldTourTitle"></strong><p id="pldTourText"></p><button type="button" id="pldTourDone" hidden>知道了，暂不下载</button></section>';
+ document.body.append(root);
+ const notice=document.createElement('div');notice.id='pldTourNotice';notice.hidden=true;notice.setAttribute('role','status');document.body.append(notice);
+ let active=false,checking=false,actions=0,step='',target=null,startId=null,sawTask=false,noticeTimer,focusBefore;
+ function tell(text){notice.textContent=text;notice.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>notice.hidden=true,4000)}
+ function occupied(s=status){return !!(busy||preparing||actions||s?.active||s?.warmup==='running'||s?.hdmi==='starting')}
+ function stop(){active=false;root.hidden=true;toggle.textContent='开启新手引导';toggle.setAttribute('aria-pressed','false');step='';target=null;(focusBefore?.isConnected?focusBefore:toggle).focus()}
+ function layout(){
+  if(!active||!target)return;const r=target.getBoundingClientRect(),spot=el('pldTourSpot'),card=el('pldTourCard');
+  Object.assign(spot.style,{left:(r.left-6)+'px',top:(r.top-6)+'px',width:(r.width+12)+'px',height:(r.height+12)+'px'});
+  const w=card.offsetWidth||340,h=card.offsetHeight||180;
+  card.style.left=Math.max(12,Math.min(innerWidth-w-12,r.left))+'px';
+  const below=r.bottom+22+h<innerHeight;
+  card.style.top=Math.max(12,Math.min(innerHeight-h-12,below?r.bottom+22:r.top-h-22))+'px';
+  el('pldTourArrow').textContent=below?'↑':'↓';
+ }
+ function show(key,id,title,text,done=false){
+  const changed=step!==key;step=key;target=el(id);if(!target){stop();tell('当前页面控件不兼容，已退出引导。');return}
+  el('pldTourTitle').textContent=title;el('pldTourText').textContent=text;el('pldTourDone').hidden=!done;
+  if(changed){target.scrollIntoView({block:'center',behavior:'auto'});if(['mode','run','download'].includes(id)&&!target.disabled)target.focus();}
+  layout();
+ }
+ function update(){
+  if(!active)return;
+  if(busy||preparing||status?.active){sawTask=true;show('working','progress','Step 3 · 正在切割',current?.preview_ready?'分割预览已显示，完整结果包仍在生成，请等待。':'请等待分割完成，无需重复点击。处理中不能切换引导模式。');return}
+  if(current?.state==='error'&&current.id!==startId){stop();tell('本次处理失败，已退出引导。请查看原页面错误信息。');return}
+  if(current?.state==='done'&&current.id!==startId){show('download','download','Step 4 · 保存完整结果','点击高亮的“下载结果包”，保存分割结果。也可以选择“知道了”，直接结束引导。',true);return}
+  if(el('mode').value!=='infer'){show('mode','mode','准备 · 选择模型分割','请选择“板端 FPGA 分割”，然后继续选择照片。');return}
+  if(!el('imageFile').files.length){show('file','drop','Step 1 · 选择照片','点击高亮区域选择照片。选择后继续下一步；若已开启自动分割，将自动进入处理阶段。');return}
+  show('run','run','Step 2 · 开始切割','点击高亮的“开始处理”，运行皮肤镜分割。');
+ }
+ async function switchMode(){
+  if(checking)return;
+  if(occupied()){tell('当前操作尚未结束，不能切换引导模式。请完成后重新点击。');return}
+  checking=true;toggle.textContent='检查板卡状态…';let timer;
+  try{
+   const s=await Promise.race([api('/api/status'),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('状态读取超时')),5000)})]);
+   if(occupied(s)){tell('板卡正在处理或准备，请结束后重新点击。');return}
+   if(s.fault||s.runtime_error||s.inference_available!==true){tell('板卡尚未就绪，暂不能切换引导。');return}
+   if(active){stop();return}
+   active=true;focusBefore=document.activeElement;startId=current?.id;sawTask=false;step='';root.hidden=false;update();
+  }catch(e){tell('无法确认板卡空闲，未切换引导。请检查连接后重试。')}
+  finally{clearTimeout(timer);checking=false;toggle.textContent=active?'退出新手引导':'开启新手引导';toggle.setAttribute('aria-pressed',String(active))}
+ }
+ toggle.addEventListener('click',switchMode);
+ el('pldTourDone').addEventListener('click',()=>{if(occupied()){tell('当前操作尚未结束，请稍候。');return}stop()});
+ function allowed(node){
+  if(toggle.contains(node))return true;
+  if(step==='download'&&el('pldTourDone').contains(node))return true;
+  return step!=='working'&&target?.contains(node);
+ }
+ // Capture gate blocks other controls without overwriting their disabled state.
+ // It also blocks links, drops and keyboard activation; existing handlers remain intact.
+ for(const type of ['click','pointerdown','mousedown','touchstart','dragover','drop','keydown','focusin']){
+  document.addEventListener(type,e=>{
+   if(!active)return;
+   if(type==='keydown'&&e.key==='Tab'){
+    const candidates=[toggle,...(step!=='working'&&target?[target.id==='drop'?el('imageFile'):target]:[]),...(step==='download'?[el('pldTourDone')]:[])].filter(n=>!n.disabled);
+    const i=candidates.indexOf(document.activeElement),next=(i+(e.shiftKey?-1:1)+candidates.length)%candidates.length;
+    e.preventDefault();e.stopImmediatePropagation();candidates[next].focus();return;
+   }
+   if(!allowed(e.target)){e.preventDefault();e.stopImmediatePropagation();if(type==='focusin')toggle.focus();}
+  },{capture:true,passive:false});
+ }
+ for(const id of ['run','demo','download','showHdmi','stopHdmi']){
+  const n=el(id),original=n?.onclick;if(typeof original!=='function')continue;
+  n.onclick=async function(...args){actions++;try{return await original.apply(this,args)}finally{actions--;update()}};
+ }
+ // Cover history downloads initiated while ordinary mode is active.
+ if(typeof downloadHistory==='function'){const original=downloadHistory;downloadHistory=async function(...args){actions++;try{return await original.apply(this,args)}finally{actions--;update()}}}
+ let timer=setInterval(update,200);
+ window.addEventListener('resize',layout);window.addEventListener('scroll',layout,true);
+ window.addEventListener('pagehide',()=>{clearInterval(timer);clearTimeout(noticeTimer);timer=null});
+ window.addEventListener('pageshow',()=>{if(timer===null)timer=setInterval(update,200)});
+})();
+/* PLD_ANIMATED_GUIDE_END */

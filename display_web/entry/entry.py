@@ -5,6 +5,7 @@ import http.client
 import json
 from pathlib import Path
 import re
+import shlex
 import signal
 import subprocess
 import sys
@@ -103,6 +104,14 @@ class Board:
     def can_park_heart(self):
         conflicts=set(self.props(ENGINE).get('Conflicts','').split())
         return not conflicts.intersection((HUB,'pld-web.service','pld-camus.service'))
+
+    def can_start_resident_heart(self):
+        # A stopped engine has no health endpoint. Check its effective service
+        # configuration before preserving the already capable, paused hub.
+        if not self.can_park_heart():return False
+        result=subprocess.run(['systemctl','show',ENGINE,'-p','Environment','--value'],
+                              check=True,capture_output=True,text=True,timeout=10)
+        return 'PLD_RESIDENT_MODELS=1' in shlex.split(result.stdout)
 
     def prestart_dual(self,model):
         units={'skin':'pld-web.service','camus':'pld-camus.service'}
@@ -298,8 +307,11 @@ class Controller:
                     self.wait(dual_idle)
                     self.set_stage('release_previous_model')
                     state=board.hub()
-                    heart=board.health() if board.running(ENGINE) else {}
-                    resident=(state.get('lifecycle')=='resident-hub-v1' and heart.get('resident_handoff')=='resident-hub-v1')
+                    heart_running=board.running(ENGINE)
+                    heart=board.health() if heart_running else {}
+                    capable=(heart.get('resident_handoff')=='resident-hub-v1' if heart_running else
+                             hasattr(board,'can_start_resident_heart') and board.can_start_resident_heart())
+                    resident=state.get('lifecycle')=='resident-hub-v1' and capable
                     if resident:
                         board.request(8765,'/hub/lifecycle',{'action':'pause'})
                         state=board.hub()

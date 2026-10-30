@@ -1,5 +1,11 @@
 # 三模型统一入口
 
+板端部署时，在仓库根目录执行一次 `sudo python3 scripts/install_pynq_boot_order.py install`。
+该配置让入口、ACDC engine、皮肤/CAMUS 后端和共享 HDMI 等待 `bootpy.service` 与
+`clear_pl_statefile.service` 完成，避免开机闪灯加载的 `base.bit` 覆盖已初始化的计算位流。
+仅添加 `After`，保留系统开机功能；不会在后续模型切换时重新启动这些一次性服务，也不会立即重启 PLD。
+回退命令为 `sudo python3 scripts/install_pynq_boot_order.py rollback`；它只移除内容匹配的专用 drop-in。
+
 P0 展示候选增加“超时恢复演示（模拟）”按钮、入口错误弹窗，以及三模型 HDMI 结果状态栏。模拟演示独立运行，不占用真实 FPGA/DMA，不改变任务成功与故障状态；成功和失败两条路径都有明确提示。其用途、计时口径、源码同步范围和板测要求见 [P0 优化说明](../../docs/P0_DEMO_HUD_RECOVERY.md)。
 
 “CPU / FPGA 指标对比”打开处理帧率、单帧/切片延迟、吞吐、功耗、LUT/FF/BRAM/DSP、DDR 估算和精度变化的已记录评测表。HDMI 触摸任务状态栏切换同一份指标，再触摸返回。使用前导入配对真实报告；没有证据时显示未测量，不能把合成检查当成绩，见 [指标导入与口径](../../docs/DEMO_METRICS.md)。

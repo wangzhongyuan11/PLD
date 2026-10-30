@@ -3,6 +3,7 @@ from __future__ import annotations
 import ctypes as ct
 import hashlib
 import json
+import os
 from pathlib import Path
 import platform
 import subprocess
@@ -17,6 +18,7 @@ def load_native():
     hashes={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sources}
     flags=['-O3','-std=c11','-shared','-fPIC','-fno-fast-math','-ffp-contract=off']
     link_flags=['-lm']
+    if os.name=='nt':link_flags+=['-Wl,--export-all-symbols']
     if platform.machine().startswith('arm'):flags+=['-mcpu=cortex-a9','-mfpu=neon','-mfloat-abi=hard']
     key=hashlib.sha256(json.dumps([hashes,flags,link_flags,platform.machine()],sort_keys=True).encode()).hexdigest()
     folder=Path(tempfile.gettempdir())/'pld-camus-native'/key

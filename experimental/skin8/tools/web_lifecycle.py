@@ -72,6 +72,8 @@ def install(web,app,kind,pipeline_factory=None):
                     if app.b_worker:app.b_worker.release_hardware(app.data/'pause_release.log')
                 else:
                     app.pipeline.close();app.released=True
+                agent=getattr(app,'display_agent',None)
+                if agent:agent.park()
                 OWNER.release();app.suspended=True
             elif action=='resume' and app.suspended:
                 OWNER.acquire()

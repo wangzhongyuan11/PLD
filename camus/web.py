@@ -13,7 +13,7 @@ import subprocess
 import sys
 import threading
 import time
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit,parse_qs
 import uuid
 
 from .model import DEFAULT_MODEL_ROOT, MODEL_SPEC_SHA256
@@ -23,7 +23,8 @@ except ModuleNotFoundError:from display_completion import Completion, user_displ
 
 MAX_BODY = 32 * 1024 * 1024
 ARTIFACTS = {'overlay.png','segmentation.png','label.png','label_raw.png','labels_native.npz',
-             'head.bin','head.json','report.json','result.zip','preview.html'}
+             'head.bin','head.json','report.json','result.zip','preview.html','original.png',
+             'preview_original.jpg','preview_overlay.jpg'}
 
 
 def decode_upload(payload):
@@ -43,7 +44,7 @@ def decode_upload(payload):
         result[name] = data
     selected = payload.get('input_name')
     if selected not in result: raise ValueError('缺少主输入文件')
-    if Path(selected).suffix.lower() not in ('.png','.jpg','.jpeg','.npy','.npz','.mhd','.nii','.gz'):
+    if Path(selected).suffix.lower() not in ('.png','.jpg','.jpeg','.npy','.npz','.mhd','.nii','.gz','.pldc'):
         raise ValueError('请选择灰度图、数组或 MHD/NIfTI')
     return result, selected
 
@@ -55,6 +56,7 @@ class CamusServer(ThreadingHTTPServer):
         protect_output(self.data/'_probe_not_created', pipeline.model.root)
         self.data.mkdir(parents=True, exist_ok=True)
         self.jobs, self.guard, self.busy = {}, threading.Lock(), threading.BoundedSemaphore(1)
+        self.changed=threading.Condition(self.guard)
         self.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='camus-inference')
         self.fault = False
         self.runtime,self.released,self.hdmi = runtime,False,None
@@ -115,8 +117,13 @@ class CamusServer(ThreadingHTTPServer):
                 if hasattr(self.pipeline,'restore_hardware'):self.pipeline.restore_hardware()
                 else:self.pipeline=CamusPipeline(self.pipeline.model.root,'pl',self.runtime)
                 self.released=False
+            def preview_ready():
+                with self.changed:
+                    job.update(preview_ready=True,preview_seconds=time.perf_counter()-job['_started'],
+                               preview_files={'original':'preview_original.jpg','overlay':'preview_overlay.jpg'})
+                    self.changed.notify_all()
             result = self.pipeline.run(self.data/job['id']/'input'/selected,
-                                       self.data/job['id']/'output', spacing)
+                                       self.data/job['id']/'output', spacing,on_preview=preview_ready)
             result.pop('output_dir'); result.pop('report')
             finished.update(state='done', result=result)
         except Exception as exc:
@@ -126,9 +133,10 @@ class CamusServer(ThreadingHTTPServer):
                 try: self.pipeline.close()
                 except Exception as close_error: finished['close_error'] = str(close_error)
         finally:
-            with self.guard:
+            with self.changed:
                 job['server_seconds'] = time.perf_counter()-job.pop('_started')
                 job.update(finished)
+                self.changed.notify_all()
             self.busy.release()
             if completion: completion.finish(job.get('state') == 'done')
 
@@ -164,15 +172,25 @@ class Handler(BaseHTTPRequestHandler):
                                   model='CAMUS hidden_histogram INT8'))
         match = re.fullmatch(r'/api/jobs/([0-9a-f]{32})', path)
         if match:
-            with self.server.guard: job = dict(self.server.jobs.get(match[1], {}))
+            phase=parse_qs(urlsplit(self.path).query).get('wait',[None])[0]
+            with self.server.changed:
+                if phase in ('preview','done'):
+                    self.server.changed.wait_for(lambda:self.server.jobs.get(match[1],{}).get('state') in ('done','error') or
+                        (phase=='preview' and self.server.jobs.get(match[1],{}).get('preview_ready')),timeout=1.)
+                job = dict(self.server.jobs.get(match[1], {}))
             job.pop('_started', None)
             return self.json(job, 200 if job else 404)
         match = re.fullmatch(r'/files/([0-9a-f]{32})/([a-z_.]+)', path)
         if match and match[2] in ARTIFACTS:
-            with self.server.guard: state = self.server.jobs.get(match[1], {}).get('state')
-            file = self.server.data/match[1]/'output'/match[2]
-            if state == 'done' and file.is_file() and not file.is_symlink():
-                kind = 'image/png' if file.suffix == '.png' else 'application/json' if file.suffix == '.json' else 'application/zip' if file.suffix == '.zip' else 'application/octet-stream'
+            with self.server.guard:
+                job=self.server.jobs.get(match[1],{});state=job.get('state')
+                preview=job.get('preview_ready') and match[2] in ('original.png','overlay.png','preview_original.jpg','preview_overlay.jpg')
+            name=match[2]
+            if preview and state!='done' and name in ('original.png','overlay.png'):
+                name=job.get('preview_files',{}).get(name[:-4],name)
+            file = self.server.data/match[1]/'output'/name
+            if (state == 'done' or preview) and file.is_file() and not file.is_symlink():
+                kind = 'image/jpeg' if file.suffix == '.jpg' else 'image/png' if file.suffix == '.png' else 'application/json' if file.suffix == '.json' else 'application/zip' if file.suffix == '.zip' else 'application/octet-stream'
                 return self.send_bytes(file.read_bytes(), kind=kind)
         self.json(dict(error='not found'), 404)
 

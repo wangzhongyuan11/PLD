@@ -1,0 +1,56 @@
+{
+  "schema": "pld-perf10-switch-v1",
+  "phase": "candidate_enabled",
+  "original_status": {
+    "phase": "ready",
+    "model": "skin",
+    "busy": false
+  },
+  "original": {
+    "pld-hub.service": {
+      "MainPID": "537",
+      "Result": "success",
+      "ControlGroup": "/system.slice/pld-hub.service",
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "pld-web.service": {
+      "MainPID": "664",
+      "Result": "success",
+      "ControlGroup": "/system.slice/pld-web.service",
+      "ActiveState": "active",
+      "UnitFileState": "disabled"
+    },
+    "pld-camus.service": {
+      "MainPID": "0",
+      "Result": "success",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled"
+    },
+    "pld-reuse9-web.service": {
+      "MainPID": "0",
+      "Result": "success",
+      "ControlGroup": "",
+      "ActiveState": "inactive",
+      "UnitFileState": "disabled"
+    }
+  },
+  "payload_files": 800,
+  "original_unit_sha256": {
+    "pld-hub.service": "cbd5b6feeb19226c14a56a848654edc692a0bc9a615387e19e8dff38ddc6fb3f",
+    "pld-web.service": "ac5bdb77281071a783e75a86df3a122887f609f1882f0fa6026da675476fdb0d",
+    "pld-camus.service": "823a79723f623f0967fecc21fa92fdfc7b69642220de0583c8ae9f03cc69bf36",
+    "pld-reuse9-web.service": "493fd5c7e4e3354f9e8857aa37008b370cf49ddac11c74cdc71dca433c67d68a"
+  },
+  "candidate_status": {
+    "model": "skin",
+    "busy": false,
+    "fault": null,
+    "closed": false
+  },
+  "rollback_status": {
+    "phase": "ready",
+    "model": "skin"
+  }
+}

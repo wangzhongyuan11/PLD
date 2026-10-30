@@ -7,6 +7,14 @@ import server
 from pld_result import load_result
 
 class UploadDecodeTests(unittest.TestCase):
+ def test_mask_conversion_runs_on_board_for_rgb_and_rgba_png(self):
+  binary=np.zeros((7,9),np.uint8);binary[2:5,3:7]=255
+  for channels in (3,4):
+   pixels=np.repeat(binary[:,:,None],channels,axis=2)
+   if channels==4:pixels[:,:,3]=255
+   stream=io.BytesIO();Image.fromarray(pixels).save(stream,format='PNG')
+   _,actual=server.decode_upload(base64.b64encode(stream.getvalue()).decode(),True)
+   np.testing.assert_array_equal(actual,binary)
  def test_exact_old_pixels_for_formats_modes_and_exif(self):
   rng=np.random.default_rng(9)
   for mode in ['RGB','L','RGBA']:

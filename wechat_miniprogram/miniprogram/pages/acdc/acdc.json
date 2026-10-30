@@ -1,0 +1,4 @@
+{
+  "navigationBarTitleText": "ACDC 心脏 MRI",
+  "usingComponents": { "privacy-guard": "/components/privacy-guard/privacy-guard" }
+}

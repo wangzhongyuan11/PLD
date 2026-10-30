@@ -1,0 +1,4 @@
+{
+  "navigationBarTitleText": "任务详情",
+  "usingComponents": { "privacy-guard": "/components/privacy-guard/privacy-guard" }
+}

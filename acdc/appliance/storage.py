@@ -42,7 +42,7 @@ class ResultUsage:
             self.dirty.clear()
             used=sum(self.sizes.values())
             if used+length>self.limit:
-                raise ContractError('V2 result storage reached 4 GiB; export and clear old V2 jobs, then restart Web')
+                raise ContractError(f'V2 result storage reached {self.limit/1024**3:g} GiB; export and clear old V2 jobs, then restart Web')
             self.dirty.add(job)
             return used
 

@@ -1,0 +1,33 @@
+<view class="page">
+  <view class="card">
+    <view class="card-title">上传皮损照片</view>
+    <view class="hint">
+      支持 JPG/PNG（≤8MB）。板端限制 300 万像素，超出的图片会由桥接自动等比缩小后提交，与网页端口径一致。
+    </view>
+    <view wx:if="{{picked}}" class="picked">
+      <view class="roi-surface" catchtouchstart="roiStart" catchtouchmove="roiMove"
+            catchtouchend="roiEnd" catchtouchcancel="roiCancel">
+        <image class="picked-img" src="{{picked.path}}" mode="widthFix" bindload="measureRoi" />
+        <view wx:if="{{roiEnabled && roi}}" class="roi-box" style="{{roiStyle}}" />
+      </view>
+      <view class="row"><text>ROI 裁剪分割</text><switch checked="{{roiEnabled}}" disabled="{{submitting}}" bindchange="toggleRoi" /></view>
+      <view wx:if="{{roiEnabled}}" class="hint">拖动框选或重新选区，关闭开关恢复全图。只分割选区，结果与面积占比均针对选区。</view>
+      <view class="row">
+        <text class="muted">{{picked.name}} · {{picked.size}} 字节</text>
+        <button class="danger-btn small" disabled="{{submitting}}" bindtap="clearImage">移除</button>
+      </view>
+    </view>
+    <button wx:else class="plain-btn" bindtap="chooseImage">选择 / 拍摄照片</button>
+  </view>
+
+  <view class="card">
+    <view class="card-title">轮廓线宽：{{thickness}} px</view>
+    <slider min="1" max="8" step="1" value="{{thickness}}" activeColor="#0f6f5c"
+            bindchange="onThickness" />
+  </view>
+
+  <button class="primary-btn" disabled="{{!picked || submitting}}"
+          bindtap="submit">{{submitting ? '提交中…' : '提交分割任务'}}</button>
+
+  <privacy-guard />
+</view>

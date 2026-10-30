@@ -1,4 +1,4 @@
-import hashlib,json,os,tempfile,threading,unittest
+import hashlib,json,os,tempfile,threading,time,unittest
 from pathlib import Path
 from unittest.mock import patch,Mock
 import numpy as np
@@ -38,7 +38,10 @@ class CachedVerifierTests(unittest.TestCase):
   self.v.check();s=self.file.stat();os.utime(self.file,ns=(s.st_atime_ns,s.st_mtime_ns+1000000000))
   self.assertEqual(self.v.check(),'full_sha256');self.assertEqual(self.v.full_checks,2)
  def test_changed_same_size_with_restored_mtime_rejected(self):
-  self.v.check();s=self.file.stat();self.file.write_bytes(b'xyz');os.utime(self.file,ns=(s.st_atime_ns,s.st_mtime_ns))
+  self.v.check();s=self.file.stat()
+  # Linux ctime may use a coarse clock tick; mutate in a later tick.
+  time.sleep(.02)
+  self.file.write_bytes(b'xyz');os.utime(self.file,ns=(s.st_atime_ns,s.st_mtime_ns))
   with self.assertRaises(ValueError):self.v.check()
  def test_manifest_change_requires_restart(self):
   self.v.check();self.manifest.write_text(self.manifest.read_text()+' ')

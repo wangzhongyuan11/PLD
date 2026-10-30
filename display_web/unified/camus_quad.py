@@ -1,5 +1,6 @@
 """Optional presentation adapter; frozen CAMUS inference files stay untouched."""
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 import subprocess
 import sys
 import time
@@ -14,34 +15,38 @@ ROOT = Path(__file__).resolve().parent
 
 def build_views(input_path, output):
     from camus.preprocess import load_gray_frame
+    from camus.png import save_png
     output = Path(output)
     # Display-only reload after inference. Do not change preprocessing or labels.
-    loaded = load_gray_frame(input_path)
+    if Path(input_path).suffix.lower()=='.pldc':
+        from camus.prepared import load
+        loaded=load(input_path).source
+    else:loaded = load_gray_frame(input_path)
     raw = np.clip(loaded.data, 0, 255).astype(np.uint8)
     original = thumbnail(raw)
     enhanced = enhance(original)
-    original.save(output/'quad_original.png', compress_level=1)
-    enhanced.save(output/'quad_enhanced.png', compress_level=1)
     with Image.open(output/'segmentation.png') as im:
         segmentation = thumbnail(im, nearest=True)
     with Image.open(output/'overlay.png') as im:
         overlay = thumbnail(im)
-    Image.fromarray(compose([original, enhanced, segmentation, overlay])).save(output/'quad.png', compress_level=1)
+    views = [('quad_original.png', np.asarray(original)),
+             ('quad_enhanced.png', np.asarray(enhanced)),
+             ('quad.png', compose([original, enhanced, segmentation, overlay]))]
+    with ThreadPoolExecutor(max_workers=2, thread_name_prefix='camus-quad-png') as pool:
+        list(pool.map(lambda item: save_png(item[1], output/item[0]), views))
 
 
 def install(web):
-    original_run = web.CamusPipeline.run
     original_get = web.Handler.do_GET
     original_hdmi = web.CamusServer.start_hdmi
 
+    original_run = web.CamusPipeline.run
+
     def run(pipeline, input_path, output_dir, *args, **kwargs):
         result = original_run(pipeline, input_path, output_dir, *args, **kwargs)
-        started = time.perf_counter()
-        write_runtime_identity(pipeline,output_dir)
-        build_views(input_path, output_dir)
-        elapsed = time.perf_counter()-started
-        result['stages_seconds']['quad_display'] = elapsed
-        result['end_to_end_seconds'] += elapsed
+        # Annotate only completed inference. Keep preview callbacks and timings
+        # intact; the HDMI path below builds presentation views on demand.
+        write_runtime_identity(pipeline, output_dir)
         return result
 
     def get(handler):
@@ -61,7 +66,9 @@ def install(web):
             raise ValueError('completed CAMUS job required')
         folder = server.data/identifier/'output'
         if not (folder/'quad.png').is_file():
-            raise ValueError('四宫格未生成，请重新处理图片')
+            source=server.data/identifier/'input'
+            selected=next(p for p in source.iterdir() if p.suffix.lower()!='.raw')
+            build_views(selected,folder)
         if (getattr(server,'display_agent',None) and server.hdmi is not None
                 and server.hdmi.poll() is None and server.hdmi_folder==folder):
             if getattr(server,'hdmi_view',None)!=view:server.hdmi.update(view)

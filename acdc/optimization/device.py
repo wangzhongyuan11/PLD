@@ -36,10 +36,11 @@ def validate_overlay(core,gpio):
 
 
 class SpatialDevice:
-    def __init__(self,runtime,model,*,timeout=5.,native_layout=True):
+    def __init__(self,runtime,model,*,timeout=5.,native_layout=True,verify=True):
         if not math.isfinite(timeout) or timeout<=0:raise ValueError('positive finite timeout required')
         from acdc.package import verify_runtime
-        runtime=verify_runtime(runtime,model)
+        runtime=verify_runtime(runtime,model) if verify else Path(runtime).resolve()
+        self.verify=verify
         record=json.loads((runtime/'overlay/build_manifest.json').read_text('utf-8'))
         if record.get('hardware_id')!=DEVICE_ID or record.get('abi')!=ABI:
             raise ContractError('runtime is not ACD8')
@@ -142,7 +143,7 @@ class SpatialDevice:
         if debug_layer is not None and (type(debug_layer) is not int or not 0<=debug_layer<15):
             raise ValueError('invalid debug layer')
         if self.closed or self.unsafe:raise RuntimeError('device is closed or quarantined')
-        started=time.perf_counter();x=checked_int8(first,INPUT_SHAPE)
+        started=time.perf_counter();x=checked_int8(first,INPUT_SHAPE) if self.verify else np.asarray(first)
         if self.core.read(0x10)&5:raise RuntimeError('device busy/fault before frame')
         if self.epoch==0xffffffff:self.core.write(0x0c,2);self.epoch=0
         self.epoch+=1

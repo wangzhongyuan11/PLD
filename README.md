@@ -6,7 +6,15 @@
 
 ## 当前板端应用（2026-10-25）
 
-日常入口为 **http://192.168.2.99:8088/**，包含心脏 2.5D、皮肤镜、CAMUS，以及仅供皮肤镜使用的 ROI 网页/HDMI 触控。最新常驻切换、自动分割/上屏、ROI 清除标记及板端评测入口已同步；实际路径、228 项源码/服务哈希和回退说明见[当前板端源码对齐](deployment/current_board_20261025/README.md)。`deployment/current_board_20261024/` 是历史快照，正式冻结资产指针保持不变。
+日常入口为 **http://192.168.2.99:8088/**，包含心脏 2.5D、皮肤镜、CAMUS，以及仅供皮肤镜使用的 ROI 网页/HDMI 触控。已记录部署的路径、230 项源码/服务哈希和回退说明见[10 月 25 日板端记录](deployment/current_board_20261025/README.md)。该记录不替代后续修改的板端验证。
+
+## 最新仓库实现（2026-10-30）
+
+本次完整源码交付入口见 [2026-10-30 整合说明](deployment/repository_20261030/README.md)，汇总此前未合并 PR、动画引导与最新小程序修改。
+
+[微信小程序与电脑桥接](wechat_miniprogram/README.md)包含提前预览、独立 ROI、相册保存与断连恢复；网页/HDMI 保留三模型、首帧预览、引导和交互分割。配置密钥与运行数据需本机准备。微信开发者工具打开 `wechat_miniprogram/`。
+
+本轮源码包含共享常驻 HDMI、模型交接、结果导出与指标身份适配。可复现清单见[最终源码快照](deployment/repository_20261030/SOURCE_MAP.json)；[10 月 26 日快照](deployment/repository_20261026/README.md)保留为历史记录。本次 Git 提交不会自动升级板端运行服务，源码检查不代表物理 HDMI 验收。`delivery/current.json` 继续指向原正式冻结资产。
 
 ## 获取与准备
 
@@ -40,6 +48,7 @@ python -m camus --plan
 | `rtl/`、`camus/rtl/` | 两套冻结计算核心；`conv_tile_engine.sv` 是皮肤镜必需模块 |
 | `board/`、`reference/`、`camus/` | 有界 DMA/驱动、定点参考、调度与验证 |
 | `display_web/`、`display_web/unified/` | 三模型入口、自动显示、皮肤镜 ROI/点/框交互与四宫格 |
+| `wechat_miniprogram/` | 微信前端、电脑桥接、演示输入生成器与回归测试；不含密钥和运行数据 |
 | `sim/`、`camus/tests/`、`display_web/*/tests/` | 数值、协议、服务与交互回归 |
 | `vivado/`、`scripts/` | IP/BD 构建、校验、模型准备、部署与板测工具 |
 | `delivery/` | 当前版本指针、严格白名单 manifest、小型证据与部署模板 |

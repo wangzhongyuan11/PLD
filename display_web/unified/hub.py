@@ -208,11 +208,14 @@ class Controller:
                 # lock. Switch/evaluation/ROI cannot overtake an unacked POST.
                 self.proxy_busy=True;self.proxy_idle.clear()
         try:
-            other='camus' if model=='skin' else 'skin'
-            if self.board.props(other)['ActiveState']!='inactive':
-                state=self.board.status(other)
-                if not (state.get('suspended') and state.get('hardware_released') and state.get('hdmi')=='off'):
-                    raise RuntimeError('另一个模型未释放硬件，请检查占用')
+            # Reads never acquire hardware; retain the local preview fast path.
+            # Every mutation still confirms the other owner's release.
+            if mutation:
+                other='camus' if model=='skin' else 'skin'
+                if self.board.props(other)['ActiveState']!='inactive':
+                    state=self.board.status(other)
+                    if not (state.get('suspended') and state.get('hardware_released') and state.get('hdmi')=='off'):
+                        raise RuntimeError('另一个模型未释放硬件，请检查占用')
             with self.lock:
                 if self.phase!='ready' or self.model!=model or generation!=self.generation:
                     raise RuntimeError('模型已切换，请等待新页面')
@@ -284,7 +287,9 @@ class Handler(BaseHTTPRequestHandler):
         m=re.fullmatch(r'/(skin|camus)/g/(\d+)/(.*)',path)
         if not m:return self.send(404,{'error':'页面不存在'})
         model,epoch,rest=m.groups();prefix='/'+model+'/g/'+epoch+'/'
-        code,kind,raw=self.server.controller.proxy(model,int(epoch),self.command,'/'+rest,body,self.headers.get('Content-Type','application/json'))
+        query=urlsplit(self.path).query
+        upstream='/'+rest+('?' + query if query else '')
+        code,kind,raw=self.server.controller.proxy(model,int(epoch),self.command,upstream,body,self.headers.get('Content-Type','application/json'))
         self.send(code,rewrite(raw,kind,prefix),kind)
     def do_GET(self):
         try:self.handle_request()

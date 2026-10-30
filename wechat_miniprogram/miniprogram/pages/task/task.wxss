@@ -1,0 +1,32 @@
+.wait-box {
+  margin-top: 16rpx;
+  background: #fdf3e0;
+  color: #a2701c;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  font-size: 26rpx;
+}
+
+.err-box {
+  margin-top: 16rpx;
+  background: #fdeeee;
+  color: #b3432f;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  font-size: 26rpx;
+  word-break: break-all;
+}
+
+.metric-row { padding: 10rpx 0; }
+
+.metric-value { font-weight: 600; }
+
+.view-block { margin-bottom: 8rpx; }
+
+.view-head { margin-bottom: 10rpx; }
+
+.view-label { font-size: 26rpx; font-weight: 600; }
+
+.small { font-size: 24rpx; padding: 6rpx 24rpx; }
+
+.file-line { padding: 14rpx 0; }

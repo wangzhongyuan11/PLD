@@ -1,0 +1,1308 @@
+{
+  "schema": "pld-repository-source-snapshot-v1",
+  "host_date": "2026-10-26",
+  "scope": "Repository source only; no live board re-verification or deployment in this PR preparation.",
+  "base_revision": "a18c51af56d8bda0dbfb25b7f7688cfbc2a45b29",
+  "recorded_board_manifest": "deployment/current_board_20261025/SOURCE_MAP.json",
+  "miniprogram_source_revision": "a1e112ca52420102a2ffe818d91d5121ce3fd8dc",
+  "excludes": [
+    "nested .git",
+    "bridge/config.json",
+    "project.private.config.json",
+    "runtime logs",
+    "generated demo data",
+    "model and bitstream payloads"
+  ],
+  "files": [
+    {
+      "repo_path": "README.md",
+      "lf_sha256": "948fe15369f0e76b4966f3dd9919dd55fa141b12498ba5d081f77b1ad658010a",
+      "bytes": 6935
+    },
+    {
+      "repo_path": "acdc/appliance/__init__.py",
+      "lf_sha256": "76902054941875eea7bdf9b2621fa4bada0ed233f4368801c1ccf718647e59d9",
+      "bytes": 133
+    },
+    {
+      "repo_path": "acdc/appliance/__main__.py",
+      "lf_sha256": "452f0e34d209f1889f260e7d7e56f963a7f221347b87e1aad0eb5672aec37685",
+      "bytes": 7131
+    },
+    {
+      "repo_path": "acdc/appliance/archive.py",
+      "lf_sha256": "5d9518e8b11fe44f72c8dc0bd7ec4abaff9e9c1dd85e65620d517372c46a21b2",
+      "bytes": 1683
+    },
+    {
+      "repo_path": "acdc/appliance/assets.py",
+      "lf_sha256": "7f39f4de49b82c5e95bd3678280c3087fe981804abaa1d578400ada68f930a87",
+      "bytes": 4790
+    },
+    {
+      "repo_path": "acdc/appliance/audit_http.py",
+      "lf_sha256": "c45ca81b13dc7a34a5b5d856d8f8694e311a4a48984f4f300e11a903d096ce4d",
+      "bytes": 3016
+    },
+    {
+      "repo_path": "acdc/appliance/benchmark_replay.py",
+      "lf_sha256": "7f1dd13f5200da39234b7c1a1a171381aa3ff8f51e1416562b9e244679822cf7",
+      "bytes": 3040
+    },
+    {
+      "repo_path": "acdc/appliance/deploy.py",
+      "lf_sha256": "3201a1a985cfb61522196352590aab194b1103dfacb088dcab6e93a02f5d71f1",
+      "bytes": 4286
+    },
+    {
+      "repo_path": "acdc/appliance/engine.py",
+      "lf_sha256": "ecd293a1d20320b7ef2aa09868bbc3b35f1be63bf35cb486e9488c2e3f6cc3c3",
+      "bytes": 14845
+    },
+    {
+      "repo_path": "acdc/appliance/full_pipeline.py",
+      "lf_sha256": "eb0720a527af94b66048839022a91fcc8cefca9a7a4b54fe625f99d7a4784c95",
+      "bytes": 7708
+    },
+    {
+      "repo_path": "acdc/appliance/hdmi.py",
+      "lf_sha256": "3426cfae90ebb0341e39f5b8ce340d06f51b4de43c8e0a562e1c7bd3cbd8febf",
+      "bytes": 7129
+    },
+    {
+      "repo_path": "acdc/appliance/identity.py",
+      "lf_sha256": "8aef277d0249ec2631efdeaf8c4ec398d2f2ebaad62af64ec7e9b25dfa1148f2",
+      "bytes": 2072
+    },
+    {
+      "repo_path": "acdc/appliance/monitor.py",
+      "lf_sha256": "4db7911d8b79a02fdc8d36f07f1e5e46a08f403b80049068eae62df161502a06",
+      "bytes": 3082
+    },
+    {
+      "repo_path": "acdc/appliance/mpr.py",
+      "lf_sha256": "cffb467d6c659a66a5cd69674163759b0ac94048258fe39234b86389c9485b33",
+      "bytes": 2993
+    },
+    {
+      "repo_path": "acdc/appliance/native.py",
+      "lf_sha256": "a669b2288fdaf23ed4c5d6b2753637507108cc3553cefe4f90239ad6379281db",
+      "bytes": 9744
+    },
+    {
+      "repo_path": "acdc/appliance/native/image.c",
+      "lf_sha256": "37cb57f6e836a6e6c7983f4929413a58b2791a52fb382602bee0f845a5282e3a",
+      "bytes": 18405
+    },
+    {
+      "repo_path": "acdc/appliance/native/mesh/arm-board-toolchain.cmake",
+      "lf_sha256": "2e39828b8007ed70fb5e3fda5a1f35792c474f8c0b1e4acd4c5b34589df5c4ee",
+      "bytes": 1845
+    },
+    {
+      "repo_path": "acdc/appliance/native/mesh/build_cross.sh",
+      "lf_sha256": "ebf11267d7fc77649e422fd0183c3e32f328d366e3117e1d4e93b86c59e8459a",
+      "bytes": 2755
+    },
+    {
+      "repo_path": "acdc/appliance/native/mesh/build_vtk.sh",
+      "lf_sha256": "550f8ff0f94de790fb75cf05297d278e6654fab2b2d6135c9a0eb33f8527f0d4",
+      "bytes": 1229
+    },
+    {
+      "repo_path": "acdc/appliance/native/mesh/mesh.cxx",
+      "lf_sha256": "015d4407b69fd1cdd4ba09839967f4ab8d26c9bdceb0fdbb3d3ac5b88700f428",
+      "bytes": 12291
+    },
+    {
+      "repo_path": "acdc/appliance/native/mesh/snapshot_sysroot.py",
+      "lf_sha256": "fb522a971342be1eaefc99d27223fbf63609e9a4bbcb0e127a432c823c3e862b",
+      "bytes": 1520
+    },
+    {
+      "repo_path": "acdc/appliance/pipeline.py",
+      "lf_sha256": "2ae35a5308110aecf9fafbadcae01bc216b1e565f374f15a19300d7f563aed69",
+      "bytes": 9135
+    },
+    {
+      "repo_path": "acdc/appliance/png.py",
+      "lf_sha256": "b8d13567b60886a27f82178427d11d8e1bbc57e0eb072ce5d99458d9a1b32a98",
+      "bytes": 1092
+    },
+    {
+      "repo_path": "acdc/appliance/qualify.py",
+      "lf_sha256": "c7e57f0e4c4d229291639bda32c64f69b6fb5a28018381f718f52650ab277560",
+      "bytes": 5777
+    },
+    {
+      "repo_path": "acdc/appliance/qualify_surfaces.py",
+      "lf_sha256": "a0b5af58afacc51bc125efc521f057aa7c548147b31f596f9be735538dc0ca34",
+      "bytes": 4926
+    },
+    {
+      "repo_path": "acdc/appliance/reconstruct.py",
+      "lf_sha256": "4f9ae424d97983695edfa1104fa99b817e98980888ff3e656fe8155e650e6235",
+      "bytes": 3786
+    },
+    {
+      "repo_path": "acdc/appliance/resident_lease.py",
+      "lf_sha256": "af38bfdf7b0fc65a09f1b443bc36079ff135e67da9813bc291e9730150ddef33",
+      "bytes": 2874
+    },
+    {
+      "repo_path": "acdc/appliance/startup_cache.py",
+      "lf_sha256": "cc106bea267699a03d56f726a37ce867ee994f42ac4ab7c84eb6b6374b3aca53",
+      "bytes": 2301
+    },
+    {
+      "repo_path": "acdc/appliance/storage.py",
+      "lf_sha256": "279fbc0988c5bc256c0149e47fa9107c33e9406acafde266b24f41e01768cf4e",
+      "bytes": 2204
+    },
+    {
+      "repo_path": "acdc/appliance/surface.py",
+      "lf_sha256": "5bf2784868c478b2b0ac95ab86a549df6da777047d0f9124ff233fc004beacab",
+      "bytes": 3997
+    },
+    {
+      "repo_path": "acdc/appliance/surface_raster.c",
+      "lf_sha256": "4e3956e375b3ea75dbaf059bface92d4ca439d25d99c63a00b216853ddd350b6",
+      "bytes": 1395
+    },
+    {
+      "repo_path": "acdc/appliance/touch_drag.py",
+      "lf_sha256": "f70979715917660289cab2303aaa7e81ce576faba2a21119aa08846aa8aca7a9",
+      "bytes": 2046
+    },
+    {
+      "repo_path": "acdc/appliance/validate_http.py",
+      "lf_sha256": "217765cc0902eb7ddb9c10fc88e7e71a562d073ac57c122a26ca5fe0ca4c8d14",
+      "bytes": 6624
+    },
+    {
+      "repo_path": "acdc/appliance/validate_overlap.py",
+      "lf_sha256": "bda08674542d831c23b31d67b56dcb28f6bce12bbc0db0b6fed6f0f0fcf4cfc9",
+      "bytes": 3556
+    },
+    {
+      "repo_path": "acdc/appliance/validate_recovery.py",
+      "lf_sha256": "fde82240513e0ecca00500d696ed2e1b45f15149d3290f596f3448a0e50e5c75",
+      "bytes": 4496
+    },
+    {
+      "repo_path": "acdc/appliance/verified_hashes.py",
+      "lf_sha256": "b7e39b8cbfda26f9f5096bdf48e06ed918d39fc8b58094ad40769d6bc7d3c49c",
+      "bytes": 817
+    },
+    {
+      "repo_path": "acdc/appliance/volume.py",
+      "lf_sha256": "3eb5e1a41278989e25128ed6863940f6b98f58b4d6f3b1871cb95191d5306472",
+      "bytes": 3921
+    },
+    {
+      "repo_path": "acdc/appliance/web.py",
+      "lf_sha256": "6bb58da9fef3fadf0b5f4f039354ead3577c48813ec1a74d833db2dc6c7ebe58",
+      "bytes": 12417
+    },
+    {
+      "repo_path": "acdc/appliance/web_assets/app.js",
+      "lf_sha256": "a2abc3d06db6d51b30417080a24b95340049ae83cc5c1f1887e04f2409b37ce3",
+      "bytes": 17609
+    },
+    {
+      "repo_path": "acdc/appliance/web_assets/index.html",
+      "lf_sha256": "07a3a805f9ce6b634830e6ed0a8e1a1b40dc713c7c9e65406126ac811f1945d3",
+      "bytes": 5127
+    },
+    {
+      "repo_path": "acdc/appliance/web_assets/style.css",
+      "lf_sha256": "658c9c10c6231919e55aca123dec08cb4b319e48e7b5b65dd88a740d8392e79f",
+      "bytes": 4976
+    },
+    {
+      "repo_path": "acdc/appliance/web_assets/surface_view.js",
+      "lf_sha256": "0c9e8c747a88d2ba7198246262f90f3c0a0338f45245174c8ae6487356ac8c77",
+      "bytes": 6454
+    },
+    {
+      "repo_path": "acdc/tests/test_task_auto_display.py",
+      "lf_sha256": "04b8bc5a02328bd268fb25eaea3dbd8db9b634d7efd8e1a0fb66131e092a3e2c",
+      "bytes": 3047
+    },
+    {
+      "repo_path": "board/cache_sync.py",
+      "lf_sha256": "16fcdae657afeb14fe0f194f046a740f17d0484dff030dd73d28edd3ecb3c54d",
+      "bytes": 1113
+    },
+    {
+      "repo_path": "board/cpu_baseline.py",
+      "lf_sha256": "712b2c1c59cd29911d491355bc08c0114d894f22f24a387a100c637d443e0ea7",
+      "bytes": 2326
+    },
+    {
+      "repo_path": "board/evaluate_dataset.py",
+      "lf_sha256": "c638ba4cbfd18dab78b42d4ea19ff8a655c1ca10610f15b2f7d5ff6d299e8db9",
+      "bytes": 14733
+    },
+    {
+      "repo_path": "board/infer_images.py",
+      "lf_sha256": "da488f13a17e6e0b4648625cb4b02ac8acdfd74ae058271c10ed638106f620fe",
+      "bytes": 15628
+    },
+    {
+      "repo_path": "board/infer_worker.py",
+      "lf_sha256": "cc12ee09cab68921c0a266e0a931c6c218b1b599e1eacc44908e60786c4c9c14",
+      "bytes": 7714
+    },
+    {
+      "repo_path": "board/native/rgb_resize.c",
+      "lf_sha256": "46842b5a5c87f1b7c18e8c3df0dfd8b0b9ef2a93c19ccd67337509bb1e8a5fb7",
+      "bytes": 8148
+    },
+    {
+      "repo_path": "board/native/tensor_control.c",
+      "lf_sha256": "d9fb9576c1c1360e1d3081031796b5b291332a269bbaf8a58fd468b05f273f35",
+      "bytes": 6819
+    },
+    {
+      "repo_path": "board/native/tensor_copy.c",
+      "lf_sha256": "dd6902e9ff09e481727c8c533b95d8e4cb9bc977a230fe84805472ab1770e835",
+      "bytes": 2806
+    },
+    {
+      "repo_path": "board/native_control.py",
+      "lf_sha256": "b24705b9aee775388494b5b1d6da144aa9cefe7f0c3e51d939501b737368eed6",
+      "bytes": 5891
+    },
+    {
+      "repo_path": "board/native_copy.py",
+      "lf_sha256": "372d26ff0656003f751f69a726f7628244273f671c13dea9292ada7f128a9097",
+      "bytes": 2716
+    },
+    {
+      "repo_path": "board/native_resize.py",
+      "lf_sha256": "b292ef472a7fe473f03200446af380f6f82f8eb044734357d787b26cd78f058f",
+      "bytes": 1248
+    },
+    {
+      "repo_path": "board/pl_graph.py",
+      "lf_sha256": "78424d3977ebd57528bc387239b8359ff1ec8c8bebc4c02c432272601ef17b0b",
+      "bytes": 10796
+    },
+    {
+      "repo_path": "board/profile_cnn.py",
+      "lf_sha256": "f8bafdbfddee3e9471947a2125d337a99f91bed35f839be29f85ad45f2479d67",
+      "bytes": 4563
+    },
+    {
+      "repo_path": "board/simple_dma.py",
+      "lf_sha256": "782e00b3a3e9a8233f176718f543467f68f563a721ac46ca06b62fa60c1337da",
+      "bytes": 7224
+    },
+    {
+      "repo_path": "board/tensor_accel.py",
+      "lf_sha256": "6aed6632f98d9d3091eb73133c7f41e9f192695c11e75371cbf553ddba50c0da",
+      "bytes": 19957
+    },
+    {
+      "repo_path": "board/verify_cnn.py",
+      "lf_sha256": "e7b35cb64b30c8db8efeb5f86829af13317e25dac68926c801dae3055d8273bd",
+      "bytes": 8713
+    },
+    {
+      "repo_path": "board/verify_dma_modes.py",
+      "lf_sha256": "604af4b72c454114ea5d4af3502196586362525a3c33714778c5e40f0292e958",
+      "bytes": 2864
+    },
+    {
+      "repo_path": "board/verify_overlay.py",
+      "lf_sha256": "489994703c0473a4ae4a7531472cb80eec18857e3bf61b207fad53da56c77ab8",
+      "bytes": 7836
+    },
+    {
+      "repo_path": "camus/__init__.py",
+      "lf_sha256": "3465276a912a94b04b67a2b706f773159a170706f85e56b7823f68030fcc6c50",
+      "bytes": 198
+    },
+    {
+      "repo_path": "camus/__main__.py",
+      "lf_sha256": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+      "bytes": 48
+    },
+    {
+      "repo_path": "camus/accelerator.py",
+      "lf_sha256": "d5a9033d3be850fcb90f64c7b4bb5a85caeb0c8943fc70cc42a255d0a1cd6365",
+      "bytes": 12726
+    },
+    {
+      "repo_path": "camus/board_service.py",
+      "lf_sha256": "9d383b66de8374fdabf7f376c95beeb815357c62bfe64b99d34a24b6c97fc87e",
+      "bytes": 3711
+    },
+    {
+      "repo_path": "camus/board_verify.py",
+      "lf_sha256": "45be1e42132ef2fce0e871c851e510ce5346f9ea1377e39f3fd587ccad020a60",
+      "bytes": 10333
+    },
+    {
+      "repo_path": "camus/board_web_verify.py",
+      "lf_sha256": "eba2e9d76578be608890c5f7af5b5f6e18aa8a9bb8028d3d77d042980a9f0600",
+      "bytes": 7674
+    },
+    {
+      "repo_path": "camus/cli.py",
+      "lf_sha256": "9f52b53e49ccce2c7942dd902dbb758e344b07bf9257e87da5d9667cc13a6ae1",
+      "bytes": 1760
+    },
+    {
+      "repo_path": "camus/contract.py",
+      "lf_sha256": "11de4844ae860e3e4b480447daf4140bff44d3c9825938c2df1341f80e51f890",
+      "bytes": 3807
+    },
+    {
+      "repo_path": "camus/device.py",
+      "lf_sha256": "092a5cccd912cfb2fb41ba237077064ebcc0c5f8047fb09443930c62b9ac248b",
+      "bytes": 13965
+    },
+    {
+      "repo_path": "camus/gen_vectors.py",
+      "lf_sha256": "07fb98de43ba4dad39b4b93e7846b77d5d088e8913f0e8dd3078566d436a2a94",
+      "bytes": 8747
+    },
+    {
+      "repo_path": "camus/graph.py",
+      "lf_sha256": "f273685fcd8f33f986db06d3d0f4dd5933053c6bd96d1c62441b087c135d07ef",
+      "bytes": 3390
+    },
+    {
+      "repo_path": "camus/hdmi.py",
+      "lf_sha256": "b117a886d2b6ddffa11f182dbd32cd30830b7c5d39f8c5bf1e79e9ce4f353a8c",
+      "bytes": 3021
+    },
+    {
+      "repo_path": "camus/integer.py",
+      "lf_sha256": "de301ee29d34864a8e0d6bae1f91f4c2d026ded20e98f23cb664cc09c4a01e65",
+      "bytes": 8871
+    },
+    {
+      "repo_path": "camus/model.py",
+      "lf_sha256": "da4a2c49e4ab366728ade982e3c1fec9e77e0f02af14f0a9294ceed2b35de5f3",
+      "bytes": 18123
+    },
+    {
+      "repo_path": "camus/native.py",
+      "lf_sha256": "c3b232a13db5df5dd7a81293950db8df23f3479926216cc0720840e04bd6656f",
+      "bytes": 10150
+    },
+    {
+      "repo_path": "camus/native/control.c",
+      "lf_sha256": "e75a3cbaf0d438c15ca78d5015747a47172f5b7cdbe263d557f57b70b0c5d1cb",
+      "bytes": 6847
+    },
+    {
+      "repo_path": "camus/native/ops.c",
+      "lf_sha256": "f06808507f4ec7460fe3b9dba83c8f17473be9a2dbeec2d86e6506ff1300a108",
+      "bytes": 8927
+    },
+    {
+      "repo_path": "camus/native_control.py",
+      "lf_sha256": "4591a089fe464b41c17485055d428a3182a4974235e8ff077c1ead0d5752d00f",
+      "bytes": 5521
+    },
+    {
+      "repo_path": "camus/package.py",
+      "lf_sha256": "bf73fec76021a214ddbe3e80ecaa0d58bbccf779dd948191c6b631cf6080eeca",
+      "bytes": 7218
+    },
+    {
+      "repo_path": "camus/performance.py",
+      "lf_sha256": "2996d3b0c51fcbae09500d1006c8d28ad793d6feb79f94782f90fd356bb7a678",
+      "bytes": 5995
+    },
+    {
+      "repo_path": "camus/pipeline.py",
+      "lf_sha256": "47c330b82998e524e3b50286ddc2c3d9545c7a4734de39313588c9b2494a12c4",
+      "bytes": 7141
+    },
+    {
+      "repo_path": "camus/plan.py",
+      "lf_sha256": "877bb6fa546ded0d38cba94831fc8bc808dcd22cb1d118e078a400a20688e473",
+      "bytes": 5761
+    },
+    {
+      "repo_path": "camus/png.py",
+      "lf_sha256": "8972f09ea352bd60ad2bd524f443c3f22a19138405df983b65cccb976f53f9b6",
+      "bytes": 2495
+    },
+    {
+      "repo_path": "camus/postprocess.py",
+      "lf_sha256": "b6350e1e36bad45f1d107cf54dfe9337446a5f3c0ef7431f527f4ba1cd474844",
+      "bytes": 3515
+    },
+    {
+      "repo_path": "camus/prepare_validation.py",
+      "lf_sha256": "b1c43e0eef9a22978ebe906e7e62fd997e95d9844a436582d2bde5be1a4c21a8",
+      "bytes": 3442
+    },
+    {
+      "repo_path": "camus/preprocess.py",
+      "lf_sha256": "d3e274fb511f737c79476a62a020053ca42563f4a9e373af463b8d201f4a1e1f",
+      "bytes": 15766
+    },
+    {
+      "repo_path": "camus/reference.py",
+      "lf_sha256": "68198b5ce38a7e82c5a31940ff4e9f1b1d2815611af3627bd9f7e5515bad1523",
+      "bytes": 3871
+    },
+    {
+      "repo_path": "camus/result.py",
+      "lf_sha256": "7a752d5c870f51b874867ab98066c9b59d35d773a89f51ce56a07f3c31610d49",
+      "bytes": 6036
+    },
+    {
+      "repo_path": "camus/tunnel.py",
+      "lf_sha256": "228cc1ab8215421ac11dce706756f8203bdb32db4b83654d61b9d8ca39314f59",
+      "bytes": 1950
+    },
+    {
+      "repo_path": "camus/verify.py",
+      "lf_sha256": "1a58012d9dc31ba0a6d31ddb35e39c252960c1f49020a6a05ef16871434054a9",
+      "bytes": 7143
+    },
+    {
+      "repo_path": "camus/web.py",
+      "lf_sha256": "d0715f6968ffacfc81eae7e0fc62f80de10ac2e218c43d44c91ea2464ddcd2b4",
+      "bytes": 13301
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/surface_hdmi.py",
+      "lf_sha256": "b6e083b841442b29c1ab9325d511103c15dbb65dcfd444dfaae281643ea5da37",
+      "bytes": 4068
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/skin8_runtime/frame_driver.py",
+      "lf_sha256": "92f79fb6deedddb9ba4f51d827740bd30808588a8bb96a5d607c0799b74c8cf0",
+      "bytes": 4703
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/skin8_runtime/verify_board.py",
+      "lf_sha256": "21bce47f6bcd43f4ae565432468209a496aa764c646bb0097bb41590fbf3328b",
+      "bytes": 4694
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/ALIGNMENT.json",
+      "lf_sha256": "bb47a6a92cb86df5e08fed4ea6cd1ebfa1ec85d9294b56379b9b347c56d5a063",
+      "bytes": 2615
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/README.md",
+      "lf_sha256": "7bf6800676a43b3fde519318845111ab7acea0b5a48603d22d47a5254a1cb552",
+      "bytes": 6578
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/SOURCE_MAP.json",
+      "lf_sha256": "8c4b8a9abd99299e96285c658e9c63ea0fd347b1a6b45f15a6b541becc7c3c73",
+      "bytes": 96668
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/evaluation_frozen/camus/hdmi.py",
+      "lf_sha256": "9da3a28d3c687002232ceb6aa0a4cade316369ebf20d19ecea7647d5c710d84e",
+      "bytes": 2157
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/evaluation_frozen/camus/web.py",
+      "lf_sha256": "e64c10daf7e3ca3f91bae2c5788151a78e50b57e2bb1f763b02430cc53e58adb",
+      "bytes": 12009
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/evaluation_frozen/run_eval.py",
+      "lf_sha256": "850a61b7026f3782f404da8b24cba236b560f190f54cc993b192b063623efd0b",
+      "bytes": 67
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/installed_tools/install_interactive.py",
+      "lf_sha256": "c7b7c7299bc7213fdb33a234c4d8c9b120ac764cb18593d334b18d228f716d1d",
+      "bytes": 5551
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-acdc-v2-engine.service",
+      "lf_sha256": "ddb6b42dcb63ef87fc2fcbd03a128ff432fae0a1241a43e41c32d4e05c6ccb2d",
+      "bytes": 982
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-acdc-v2-engine.service.d/96-entry-hdmi-shutdown.conf",
+      "lf_sha256": "2b0e7cdbad95417126f1161524e23a8c4faa153ca095b457cec58eb46194c361",
+      "bytes": 70
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-acdc-v2-engine.service.d/98-latency-opt.conf",
+      "lf_sha256": "7f1b3c89f5a06f3a674bba34ff0ce59f659514db816664e4792ed5f0bb5ef28b",
+      "bytes": 724
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-acdc-v2-web.service",
+      "lf_sha256": "240e3d149eb60487bfd0745b188b0bd0a2656eb8993490f91b38fc59fe039952",
+      "bytes": 821
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-acdc-v2-web.service.d/98-latency-opt.conf",
+      "lf_sha256": "89496701e7341385b468e2d53a8f0115967de56098b26d7305e226b12156928e",
+      "bytes": 572
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-camus.service",
+      "lf_sha256": "82c3f3f38be914fb414070096c93b661444141895513c87210184af9dc4a7e02",
+      "bytes": 933
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-camus.service.d/90-hdmi-touch.conf",
+      "lf_sha256": "a148c8c1825015fce453c65d1345a3083f70b32dae9a797bf6b2928333b97a3d",
+      "bytes": 269
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-camus.service.d/90-skin8.conf",
+      "lf_sha256": "fde23ea82ea722b2208fb6e6a4bd23fd7551dd665ea65950c694068c889426bb",
+      "bytes": 169
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-camus.service.d/95-camus-dependencies.conf",
+      "lf_sha256": "39b738e5ee6f60c339cc007c0c12a282b61194ba21828a865d59938e63b80541",
+      "bytes": 242
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-camus.service.d/98-latency-opt.conf",
+      "lf_sha256": "eaf8e9bebe72c6058d7c93edbe24827295ee11c528ed62983ca1a54e78c69e02",
+      "bytes": 153
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-entry.service",
+      "lf_sha256": "6b80da42df439831ec27e8d2e4bc86f79203aeb7014cd46bcc453a264c187978",
+      "bytes": 432
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-entry.service.d/96-display-repair.conf",
+      "lf_sha256": "e27170eb98255cabd06f38a33e3a08918e16891a769cadc12bfa0ac2caadc63e",
+      "bytes": 262
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-entry.service.d/98-latency-opt.conf",
+      "lf_sha256": "8cc6e64ce396566138552735af669648d6ebceada9ac56b323691dea2ab1149a",
+      "bytes": 256
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-hdmi.service",
+      "lf_sha256": "9d13816e931f2db59d816288f814a4bd4fdd995759385fe9724b2dfbee48107b",
+      "bytes": 675
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-hub.service",
+      "lf_sha256": "568072da0aff4ed167662533595e5da494079cb7d3fa74c43387597e4371fc6b",
+      "bytes": 520
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-web.service",
+      "lf_sha256": "1180289e9bf0a30916eb2de39cfe245c62d241830fe521a44a9517ee1e0b0a7b",
+      "bytes": 759
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-web.service.d/90-hdmi-touch.conf",
+      "lf_sha256": "9d3ff0e847ef873dcf1ee22ca2c29d758d0f27aa7bd20897497503940f765917",
+      "bytes": 268
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-web.service.d/90-skin8.conf",
+      "lf_sha256": "dfdf5aa145c9766d18eb3c4c50dd85d5253c5b317bfcb8bcab9acabc836521e8",
+      "bytes": 168
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-web.service.d/98-latency-opt.conf",
+      "lf_sha256": "eaf8e9bebe72c6058d7c93edbe24827295ee11c528ed62983ca1a54e78c69e02",
+      "bytes": 153
+    },
+    {
+      "repo_path": "deployment/repository_20261026/README.md",
+      "lf_sha256": "2f0a6e69d6b5ba4527a812c95d6b58b52dc9608094ea0c707209279de4c9bdca",
+      "bytes": 1937
+    },
+    {
+      "repo_path": "display_web/README.md",
+      "lf_sha256": "5b401acb77d3c7dcbd11d429671e4eb92d775a9c093409a82b2730c8ab93affd",
+      "bytes": 13343
+    },
+    {
+      "repo_path": "display_web/contour.py",
+      "lf_sha256": "971af0297295d608182143830800ec2602b602d9e45ba9521df3b1ae6a7069cf",
+      "bytes": 6050
+    },
+    {
+      "repo_path": "display_web/display_completion.py",
+      "lf_sha256": "be65c5d613a48beec5f9afde2fbf6bf3422190aa4fd10c79369acf912b4f1916",
+      "bytes": 1310
+    },
+    {
+      "repo_path": "display_web/display_lease.py",
+      "lf_sha256": "2a4aa51950a5bcae3427c100ba28c72140cf54a4cf52b02dfc69d37cae7b170f",
+      "bytes": 1765
+    },
+    {
+      "repo_path": "display_web/entry/display_control.py",
+      "lf_sha256": "852a2d2e4552d185ebeb86632b21a1f4f850018656776703758cd9bb8314fb39",
+      "bytes": 8933
+    },
+    {
+      "repo_path": "display_web/entry/entry.py",
+      "lf_sha256": "c284069b99f79864d321ecf9bd0b6bb5e464b03145fd79f1e66edc77d044ad1a",
+      "bytes": 22264
+    },
+    {
+      "repo_path": "display_web/entry/index.html",
+      "lf_sha256": "3810f0f60d44ad8c19a8517b2cad9ea7734d4d2db4f3e3804d1dfd95feb7d1af",
+      "bytes": 5272
+    },
+    {
+      "repo_path": "display_web/entry/test_entry.py",
+      "lf_sha256": "9ff56c4b5ede3dad03da1e4c8cfd812a2715796440f41ecd02fd5e7d618416cf",
+      "bytes": 12682
+    },
+    {
+      "repo_path": "display_web/hdmi_buttons.py",
+      "lf_sha256": "bcd11308daa08f51cbe97086bc23fab172f91e8913efc793e22842a828c898f9",
+      "bytes": 2908
+    },
+    {
+      "repo_path": "display_web/hdmi_worker.py",
+      "lf_sha256": "642c17b2bd364e3c4ec50f534c049dea53b42544a6b136adb3a446d40c8f95c1",
+      "bytes": 2236
+    },
+    {
+      "repo_path": "display_web/infer_then_display.py",
+      "lf_sha256": "d81610823f104d37fc8638cbd962346a0ccd3c884a502ce127e608370e45f19b",
+      "bytes": 6321
+    },
+    {
+      "repo_path": "display_web/install_autostart.py",
+      "lf_sha256": "f35090b984ec38dc36daea3a7923fd9a9109d563ddc6e170a8c74c354169a9b2",
+      "bytes": 5937
+    },
+    {
+      "repo_path": "display_web/latency.py",
+      "lf_sha256": "22a20902cfd71e986eb46201b9ec4871d5f2b6823abdaf69b88c197c497e7f8b",
+      "bytes": 701
+    },
+    {
+      "repo_path": "display_web/overlay_metadata.py",
+      "lf_sha256": "be4f98aa31ebc402fb3dfd07627ad78533dff8062160a31f590669bac80268f6",
+      "bytes": 5428
+    },
+    {
+      "repo_path": "display_web/persistent_worker.py",
+      "lf_sha256": "c6c7320c27560c9fb5fccecdc9e76e1806f21ee1072236f46c9b1ce302702e83",
+      "bytes": 16671
+    },
+    {
+      "repo_path": "display_web/pld_hdmi.py",
+      "lf_sha256": "d46bb71fec0b7192cfb11e937dc17546e66e58c02dc8444c763cf8824e501466",
+      "bytes": 11482
+    },
+    {
+      "repo_path": "display_web/pld_result.py",
+      "lf_sha256": "a043f0038d1c13ad6450aed32ed5b17ce27091fdf7493904ab98e681c45c508c",
+      "bytes": 10771
+    },
+    {
+      "repo_path": "display_web/quad_display.py",
+      "lf_sha256": "11ed140052ca9171b2aaa601118072cf7ac9ff6b8ad11e4eb578af7567a19eca",
+      "bytes": 2286
+    },
+    {
+      "repo_path": "display_web/server.py",
+      "lf_sha256": "68a432f606b9954ddab357b6885807e416fd87f930b6045d053b21a14e56e304",
+      "bytes": 37758
+    },
+    {
+      "repo_path": "display_web/show_result.py",
+      "lf_sha256": "00246da054a574f9910c64325d95d53dbf1925a854386abbf6fb35427b6e0011",
+      "bytes": 3816
+    },
+    {
+      "repo_path": "display_web/start_board.sh",
+      "lf_sha256": "b5811b59f17488dc2ea959b6b68c31f1664b4c73b8e82bceb33cdf390e792204",
+      "bytes": 238
+    },
+    {
+      "repo_path": "display_web/static/app.js",
+      "lf_sha256": "7dd0192775258ad44e7a150f50a88c1cda85c13ae518447d232909c38dd3ff0b",
+      "bytes": 26948
+    },
+    {
+      "repo_path": "display_web/static/index.html",
+      "lf_sha256": "fa6cbd0c9e413964ff2136b31d0d9fffb5b8705c15289b8f0b11d52816293b56",
+      "bytes": 6424
+    },
+    {
+      "repo_path": "display_web/static/style.css",
+      "lf_sha256": "0b4a3f3849f3ea063d8c5e3568f15ad25f6184250e7597a7885cc170e9950250",
+      "bytes": 8152
+    },
+    {
+      "repo_path": "display_web/tests/test_preview.py",
+      "lf_sha256": "8f0d092ce10293dc72706d9bae5dd60556798e668086b1604e641a9edf8186fa",
+      "bytes": 5156
+    },
+    {
+      "repo_path": "display_web/tests/test_warm_hdmi.py",
+      "lf_sha256": "8886a307da646b2e3a8ec2196d5b2331f98c8ad6bbdcb6a8524d344cb586346a",
+      "bytes": 6009
+    },
+    {
+      "repo_path": "display_web/tests/test_web.py",
+      "lf_sha256": "6d542e7533954ab6340d5856fac14b42682b190388b7c1175f1f018541e9fc66",
+      "bytes": 19285
+    },
+    {
+      "repo_path": "display_web/touch_display.py",
+      "lf_sha256": "0d30284712e4dd049db3485cd4e947718759f4d108e76f1a486471cb087e6432",
+      "bytes": 4623
+    },
+    {
+      "repo_path": "display_web/touch_drag.py",
+      "lf_sha256": "200b8cff258809feb082003ac8de71ca0293790e13c13c10baec8c7a89729119",
+      "bytes": 2174
+    },
+    {
+      "repo_path": "display_web/unified/backend_launcher.py",
+      "lf_sha256": "e5c90bbed1e429d9df613a5fb3a0a6465bfef64e7ae95d065b65e2e642c55f95",
+      "bytes": 3175
+    },
+    {
+      "repo_path": "display_web/unified/camus_input_adapter.py",
+      "lf_sha256": "cdee0dc20ed30643ba883a69b72941f4f7b3c38091c1eae3b46a68642cf5d10b",
+      "bytes": 4642
+    },
+    {
+      "repo_path": "display_web/unified/camus_quad.py",
+      "lf_sha256": "9a82cf1b193b09a7198abfa9d184c9fff482d6074434d039f6e392d4e3bf056d",
+      "bytes": 4051
+    },
+    {
+      "repo_path": "display_web/unified/diagnose.py",
+      "lf_sha256": "836a0588aebbeb9a0b743ead240e16bccff150642cc1e902b86ef0e94803b288",
+      "bytes": 1393
+    },
+    {
+      "repo_path": "display_web/unified/evaluation.html",
+      "lf_sha256": "3b15a7e5de11521ec9095244658121482acfa8fc2f895e53c46b8aaa9ee11f19",
+      "bytes": 8555
+    },
+    {
+      "repo_path": "display_web/unified/evaluation_bridge.py",
+      "lf_sha256": "c2e7381ba0afa67e252df295be1c6089009315ddff2db50a8e6151e022348b4b",
+      "bytes": 9971
+    },
+    {
+      "repo_path": "display_web/unified/hub.py",
+      "lf_sha256": "9210a84460cab19c45e2c5f527c64e4bc4c418350e84529a7bbbd29ff6d66528",
+      "bytes": 19179
+    },
+    {
+      "repo_path": "display_web/unified/index.html",
+      "lf_sha256": "614b19d01df147dfd85fd8b69f28d01f3569f8f95cccd964dbd2b9afa6eff371",
+      "bytes": 6399
+    },
+    {
+      "repo_path": "display_web/unified/install.py",
+      "lf_sha256": "0ceda01711b20f093a62b7d99734fac1c7e1c7e2d4c592edd3462a1b728b8342",
+      "bytes": 10134
+    },
+    {
+      "repo_path": "display_web/unified/install_quad.py",
+      "lf_sha256": "027268b8339925f728a3ceea5bf8c7a3ef3f01c8c1b899a55696cf9632ccb0ca",
+      "bytes": 5332
+    },
+    {
+      "repo_path": "display_web/unified/interactive.html",
+      "lf_sha256": "1e6af724052c93bd1d893ccc284a9d4f5852d1647cc1e0f59f4eec24904d852e",
+      "bytes": 3388
+    },
+    {
+      "repo_path": "display_web/unified/interactive.js",
+      "lf_sha256": "052f437a2d33e3720df8576d13f1d1d7962dfd8aee70eb9cd6c3fb2f6d13dab1",
+      "bytes": 6772
+    },
+    {
+      "repo_path": "display_web/unified/interactive_bridge.py",
+      "lf_sha256": "cf640541ad731af1b153b83021a9851615026a9e6227fc56a47a131ad9a5d5d1",
+      "bytes": 24570
+    },
+    {
+      "repo_path": "display_web/unified/interactive_hdmi.py",
+      "lf_sha256": "e0a6b64671831914e942f9b4126ce7997eef9c8a613775b630c3536a88c6c985",
+      "bytes": 9693
+    },
+    {
+      "repo_path": "display_web/unified/interactive_workspace.py",
+      "lf_sha256": "e1e82bafcb582cc22774dfe5f873d91bbb64db44007100808c73fbd48b35fe03",
+      "bytes": 5590
+    },
+    {
+      "repo_path": "display_web/unified/prompt_seg/__init__.py",
+      "lf_sha256": "89d33d33814dfe68dbd3eb95b97b5e5e2c767e1b1f4c13f4c7a82409ed6b658c",
+      "bytes": 66
+    },
+    {
+      "repo_path": "display_web/unified/prompt_seg/contracts.py",
+      "lf_sha256": "cadfbedfc1c5a1abf4788c24f0c4063ce5d6b7f865ca5bc55f41a2da99fc772d",
+      "bytes": 4893
+    },
+    {
+      "repo_path": "display_web/unified/prompt_seg/refinement.py",
+      "lf_sha256": "28d0f9e4552d84fa96e18f1f85cf32a1c95c3a2b14263cd3cec5b79c2c0f8425",
+      "bytes": 9297
+    },
+    {
+      "repo_path": "display_web/unified/prompt_seg/service.py",
+      "lf_sha256": "ba58151d3f15c28897e6d68ee7f003c16284cc243bca98e03403108235167438",
+      "bytes": 13686
+    },
+    {
+      "repo_path": "display_web/unified/quad_camus.html",
+      "lf_sha256": "ee2e6716043c7456bf4c97fc36b7ec8b3c1dfbed77c76923e36b56e07953863e",
+      "bytes": 9413
+    },
+    {
+      "repo_path": "display_web/unified/quad_camus_hdmi.py",
+      "lf_sha256": "cd16d4e2a42660fec8a802bf349bb68fddfcf83f9cabf6f2afbf6a22cef810c1",
+      "bytes": 3302
+    },
+    {
+      "repo_path": "display_web/unified/quad_display.py",
+      "lf_sha256": "11ed140052ca9171b2aaa601118072cf7ac9ff6b8ad11e4eb578af7567a19eca",
+      "bytes": 2286
+    },
+    {
+      "repo_path": "display_web/video_overlay.py",
+      "lf_sha256": "a497f4f536deec05b538a170d94b605ec2b2df02f29bf9bb2a2df2996ff34c31",
+      "bytes": 1405
+    },
+    {
+      "repo_path": "display_web/warm_hdmi.py",
+      "lf_sha256": "55cf008db7f15a5a8f0cd87e9d799c41bf7cffdc22a8f6f66a11b7065cbbc19a",
+      "bytes": 15918
+    },
+    {
+      "repo_path": "experimental/skin8/tools/board_image.py",
+      "lf_sha256": "741dc35618eb81a844bdf3e5f7859ff6041dc08236f30ef486360587a043db4b",
+      "bytes": 5595
+    },
+    {
+      "repo_path": "experimental/skin8/tools/hdmi_policy.py",
+      "lf_sha256": "73ad36a5c2e09a9ed68866584082258046f90ab47aecd692a3bc30aa439dd371",
+      "bytes": 630
+    },
+    {
+      "repo_path": "experimental/skin8/tools/test_web_lifecycle.py",
+      "lf_sha256": "80c8447927f2372cd1f16874d9db5a6c6e8956180ec8e4886f4ab3625e6e465a",
+      "bytes": 2865
+    },
+    {
+      "repo_path": "experimental/skin8/tools/web_entry.py",
+      "lf_sha256": "5e826319d9a8a2505b19de6ae0a036ca91e859afb8e2aa1217b1836f2fd9d263",
+      "bytes": 12111
+    },
+    {
+      "repo_path": "experimental/skin8/tools/web_lifecycle.py",
+      "lf_sha256": "15118b97fd9a461a1375413e8e189535a4a192a18ff2dc018c29aace0ded8ae7",
+      "bytes": 4648
+    },
+    {
+      "repo_path": "perf_eval/__init__.py",
+      "lf_sha256": "d437401a71a3a8b4a0573500f749c9577a6857f37529e64147db6b28db827840",
+      "bytes": 100
+    },
+    {
+      "repo_path": "perf_eval/__main__.py",
+      "lf_sha256": "981ce15c97df5124d3fb49885b4986c7ba4a73900500fe45f1624bdb977358f0",
+      "bytes": 4236
+    },
+    {
+      "repo_path": "perf_eval/benchmark.py",
+      "lf_sha256": "d54dc3a3da863199b66a793d5d7fd68f7330def8dfdb6aa8b00e3ca0d9a63e3b",
+      "bytes": 8644
+    },
+    {
+      "repo_path": "perf_eval/core.py",
+      "lf_sha256": "ac9e38dd21d7438bc2e265c1715173b89a4a40a4183c90a154d2fa7cf1b32307",
+      "bytes": 4761
+    },
+    {
+      "repo_path": "perf_eval/engines.py",
+      "lf_sha256": "ee37e4c618000a812125c98b39834a96d11d7ecf7fcf3ed692cff79a0a65793d",
+      "bytes": 8082
+    },
+    {
+      "repo_path": "perf_eval/evidence.py",
+      "lf_sha256": "a4accc0fa1c780dda30a631bf30c61504605421c00e117f6010abf00fc973d11",
+      "bytes": 6704
+    },
+    {
+      "repo_path": "perf_eval/metrics.py",
+      "lf_sha256": "bdb72ceefa32c6b17c37dbbe0df830912fb69152b3b7b2f37534e89a5fe60863",
+      "bytes": 2497
+    },
+    {
+      "repo_path": "perf_eval/report.py",
+      "lf_sha256": "73ddb048ee1bd1474f1cb0a0de2467925eee45949c0f6682d29f14196f4ec0ed",
+      "bytes": 10313
+    },
+    {
+      "repo_path": "reference/__init__.py",
+      "lf_sha256": "0b791a0e6a99a330be00a9dda9980f54324910ec6ba8327a49e73ca1e99d43c1",
+      "bytes": 63
+    },
+    {
+      "repo_path": "reference/datasets.py",
+      "lf_sha256": "ad102f9e26fcdfb084c5a530bdda60cb0f84a293a6fbbfe5c7673a5bc951b2e7",
+      "bytes": 2780
+    },
+    {
+      "repo_path": "reference/evaluation.py",
+      "lf_sha256": "af1b4381abf1b55ce3a2222950244b9f5d096922afe6346e879a58b6bad9b047",
+      "bytes": 1558
+    },
+    {
+      "repo_path": "reference/fp32.py",
+      "lf_sha256": "ff37f407dd2010a4701c3002ca7fc2f7f7168fcb3822470e488d92ed21afd989",
+      "bytes": 1296
+    },
+    {
+      "repo_path": "reference/native_resize.py",
+      "lf_sha256": "e5c5b9a7597a3f688c2e8e09d23713f8776cf60b4b3e3d39cc7506ff9655ffad",
+      "bytes": 3609
+    },
+    {
+      "repo_path": "reference/parallel_resize.py",
+      "lf_sha256": "d0d135b7e07824812fd13390861b5ac79e1c3441c60268ca796f839730328697",
+      "bytes": 1490
+    },
+    {
+      "repo_path": "reference/pillow_resize.py",
+      "lf_sha256": "bc54a87343ec5aa893db04bfafa670dd7dd40d5fb6d407db178c07cc708c77ca",
+      "bytes": 2842
+    },
+    {
+      "repo_path": "reference/preprocess.py",
+      "lf_sha256": "45ab2b338fdd4c2582d4f721d4a1284233606227070d9be476d132e412e7caa3",
+      "bytes": 3388
+    },
+    {
+      "repo_path": "reference/tiling.py",
+      "lf_sha256": "08b51d8e49f4e90a7ce242fedbada86b1759485fe5aaa548a59c871684cbf477",
+      "bytes": 5226
+    },
+    {
+      "repo_path": "reference/tinyunet.py",
+      "lf_sha256": "8dcc7ad421c477a6cc3eebd2ea488bc9abef7c766692ca0e20728bf00843907f",
+      "bytes": 12173
+    },
+    {
+      "repo_path": "scripts/verify_native_control.py",
+      "lf_sha256": "107d0c17a8816c5176d1449f965d4f8b7a3ad42b84abebdbff53bdaac4694d8d",
+      "bytes": 8231
+    },
+    {
+      "repo_path": "wechat_miniprogram/.gitignore",
+      "lf_sha256": "86f081091008d98bec0de79aba45d624d133965b372f49c5d1a32b0dce6e34ce",
+      "bytes": 238
+    },
+    {
+      "repo_path": "wechat_miniprogram/README.md",
+      "lf_sha256": "23c9777e15e1c84587eb41b6f9d96020b709af1d7514573b5a2c3bf7ceabf077",
+      "bytes": 4269
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/board_client.py",
+      "lf_sha256": "aa44052f9d901ff9f7b1ea98323080be1363bae4735eb96b94ff712f756434d7",
+      "bytes": 19995
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/bridge.py",
+      "lf_sha256": "e762acef20cf9f20b8fec4301a2c07814159cf88ba2522cda7050a138cb4bc79",
+      "bytes": 37152
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/config.example.json",
+      "lf_sha256": "5ccb73aca82630e0c80fbca2da89eccf86b3c71e4fe986d3c5b58f9efee6c057",
+      "bytes": 527
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/preprocess.py",
+      "lf_sha256": "81b38afff969efbe64e405984219c87657068e0195e46bfd6e59f7b6734d2f8f",
+      "bytes": 1957
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/run_bridge.cmd",
+      "lf_sha256": "0a845edcd531dd3d98bc3819c81f032a96cdff6176c9388a206656771969abef",
+      "bytes": 317
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/start_bridge.cmd",
+      "lf_sha256": "e57e2a41f14cc9e3a44d949b77e1f8413900666a6c9d9169a458c2f545624318",
+      "bytes": 427
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/start_detached.cmd",
+      "lf_sha256": "e1691f29369d1e8986ae08d0726f6df9a3bdb1741f10943f965d969cc1271f49",
+      "bytes": 488
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tests/__init__.py",
+      "lf_sha256": "475e6a61a1cd90ddcc3b3c924cfe005e0d81d802cb27a1466da12f20cd74a619",
+      "bytes": 17
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tests/mocks.py",
+      "lf_sha256": "4392bd89a50c721db67c71c86f239d17f488ac7a6c43b2a93eced21cc94b6018",
+      "bytes": 28859
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tests/test_board_client.py",
+      "lf_sha256": "49a6b6294ba0defd1ca07edda2557f1a086032563e535d399d513273887ff0b1",
+      "bytes": 6840
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tests/test_bridge_flows.py",
+      "lf_sha256": "b06bf24a2a0a7c1398cf901815f362c9908dc321a395573d768a12c62087dfdf",
+      "bytes": 11386
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tests/test_nifti.py",
+      "lf_sha256": "c675edb8e259381b56a4b0b6e5a1cf22ea6e974ccd11382343702b81e4be589d",
+      "bytes": 2676
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tests/test_regressions.py",
+      "lf_sha256": "a75f1b2633db21ee78cf7153febec91b876a0ebb76c2cd9eb56e4f99270f9c95",
+      "bytes": 11611
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tests/test_wechat_api.py",
+      "lf_sha256": "4f9ede785bae24c4a6b2f8a851ca3d9c381fd9fa943ac97ff2947dac32516d14",
+      "bytes": 3244
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tools/board_probe.py",
+      "lf_sha256": "88771530dbceb61637317a698557fc7e414ab4d225c070d96f847d350988ade0",
+      "bytes": 12491
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tools/nifti.py",
+      "lf_sha256": "ef663868070780983c9e154f8a7a2d0237c0f7a84a0e974c0edf1612474360af",
+      "bytes": 3820
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tools/upload_demo_data.py",
+      "lf_sha256": "7f0af233a1eb6d9cbfd8b42af8a0e7020dbb3f0094c673940bb2473e5153214e",
+      "bytes": 3729
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/wechat_api.py",
+      "lf_sha256": "abe3d8c78a7dad0b5b7203d90be1ae10177bdb3cda735d99865570423034f724",
+      "bytes": 13886
+    },
+    {
+      "repo_path": "wechat_miniprogram/docs/DEPLOY.md",
+      "lf_sha256": "46b3cbe6aa5b40696de5f93f695dad0299fbbcaf116e50b2fa1aeae9cac13e40",
+      "bytes": 11490
+    },
+    {
+      "repo_path": "wechat_miniprogram/docs/RELEASE.md",
+      "lf_sha256": "cb817533c5ba90b76dbd510eb2f775d3b5ada9a1cea85ab3bed1537abd0b9bf5",
+      "bytes": 2215
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/app.js",
+      "lf_sha256": "0e14b915d89373a45751e3142d8647cc4039c436f2d2248d76df2acc0f4db9bb",
+      "bytes": 1422
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/app.json",
+      "lf_sha256": "6568750fe6a0179142cbca9fb8e3c459a9d9ca2e5e972df1d4dac2c64109eeb2",
+      "bytes": 806
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/app.wxss",
+      "lf_sha256": "d4a998437cb2767ddca3842eb57db6a34c6fb0373e7dce318dfffa59f9d13f15",
+      "bytes": 1817
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/components/privacy-guard/privacy-guard.js",
+      "lf_sha256": "fe9fdeea798c5cea62a8a5876f85ae64b2b0a4887f51cf9551d2a2f30e08f41f",
+      "bytes": 520
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/components/privacy-guard/privacy-guard.json",
+      "lf_sha256": "035503c1a56d8b4b9227ce8bb9145fbd1ef8ec7dce59e55f9d5d55fb5eb7d566",
+      "bytes": 49
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/components/privacy-guard/privacy-guard.wxml",
+      "lf_sha256": "f3db115b5f99d994cd49cd5d49eab13c8ef73f056cc22e8b2d904ad459f9fddd",
+      "bytes": 761
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/components/privacy-guard/privacy-guard.wxss",
+      "lf_sha256": "e155c918716ad7ef7ffbadbd8ac2c8334baa7320b4cd1a103121aecff2ade17d",
+      "bytes": 615
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/acdc/acdc.js",
+      "lf_sha256": "3b44a4ac86f87d46c3536c4302ec1bd1f7652b2310729d03286a09d4acc53d38",
+      "bytes": 3225
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/acdc/acdc.json",
+      "lf_sha256": "2da62164779059e8265891c30664106363b22b4eea872e155cd13536f7ea6b52",
+      "bytes": 135
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/acdc/acdc.wxml",
+      "lf_sha256": "d008b305938be151e7de8b1f601937bc15ede5f61962480fd28513c6f95ba5e8",
+      "bytes": 1961
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/acdc/acdc.wxss",
+      "lf_sha256": "f46edbd498649f0a099fc0cb8f07f46281dfb26312fea4018d24f0ea17a146d7",
+      "bytes": 366
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/camus/camus.js",
+      "lf_sha256": "eccdde159509fbe7f3e82cea3e9d8c347691c30033eb16a3d7d76db3258d2918",
+      "bytes": 2995
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/camus/camus.json",
+      "lf_sha256": "13a5b5fcb525cc2b775df3ef0a109ce2daff870ec7fc86424fa8ec9bd5a66e7d",
+      "bytes": 138
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/camus/camus.wxml",
+      "lf_sha256": "5964ac84dcbed90d91f51f9abf32ac212c8864a0cc239343e20e7a8690d7f8a7",
+      "bytes": 2511
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/camus/camus.wxss",
+      "lf_sha256": "a155999f2df85247150dff145b2796fe22c0bc51c71144a0efebf814cb2f3519",
+      "bytes": 606
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/home/home.js",
+      "lf_sha256": "fb7abee81a2188ee3abd12930f02396fac8aaae8abf68094c6e31695747c2396",
+      "bytes": 4810
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/home/home.json",
+      "lf_sha256": "35369c849e8129a0ed4684564b16c2934806a867fe884b2a1729e21ee4ad282f",
+      "bytes": 136
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/home/home.wxml",
+      "lf_sha256": "d7ed066a179c5562643d9b3e56f45fb20c98cec4ab182758e1c602b06c6554e8",
+      "bytes": 2299
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/home/home.wxss",
+      "lf_sha256": "f99fe87c0d117082af4ee5249766a2e9d5a4bf6b30d4188a6d733a42f948c475",
+      "bytes": 204
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/skin/skin.js",
+      "lf_sha256": "8987014ca567c600923bf769c28a52529e4be8970c70ced9ff8ce9aadfa8083d",
+      "bytes": 1528
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/skin/skin.json",
+      "lf_sha256": "90b5195afee65546a327e1adff2024bf8e1222d025ddb17ddeed3b6d8b7e599a",
+      "bytes": 135
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/skin/skin.wxml",
+      "lf_sha256": "967724c377b24eebcea6c20c26184abc8c5e7ddae840e0b21860e3711124bf4d",
+      "bytes": 1140
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/skin/skin.wxss",
+      "lf_sha256": "6f4f4f4dbb82219e5fa6d35289fa4474fc7b7cff0639cb6c5f50a5a6efe465f7",
+      "bytes": 207
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/task/task.js",
+      "lf_sha256": "6be8508db1d1198a28305223245abcfcaa237837ec6f625e0ae13c4238f0d821",
+      "bytes": 5585
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/task/task.json",
+      "lf_sha256": "099dc6f9df79e2239d61ad76beb683ea2154b3d29c4a3c1d1be29b70a019eb5b",
+      "bytes": 132
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/task/task.wxml",
+      "lf_sha256": "6f327eaca4605e0d52cc8ab2241df1b3e1fe5f0b7096d2451342fc13fe89a780",
+      "bytes": 3908
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/task/task.wxss",
+      "lf_sha256": "1e20d35afe3810b2d027edbfccb5c9e993252a8bf0dd7851fcccb016c00d6368",
+      "bytes": 587
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/tasks/tasks.js",
+      "lf_sha256": "35b4f0c0ca1963ecbea6d94cb33c9163b2532db5794e25d812b2acac0794d121",
+      "bytes": 2298
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/tasks/tasks.json",
+      "lf_sha256": "7b7ddebed1166769c42b198d8af8ef1fccd85c02b2c4423ebe027a6f30031b87",
+      "bytes": 132
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/tasks/tasks.wxml",
+      "lf_sha256": "8fa8dbf7467a621923108fd0488bda4792649806c0ea5d0d29a15754fc1b1aa0",
+      "bytes": 781
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/tasks/tasks.wxss",
+      "lf_sha256": "4d693dcab7651da0605f31ffb2a9b84b768b77c273d74c098c97de92d436e166",
+      "bytes": 89
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/sitemap.json",
+      "lf_sha256": "9b6f9ce8a1cd47042022491f1a8cd55862a73466f3615a52014b4d350859fbd1",
+      "bytes": 195
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/utils/api.js",
+      "lf_sha256": "44e99f22cfdd1e393a132a9d92ddf63f55b6a06f29efad07e3e7c368672e1cb3",
+      "bytes": 4948
+    },
+    {
+      "repo_path": "wechat_miniprogram/project.config.json",
+      "lf_sha256": "d8367dfad39ebf15f99cb95ab8889a22dae0ad88a086fe79f1b774115e5e23c6",
+      "bytes": 1749
+    },
+    {
+      "repo_path": "wechat_miniprogram/tools/check_miniprogram.py",
+      "lf_sha256": "bae88ed6a54ba0ddc60a3af75ec4adb4a45ae7d3b43985eb5ffd8e7e617dcdf3",
+      "bytes": 4954
+    },
+    {
+      "repo_path": "wechat_miniprogram/tools/test_api_js.cjs",
+      "lf_sha256": "2437275c97d6e2ce51049f267f548b10eef4b811e192fdf18aac08c69b7fb6a2",
+      "bytes": 1791
+    },
+    {
+      "repo_path": "wechat_miniprogram/tools/test_regressions.cjs",
+      "lf_sha256": "d36659b5659b5249cfc83be05a98e963bfedd924e93f2e9376192e25c6bf4cdb",
+      "bytes": 4541
+    }
+  ]
+}

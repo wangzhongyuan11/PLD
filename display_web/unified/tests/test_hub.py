@@ -73,7 +73,22 @@ class SwitchTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):self.c.proxy(model,epoch,'POST','/api/jobs',b'{}','application/json')
     def test_unexpected_second_owner_blocks_requests(self):
         self.switch('skin');self.board.states['camus']='active'
-        with self.assertRaises(RuntimeError):self.c.proxy('skin',self.c.generation,'GET','/api/status',None,'application/json')
+        with self.assertRaises(RuntimeError):self.c.proxy('skin',self.c.generation,'POST','/api/hdmi',b'{}','application/json')
+
+    def test_result_reads_do_not_query_other_hardware_owner(self):
+        self.switch('skin')
+        self.board.props=Mock(side_effect=AssertionError('service query for a result read'))
+        self.board.status=Mock(side_effect=AssertionError('owner query for a result read'))
+        self.c.proxy('skin',self.c.generation,'GET','/files/result/mask.png',None,'application/json')
+        with self.assertRaises(RuntimeError):
+            self.c.proxy('skin',self.c.generation-1,'GET','/api/status',None,'application/json')
+    def test_upload_also_requires_other_hardware_owner_release(self):
+        self.switch('skin');self.board.states['camus']='active'
+        with self.assertRaises(RuntimeError):
+            self.c.proxy('skin',self.c.generation,'POST','/api/jobs',b'{}','application/json')
+        self.assertFalse(self.c.proxy_busy)
+        self.board.status=Mock(return_value=dict(suspended=True,hardware_released=True,hdmi='off'))
+        self.assertEqual(self.c.proxy('skin',self.c.generation,'POST','/api/jobs',b'{}','application/json')[0],200)
     def test_close_releases_both(self):
         self.switch('skin');self.c.close();self.assertTrue(all(v=='inactive' for v in self.board.states.values()))
         with self.assertRaises(RuntimeError):self.c.switch('camus')
@@ -176,6 +191,9 @@ class HttpTests(unittest.TestCase):
         self.assertEqual(self.request('/skin/g/0/api/jobs',{},True)[0],409)
         self.assertEqual(self.request('/camus/g/1/api/jobs',{},True)[0],409)
         self.assertEqual(self.request('/skin/g/1/api/status',cookie=True)[0],200)
+    def test_preview_wait_query_reaches_backend(self):
+        self.assertEqual(self.request('/skin/g/1/api/jobs/result?wait=preview',cookie=True)[0],200)
+        self.assertIn(('request','skin','GET','/api/jobs/result?wait=preview'),self.c.board.events)
     def test_public_shell_has_switch_buttons(self):
         code,_,raw=self.request('/');self.assertEqual(code,200)
         self.assertIn(b'id="camus"',raw);self.assertIn(b'id="skin"',raw)

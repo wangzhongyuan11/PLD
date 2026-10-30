@@ -26,6 +26,10 @@ class Volume:
     @property
     def geometry_sha(self):return digest(self.geometry)
 
+    @property
+    def working_shape(self):
+        return self.working.shape if self.working is not None else tuple(self.geometry['working_shape'])
+
 
 def load_volume(path,kernel,*,policy='strict',binding=None):
     import nibabel as nib

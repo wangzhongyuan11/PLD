@@ -1,0 +1,4 @@
+{
+  "navigationBarTitleText": "皮肤镜分割",
+  "usingComponents": { "privacy-guard": "/components/privacy-guard/privacy-guard" }
+}

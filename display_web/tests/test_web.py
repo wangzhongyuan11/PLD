@@ -54,7 +54,7 @@ class WebTests(unittest.TestCase):
         j=self.wait(self.app.submit({'mode':'mask','image':encoded(rgb),'mask':encoded(mask)})['id'])
         self.assertEqual(j['state'],'done')
         stats=j['statistics']; t=stats['final_stage_seconds']
-        self.assertGreaterEqual(t['png_batch_wall'],max(t['png_save'].values()))
+        self.assertGreaterEqual(t['png_batch_wall'],t['png_save']['comparison'])
         self.assertGreaterEqual(t['job_total'],t['png_batch_wall'])
         self.assertGreaterEqual(t['request_to_job_complete'],t['job_total'])
         self.assertEqual(stats['output_png_workers'],2)
@@ -296,19 +296,23 @@ class WebTests(unittest.TestCase):
         mask = np.zeros((48, 64), np.uint8); mask[10:40, 12:52] = 255
         image_payload = encoded(rgb); mask_payload = encoded(mask)
         saves = []
-        # Full-size exports run in the bounded pool and every one must rendezvous
-        # with a second saver; serial saving breaks the barrier after its bounded
-        # timeout instead of hanging. Preview thumbnails stay serial by contract.
+        # The two early views must overlap; every full view is encoded only once
+        # across the early, remaining and comparison batches.
         barrier = threading.Barrier(PNG_SAVE_WORKERS, timeout=3)
+        lock = threading.Lock(); active = 0; peak = 0
         original_save = server.save_lossless_png
 
         def coordinated_save(array, path):
+            nonlocal active, peak
             name = Path(path).name
-            if name.startswith("preview_"):
+            with lock:
+                active += 1; peak = max(peak, active)
+                saves.append((threading.get_ident(), name))
+            try:
+                if name in ('original.png','outlined.png'):barrier.wait()
                 return original_save(array, path)
-            saves.append((threading.get_ident(), name))
-            barrier.wait()
-            return original_save(array, path)
+            finally:
+                with lock: active -= 1
 
         with patch("server.save_lossless_png", side_effect=coordinated_save):
             j = self.wait(self.app.submit({"mode":"mask","image":image_payload,
@@ -319,7 +323,7 @@ class WebTests(unittest.TestCase):
         self.assertEqual(sorted(names),sorted(name+".png" for name in VIEWS))
         self.assertEqual(len(names),len(set(names)))
         thread_ids = {thread_id for thread_id, _ in saves}
-        self.assertEqual(len(thread_ids),PNG_SAVE_WORKERS)
+        self.assertEqual(peak,PNG_SAVE_WORKERS)
         self.assertNotIn(threading.get_ident(),thread_ids)
         folder = Path(self.temp.name)/j["id"]
         np.testing.assert_array_equal(np.asarray(Image.open(folder/"original.png")),rgb)

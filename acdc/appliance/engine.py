@@ -30,7 +30,8 @@ class JobManager:
     def __init__(self,pipeline,root,*,initialization=None,backend_factory=None,display_agent=None,backend_check=None,resident_handoff=False):
         self.pipeline=pipeline;self.root=Path(root).resolve();self.root.mkdir(parents=True,exist_ok=True)
         (self.root/'inputs').mkdir(exist_ok=True);(self.root/'jobs').mkdir(exist_ok=True)
-        self.lock=threading.Lock();self.active=None;self.states=OrderedDict();self.thread=None
+        self.lock=threading.RLock();self.active=None;self.states=OrderedDict();self.thread=None
+        self.changed=threading.Condition(self.lock);self.versions={}
         self.initialization=initialization or {}
         self.backend_factory=backend_factory;self.hdmi=None;self.hdmi_thread=None
         self.hdmi_state='off';self.hdmi_error='';self.released=False
@@ -53,7 +54,7 @@ class JobManager:
             self.hdmi_state='error';self.hdmi_error='HDMI child exited; stop HDMI to restore inference'
         ready=not fault and not self.suspended and self.hdmi_state not in ('starting','restoring','error')
         return dict(status='fault' if fault else 'paused' if self.suspended else 'busy' if active else 'ready',ready=ready,active_job=active,backend=backend.kind,
-            lifecycle='pause-resume-v1',suspended=self.suspended,hardware_released=self.released,
+            lifecycle='pause-resume-v1',task_auto_display=True,suspended=self.suspended,hardware_released=self.released,
             recovery_selftest=self.recovery_selftest,
             owner_pid=os.getpid(),resident_handoff='resident-hub-v1' if self.resident_handoff else None,
             hdmi=self.hdmi_state,hdmi_error=self.hdmi_error,
@@ -83,10 +84,11 @@ class JobManager:
                 self.active=None;self.states[job]=dict(run_id=job,status='upload_failed')
         return dict(released=True)
 
-    def start(self,job,token,suffixes,upload_seconds):
+    def start(self,job,token,suffixes,upload_seconds,auto_display=True):
         checked_job(job)
-        if (not isinstance(suffixes,list) or len(suffixes)!=2 or any(s not in ('.nii','.nii.gz') for s in suffixes)
-                or not isinstance(upload_seconds,(int,float)) or not 0<=upload_seconds<=90):
+        if (not isinstance(suffixes,list) or len(suffixes)!=2 or any(s not in ('.nii','.nii.gz','.plda') for s in suffixes)
+                or not isinstance(upload_seconds,(int,float)) or not 0<=upload_seconds<=90
+                or type(auto_display) is not bool):
             raise ContractError('invalid upload metadata')
         files=[self.root/'inputs'/job/(phase+suffix) for phase,suffix in zip(('ED','ES'),suffixes)]
         if not all(p.is_file() and not p.is_symlink() for p in files):raise ContractError('missing uploaded pair')
@@ -98,9 +100,11 @@ class JobManager:
             self.active['stage']='computing';cancel=self.active['cancel']
             self.states[job]=dict(run_id=job,status='queued')
         def progress(state):
-            with self.lock:self.states[job]=dict(state)
+            with self.changed:
+                self.states[job]=dict(state);self.versions[job]=self.versions.get(job,0)+1
+                self.changed.notify_all()
         def run():
-            completion=Completion('acdc',job,identity=self.pipeline.backend.model_sha+':'+str(self.pipeline.backend.runtime_sha))
+            completion=Completion('acdc',job,identity=self.pipeline.backend.model_sha+':'+str(self.pipeline.backend.runtime_sha)) if auto_display else None
             try:
                 self.restore_inference()
                 self.pipeline.run(*files,self.root/'jobs'/job,cancel=cancel,progress=progress,upload_seconds=upload_seconds)
@@ -109,8 +113,9 @@ class JobManager:
                     if self.states[job].get('status') not in ('failed','cancelled'):
                         self.states[job]=dict(run_id=job,status='failed',error=f'{type(exc).__name__}: {exc}')
             finally:
-                with self.lock:self.active=None
-                completion.finish(self.status(job).get('status')=='assets_ready')
+                with self.changed:
+                    self.active=None;self.changed.notify_all()
+                if completion:completion.finish(self.status(job).get('status')=='assets_ready')
         self.thread=threading.Thread(target=run,name='acdc-v2-job',daemon=False);self.thread.start()
         return dict(run_id=job,status='queued')
 
@@ -118,12 +123,23 @@ class JobManager:
         checked_job(job)
         with self.lock:
             self._expire()
-            if job in self.states:return dict(self.states[job])
+            if job in self.states:
+                state=dict(self.states[job],version=self.versions.get(job,0))
+                preview=self.root/'jobs'/job/'preview.json'
+                if preview.is_file():state.update(preview_ready=True)
+                if preview.with_name('quick_preview.json').is_file():state.update(quick_preview_ready=True)
+                return state
         path=self.root/'jobs'/job/'status.json'
         state=json.loads(path.read_text('utf-8'))
         if state['status'] not in ('assets_ready','failed','cancelled'):
             return dict(run_id=job,status='interrupted',error='engine restarted before completion')
         return state
+
+    def wait_status(self,job,version):
+        with self.changed:
+            self.changed.wait_for(lambda:self.versions.get(job,0)!=version or
+                self.states.get(job,{}).get('status') in ('assets_ready','failed','cancelled'),timeout=1.)
+            return self.status(job)
 
     def cancel(self,job):
         checked_job(job)
@@ -137,8 +153,9 @@ class JobManager:
         if op=='health':return self.health()
         if op=='reserve':return self.reserve(job)
         if op=='release':return self.release(job,message.get('reservation'))
-        if op=='start':return self.start(job,message.get('reservation'),message.get('suffixes'),message.get('upload_seconds'))
+        if op=='start':return self.start(job,message.get('reservation'),message.get('suffixes'),message.get('upload_seconds'),message.get('auto_display',True))
         if op=='status':return self.status(job)
+        if op=='wait_status':return self.wait_status(job,message.get('version',-1))
         if op=='cancel':return self.cancel(job)
         if op=='hdmi':return self.show_hdmi(job,message.get('action','show'))
         if op=='lifecycle':return self.lifecycle(message.get('action'))

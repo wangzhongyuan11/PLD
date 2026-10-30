@@ -1,0 +1,16 @@
+<view wx:if="{{need}}" class="privacy-mask">
+  <view class="privacy-panel">
+    <view class="privacy-title">用户隐私保护提示</view>
+    <view class="privacy-body">
+      本演示需要选择照片/文件，并可由你主动保存结果到相册。
+      提交的图片会通过微信云存储传至桥接电脑和板卡，用于图像分割教学演示；结果会回传云存储供查看。
+    </view>
+    <button class="plain-btn" bindtap="openContract">查看隐私保护指引</button>
+    <view class="privacy-actions">
+      <button class="plain-btn privacy-btn" bindtap="onRefuse">拒绝</button>
+      <button class="primary-btn privacy-btn" id="agree-btn"
+              open-type="agreePrivacyAuthorization"
+              bindagreeprivacyauthorization="onAgree">同意并继续</button>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,12 @@
+{
+  "script": "experimental/perf10/test_fast.py",
+  "exit": 0,
+  "checks": [
+    "skin 15 layers independent reference",
+    "camus 15 layers independent reference",
+    "227 packet and fault checks",
+    "K1/K3 tail padding and fault checks",
+    "corrupt transport poisons session"
+  ],
+  "note": "Initial unittest-module invocation failed due to script-local imports; documented direct script invocation passed."
+}

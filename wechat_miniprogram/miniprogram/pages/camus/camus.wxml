@@ -1,0 +1,58 @@
+<view class="page">
+  <view class="card">
+    <view class="card-title">上传输入</view>
+    <view class="tabs">
+      <button class="plain-btn tab {{mode === 'image' ? 'tab-on' : ''}}"
+              data-mode="image" bindtap="setMode">超声图片</button>
+      <button class="plain-btn tab {{mode === 'file' ? 'tab-on' : ''}}"
+              data-mode="file" bindtap="setMode">专业文件</button>
+    </view>
+
+    <block wx:if="{{mode === 'image'}}">
+      <view class="hint">从相册选择 PNG/JPG 超声图像。</view>
+      <view wx:if="{{image}}" class="picked">
+        <image class="picked-img" src="{{image.path}}" mode="aspectFit" bindtap="chooseImage" />
+        <view class="row">
+          <text class="muted">{{image.name}}</text>
+          <button class="danger-btn small" bindtap="clearImage">移除</button>
+        </view>
+      </view>
+      <button wx:else class="plain-btn" bindtap="chooseImage">选择图片</button>
+    </block>
+
+    <block wx:else>
+      <view class="hint">
+        从微信聊天记录选择 NPZ / NPY / NIfTI / MHD 文件（最多 4 个，第一个为主输入；MHD 需同时选配套 RAW）。
+      </view>
+      <button class="plain-btn" bindtap="chooseFiles">从聊天记录选择文件</button>
+      <view wx:for="{{files}}" wx:key="name" class="file-row">
+        <text class="file-name">{{item.name}}</text>
+        <text class="muted file-size">{{item.size}} B</text>
+        <button class="danger-btn small" data-index="{{index}}"
+                bindtap="removeFile">移除</button>
+      </view>
+    </block>
+  </view>
+
+  <view class="card">
+    <view class="row">
+      <view class="card-title" style="margin:0">指定像素间距</view>
+      <switch checked="{{spacingOn}}" bindchange="toggleSpacing" color="#0f6f5c" />
+    </view>
+    <view wx:if="{{spacingOn}}" class="hint">
+      NPZ 缓存自带间距时无需填写；纯图像可选填（毫米，Y 与 X）。
+    </view>
+    <view wx:if="{{spacingOn}}" class="spacing-row">
+      <input class="input spacing-input" type="digit" placeholder="Y (mm)"
+             value="{{spacingY}}" bindinput="onY" />
+      <input class="input spacing-input" type="digit" placeholder="X (mm)"
+             value="{{spacingX}}" bindinput="onX" />
+    </view>
+  </view>
+
+  <button class="primary-btn"
+          disabled="{{(mode === 'image' ? !image : !files.length) || submitting}}"
+          bindtap="submit">{{submitting ? '提交中…' : '提交分割任务'}}</button>
+
+  <privacy-guard />
+</view>

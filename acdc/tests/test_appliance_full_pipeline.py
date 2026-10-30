@@ -5,6 +5,7 @@ import zipfile
 
 import nibabel as nib
 import numpy as np
+from PIL import Image
 
 from acdc.backend import DemoBackend
 from acdc.appliance.native import load_native
@@ -35,24 +36,45 @@ def test_assets_ready_requires_both_phases_mpr_and_zip(tmp_path):
         p=tmp_path/(phase+'.nii.gz')
         image=nib.Nifti1Image(rng.integers(1,250,(9,11,5)).astype(np.float32),np.diag([2.,2.,2.,1.]))
         image.header.set_xyzt_units('mm');nib.save(image,p);paths.append(p)
-    mesh=MeshFixture();infer=backend.infer
+    mesh=MeshFixture();infer=backend.infer;first={}
     def observed_infer(x,request,cancel):
         if request['phase']=='ES':
             assert mesh.ed_started.wait(5),'ED display was not scheduled before ES inference'
             mesh.es_inference.set()
-        return infer(x,request,cancel)
+        head,meta=infer(x,request,cancel)
+        if request['phase']=='ED' and not first:first.update(x=x.copy(),head=head.copy())
+        return head,meta
     backend.infer=observed_infer
     numerical=NumericalPipeline(backend,kernel,make_exp_table(backend.head_scale),binding={})
     out=tmp_path/'job';events=[]
     def progress(row):
         events.append(row['status'])
+        if row['status']=='quick_preview_ready':
+            quick=json.loads((out/'quick_preview.json').read_text())
+            assert quick['grid']=='model_input' and quick['phase']=='ED'
+            assert (out/'quick_axial.png').read_bytes().startswith(b'\x89PNG')
+            assert not (out/'preview.json').exists()
+            assert not (out/'labels'/'ED.nii.gz').exists()
+            box=json.loads((out/'geometry/ED.json').read_text())['letterbox']
+            y,x=box['top'],box['left'];h,w=box['resized_hw']
+            gray=np.rint((first['x'][0,1,y:y+h,x:x+w].astype(np.float32)+127)*(255/254))
+            labels=first['head'][0,:,y:y+h,x:x+w].argmax(axis=0)
+            # Same red RV / green MYO / blue LV legend as native MPR.
+            expected=np.stack([np.rint(np.where(labels>0,(gray+255*(labels==c))*.5,gray)) for c in (1,2,3)],axis=2).astype(np.uint8)
+            with Image.open(out/'quick_axial.png') as image:np.testing.assert_array_equal(np.array(image)[:,:,:3],expected)
         if row['status']=='assets_ready':
             assert (out/'result.zip').is_file()
             for phase in ('ED','ES'):
                 assert (out/'viewer'/phase/'volume.json').is_file()
                 assert all((out/'mpr'/phase/(plane+'.png')).is_file() for plane in ('axial','coronal','sagittal'))
+        if row['status']=='preview_ready':
+            preview=json.loads((out/'preview.json').read_text())
+            assert preview['phase']=='ED'
+            assert all((out/'mpr/ED'/(plane+'.png')).is_file() for plane in ('axial','coronal','sagittal'))
+            assert not (out/'result.zip').exists()
     result=FullPipeline(numerical,mesh,application_sha='a'*64).run(*paths,out,progress=progress,upload_seconds=.25)
     assert events[-1]=='assets_ready' and result['server_upload_to_assets_seconds']>=.25
+    assert events.index('quick_preview_ready')<events.index('preview_ready')<events.index('assets_ready')
     assert result['browser_interactive_seconds'] is None
     manifest=json.loads((out/'manifest.json').read_text())
     assert manifest['synthetic'] is True and manifest['backend']=='demo'

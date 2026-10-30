@@ -1,0 +1,99 @@
+<view class="page" wx:if="{{task}}">
+  <view class="card">
+    <view class="row">
+      <view class="card-title" style="margin:0">{{typeName}}</view>
+      <text class="tag {{statusCls}}">{{statusText}}</text>
+    </view>
+    <view class="hint" style="margin-top:10rpx">
+      {{task.title || '未命名输入'}} · 提交于 {{time}}
+    </view>
+
+    <block wx:if="{{task.status === 'running'}}">
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{percent}}%"></view>
+      </view>
+      <view class="hint">
+        {{task.progress.stage || '处理中'}}{{task.progress.detail ? ' · ' + task.progress.detail : ''}}
+      </view>
+    </block>
+
+    <block wx:if="{{task.status === 'pending' && boardModel && boardModel !== task.type}}">
+      <view class="wait-box">
+        当前板卡运行的是 {{boardModel}} 模型；该任务将在切换后自动执行。
+      </view>
+      <button class="primary-btn" style="margin-top:16rpx" bindtap="goSwitch">去首页切换模型</button>
+    </block>
+
+    <block wx:if="{{task.status === 'waiting_model'}}">
+      <view class="wait-box">{{task.note || '等待板卡切换到对应模型'}}</view>
+      <button class="primary-btn" style="margin-top:16rpx" bindtap="goSwitch">去首页切换模型</button>
+    </block>
+
+    <block wx:if="{{task.status === 'error'}}">
+      <view class="err-box">{{task.error || '任务失败'}}</view>
+      <button class="primary-btn" style="margin-top:16rpx" bindtap="retry">{{task.board_job ? (task.board_completed ? '重传结果' : '接回原任务') : '重新提交'}}</button>
+      <button wx:if="{{task.board_job}}" class="plain-btn" style="margin-top:16rpx" data-fresh="{{true}}" bindtap="retry">重新运行</button>
+    </block>
+  </view>
+
+  <view wx:if="{{previews.length}}" class="card">
+    <view class="card-title">{{previews[0].label}}</view>
+    <view class="hint">{{task.status === 'error' ? '任务未完成，已生成的预览仍可查看。' : '预览已就绪，高清视图和完整文件继续生成。'}}预览为压缩显示图。</view>
+    <image class="view-img" src="{{previews[0].fileID}}" mode="widthFix"
+           data-fid="{{previews[0].fileID}}" bindtap="previewView" />
+    <button class="plain-btn" data-fid="{{previews[0].fileID}}" disabled="{{!!busy}}" bindtap="saveView">保存预览</button>
+  </view>
+
+  <view wx:if="{{task.params.roi}}" class="card hint">本次为 ROI 裁剪分割，结果视图和面积占比针对选区，不能作为全图面积占比。</view>
+  <block wx:if="{{task.status === 'done' || views.length || files.length || zipFile}}">
+    <view class="card">
+      <view class="card-title">结果指标</view>
+      <view wx:if="{{!metrics.length}}" class="hint">本次任务无摘要指标，详见结果文件。</view>
+      <view wx:for="{{metrics}}" wx:key="label" class="row metric-row">
+        <text class="muted">{{item.label}}</text>
+        <text class="metric-value">{{item.value}}</text>
+      </view>
+    </view>
+
+    <view class="card" wx:if="{{views.length}}">
+      <view class="card-title">结果视图（点击放大）</view>
+      <view wx:for="{{views}}" wx:key="name" class="view-block">
+        <view class="row view-head">
+          <text class="view-label">{{item.label}}</text>
+          <button class="plain-btn small" data-fid="{{item.fileID}}"
+                  disabled="{{!!busy}}"
+                  bindtap="saveView">保存到相册</button>
+        </view>
+        <image class="view-img" src="{{item.fileID}}" mode="widthFix"
+               data-fid="{{item.fileID}}" bindtap="previewView" />
+      </view>
+    </view>
+
+    <view class="card" wx:if="{{files.length || zipFile}}">
+      <view class="card-title">结果文件</view>
+      <view wx:for="{{files}}" wx:key="name" class="row file-line">
+        <text>{{item.label}}</text>
+        <button class="plain-btn small" data-fid="{{item.fileID}}"
+                data-name="{{item.name}}"
+                disabled="{{busy === item.fileID}}"
+                bindtap="shareFile">转发</button>
+      </view>
+      <view wx:if="{{zipFile}}" class="row file-line">
+        <text>完整结果包 ZIP</text>
+        <button class="plain-btn small" data-fid="{{zipFile}}"
+                data-name="results.zip"
+                disabled="{{busy === zipFile}}"
+                bindtap="shareFile">转发</button>
+      </view>
+      <view class="hint" style="margin-top:12rpx">
+        转发可将文件发到微信聊天（文件助手）后在电脑上查看。
+      </view>
+    </view>
+  </block>
+
+  <privacy-guard />
+</view>
+
+<view class="page" wx:else>
+  <view class="card hint">任务加载中…</view>
+</view>

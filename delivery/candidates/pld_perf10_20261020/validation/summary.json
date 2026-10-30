@@ -1,0 +1,66 @@
+{
+  "schema": "pld-perf10-board-handoff-v1",
+  "host_time": "2026-10-20T23:10:50.373805+08:00",
+  "release": "pld_perf10_20261020",
+  "candidate": true,
+  "url": "http://192.168.2.99:8765/",
+  "execution": "100 MHz FPGA convolution, CPU nonconvolution, batch 64",
+  "source_archive": "PLD_Dev_Source_OriginalBytes_20261020.zip",
+  "received_archive_sha256": "fdc2f79110505183003f0b70c0b75e45c186758ac384db82e3935c9dd66cbf3f",
+  "payload_files_verified": 800,
+  "small_board_15_layers_per_model": true,
+  "full_256_independent_reference": {
+    "skin": {
+      "head_equal": true,
+      "differing_values": 0
+    },
+    "camus": {
+      "head_equal": true,
+      "differing_values": 0
+    }
+  },
+  "lan_runs_passed": 6,
+  "preview_median_seconds_two_samples": {
+    "skin": 3.696905400000105,
+    "camus": 7.642892499999903
+  },
+  "timing_scope": "Host monotonic time from Ethernet upload start to four preview PNGs downloaded and decoded; CPU-comparison runs excluded; no browser paint or model loading",
+  "original_rollback": {
+    "phase": "ready",
+    "golden_http": "skin ISIC_0000003.jpg head equality, six PNGs and ZIP checked",
+    "script_exit": 0
+  },
+  "final_service": {
+    "unit": "pld-perf10.service",
+    "active": true,
+    "enabled": true,
+    "status": {
+      "model": "skin",
+      "busy": false,
+      "fault": null,
+      "closed": false
+    },
+    "status_scope": "Observed after acceptance and before the later user-requested safe shutdown"
+  },
+  "formal_pointer": "delivery/current.json unchanged: pld_dual_20261017",
+  "limitations": [
+    "Synthetic input short validation; not dataset accuracy acceptance",
+    "No 1000-frame stability or complete fault-injection rerun",
+    "No physical HDMI acceptance",
+    "No power-cycle/autostart execution test",
+    "8 FPS and 2-second preview target not achieved",
+    "Host Ethernet address 192.168.2.1 was added to Windows ActiveStore; it is not a permanent network profile"
+  ],
+  "post_acceptance_user_shutdown": {
+    "host_time": "2026-10-20T23:17:56.462266+08:00",
+    "services_stopped": true,
+    "dma_lock_released": true,
+    "storage_sync_exit": 0,
+    "poweroff_request_exit": 0,
+    "ports": {
+      "22": "TimeoutError",
+      "8765": "TimeoutError"
+    },
+    "connections_closed": true
+  }
+}

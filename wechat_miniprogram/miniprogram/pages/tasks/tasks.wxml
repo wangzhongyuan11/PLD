@@ -1,0 +1,23 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="card hint">加载中…</view>
+
+  <view wx:if="{{!loading && !rows.length}}" class="card">
+    <view class="hint">
+      还没有任务。回到首页选择一个模型并上传数据开始演示。
+    </view>
+    <button class="primary-btn" style="margin-top:20rpx" bindtap="goHome">去首页</button>
+  </view>
+
+  <view wx:for="{{rows}}" wx:key="_id" class="card task-row"
+        data-id="{{item._id}}" bindtap="openTask">
+    <view class="row">
+      <view class="task-title">{{item.typeName}}</view>
+      <text class="tag {{item.statusCls}}">{{item.statusText}}</text>
+    </view>
+    <view class="hint" style="margin-top:8rpx">
+      {{item.title}} · {{item.time}}
+    </view>
+  </view>
+
+  <privacy-guard />
+</view>

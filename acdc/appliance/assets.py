@@ -36,9 +36,9 @@ def prepare(model,directory,*,selftest_input=None,selftest_head_sha=None):
     return file_sha(directory/'manifest.json')
 
 
-def load(model,directory,expected_sha):
+def load(model,directory,expected_sha,*,verify=True):
     directory=Path(directory)
-    if file_sha(directory/'manifest.json')!=expected_sha:raise ContractError('V2 asset manifest drift')
+    if verify and file_sha(directory/'manifest.json')!=expected_sha:raise ContractError('V2 asset manifest drift')
     record=json.loads((directory/'manifest.json').read_text('utf-8'))
     if (record.get('schema')!='pld-acdc-appliance-assets-v2'
             or record.get('model_sha256')!=model.model_sha256 or record.get('head_scale')!=model.head_scale):
@@ -46,7 +46,7 @@ def load(model,directory,expected_sha):
     if set(record.get('files',{})) not in ({'exp.npy'},{'exp.npy','selftest_input.i8'}):
         raise ContractError('unexpected V2 asset members')
     for name,sha in record['files'].items():
-        if file_sha(directory/name)!=sha:raise ContractError('V2 asset drift: '+name)
+        if verify and file_sha(directory/name)!=sha:raise ContractError('V2 asset drift: '+name)
     table=np.load(directory/'exp.npy',allow_pickle=False)
     if table.dtype!=np.float32 or table.shape!=(255,255) or not table.flags.c_contiguous:
         raise ContractError('invalid V2 exp table representation')

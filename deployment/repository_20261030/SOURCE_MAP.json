@@ -1,0 +1,5287 @@
+{
+  "schema": "pld-repository-source-snapshot-v1",
+  "host_date": "2026-10-30",
+  "scope": "Complete tracked repository source snapshot, with historical delivery records; no board installation assertion.",
+  "base_revision": "24fc765d63a2612ab8c5320c6eead194a5b451ee",
+  "integration_revision_before_snapshot": "dec0b4b11b442b92f28cce305b3fe2355b80815f",
+  "included_pr_heads": {
+    "11": "067f77e2c51ef74ffa667195c1233e259888a5d9",
+    "17": "a72e7e21ae23a03a424ef23d38bfdece7671f1f5",
+    "20": "f13bf12004d10c6613122518c8f55d368b5c7dcb",
+    "22": "612c93eedfbdb706fb25e1f18e018ef82a837b6a",
+    "23": "d5796fd4514d626c79085d035251ec145687edc5"
+  },
+  "animated_guide_head": "539a6ba0af87806263e1a67cfa6f32f0b589581c",
+  "excludes": [
+    "this self-referential source map",
+    "untracked .archify authoring caches",
+    "local DOCX and MP4 presentation assets",
+    "model/bitstream payloads",
+    "runtime datasets and generated results",
+    "private credentials and configuration"
+  ],
+  "files": [
+    {
+      "repo_path": ".gitattributes",
+      "lf_sha256": "47c5877d17e3fa61e29389bc8da9ce838a64af3d3e6d651fc71dca5c9e7424da",
+      "bytes": 1342
+    },
+    {
+      "repo_path": ".gitignore",
+      "lf_sha256": "b9b92a33aa7150e8778742ed4f20d4ee8de1b04a37c5961e25e900da0ce5c2d5",
+      "bytes": 2732
+    },
+    {
+      "repo_path": "ACDC25D_B16_P3_v1_板端预适配规格_20261017.md",
+      "lf_sha256": "6c99ad4ffcaf44c6202a971a03ac2e0acc9ce9b127d0caf1b9c0e67500195bfe",
+      "bytes": 15561
+    },
+    {
+      "repo_path": "AGENTS.md",
+      "lf_sha256": "31ac6df256b0591c7f224ad1cc05d80835a210aa2d94a11c5c8517dd699de639",
+      "bytes": 21687
+    },
+    {
+      "repo_path": "CONTRIBUTING.md",
+      "lf_sha256": "24919aebae8a0fd47cafef22db0294566cf5aa7c61af0f2c68bb215fdfb8579a",
+      "bytes": 3173
+    },
+    {
+      "repo_path": "PRODUCTION_NUMERICS.md",
+      "lf_sha256": "136e9c120a9a19eb34a06ecae34b39924bf737245637bb11cb74c2fb9c08adb3",
+      "bytes": 14887
+    },
+    {
+      "repo_path": "README.md",
+      "lf_sha256": "549367bc3baa0fcc283b2f7a72096482c9901973bb87bc6939af65200c8ed2b1",
+      "bytes": 8217
+    },
+    {
+      "repo_path": "acdc/.gitattributes",
+      "lf_sha256": "96e760fe2c7335e52d3e709a4077401fc16fad80bb9b7f0b68830ba6e721cb0d",
+      "bytes": 144
+    },
+    {
+      "repo_path": "acdc/README.md",
+      "lf_sha256": "8607f0cbfdd09baeab600fb4cc3eeb5bace229b7dbbb7c962f27545c4a10a188",
+      "bytes": 14017
+    },
+    {
+      "repo_path": "acdc/__init__.py",
+      "lf_sha256": "f8b50bec05ac6ee10fef74a4ef822d8412720316157bf6948e7cf97dce5fb0f3",
+      "bytes": 110
+    },
+    {
+      "repo_path": "acdc/__main__.py",
+      "lf_sha256": "f38fd2f2c920c29c828645e87ed64743d567aaaef7fba7a15d2c7d7f8094f91f",
+      "bytes": 61
+    },
+    {
+      "repo_path": "acdc/appliance/README.md",
+      "lf_sha256": "4b66ba9cafd0684dfaf11b9e76cc2142b27d20873a5ffc6b73c75b9222e64887",
+      "bytes": 9389
+    },
+    {
+      "repo_path": "acdc/appliance/__init__.py",
+      "lf_sha256": "76902054941875eea7bdf9b2621fa4bada0ed233f4368801c1ccf718647e59d9",
+      "bytes": 133
+    },
+    {
+      "repo_path": "acdc/appliance/__main__.py",
+      "lf_sha256": "cd2a51ba374c4b895748f60d5c2a6101cbd21825c4fcc43f9863ca05d3a04850",
+      "bytes": 6193
+    },
+    {
+      "repo_path": "acdc/appliance/archive.py",
+      "lf_sha256": "21afabcfeb405cf476fa8f81863b7194c4740aa85ae5d5fcb2911a18b0e5301a",
+      "bytes": 1739
+    },
+    {
+      "repo_path": "acdc/appliance/assets.py",
+      "lf_sha256": "240c41dad0f3266d38998cfa8dd18d227d4295cee7ce004d33f7d578422d48ab",
+      "bytes": 4826
+    },
+    {
+      "repo_path": "acdc/appliance/audit_http.py",
+      "lf_sha256": "c45ca81b13dc7a34a5b5d856d8f8694e311a4a48984f4f300e11a903d096ce4d",
+      "bytes": 3016
+    },
+    {
+      "repo_path": "acdc/appliance/benchmark_replay.py",
+      "lf_sha256": "7f1dd13f5200da39234b7c1a1a171381aa3ff8f51e1416562b9e244679822cf7",
+      "bytes": 3040
+    },
+    {
+      "repo_path": "acdc/appliance/deploy.py",
+      "lf_sha256": "3201a1a985cfb61522196352590aab194b1103dfacb088dcab6e93a02f5d71f1",
+      "bytes": 4286
+    },
+    {
+      "repo_path": "acdc/appliance/engine.py",
+      "lf_sha256": "092c0f9c7140dd632e7a9266cf13a324ce714b99906ec699b3a990dbc1798732",
+      "bytes": 15769
+    },
+    {
+      "repo_path": "acdc/appliance/full_pipeline.py",
+      "lf_sha256": "fc0cc1765dc9e5ebe3a5d91cf6ca6023e7d5c51da13a4c52ae907f7e15aa7579",
+      "bytes": 9455
+    },
+    {
+      "repo_path": "acdc/appliance/hdmi.py",
+      "lf_sha256": "355acda65603a642f3a3d4e1d5a3497e645631499db2deca74e1e0ee7d1f5c98",
+      "bytes": 7632
+    },
+    {
+      "repo_path": "acdc/appliance/identity.py",
+      "lf_sha256": "22c4667539a5958762d026bcec784038ff7b270b7ad9880a110178465eacedb5",
+      "bytes": 2233
+    },
+    {
+      "repo_path": "acdc/appliance/monitor.py",
+      "lf_sha256": "4db7911d8b79a02fdc8d36f07f1e5e46a08f403b80049068eae62df161502a06",
+      "bytes": 3082
+    },
+    {
+      "repo_path": "acdc/appliance/mpr.py",
+      "lf_sha256": "cffb467d6c659a66a5cd69674163759b0ac94048258fe39234b86389c9485b33",
+      "bytes": 2993
+    },
+    {
+      "repo_path": "acdc/appliance/native.py",
+      "lf_sha256": "a669b2288fdaf23ed4c5d6b2753637507108cc3553cefe4f90239ad6379281db",
+      "bytes": 9744
+    },
+    {
+      "repo_path": "acdc/appliance/native/image.c",
+      "lf_sha256": "37cb57f6e836a6e6c7983f4929413a58b2791a52fb382602bee0f845a5282e3a",
+      "bytes": 18405
+    },
+    {
+      "repo_path": "acdc/appliance/native/mesh/CMakeLists.txt",
+      "lf_sha256": "f281bfdf076f7623787cefe11ba75e310fb701c8ff5f2f693d02cf58f508ab82",
+      "bytes": 453
+    },
+    {
+      "repo_path": "acdc/appliance/native/mesh/arm-board-toolchain.cmake",
+      "lf_sha256": "2e39828b8007ed70fb5e3fda5a1f35792c474f8c0b1e4acd4c5b34589df5c4ee",
+      "bytes": 1845
+    },
+    {
+      "repo_path": "acdc/appliance/native/mesh/build_cross.sh",
+      "lf_sha256": "ebf11267d7fc77649e422fd0183c3e32f328d366e3117e1d4e93b86c59e8459a",
+      "bytes": 2755
+    },
+    {
+      "repo_path": "acdc/appliance/native/mesh/build_vtk.sh",
+      "lf_sha256": "550f8ff0f94de790fb75cf05297d278e6654fab2b2d6135c9a0eb33f8527f0d4",
+      "bytes": 1229
+    },
+    {
+      "repo_path": "acdc/appliance/native/mesh/mesh.cxx",
+      "lf_sha256": "015d4407b69fd1cdd4ba09839967f4ab8d26c9bdceb0fdbb3d3ac5b88700f428",
+      "bytes": 12291
+    },
+    {
+      "repo_path": "acdc/appliance/native/mesh/snapshot_sysroot.py",
+      "lf_sha256": "fb522a971342be1eaefc99d27223fbf63609e9a4bbcb0e127a432c823c3e862b",
+      "bytes": 1520
+    },
+    {
+      "repo_path": "acdc/appliance/pipeline.py",
+      "lf_sha256": "a4fa8b8c10d2d93717f51b9a055e8c32631054cf184078bdde9fac716b0c0ee5",
+      "bytes": 9975
+    },
+    {
+      "repo_path": "acdc/appliance/png.py",
+      "lf_sha256": "b8d13567b60886a27f82178427d11d8e1bbc57e0eb072ce5d99458d9a1b32a98",
+      "bytes": 1092
+    },
+    {
+      "repo_path": "acdc/appliance/prepared.py",
+      "lf_sha256": "0174e68fa2002a2c5102f5bc92b61f5cca4c79e204fb147eaf19cf060dce2c01",
+      "bytes": 2591
+    },
+    {
+      "repo_path": "acdc/appliance/qualify.py",
+      "lf_sha256": "c7e57f0e4c4d229291639bda32c64f69b6fb5a28018381f718f52650ab277560",
+      "bytes": 5777
+    },
+    {
+      "repo_path": "acdc/appliance/qualify_surfaces.py",
+      "lf_sha256": "a0b5af58afacc51bc125efc521f057aa7c548147b31f596f9be735538dc0ca34",
+      "bytes": 4926
+    },
+    {
+      "repo_path": "acdc/appliance/reconstruct.py",
+      "lf_sha256": "c5bccfd205980d3c2bee3a4c60d1bab83965a97dcce555815d06142a1b8a249f",
+      "bytes": 3786
+    },
+    {
+      "repo_path": "acdc/appliance/resident_lease.py",
+      "lf_sha256": "af38bfdf7b0fc65a09f1b443bc36079ff135e67da9813bc291e9730150ddef33",
+      "bytes": 2874
+    },
+    {
+      "repo_path": "acdc/appliance/startup_cache.py",
+      "lf_sha256": "cc106bea267699a03d56f726a37ce867ee994f42ac4ab7c84eb6b6374b3aca53",
+      "bytes": 2301
+    },
+    {
+      "repo_path": "acdc/appliance/storage.py",
+      "lf_sha256": "687f4f5f9340affafc80216b96216b7a1a4d10d669c4564ff7f0c7a93087f490",
+      "bytes": 2226
+    },
+    {
+      "repo_path": "acdc/appliance/surface.py",
+      "lf_sha256": "1a947d695dd8ab5156cd27d03ef98f69e055e5c21ffb5fa503c2e96bf9a0d2bf",
+      "bytes": 4020
+    },
+    {
+      "repo_path": "acdc/appliance/surface_hdmi.py",
+      "lf_sha256": "8b95cee374b0942526ad3616cf4b9097b0b83bceccca97a1f12e76e47a5af281",
+      "bytes": 4061
+    },
+    {
+      "repo_path": "acdc/appliance/surface_raster.c",
+      "lf_sha256": "4e3956e375b3ea75dbaf059bface92d4ca439d25d99c63a00b216853ddd350b6",
+      "bytes": 1395
+    },
+    {
+      "repo_path": "acdc/appliance/touch_drag.py",
+      "lf_sha256": "f70979715917660289cab2303aaa7e81ce576faba2a21119aa08846aa8aca7a9",
+      "bytes": 2007
+    },
+    {
+      "repo_path": "acdc/appliance/validate_http.py",
+      "lf_sha256": "217765cc0902eb7ddb9c10fc88e7e71a562d073ac57c122a26ca5fe0ca4c8d14",
+      "bytes": 6527
+    },
+    {
+      "repo_path": "acdc/appliance/validate_overlap.py",
+      "lf_sha256": "bda08674542d831c23b31d67b56dcb28f6bce12bbc0db0b6fed6f0f0fcf4cfc9",
+      "bytes": 3556
+    },
+    {
+      "repo_path": "acdc/appliance/validate_recovery.py",
+      "lf_sha256": "fde82240513e0ecca00500d696ed2e1b45f15149d3290f596f3448a0e50e5c75",
+      "bytes": 4418
+    },
+    {
+      "repo_path": "acdc/appliance/verified_hashes.py",
+      "lf_sha256": "b7e39b8cbfda26f9f5096bdf48e06ed918d39fc8b58094ad40769d6bc7d3c49c",
+      "bytes": 817
+    },
+    {
+      "repo_path": "acdc/appliance/volume.py",
+      "lf_sha256": "e2a6ab045a82ed3950c2fc888d894eb15e45d070fe8a6779d3aaf2a0c19190e7",
+      "bytes": 4070
+    },
+    {
+      "repo_path": "acdc/appliance/web.py",
+      "lf_sha256": "f939a54c2352c3de583d052287430afb3035e44fc7c3b82d958b448afdad3a61",
+      "bytes": 13704
+    },
+    {
+      "repo_path": "acdc/appliance/web_assets/app.js",
+      "lf_sha256": "b28c4f1ae48e68aca48ef13382e6b9bb648f78944d8dfda3b30dc87220d84e85",
+      "bytes": 31763
+    },
+    {
+      "repo_path": "acdc/appliance/web_assets/index.html",
+      "lf_sha256": "4c45654e13ad4e6c7317a0a17c1043dac0a583f5348ee1dfdeaa1261889f88df",
+      "bytes": 5194
+    },
+    {
+      "repo_path": "acdc/appliance/web_assets/style.css",
+      "lf_sha256": "658c9c10c6231919e55aca123dec08cb4b319e48e7b5b65dd88a740d8392e79f",
+      "bytes": 4976
+    },
+    {
+      "repo_path": "acdc/appliance/web_assets/surface_view.js",
+      "lf_sha256": "0c9e8c747a88d2ba7198246262f90f3c0a0338f45245174c8ae6487356ac8c77",
+      "bytes": 6454
+    },
+    {
+      "repo_path": "acdc/backend.py",
+      "lf_sha256": "ce089614936983ee0fc616f18b1c0eccd9a773cf96823d13e1d1a533868119fc",
+      "bytes": 10314
+    },
+    {
+      "repo_path": "acdc/board_verify.py",
+      "lf_sha256": "f238ba7fa7b2dc169b24de1d61e1a0a948724cece4d07dd2c05f2c27ec9f00ec",
+      "bytes": 8080
+    },
+    {
+      "repo_path": "acdc/build.sh",
+      "lf_sha256": "a6e23372f978d6f7b8e89f7bbc5dc4294b43137b6d532416fb72d523fcd8c7ef",
+      "bytes": 729
+    },
+    {
+      "repo_path": "acdc/build_fast.sh",
+      "lf_sha256": "c73f77117e721ab9916d404dc38f63a795d6d9df01ef60a0e3c8624fd259fe92",
+      "bytes": 879
+    },
+    {
+      "repo_path": "acdc/cli.py",
+      "lf_sha256": "e1f4d9f62ca7961dd78cd021984e07b25f4d5696d3a44c8f78076f9902e606e9",
+      "bytes": 7333
+    },
+    {
+      "repo_path": "acdc/contract.py",
+      "lf_sha256": "044a0d692ea67fdbe3f867b623ed71d2b4fab8e3de1a868eb807f906f9300c62",
+      "bytes": 3938
+    },
+    {
+      "repo_path": "acdc/delivery/candidate.json",
+      "lf_sha256": "6b1ceebf32e16a062e6d9a4c858580cf826bc5ec5ff5823a75d9dc4381279a0f",
+      "bytes": 962
+    },
+    {
+      "repo_path": "acdc/delivery/inputs_rc1.json",
+      "lf_sha256": "15d2f4b8dcc2bdf930e2fec802bf6dbbb15e9928716329550913d0939b652992",
+      "bytes": 31405
+    },
+    {
+      "repo_path": "acdc/delivery/inputs_rc2.json",
+      "lf_sha256": "d211a1731648ea4579c114bf8c96bbfe132b735b4dee35a8100ff83c6114c6f8",
+      "bytes": 36078
+    },
+    {
+      "repo_path": "acdc/delivery/pr_delivery.json",
+      "lf_sha256": "03e96efa3ab5b4fd5291094994d7cde51f3840fc2a31494770b6639574855635",
+      "bytes": 1436
+    },
+    {
+      "repo_path": "acdc/deploy/acdc-worker.service.in",
+      "lf_sha256": "c0d78caad7533e9a49523bc8bc4a0eb8d4ce7f29bd713d09a30cb60b7402eb87",
+      "bytes": 582
+    },
+    {
+      "repo_path": "acdc/deploy/manage.py",
+      "lf_sha256": "e9da280b94a7069d554d8871f5c8e997846544a51432769205bfcbd2b46459b3",
+      "bytes": 7606
+    },
+    {
+      "repo_path": "acdc/deploy/render_unit.py",
+      "lf_sha256": "95207d611f6103009b8966ff78d5ed3d1c21feef4f949ab6eb09f2e9f76ccd4d",
+      "bytes": 918
+    },
+    {
+      "repo_path": "acdc/docs/BOARD_STANDALONE_V2_PLAN_20261021.md",
+      "lf_sha256": "b3a59749bcc9598eec7f83058619cf374a41d24a96d51eba8e767943ba22416a",
+      "bytes": 44235
+    },
+    {
+      "repo_path": "acdc/docs/DONOR_SOURCES.json",
+      "lf_sha256": "5e26d1a338676ee57c4869e52de33ffb7d15e6ac0ce1b514b488951aadc53128",
+      "bytes": 428
+    },
+    {
+      "repo_path": "acdc/docs/FINAL_ALIGNMENT_OPTIMIZATION_PLAN_20261019.md",
+      "lf_sha256": "70008c8b04e29da67b7e6d9c568789056f2e30d557ea418ec6807ab95bffdc7a",
+      "bytes": 44231
+    },
+    {
+      "repo_path": "acdc/docs/IMPLEMENTATION_PLAN.md",
+      "lf_sha256": "f7ce122ec4338f54efed8f0ab9fa5ea44fc8371c4b17d421b3b3a8c62fa3e0a3",
+      "bytes": 65536
+    },
+    {
+      "repo_path": "acdc/docs/IMPLEMENTATION_STATUS.md",
+      "lf_sha256": "ab571cb7af8abeb4496066250920d314e599e747ab6f613843ccf6bf695cefa4",
+      "bytes": 23655
+    },
+    {
+      "repo_path": "acdc/docs/MODEL_BUNDLE.md",
+      "lf_sha256": "1028386adac907bcf7b78366a83084ffc66d5d51d67dcb1bd444cde8c5b97861",
+      "bytes": 3550
+    },
+    {
+      "repo_path": "acdc/docs/OPTIMIZATION_4FPS_8FPS.md",
+      "lf_sha256": "1642c265dc73880c44c93e565e6130250a0c2208a6bf98bd2aa56b88b8d1af34",
+      "bytes": 42897
+    },
+    {
+      "repo_path": "acdc/docs/SOURCE_INPUTS.json",
+      "lf_sha256": "1f298fe0d1ca028f3bbbbc5834d638b39b4df44bdb6ecbd973e25e2cf72daf6d",
+      "bytes": 523
+    },
+    {
+      "repo_path": "acdc/docs/VALIDATION.md",
+      "lf_sha256": "ceeebe8b57edfb186aceebf74074ecf2409aa3774f64572ae887a2c616ab44a8",
+      "bytes": 9014
+    },
+    {
+      "repo_path": "acdc/docs/VALIDATION_BOARD_V2_20261023.md",
+      "lf_sha256": "a0e7f56dd4bd24e7506f4c68fa969aad1e61cb66bb5ef225982e322e0a2dd153",
+      "bytes": 7736
+    },
+    {
+      "repo_path": "acdc/docs/VALIDATION_P6_20261021.md",
+      "lf_sha256": "a61613f667e4fc8f41d173964226ff0d471750e7f3194638029b2f3c818adbc6",
+      "bytes": 17701
+    },
+    {
+      "repo_path": "acdc/docs/evidence/appliance_candidate9_20261022.json",
+      "lf_sha256": "a78986003e83f920b9981266fb08ddeaf5441f2d2362fca525295ca1ac3b2a60",
+      "bytes": 14626
+    },
+    {
+      "repo_path": "acdc/docs/evidence/appliance_final_20261023.json",
+      "lf_sha256": "c3abe5ac1a21597caacbf6e3e627d5e41ee9e53d1b8961b44d166acc66663d7d",
+      "bytes": 72977
+    },
+    {
+      "repo_path": "acdc/docs/evidence/appliance_mpr_20261023.json",
+      "lf_sha256": "80ae66539bbfa5f0692af9ede278429490738e36e6d2d4a0e03ccd420cb37dee",
+      "bytes": 17444
+    },
+    {
+      "repo_path": "acdc/docs/evidence/appliance_native_20261021.json",
+      "lf_sha256": "c04050f0574a587b8e028ff5c1fa308ce0c930c535abaeb8a1b82b27798b71ae",
+      "bytes": 5372
+    },
+    {
+      "repo_path": "acdc/docs/evidence/appliance_numerical_PL_20261021.json",
+      "lf_sha256": "4ed5e064f711cb9c4a05fd4d72e8227fbae4bfa772204ef98eea49f9d9345497",
+      "bytes": 1516
+    },
+    {
+      "repo_path": "acdc/docs/evidence/appliance_optimization_20261022.json",
+      "lf_sha256": "9b319d235e1c8199265e8b7eceb73a2d09e0d965a1f23ab9ded8c45628f3298f",
+      "bytes": 2621
+    },
+    {
+      "repo_path": "acdc/docs/evidence/appliance_progress_20261022.json",
+      "lf_sha256": "9e19eb11ff488d78d69b6d3d25503cb5a7d8e3ca3f174b7388b8603fe9138740",
+      "bytes": 5848
+    },
+    {
+      "repo_path": "acdc/docs/evidence/appliance_surface_profile_20261021.json",
+      "lf_sha256": "eadfc9540fc459ae953ce836db1b485bfccbbdf07681af098d8b2cbd0ddb7571",
+      "bytes": 1238
+    },
+    {
+      "repo_path": "acdc/docs/evidence/baseline_build.json",
+      "lf_sha256": "457a155a484be322259a4ca88d0a9874a79716bac14e96fb5d58204f284f0e6d",
+      "bytes": 2016
+    },
+    {
+      "repo_path": "acdc/docs/evidence/board_regression_20261021.json",
+      "lf_sha256": "97cfb236016f0392c12b2907ce028e96d9889c33b02feb7e5f7f93cee308a133",
+      "bytes": 14949
+    },
+    {
+      "repo_path": "acdc/docs/evidence/cpu_PL_comparison_20261021.json",
+      "lf_sha256": "ab3b32a14b4ea7122cb7529ef6889c24a8a978446339423a809214996eefa666",
+      "bytes": 1785
+    },
+    {
+      "repo_path": "acdc/docs/evidence/development_PL_20261021.json",
+      "lf_sha256": "937d296cee5186a1bc75c71dc84fd7bf06ae1760bcf37313715aac4dc12fb85e",
+      "bytes": 7223
+    },
+    {
+      "repo_path": "acdc/docs/evidence/fast100_build.json",
+      "lf_sha256": "e8d479971c786fcc979bb216b1b7589b10104ff52d4bc1abb8228eb71ec22d96",
+      "bytes": 2373
+    },
+    {
+      "repo_path": "acdc/docs/evidence/initialization_power_20261021.json",
+      "lf_sha256": "744689c7f95de5700c056b5f0756d79adc0aa62506637c8f48d05a1e50477604",
+      "bytes": 2892
+    },
+    {
+      "repo_path": "acdc/docs/evidence/local_verification.json",
+      "lf_sha256": "51de3ae16442378c7e7ce812c5a0251b5913fda5fd692b64afb5521c7dc3214f",
+      "bytes": 1988
+    },
+    {
+      "repo_path": "acdc/docs/evidence/manual_handoff_20261021.json",
+      "lf_sha256": "fdac6d4436864c73f7cd8c2276e439eb52e0a5fdd70694935fa05722ba9ca5bc",
+      "bytes": 1857
+    },
+    {
+      "repo_path": "acdc/docs/evidence/model_admission_20261019.json",
+      "lf_sha256": "dd9eeaebe06fb650ed8faf84c00f4526482a1f2e4f281536037eb1d860576f8a",
+      "bytes": 2279
+    },
+    {
+      "repo_path": "acdc/docs/evidence/netlist_tools_20261021.json",
+      "lf_sha256": "7456e7e0304af56b377cf1734604bacc729857771ce825cbb8afdd09b0ed4192",
+      "bytes": 3283
+    },
+    {
+      "repo_path": "acdc/docs/evidence/optimization_components.json",
+      "lf_sha256": "3448b9b46d186cb9190793ee07f5a454408620f7ed64032c42286cab54ff4b91",
+      "bytes": 6015
+    },
+    {
+      "repo_path": "acdc/docs/evidence/optimization_stream_dma.json",
+      "lf_sha256": "4c382141ca6de11b36684051bac4966258715f7cdf7242b702498de08ea68cbf",
+      "bytes": 17656
+    },
+    {
+      "repo_path": "acdc/docs/evidence/optimization_tiles.json",
+      "lf_sha256": "479388c2fa4638b8ac6ac35d060e1aaf8f7e1e25862341d1ff5023ed01e0ad86",
+      "bytes": 3491
+    },
+    {
+      "repo_path": "acdc/docs/evidence/p6_board_20261020.json",
+      "lf_sha256": "e9b04861ca9923ba889f60e6df42d45681085ce5b1f4e3e7708ced75ee7ddafb",
+      "bytes": 7726
+    },
+    {
+      "repo_path": "acdc/docs/evidence/pc_surfaces_20261021.json",
+      "lf_sha256": "0d62c121e0120c3ec3f44a3b38103fd996a9bee5ddd5b76229e5d52b6883acd1",
+      "bytes": 3887
+    },
+    {
+      "repo_path": "acdc/docs/evidence/performance_projection.json",
+      "lf_sha256": "da4ff7c9df27d74380aad03d1465a3e4bbd7b5bf6af45e40365187e36b8f6a14",
+      "bytes": 11620
+    },
+    {
+      "repo_path": "acdc/docs/evidence/portable_DDR_20261021.json",
+      "lf_sha256": "4201bbb7d8cdece593cc7ee2576742418c58b8dbdcb1a4f117492cead652046d",
+      "bytes": 774
+    },
+    {
+      "repo_path": "acdc/docs/evidence/preprocessing_A_20261021.json",
+      "lf_sha256": "3f05bdb9aacfd0cc33798a11be7d4527f5b399c049c50010bb732f75738519b4",
+      "bytes": 895
+    },
+    {
+      "repo_path": "acdc/docs/evidence/reconnect_20261021.json",
+      "lf_sha256": "9c2d201b0d2ab06b32e7146ca458fb60fc14716fcfe0640700a8a4e75ded5ec3",
+      "bytes": 1350
+    },
+    {
+      "repo_path": "acdc/docs/evidence/release_alignment_20261019.json",
+      "lf_sha256": "ec1565f6a3f12e8cf2cd578f124f78820d0cf0e3487c138377189d341b3cf013",
+      "bytes": 54741
+    },
+    {
+      "repo_path": "acdc/docs/evidence/restoration_A_20261020.json",
+      "lf_sha256": "925af9bf7e21a923383708961a37a5d3e9316117c67d4083e46701d5b1a21a43",
+      "bytes": 835
+    },
+    {
+      "repo_path": "acdc/docs/evidence/spatial_board_20261020.json",
+      "lf_sha256": "89a5199d8536e3bd0d3614d0ae5470cc97189e70d777a45a819b537ff3a42254",
+      "bytes": 2352
+    },
+    {
+      "repo_path": "acdc/docs/evidence/spatial_implementation_20261019.json",
+      "lf_sha256": "dcbfa8c618be934f5532af5b7fb7f9f03f63b28cf94f3404524fe83b2213e903",
+      "bytes": 8617
+    },
+    {
+      "repo_path": "acdc/docs/evidence/vendor_datamover_20261021.json",
+      "lf_sha256": "b68c8d5286bb13f536d0ac5a04f82a3666faf3f10d2755b0bb1b3cb729e3c2ac",
+      "bytes": 1829
+    },
+    {
+      "repo_path": "acdc/docs/evidence/web_P6_20261021.json",
+      "lf_sha256": "8bba77858bbdd53f5e4a51928b55147cb5d104e7365db6453a2a9a273145862d",
+      "bytes": 1354
+    },
+    {
+      "repo_path": "acdc/docs/evidence/web_pl_pair_20261020.json",
+      "lf_sha256": "aae11988c38fe55d5b282efafae4ce91dfb2f7fd7e7659411615e2697be4474a",
+      "bytes": 3324
+    },
+    {
+      "repo_path": "acdc/docs/sources/.gitattributes",
+      "lf_sha256": "cc98f24e46eb5e3cb103ad4bfa303722e859d00644a083f9ab16d68383a31bf3",
+      "bytes": 90
+    },
+    {
+      "repo_path": "acdc/docs/sources/production_numerics.md",
+      "lf_sha256": "e159bce5476dbaa9c85a850d11c8d7275b855a24d328e9482e6e3a080357bd14",
+      "bytes": 14644
+    },
+    {
+      "repo_path": "acdc/docs/sources/topology.md",
+      "lf_sha256": "06b27b2a5abe5a2baebaac1e2228d0dfa104ca0a08d7d3e5fa3a375e87679cb4",
+      "bytes": 15417
+    },
+    {
+      "repo_path": "acdc/evaluate.py",
+      "lf_sha256": "2fdf93a169117812d8b406c57f3a69af95ceb1dd10aab974f70e18ed43cf1120",
+      "bytes": 5249
+    },
+    {
+      "repo_path": "acdc/exchange.py",
+      "lf_sha256": "ec5dd15d65f6c7c974f927e2634dad382658de598e41a42ce6fe3a94a27c3a96",
+      "bytes": 5091
+    },
+    {
+      "repo_path": "acdc/gen_vectors.py",
+      "lf_sha256": "5cd75ef74c0d422f8cae9833618a726a3f6a3ce59a07712deedc560dd78026b5",
+      "bytes": 3922
+    },
+    {
+      "repo_path": "acdc/graph.py",
+      "lf_sha256": "07bbc0e461b40adb47c4a90da124a2c05f454d653918cdb5393c78659575a843",
+      "bytes": 2897
+    },
+    {
+      "repo_path": "acdc/hardware.py",
+      "lf_sha256": "5a416077379e7a4b037e12aec0f4b23e9aff1ec1f52e2927d99e7047a140689a",
+      "bytes": 6038
+    },
+    {
+      "repo_path": "acdc/install_pc.ps1",
+      "lf_sha256": "a008bee9ae6e24264be484ed4df372801b0c8b38d2daae553ca4212d909dd689",
+      "bytes": 566
+    },
+    {
+      "repo_path": "acdc/integer.py",
+      "lf_sha256": "27713579d4dca18c12434b9bfd8985b64ca5a0a5e00f660f7455700a71411b42",
+      "bytes": 3000
+    },
+    {
+      "repo_path": "acdc/lifecycle.py",
+      "lf_sha256": "15b15b79b66ef390910b0f6bd7250495caae83b070e5eb124dec2751f583d360",
+      "bytes": 378
+    },
+    {
+      "repo_path": "acdc/model.py",
+      "lf_sha256": "743ab8c0a3faf553678f030fb4abd4ec98c5141d9111096e20c7a35b8f8e7116",
+      "bytes": 10246
+    },
+    {
+      "repo_path": "acdc/optimization/ABI.md",
+      "lf_sha256": "cae21df9fe053b2c72a9413068b5c002498373c6998d9213b6aadf1d31feb32f",
+      "bytes": 7342
+    },
+    {
+      "repo_path": "acdc/optimization/README.md",
+      "lf_sha256": "93a9190b19f9e10128e5b7c9520db4827b118e1d8b20050494a1cb9916593951",
+      "bytes": 12616
+    },
+    {
+      "repo_path": "acdc/optimization/__init__.py",
+      "lf_sha256": "a1f9ff13f628210077c9d036681c2af8558f7fc3c7ed728275133eb756892982",
+      "bytes": 82
+    },
+    {
+      "repo_path": "acdc/optimization/benchmark_layout.py",
+      "lf_sha256": "fecf37079728b4d5296c9885a5347523842a390f2372e660aae0ea03a53e0f97",
+      "bytes": 2944
+    },
+    {
+      "repo_path": "acdc/optimization/board_inventory.py",
+      "lf_sha256": "1d58b1d5c3ef8baa546433d3f750c9099ed31505b271fb57ccfb064de01cabe2",
+      "bytes": 1899
+    },
+    {
+      "repo_path": "acdc/optimization/board_verify.py",
+      "lf_sha256": "abad335aa2df553a2eedd435ab01a1cca539537b25ad6d779ece0f3c759bd8b3",
+      "bytes": 9534
+    },
+    {
+      "repo_path": "acdc/optimization/device.py",
+      "lf_sha256": "4df32e71a00ec616f7a735d4737ca778046cbd1bb64d29363d18b4d9e347015f",
+      "bytes": 11660
+    },
+    {
+      "repo_path": "acdc/optimization/gen_compute_vectors.py",
+      "lf_sha256": "1e493d8fa7021e42dff3e8e2778a0f5cb955fd1d284a8f417c107bdbe2bf1235",
+      "bytes": 3389
+    },
+    {
+      "repo_path": "acdc/optimization/gen_executor_vectors.py",
+      "lf_sha256": "998f1169eb149452d1520d156db8a06c115e82f48eb107654ea55db0622ed650",
+      "bytes": 7276
+    },
+    {
+      "repo_path": "acdc/optimization/gen_frame_vectors.py",
+      "lf_sha256": "0327222d25bb38a4dd77098471e0337ff6c51011ce814c24a086953ef6165f07",
+      "bytes": 1622
+    },
+    {
+      "repo_path": "acdc/optimization/gen_input_vectors.py",
+      "lf_sha256": "ddce1351293b50e8169e10058cb737560310eaef2eba56566e84b01c7e567e7f",
+      "bytes": 3651
+    },
+    {
+      "repo_path": "acdc/optimization/gen_stream_vectors.py",
+      "lf_sha256": "21cfba2f23daea14eb76b9ea47e219b8690a723707a955803cffa3ca98cd1541",
+      "bytes": 2477
+    },
+    {
+      "repo_path": "acdc/optimization/gen_tile_vectors.py",
+      "lf_sha256": "bdba2ad43545acf3bc0ea8fe92437de0dd3672162e37f7ced6e9b228243253c4",
+      "bytes": 4426
+    },
+    {
+      "repo_path": "acdc/optimization/image.py",
+      "lf_sha256": "77f077c8d48db1ae01a93ba65c98ec36cb828bb223718da8750af6b942265f04",
+      "bytes": 2823
+    },
+    {
+      "repo_path": "acdc/optimization/layout.py",
+      "lf_sha256": "bd4e1742e546dc2ba5126ae9e5c6f7927d246b50421967e46066c2f16ea491bc",
+      "bytes": 4344
+    },
+    {
+      "repo_path": "acdc/optimization/measure_appliance_mpr.py",
+      "lf_sha256": "8db603f99b2841b53b49d053219a8638c7c52b0fd76d7d6035ddc2a1a17c6e05",
+      "bytes": 3776
+    },
+    {
+      "repo_path": "acdc/optimization/native/layout.c",
+      "lf_sha256": "2414f25c13207b817dd0339a552b4da25f63041e50ca5105f3dc879927ce9e84",
+      "bytes": 3214
+    },
+    {
+      "repo_path": "acdc/optimization/native_layout.py",
+      "lf_sha256": "d00ceb16efb61d9ce775ae29a2b6830be9341f0e02783c06f458f95d9f2c007c",
+      "bytes": 3626
+    },
+    {
+      "repo_path": "acdc/optimization/package.py",
+      "lf_sha256": "f6457c632b76048c8cf026be790c4751636e17461ae2b3aa5972ad4f5c51115c",
+      "bytes": 4150
+    },
+    {
+      "repo_path": "acdc/optimization/planner.py",
+      "lf_sha256": "e8e6926cf989f4a667aaeb0b23419aa5662a55d4bd530e54bce71aaf2aaafe15",
+      "bytes": 6293
+    },
+    {
+      "repo_path": "acdc/optimization/profile_layers.py",
+      "lf_sha256": "4b92668492be2edb0c9da56064b0f498c6ff9d5c9538169904f97f3929f6e1f5",
+      "bytes": 5837
+    },
+    {
+      "repo_path": "acdc/optimization/program.py",
+      "lf_sha256": "06f42fbf54aaa29b76be05b07c19228a36a43bcba558378dd92c560aea5999ce",
+      "bytes": 8073
+    },
+    {
+      "repo_path": "acdc/optimization/qualify_appliance_mpr.py",
+      "lf_sha256": "7c9487d38d6397ab80d949b46a459acb2d48e6f3f476fa25c425ee53508ee7cb",
+      "bytes": 3782
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/conv_array.sv",
+      "lf_sha256": "2e2ea09d46412712f11b78389870d8b969875a069490dfcf14ed04281a27faf5",
+      "bytes": 4494
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/conv_compute.sv",
+      "lf_sha256": "26b4f1a640b506e4305f95f1cb318419e14c59c20054c72205c43a6f29ddbed3",
+      "bytes": 3762
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/dma_read_arbiter.sv",
+      "lf_sha256": "25d950727401a19d7123c23e51245058381a66f9ef1da07dc592f3dc26834db3",
+      "bytes": 2608
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/dma_transfer.sv",
+      "lf_sha256": "f270798f9c26d94cacdf470b418b0967437a64c01171d2a492f81541f9e735ba",
+      "bytes": 3716
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/frame_control.sv",
+      "lf_sha256": "256df4130604b8c3fa491e1d53a726ec5f79a2f1f7bf1e725ba7cd21b7f9aee2",
+      "bytes": 4578
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/frame_dispatch.sv",
+      "lf_sha256": "ab8b52870ff0db3e44f8720b3845573dcce9b1948adbbc0fcb4f5ad62b1a01cc",
+      "bytes": 4222
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/frame_engine.sv",
+      "lf_sha256": "d2168d51a18093a907f71e652bd73494c667cbd834d3bfe91c257b04adda957c",
+      "bytes": 3767
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/input_loader.sv",
+      "lf_sha256": "8a41b23d5b0fd4c513ec48b04cda44f79b6a570f5804b434dc013a22880402e4",
+      "bytes": 8843
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/input_transform.sv",
+      "lf_sha256": "a0c1120ca48eb28637b75a91c4fd22e90848febdf5bb0e74c9200f7278101a2a",
+      "bytes": 1482
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/int8_pair_mul.sv",
+      "lf_sha256": "4496158989c531aa68a349c615ce6987c69708eb3a4d0c248c15a722bb61d1cf",
+      "bytes": 1171
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/lut_loader.sv",
+      "lf_sha256": "3cc98bf907967a1280960c377e09f3902907a85a7834f0ebf9042a416df59337",
+      "bytes": 2877
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/parameter_loader.sv",
+      "lf_sha256": "ae850aa6e4c742c15667e555a41f4e437e74e9dad0159b7603caaff7e62db26a",
+      "bytes": 3767
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/pool_stream.sv",
+      "lf_sha256": "8e993ce2583a4422cb225503f49408d0ab8a294911df97ad3117c4561ab623af",
+      "bytes": 2357
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/spatial_accel.sv",
+      "lf_sha256": "0e62c562d276ba414f3959ba43e17de027c6f836fad4c7a17a0129409c453520",
+      "bytes": 3592
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/stream_fork.sv",
+      "lf_sha256": "20e08ca204d4e1f1ac1ef3a02fafb1648f3b89253b308853161aa40ae2b52548",
+      "bytes": 878
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/tile_banks.sv",
+      "lf_sha256": "0b798983b64914a4926aea19b9b4081ab39b95a9df2e0934a892279637a194b4",
+      "bytes": 2943
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/tile_conv.sv",
+      "lf_sha256": "251ce2ef4c35414a78ef904226f9d2a99f2a8ae47a19f44f162c95f4ccff5f24",
+      "bytes": 9070
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/tile_executor.sv",
+      "lf_sha256": "8d57a0e0f18ff55aa8914fa9a69d1a25d7cb7f1083896a99568c0befd61e5787",
+      "bytes": 7209
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/tile_job_queue.sv",
+      "lf_sha256": "d94a1cff8db89ff8d567a600f7bc41450246a5c291c1ab2d2dee5e65e1345f8a",
+      "bytes": 8577
+    },
+    {
+      "repo_path": "acdc/optimization/rtl/tile_writer.sv",
+      "lf_sha256": "b4c06d1a346be787b06242d0cb9a71422d3b2e0a6e58efbd2f73cc126858d4b8",
+      "bytes": 8297
+    },
+    {
+      "repo_path": "acdc/optimization/run_arbiter_sim.sh",
+      "lf_sha256": "fa52caa4fa54a69dfe5b94522984e7df8d63719fdda26cd5e1c8e79adfb35158",
+      "bytes": 716
+    },
+    {
+      "repo_path": "acdc/optimization/run_array_sim.sh",
+      "lf_sha256": "9970cb18ef899bf70b8c1dfa35d2352f7c9b946dfbe8aa5a05a5a081c5d67804",
+      "bytes": 602
+    },
+    {
+      "repo_path": "acdc/optimization/run_banks_sim.sh",
+      "lf_sha256": "5b9e1a368f14502482c2a6421b1603f7be650e8e626e7515d2c625b0cc9021a3",
+      "bytes": 602
+    },
+    {
+      "repo_path": "acdc/optimization/run_compute_sim.sh",
+      "lf_sha256": "c7c4767c8ec2bb254ba3e7e1038ff9f7466adeb103158710e974352257339587",
+      "bytes": 818
+    },
+    {
+      "repo_path": "acdc/optimization/run_control_sim.sh",
+      "lf_sha256": "c19e9ee3d22643ef203df8931b7b268887b8c0f23adb9bf586d3e8162be4738f",
+      "bytes": 529
+    },
+    {
+      "repo_path": "acdc/optimization/run_dma_sim.sh",
+      "lf_sha256": "a1277bc2ef7ddbaf022785e281a0b7522ce4a78673c25b6949796d54855a3779",
+      "bytes": 513
+    },
+    {
+      "repo_path": "acdc/optimization/run_executor_sim.sh",
+      "lf_sha256": "001efefa4162b8ea92b0a1dfa1c0cc6d0f3127d59b2d7a03b269bc45765c9b68",
+      "bytes": 1485
+    },
+    {
+      "repo_path": "acdc/optimization/run_frame_sim.sh",
+      "lf_sha256": "b1369e33cb486587a19d95ac6de2cab77612e21856239308fdfdc915b3352a9b",
+      "bytes": 1326
+    },
+    {
+      "repo_path": "acdc/optimization/run_input_sim.sh",
+      "lf_sha256": "8b0abb627b466d54de57c6ecc6aa0340c2f975c8b6ea11357d6b101c04290816",
+      "bytes": 1012
+    },
+    {
+      "repo_path": "acdc/optimization/run_netlist_icarus.ps1",
+      "lf_sha256": "31679067e3f4af041245f183cb7c46917dff010c176860070b0f8dd82671f26f",
+      "bytes": 4098
+    },
+    {
+      "repo_path": "acdc/optimization/run_netlist_sim.sh",
+      "lf_sha256": "828e1249854ef1c6633e3cff255676632621d17e89e881e5d8af049fd96065f8",
+      "bytes": 1352
+    },
+    {
+      "repo_path": "acdc/optimization/run_pair_sim.sh",
+      "lf_sha256": "d7380db9ee28562edb71e80c13c4db5d3c0cb1a07a3a7211670cacbe243998e4",
+      "bytes": 520
+    },
+    {
+      "repo_path": "acdc/optimization/run_parameter_sim.sh",
+      "lf_sha256": "cc901bf2a60917ba026b24b27cbfb204d58ca2be15178c4d1d32e4d6e1d02cd5",
+      "bytes": 1245
+    },
+    {
+      "repo_path": "acdc/optimization/run_queue_sim.sh",
+      "lf_sha256": "e1fad8d97c769f9632cf9b000108e6aa68bf5a724b6f683f518f1f5e11efe614",
+      "bytes": 527
+    },
+    {
+      "repo_path": "acdc/optimization/run_stream_sim.sh",
+      "lf_sha256": "2453ce2505960ddaae0fcf539ce2e2e53205b6c50a6ecfbeabaff4d2b667f90c",
+      "bytes": 824
+    },
+    {
+      "repo_path": "acdc/optimization/run_tile_sim.sh",
+      "lf_sha256": "d81afcc3713e696fd0985ccac05ed95227af7309dc05d3cf2dd232f0366be06c",
+      "bytes": 904
+    },
+    {
+      "repo_path": "acdc/optimization/run_top_sim.sh",
+      "lf_sha256": "2901b16fbf760e7031b0c459d44ce72f0c0707b0ead730190e29eb761a880188",
+      "bytes": 1326
+    },
+    {
+      "repo_path": "acdc/optimization/run_vendor_datamover_sim.ps1",
+      "lf_sha256": "32eae5f7a964d7096cb98eea6a78fa08795fba1989191e12068fae6be9c2d75b",
+      "bytes": 2500
+    },
+    {
+      "repo_path": "acdc/optimization/run_writer_sim.sh",
+      "lf_sha256": "3d577c2df609573db8967bca89627c76cb833aabd80686c378dbfee09a5a9b4c",
+      "bytes": 1123
+    },
+    {
+      "repo_path": "acdc/optimization/sim/datamover_memory.sv",
+      "lf_sha256": "acd654ee33401587b3bab322a109132eb96c6f79adf36bb52f256655ef29c91f",
+      "bytes": 4885
+    },
+    {
+      "repo_path": "acdc/optimization/sim/datamover_memory_portable.sv",
+      "lf_sha256": "a522265bb6e511501cb27a1f1e9c5cda34786908605bb168b077a8110b95d6c5",
+      "bytes": 6205
+    },
+    {
+      "repo_path": "acdc/optimization/sim/datamover_sink.sv",
+      "lf_sha256": "0d97c2cfad6db09e3e19442c9621a7c93bf775079ca3ec290b4db4700ef336e4",
+      "bytes": 2892
+    },
+    {
+      "repo_path": "acdc/optimization/sim/datamover_source.sv",
+      "lf_sha256": "5d395b96c116537d24c42e70f8b18616a29075cb062a7ec2132c2826cb4fe274",
+      "bytes": 2478
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_conv_array.sv",
+      "lf_sha256": "48da8ac97ec0cd4eadc84a9ac270abe5ac56160fa8accae599759c18e3108f27",
+      "bytes": 3607
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_conv_compute.sv",
+      "lf_sha256": "e3bfc0a464fe3792c6cca2c99a00ecdabcc863fdf95d044187858a302a5bf558",
+      "bytes": 4152
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_dma_read_arbiter.sv",
+      "lf_sha256": "49aa3bd421cbb997350c9529218055ce6e7cce3a8578bbc9166fa6eb5fff89e9",
+      "bytes": 3489
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_dma_transfer.sv",
+      "lf_sha256": "01d940a52e567e771f6b16d415df8ac98c82a8029f51b7a356eb3a1c9ccd15e0",
+      "bytes": 4837
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_executor_netlist.sv",
+      "lf_sha256": "e54afee2e073fb921ccd30f40c5f61d34d83eac255b1a069a9147a02b9011233",
+      "bytes": 3112
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_frame_control.sv",
+      "lf_sha256": "e540867c9aece603d1afdb2b341eb8c9601194504331817122a056abb3d14aff",
+      "bytes": 4638
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_frame_engine.sv",
+      "lf_sha256": "b78512c628b8e9df4f8aae1afd66fcda91814040aea637734dcd8d855b399820",
+      "bytes": 2997
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_input_loader.sv",
+      "lf_sha256": "0a515dceb945cd5eb607008c86d16b68a716b5c8d211a4b01adcc9f5362f986f",
+      "bytes": 6843
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_input_transform.sv",
+      "lf_sha256": "4fe61bff67496a186771243b0c2103a8029e52d86c88a2f9a622263bba15ee53",
+      "bytes": 2721
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_int8_pair_mul.sv",
+      "lf_sha256": "345629f774955b3554324895a1400266787d2a0e009840befb9d3eba801be2f3",
+      "bytes": 2535
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_pool_stream.sv",
+      "lf_sha256": "25520c6cb6ae6d87d235c6275a56c085cd5ae72e2089263fccec99474ca09f0a",
+      "bytes": 4001
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_spatial_accel.sv",
+      "lf_sha256": "0a9ea7c1303539999ff16be046af38ed9ed1dfef0c9aecf2b4be1a9ae3bcfc8e",
+      "bytes": 4168
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_tile_banks.sv",
+      "lf_sha256": "e690735886e77bc03f21927b23ee08be9d0cbb567405d2416ea503dfea7daabe",
+      "bytes": 4136
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_tile_conv.sv",
+      "lf_sha256": "f6a8ac397dbd5298b24e66455c4df901a4d3f4f32e2a880adafcd38652cee7cf",
+      "bytes": 9772
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_tile_executor.sv",
+      "lf_sha256": "e25ad789253bf2555440f31dab9ec9c065c3ece3bf42cb5bed979f657e174c5c",
+      "bytes": 2952
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_tile_job_queue.sv",
+      "lf_sha256": "c75f988cf272707bf566bdc9977efc62c4babb347568f574646c30ce947b7aa7",
+      "bytes": 5320
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_unisim_initialization.sv",
+      "lf_sha256": "f43f6713446de35439b8d26c7d62e92034ca7473ee8a390e41058ddc699a73c8",
+      "bytes": 1470
+    },
+    {
+      "repo_path": "acdc/optimization/sim/tb_vendor_datamover.sv",
+      "lf_sha256": "99e83941c11fb8c17905cae89e419feb7392dc9834cdcb5fa0bb0a75096b14e7",
+      "bytes": 11362
+    },
+    {
+      "repo_path": "acdc/optimization/synth_guard.py",
+      "lf_sha256": "478844a706da6c77b11f6056440693d284a9243c9bb64dd283417126bfea5139",
+      "bytes": 1812
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/build_spatial.tcl",
+      "lf_sha256": "812c9e0b3862ba795816ab52066cecee2ef08b8e8f28f22ff28f820d7521f9b8",
+      "bytes": 7841
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/package_spatial.tcl",
+      "lf_sha256": "bb8fb07b1d94a0428a5fc2a915165972481c41105da9749f912c7a128fd4df15",
+      "bytes": 2339
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/probe_compute_boundary.tcl",
+      "lf_sha256": "c422cfb9d5cfd8e17442f44f419d951e44d2040803fa17cebe4eed7d6155a667",
+      "bytes": 1378
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/probe_datamover.tcl",
+      "lf_sha256": "6a932a47c862ec129065f6335cd98eead2b28f0ea2f212cae165546f8ed061c4",
+      "bytes": 1397
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/probe_executor_netlist.tcl",
+      "lf_sha256": "4dccba4b96d56a4d34b151a5575b64d756eb6b6591c1ae313d40d1af1f8af086",
+      "bytes": 1122
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/probe_fifo_storage.tcl",
+      "lf_sha256": "e8126fe652a6e10ba51f1f99e17d139dbf02b6ed1e7f397a6d08a9043b69a7d4",
+      "bytes": 1579
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/probe_payload_retention.tcl",
+      "lf_sha256": "509dc06b3616a0df2b49533e5f249bcd56425dc508aacf5b8539ebd57ea2896b",
+      "bytes": 1291
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/probe_writer_boundary.tcl",
+      "lf_sha256": "ffac842961470faa4fbd9090d0260aecd420cd68df367c245ef54acdbe4281ea",
+      "bytes": 1287
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/probe_writer_netlist.tcl",
+      "lf_sha256": "7334ae2154914d8259df0a928bd7086bcee52d3d90d105050b5fd1e8c7e7cf8d",
+      "bytes": 310
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/synth_array.tcl",
+      "lf_sha256": "b0a0f261e6a42d5f42897a0cf05909adb1b6e33b1ff213a57f9d107df08c2def",
+      "bytes": 1063
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/synth_banks.tcl",
+      "lf_sha256": "b6c849119586a43ca5702d8c69b1242fbe6fbfa98bc0576b8de37f90f9edb7e4",
+      "bytes": 1371
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/synth_compute.tcl",
+      "lf_sha256": "a257cbfa1877d8ff8ccf2fab49c59b70ee8752738fa155649fbc98a1a7d0b364",
+      "bytes": 1164
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/synth_executor.tcl",
+      "lf_sha256": "ac0cc8e5cd8190a66a700437fd11fde6f7b45902f8cf4f6aaa5fd711238cfdeb",
+      "bytes": 1895
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/synth_loaders.tcl",
+      "lf_sha256": "147a11ad78a09042f9611100da0946622b49b361deaa9334895cb15dfe62bba7",
+      "bytes": 1399
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/synth_pair.tcl",
+      "lf_sha256": "8ec419d2c165ceabe84933597b543a41773ce72d18fb2f1b41021706228ef492",
+      "bytes": 960
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/synth_stream.tcl",
+      "lf_sha256": "9cd63b9b28caf70470c1379336855ca24b118e9fb3db26937a9cd7964751af17",
+      "bytes": 1038
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/synth_tile.tcl",
+      "lf_sha256": "1964fde06b72041ee4562d53a2af2eaa8cd97e69808a9a2071b088c24fc2fd63",
+      "bytes": 1491
+    },
+    {
+      "repo_path": "acdc/optimization/vivado/synth_writer.tcl",
+      "lf_sha256": "013cfe67d7962a31be603e0ba2eda3e762dfc546c12fa97963a8e764f5137160",
+      "bytes": 1169
+    },
+    {
+      "repo_path": "acdc/package.py",
+      "lf_sha256": "dcf9b153e5ae4feb55e9d44baf189fa838f83cea7b1f1d604dde926a8940c6b3",
+      "bytes": 8796
+    },
+    {
+      "repo_path": "acdc/package_delivery.py",
+      "lf_sha256": "dae4a3c20a1fa0857186f689758acac67d9414972b51fc5187fd3e731960b3b6",
+      "bytes": 4929
+    },
+    {
+      "repo_path": "acdc/performance_ip/axis_tensor_accel_acdc_fast.sv",
+      "lf_sha256": "8248e48c69710c0a02282da5e14806c470a189cf7af3cbcdebfac6b89c0febf7",
+      "bytes": 22263
+    },
+    {
+      "repo_path": "acdc/performance_ip/conv_mac_128.sv",
+      "lf_sha256": "8b3b124978f953754f4b7989df8967afaeb05c33d6d118ae16eea3e02ca3d411",
+      "bytes": 2927
+    },
+    {
+      "repo_path": "acdc/performance_ip/conv_tile_engine_acdc_128.sv",
+      "lf_sha256": "331e1956c3b7ce6c8fab43246cb3c3ebc143aba54c69fc81f842ef5ce6089a9d",
+      "bytes": 10662
+    },
+    {
+      "repo_path": "acdc/performance_ip/run_sim.sh",
+      "lf_sha256": "6236f77bf16528a26ccd7ab5daa41302203791773691eac56ed1ecdb0effb452",
+      "bytes": 505
+    },
+    {
+      "repo_path": "acdc/performance_ip/run_tile_sim.sh",
+      "lf_sha256": "f09e7a52db822d9ac38ac9694d4617bf5944b94580dd55f4ad4a5c4f83028f0b",
+      "bytes": 1080
+    },
+    {
+      "repo_path": "acdc/performance_ip/synth.tcl",
+      "lf_sha256": "d95fa9964fe12f6ed18679657b764d8f4a8fb2f5273924bb6b6741534d85c292",
+      "bytes": 531
+    },
+    {
+      "repo_path": "acdc/performance_ip/synth_core.tcl",
+      "lf_sha256": "6fda21249756067889d60547140122a38574c191a551998a1ef5374a8235a601",
+      "bytes": 1181
+    },
+    {
+      "repo_path": "acdc/performance_ip/tb_axis_tensor_accel_acdc_fast.sv",
+      "lf_sha256": "15002e050c5c8fc85e470c2b1a6c717d3d6b152d805dfc32fa1c9020ff4378e7",
+      "bytes": 6772
+    },
+    {
+      "repo_path": "acdc/performance_ip/tb_conv_mac_128.sv",
+      "lf_sha256": "dbb1e7827e401e1f95a8e7c2b7a1a3a75a66796a7f3beda3ca7439613b0412fe",
+      "bytes": 2699
+    },
+    {
+      "repo_path": "acdc/pipeline.py",
+      "lf_sha256": "597d025d68f5b5482eecb3da94a6a017650ad6a92074772f12c154aa89dfccaa",
+      "bytes": 15751
+    },
+    {
+      "repo_path": "acdc/planning.py",
+      "lf_sha256": "3736bfb41039006ac734df67c8d8b3f1d694b720206321fffa78e708a5157ec1",
+      "bytes": 3707
+    },
+    {
+      "repo_path": "acdc/prepare_board_cases.py",
+      "lf_sha256": "aa81fb1535efe38458868c09f264910e631be30eb578e7dc53be151a9c567740",
+      "bytes": 4201
+    },
+    {
+      "repo_path": "acdc/protocol.py",
+      "lf_sha256": "36b6430829d59ec0e4e26bb892a62cb9222c03308bd74841999aa73bbc1ab16b",
+      "bytes": 2680
+    },
+    {
+      "repo_path": "acdc/reconstruct.py",
+      "lf_sha256": "98adc6b8c11618ba2f24b8f647b47407cadc1867bdf926a4d6848ee8215abb71",
+      "bytes": 2576
+    },
+    {
+      "repo_path": "acdc/release.py",
+      "lf_sha256": "d13f77873b09bc217b9255b6105c8b0dcb88585b79d216485dfa8680693b362a",
+      "bytes": 11045
+    },
+    {
+      "repo_path": "acdc/requirements-board.txt",
+      "lf_sha256": "203c2ff08e68854e6f7d913f655bf82bd631d06773f990f860ac19b0bb26c987",
+      "bytes": 189
+    },
+    {
+      "repo_path": "acdc/requirements-pc.lock",
+      "lf_sha256": "eae54cabda1c7e6937a2d021bc949b35cd257e52245d7d21879946164e0a768e",
+      "bytes": 473
+    },
+    {
+      "repo_path": "acdc/requirements-pc.txt",
+      "lf_sha256": "86df656274218705e292205e6598ee3c8869694ec8b50beaabdfd0d651c05497",
+      "bytes": 218
+    },
+    {
+      "repo_path": "acdc/rtl/axis_tensor_accel_acdc.sv",
+      "lf_sha256": "8ffbf179f3e3bf9ad74d63742c5ba05b089457a66c4ccec6e28c1b7ae637f936",
+      "bytes": 22254
+    },
+    {
+      "repo_path": "acdc/rtl/conv_tile_engine_acdc.sv",
+      "lf_sha256": "52825e38743e6c68892e0929e8e5888b2f9b0d089b21f3922b830d1d0e7f29af",
+      "bytes": 14659
+    },
+    {
+      "repo_path": "acdc/rtl/tensor_tile_engine_acdc.sv",
+      "lf_sha256": "30cfcc749b0f5e04292232fbdf35117ea562ff7d81b222a479545e269dd173c9",
+      "bytes": 8828
+    },
+    {
+      "repo_path": "acdc/run_sim.sh",
+      "lf_sha256": "e8c602a1dff2308b25227003bb952245f2313e21fbf81ff7f72e871871cc42a6",
+      "bytes": 907
+    },
+    {
+      "repo_path": "acdc/sim/tb_axis_tensor_accel_acdc.sv",
+      "lf_sha256": "ee63b4bc4095d69a2684f8c124deed374e2b461efc977bb66b53763ab4e1fbf1",
+      "bytes": 6757
+    },
+    {
+      "repo_path": "acdc/statistics.py",
+      "lf_sha256": "d991b0221d8ebd2cb8a9f3dc5a72b6bc93761cf13b8a317c07a824f3c8af693d",
+      "bytes": 2461
+    },
+    {
+      "repo_path": "acdc/surface.py",
+      "lf_sha256": "9aeb8355b19e1dd9b8dd12ead5be63604380b2f15c000082cea1ca43f8243088",
+      "bytes": 6463
+    },
+    {
+      "repo_path": "acdc/tests/__init__.py",
+      "lf_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "repo_path": "acdc/tests/test_appliance_archive.py",
+      "lf_sha256": "ed0ffe583ac282e0aa8b33eb571042dc6ce5035ff0fc005a7a736bdf2a3a9581",
+      "bytes": 1031
+    },
+    {
+      "repo_path": "acdc/tests/test_appliance_full_pipeline.py",
+      "lf_sha256": "f44ce030a21c8c96e8bdb3e9ebe9539014ffdab0953ad2ada748e3f747501d85",
+      "bytes": 4655
+    },
+    {
+      "repo_path": "acdc/tests/test_appliance_mpr.py",
+      "lf_sha256": "e47470656c7050a5ce70bfd97cc64b06ceff8cdf21738a10b6bfeda51aba8330",
+      "bytes": 3773
+    },
+    {
+      "repo_path": "acdc/tests/test_appliance_native.py",
+      "lf_sha256": "8f745fc5d81942a47299fc3b3bb9f7ad3825b27073beaad92b6d785da2a2c949",
+      "bytes": 5338
+    },
+    {
+      "repo_path": "acdc/tests/test_appliance_pipeline.py",
+      "lf_sha256": "0c2b62d97f38d556ef69bdd012ef623084d79203e91195e6e5acd69977d2b5a6",
+      "bytes": 2688
+    },
+    {
+      "repo_path": "acdc/tests/test_appliance_storage.py",
+      "lf_sha256": "795b2013856c5f71cdcda8e9acf7760c03ee82e2f597493bb315d80668c1aa49",
+      "bytes": 1415
+    },
+    {
+      "repo_path": "acdc/tests/test_appliance_viewer.cjs",
+      "lf_sha256": "773f7205eb3104f210ef549a9a6caf70b155fb073b7738c0b7c8eaa9e1d699c6",
+      "bytes": 5066
+    },
+    {
+      "repo_path": "acdc/tests/test_appliance_web.py",
+      "lf_sha256": "32bfc54ed67609c2256beb85e4fe13325da0569a4f1dff6c54d00ea417aa9fc9",
+      "bytes": 4587
+    },
+    {
+      "repo_path": "acdc/tests/test_board_runner.py",
+      "lf_sha256": "056be683113cb80a5473933f31d3868de384586286ebb1200046985eb3bd787a",
+      "bytes": 1858
+    },
+    {
+      "repo_path": "acdc/tests/test_boundaries.py",
+      "lf_sha256": "21ab558afb88350d6c08a97ccf20e8a98f96c063536c2a880f22b91badf3e7ed",
+      "bytes": 3699
+    },
+    {
+      "repo_path": "acdc/tests/test_deploy.py",
+      "lf_sha256": "806c63231d1827d01a9267c03d3bb3b8120dcc872a6d569164e34c9b63ec1d43",
+      "bytes": 2504
+    },
+    {
+      "repo_path": "acdc/tests/test_display_lifecycle_http.py",
+      "lf_sha256": "7f03c9eac1f82921efc85848dea83b98080784f145809286076f8f4452986803",
+      "bytes": 1092
+    },
+    {
+      "repo_path": "acdc/tests/test_exchange.py",
+      "lf_sha256": "6a671324fbe9dc36ecc35edecd4a7c350d02069008ffeeadeec036338a15cd4f",
+      "bytes": 1393
+    },
+    {
+      "repo_path": "acdc/tests/test_hardware_lease.py",
+      "lf_sha256": "b43f2a5aac6ff0b4c1c158b271db728d095d062a76ec12cefe65cb842bb8629e",
+      "bytes": 1099
+    },
+    {
+      "repo_path": "acdc/tests/test_hdmi_touch.py",
+      "lf_sha256": "2d87c6fce8a46c4101e1635f3c0036ac962a01192aeb26217849ac78a7a507de",
+      "bytes": 4156
+    },
+    {
+      "repo_path": "acdc/tests/test_integration.py",
+      "lf_sha256": "abce8aa23fdd71aea3fe4189f4d03e3578faf5edeeee6d020f0dbca262e0d7aa",
+      "bytes": 7607
+    },
+    {
+      "repo_path": "acdc/tests/test_native_layout.py",
+      "lf_sha256": "22430e6255c41dff882ad8be86e5033d84791b3bba3159b4561eafbd640aacee",
+      "bytes": 1777
+    },
+    {
+      "repo_path": "acdc/tests/test_numerics.py",
+      "lf_sha256": "578586c5109e42a92117de1e9c850d1243f80cb7b14c8baabaaa82cb9bf58f54",
+      "bytes": 3461
+    },
+    {
+      "repo_path": "acdc/tests/test_optimization_layout.py",
+      "lf_sha256": "8b78494565079cb100b8f9083b59f0d71cf1de1775235f7b6157f738076b6655",
+      "bytes": 4093
+    },
+    {
+      "repo_path": "acdc/tests/test_optimization_program.py",
+      "lf_sha256": "7e1e2c90fa6c9eafd75c8c160c686a3657a4d747f380b6c4e31bf638ccd2d4db",
+      "bytes": 4571
+    },
+    {
+      "repo_path": "acdc/tests/test_performance_comparison.py",
+      "lf_sha256": "2810962acc5a23dda491085f732882ed64aefda508381b8268586a184be50cd7",
+      "bytes": 1103
+    },
+    {
+      "repo_path": "acdc/tests/test_prepared_inputs.py",
+      "lf_sha256": "2cf5feca80441b58969d0839cb2e218472c64a95df521fa64e9c3fc58cfe9a57",
+      "bytes": 3303
+    },
+    {
+      "repo_path": "acdc/tests/test_presentation_web.py",
+      "lf_sha256": "ff6426defe4f7e23aee976a79633cb57396dc3f89be8bbbe98de7c5c136994d9",
+      "bytes": 2415
+    },
+    {
+      "repo_path": "acdc/tests/test_release.py",
+      "lf_sha256": "203761ef8de5d11b8d56b23d83be46bfb7de362956515af038ca173d6efde19f",
+      "bytes": 2657
+    },
+    {
+      "repo_path": "acdc/tests/test_resident_lease.py",
+      "lf_sha256": "9176eceb25d7e133bf985cb1ffb0f91932875e58ce6c2d9c5a2daf36f0045933",
+      "bytes": 1782
+    },
+    {
+      "repo_path": "acdc/tests/test_restore_gate.py",
+      "lf_sha256": "19e2efd9e408f540d72b010700f8ad480558c0e3a39861c3cb4f453a4a645882",
+      "bytes": 843
+    },
+    {
+      "repo_path": "acdc/tests/test_spatial_device.py",
+      "lf_sha256": "935d20477df3954baad4cec840b11dd75a2f272d1304a6ce99cd2e24765baddc",
+      "bytes": 2412
+    },
+    {
+      "repo_path": "acdc/tests/test_surface.py",
+      "lf_sha256": "49b77dc80eb09440a70b30c16edd0d4f2f3e8d079b3da68b3d5bbd594aedafb7",
+      "bytes": 4189
+    },
+    {
+      "repo_path": "acdc/tests/test_surface_view.cjs",
+      "lf_sha256": "210603e8e6f969bde5d342465b89e0466a7ee194754febb2a57f552a6ff7b48f",
+      "bytes": 949
+    },
+    {
+      "repo_path": "acdc/tests/test_task_auto_display.py",
+      "lf_sha256": "04b8bc5a02328bd268fb25eaea3dbd8db9b634d7efd8e1a0fb66131e092a3e2c",
+      "bytes": 3047
+    },
+    {
+      "repo_path": "acdc/tests/test_verified_hashes.py",
+      "lf_sha256": "a9ca0df7fe814e90ff15445325e14681cf335711eed513af68814234a543dc57",
+      "bytes": 812
+    },
+    {
+      "repo_path": "acdc/tests/test_viewer.cjs",
+      "lf_sha256": "5fbf00ef679315adddb0e06f65fdd6fbb3035e5f14bf396ce8e98e2a890ba13a",
+      "bytes": 2753
+    },
+    {
+      "repo_path": "acdc/tests/test_volume.py",
+      "lf_sha256": "2eb17d614ecf6c75bde80134577bd7a178d1e01d8b4b92c320300384c1a1f16c",
+      "bytes": 3658
+    },
+    {
+      "repo_path": "acdc/validate_development.py",
+      "lf_sha256": "55d0bcd87bf9a618b2f270e1915f1a83c70fb05947024f5be8fa17415f541010",
+      "bytes": 5845
+    },
+    {
+      "repo_path": "acdc/validate_performance_comparison.py",
+      "lf_sha256": "ded3fae6457528316d959338c15191944f5bfd6c10b027069de625582c03f548",
+      "bytes": 5582
+    },
+    {
+      "repo_path": "acdc/validate_preprocessing.py",
+      "lf_sha256": "defa15bb99bd18bccd4a6a1bd73d15d3e8d7a038725583291a31001462e534ac",
+      "bytes": 5335
+    },
+    {
+      "repo_path": "acdc/validate_restore.py",
+      "lf_sha256": "c1906c3a0f3ecea4ed6155f29d17b6750d2ccdf64692e78c2b8c7a990ae6811b",
+      "bytes": 6402
+    },
+    {
+      "repo_path": "acdc/verify.py",
+      "lf_sha256": "6de99a25ff9454d1ceef48966c5e76a5474b45784d58f6637960014824646b15",
+      "bytes": 2536
+    },
+    {
+      "repo_path": "acdc/vivado/build.tcl",
+      "lf_sha256": "858805b9e5977109b074bf01c54684f1f5686e5c6cfa7c0b3c75f5e7734b11f2",
+      "bytes": 9975
+    },
+    {
+      "repo_path": "acdc/vivado/build_fast.tcl",
+      "lf_sha256": "faccc7de7e9096e4a28e0846aeb2a67bdf25dc6adb6f69b0152456791eb7f29a",
+      "bytes": 10156
+    },
+    {
+      "repo_path": "acdc/vivado/package.tcl",
+      "lf_sha256": "a6a6692ddb79dd950fd7d710a723f001e727682d6e6e5346b31101e34e5ecf8c",
+      "bytes": 2727
+    },
+    {
+      "repo_path": "acdc/vivado/package_fast.tcl",
+      "lf_sha256": "d9fe54695428f0fbf0648b25fa9b7e9aa75b2fa36995949d1836a86f37273039",
+      "bytes": 3125
+    },
+    {
+      "repo_path": "acdc/volume.py",
+      "lf_sha256": "bf13a5588aa0ad5a7677f7378e5f75ddab5f1e09fe46d863112582b36674c686",
+      "bytes": 8978
+    },
+    {
+      "repo_path": "acdc/web.py",
+      "lf_sha256": "853bd9ae43e5fcf8330067acfbca5f1b09dd5969f3f8559877ce71598fc97a3d",
+      "bytes": 10034
+    },
+    {
+      "repo_path": "acdc/web_assets/app.js",
+      "lf_sha256": "f142ef36ab86f0ce4ffc2444b89ab5a91316957808c5fd2703abbd9d2716f2f6",
+      "bytes": 16698
+    },
+    {
+      "repo_path": "acdc/web_assets/index.html",
+      "lf_sha256": "7b057ed54718945e76d35633ae18d7491a6f19bd8f2c94bc5681b3ddaad25445",
+      "bytes": 5295
+    },
+    {
+      "repo_path": "acdc/web_assets/style.css",
+      "lf_sha256": "658c9c10c6231919e55aca123dec08cb4b319e48e7b5b65dd88a740d8392e79f",
+      "bytes": 4976
+    },
+    {
+      "repo_path": "acdc/web_assets/surface_view.js",
+      "lf_sha256": "3f07c892aa45575e0dc6e2631d23eb5e457aef6e7b793fc47b9209eb41dbf507",
+      "bytes": 6026
+    },
+    {
+      "repo_path": "acdc/witness.py",
+      "lf_sha256": "0a1861874ec07ce37050bf4b3c0a3a5db4e8c675624dcb6a6462ab15a58558a3",
+      "bytes": 2023
+    },
+    {
+      "repo_path": "acdc/worker.py",
+      "lf_sha256": "1fa33ca3dc98a39ac8d695cc3666f862bf749524f13b918bc1f48ec1b62df5b3",
+      "bytes": 3568
+    },
+    {
+      "repo_path": "board/README.md",
+      "lf_sha256": "3cafdf14c5201a0f6987b760063b441fae25539c4ce937fb3268c50bdd79e0ba",
+      "bytes": 17745
+    },
+    {
+      "repo_path": "board/cache_sync.py",
+      "lf_sha256": "16fcdae657afeb14fe0f194f046a740f17d0484dff030dd73d28edd3ecb3c54d",
+      "bytes": 1113
+    },
+    {
+      "repo_path": "board/cpu_baseline.py",
+      "lf_sha256": "712b2c1c59cd29911d491355bc08c0114d894f22f24a387a100c637d443e0ea7",
+      "bytes": 2275
+    },
+    {
+      "repo_path": "board/deploy_release.py",
+      "lf_sha256": "08da6c7fe9653910ab13cb54149196a3bbc99ac271206c056017f02f2e19b9ad",
+      "bytes": 9494
+    },
+    {
+      "repo_path": "board/evaluate_dataset.py",
+      "lf_sha256": "c638ba4cbfd18dab78b42d4ea19ff8a655c1ca10610f15b2f7d5ff6d299e8db9",
+      "bytes": 14486
+    },
+    {
+      "repo_path": "board/infer_images.py",
+      "lf_sha256": "da488f13a17e6e0b4648625cb4b02ac8acdfd74ae058271c10ed638106f620fe",
+      "bytes": 15628
+    },
+    {
+      "repo_path": "board/infer_worker.py",
+      "lf_sha256": "cc12ee09cab68921c0a266e0a931c6c218b1b599e1eacc44908e60786c4c9c14",
+      "bytes": 7714
+    },
+    {
+      "repo_path": "board/native/rgb_resize.c",
+      "lf_sha256": "46842b5a5c87f1b7c18e8c3df0dfd8b0b9ef2a93c19ccd67337509bb1e8a5fb7",
+      "bytes": 8148
+    },
+    {
+      "repo_path": "board/native/tensor_control.c",
+      "lf_sha256": "d9fb9576c1c1360e1d3081031796b5b291332a269bbaf8a58fd468b05f273f35",
+      "bytes": 6819
+    },
+    {
+      "repo_path": "board/native/tensor_copy.c",
+      "lf_sha256": "dd6902e9ff09e481727c8c533b95d8e4cb9bc977a230fe84805472ab1770e835",
+      "bytes": 2806
+    },
+    {
+      "repo_path": "board/native_control.py",
+      "lf_sha256": "b24705b9aee775388494b5b1d6da144aa9cefe7f0c3e51d939501b737368eed6",
+      "bytes": 5891
+    },
+    {
+      "repo_path": "board/native_copy.py",
+      "lf_sha256": "372d26ff0656003f751f69a726f7628244273f671c13dea9292ada7f128a9097",
+      "bytes": 2716
+    },
+    {
+      "repo_path": "board/native_resize.py",
+      "lf_sha256": "b292ef472a7fe473f03200446af380f6f82f8eb044734357d787b26cd78f058f",
+      "bytes": 1222
+    },
+    {
+      "repo_path": "board/pl_graph.py",
+      "lf_sha256": "78424d3977ebd57528bc387239b8359ff1ec8c8bebc4c02c432272601ef17b0b",
+      "bytes": 10796
+    },
+    {
+      "repo_path": "board/profile_cnn.py",
+      "lf_sha256": "f8bafdbfddee3e9471947a2125d337a99f91bed35f839be29f85ad45f2479d67",
+      "bytes": 4481
+    },
+    {
+      "repo_path": "board/simple_dma.py",
+      "lf_sha256": "782e00b3a3e9a8233f176718f543467f68f563a721ac46ca06b62fa60c1337da",
+      "bytes": 7224
+    },
+    {
+      "repo_path": "board/tensor_accel.py",
+      "lf_sha256": "6aed6632f98d9d3091eb73133c7f41e9f192695c11e75371cbf553ddba50c0da",
+      "bytes": 19957
+    },
+    {
+      "repo_path": "board/verify_cnn.py",
+      "lf_sha256": "e7b35cb64b30c8db8efeb5f86829af13317e25dac68926c801dae3055d8273bd",
+      "bytes": 8549
+    },
+    {
+      "repo_path": "board/verify_dma_modes.py",
+      "lf_sha256": "604af4b72c454114ea5d4af3502196586362525a3c33714778c5e40f0292e958",
+      "bytes": 2864
+    },
+    {
+      "repo_path": "board/verify_overlay.py",
+      "lf_sha256": "489994703c0473a4ae4a7531472cb80eec18857e3bf61b207fad53da56c77ab8",
+      "bytes": 7835
+    },
+    {
+      "repo_path": "camus/.gitattributes",
+      "lf_sha256": "d60f352d0db1404c70afb4bb8b2ca3fd1c610572aa40720e8a0b7baa7885418c",
+      "bytes": 19
+    },
+    {
+      "repo_path": "camus/README.md",
+      "lf_sha256": "48a440a54925b2b1b3c81651c902061c084e675134b672018b58d3fe36e109df",
+      "bytes": 17043
+    },
+    {
+      "repo_path": "camus/__init__.py",
+      "lf_sha256": "3465276a912a94b04b67a2b706f773159a170706f85e56b7823f68030fcc6c50",
+      "bytes": 198
+    },
+    {
+      "repo_path": "camus/__main__.py",
+      "lf_sha256": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+      "bytes": 48
+    },
+    {
+      "repo_path": "camus/accelerator.py",
+      "lf_sha256": "d5a9033d3be850fcb90f64c7b4bb5a85caeb0c8943fc70cc42a255d0a1cd6365",
+      "bytes": 12726
+    },
+    {
+      "repo_path": "camus/board_service.py",
+      "lf_sha256": "9d383b66de8374fdabf7f376c95beeb815357c62bfe64b99d34a24b6c97fc87e",
+      "bytes": 3711
+    },
+    {
+      "repo_path": "camus/board_verify.py",
+      "lf_sha256": "45be1e42132ef2fce0e871c851e510ce5346f9ea1377e39f3fd587ccad020a60",
+      "bytes": 10333
+    },
+    {
+      "repo_path": "camus/board_web_verify.py",
+      "lf_sha256": "eba2e9d76578be608890c5f7af5b5f6e18aa8a9bb8028d3d77d042980a9f0600",
+      "bytes": 7674
+    },
+    {
+      "repo_path": "camus/build.sh",
+      "lf_sha256": "9dcb8bf8f2d533994ad9768f9099fca029ab58171a85022826c592c0a50aeda7",
+      "bytes": 806
+    },
+    {
+      "repo_path": "camus/cli.py",
+      "lf_sha256": "9f52b53e49ccce2c7942dd902dbb758e344b07bf9257e87da5d9667cc13a6ae1",
+      "bytes": 1760
+    },
+    {
+      "repo_path": "camus/contract.py",
+      "lf_sha256": "11de4844ae860e3e4b480447daf4140bff44d3c9825938c2df1341f80e51f890",
+      "bytes": 3807
+    },
+    {
+      "repo_path": "camus/device.py",
+      "lf_sha256": "092a5cccd912cfb2fb41ba237077064ebcc0c5f8047fb09443930c62b9ac248b",
+      "bytes": 13965
+    },
+    {
+      "repo_path": "camus/gen_vectors.py",
+      "lf_sha256": "07fb98de43ba4dad39b4b93e7846b77d5d088e8913f0e8dd3078566d436a2a94",
+      "bytes": 8747
+    },
+    {
+      "repo_path": "camus/graph.py",
+      "lf_sha256": "f273685fcd8f33f986db06d3d0f4dd5933053c6bd96d1c62441b087c135d07ef",
+      "bytes": 3390
+    },
+    {
+      "repo_path": "camus/hdmi.py",
+      "lf_sha256": "b117a886d2b6ddffa11f182dbd32cd30830b7c5d39f8c5bf1e79e9ce4f353a8c",
+      "bytes": 3021
+    },
+    {
+      "repo_path": "camus/integer.py",
+      "lf_sha256": "de301ee29d34864a8e0d6bae1f91f4c2d026ded20e98f23cb664cc09c4a01e65",
+      "bytes": 8871
+    },
+    {
+      "repo_path": "camus/model.py",
+      "lf_sha256": "3d39b8773d4b061ff16d32bed24144468053e28df980ba4e49481e4fbd57b2a8",
+      "bytes": 18183
+    },
+    {
+      "repo_path": "camus/model_manifest.json",
+      "lf_sha256": "ed6813fe6cb3deb24063b944c00d97c0eae3ade5ca001bd21aaf4fbb552cee29",
+      "bytes": 28958
+    },
+    {
+      "repo_path": "camus/native.py",
+      "lf_sha256": "adbf1f04caab202405f67f9dab742a74d52f3334cfda50fc98a37fa4ee91a6aa",
+      "bytes": 10222
+    },
+    {
+      "repo_path": "camus/native/control.c",
+      "lf_sha256": "e75a3cbaf0d438c15ca78d5015747a47172f5b7cdbe263d557f57b70b0c5d1cb",
+      "bytes": 6847
+    },
+    {
+      "repo_path": "camus/native/ops.c",
+      "lf_sha256": "f06808507f4ec7460fe3b9dba83c8f17473be9a2dbeec2d86e6506ff1300a108",
+      "bytes": 8927
+    },
+    {
+      "repo_path": "camus/native_control.py",
+      "lf_sha256": "4591a089fe464b41c17485055d428a3182a4974235e8ff077c1ead0d5752d00f",
+      "bytes": 5521
+    },
+    {
+      "repo_path": "camus/package.py",
+      "lf_sha256": "bf73fec76021a214ddbe3e80ecaa0d58bbccf779dd948191c6b631cf6080eeca",
+      "bytes": 7218
+    },
+    {
+      "repo_path": "camus/performance.py",
+      "lf_sha256": "2996d3b0c51fcbae09500d1006c8d28ad793d6feb79f94782f90fd356bb7a678",
+      "bytes": 5995
+    },
+    {
+      "repo_path": "camus/pipeline.py",
+      "lf_sha256": "4c0cc85aedcaf6858c13d7f8b86f06ea386167bdb41ea2f1ffa4234a6c85fa81",
+      "bytes": 7446
+    },
+    {
+      "repo_path": "camus/plan.py",
+      "lf_sha256": "877bb6fa546ded0d38cba94831fc8bc808dcd22cb1d118e078a400a20688e473",
+      "bytes": 5761
+    },
+    {
+      "repo_path": "camus/png.py",
+      "lf_sha256": "60d735e05c6f58765781b2f03f073b3abe9dc4d3a8cfcc9dbd833039e2160dfa",
+      "bytes": 3853
+    },
+    {
+      "repo_path": "camus/postprocess.py",
+      "lf_sha256": "b6350e1e36bad45f1d107cf54dfe9337446a5f3c0ef7431f527f4ba1cd474844",
+      "bytes": 3515
+    },
+    {
+      "repo_path": "camus/prepare_validation.py",
+      "lf_sha256": "b1c43e0eef9a22978ebe906e7e62fd997e95d9844a436582d2bde5be1a4c21a8",
+      "bytes": 3442
+    },
+    {
+      "repo_path": "camus/prepared.py",
+      "lf_sha256": "a366db8a673eb04c9d568b053207ac45480db58d89534ea70276317773b92135",
+      "bytes": 1979
+    },
+    {
+      "repo_path": "camus/preprocess.py",
+      "lf_sha256": "d3e274fb511f737c79476a62a020053ca42563f4a9e373af463b8d201f4a1e1f",
+      "bytes": 15766
+    },
+    {
+      "repo_path": "camus/reference.py",
+      "lf_sha256": "68198b5ce38a7e82c5a31940ff4e9f1b1d2815611af3627bd9f7e5515bad1523",
+      "bytes": 3871
+    },
+    {
+      "repo_path": "camus/requirements.txt",
+      "lf_sha256": "8f1d43c4dd2f7afa26b4ddfb429689b82b1d0bfb5343a4dfe6292b1aaf700de4",
+      "bytes": 117
+    },
+    {
+      "repo_path": "camus/result.py",
+      "lf_sha256": "7a752d5c870f51b874867ab98066c9b59d35d773a89f51ce56a07f3c31610d49",
+      "bytes": 6036
+    },
+    {
+      "repo_path": "camus/rtl/axis_tensor_accel_camus.sv",
+      "lf_sha256": "60b020536ca411bee8a0d7aad392c375efef024c667251b68ec26410c801e050",
+      "bytes": 22257
+    },
+    {
+      "repo_path": "camus/rtl/conv_tile_engine_camus.sv",
+      "lf_sha256": "6a9381c67c235dcf68bb5dc00903ebbd6d943784724643c2134a65a727ffb02e",
+      "bytes": 14660
+    },
+    {
+      "repo_path": "camus/rtl/tensor_tile_engine_camus.sv",
+      "lf_sha256": "6cdb690403501af7689e97c4b5cabe0c228aefb810a762dabd8a2d3485cb660e",
+      "bytes": 8829
+    },
+    {
+      "repo_path": "camus/run_sim.sh",
+      "lf_sha256": "8d8c0740c636df4e5be0b5f6084b80eaa5f610416402b680d2933611fe38c796",
+      "bytes": 909
+    },
+    {
+      "repo_path": "camus/sim/tb_axis_tensor_accel_camus.sv",
+      "lf_sha256": "aec7cbaea7ea68f954012efe114742a6059d4f5d49b23c647e7afc9b1e4261ae",
+      "bytes": 6761
+    },
+    {
+      "repo_path": "camus/tests/__init__.py",
+      "lf_sha256": "5ca65f2e25fc4d7a496775f2182634c749905048730b64f64a8b33da646f4711",
+      "bytes": 101
+    },
+    {
+      "repo_path": "camus/tests/test_board_lifecycle.py",
+      "lf_sha256": "d94290189707515191f496931221012d663bdbc01a454899b64334ef7993eac6",
+      "bytes": 7861
+    },
+    {
+      "repo_path": "camus/tests/test_device.py",
+      "lf_sha256": "a93ca2411a69d07a73ebed092a826e4ba77ff72ab46f60ce140df48db1cebafe",
+      "bytes": 2423
+    },
+    {
+      "repo_path": "camus/tests/test_full_network.py",
+      "lf_sha256": "27ae70027f5d00e85245af3e739ce06df48f758c2eb319bd0292e7b4bf1556f5",
+      "bytes": 1794
+    },
+    {
+      "repo_path": "camus/tests/test_integer.py",
+      "lf_sha256": "e7251d2f1b8c66e9ccf1ec13c7b593a4a4887c542361001c71756750a2812d87",
+      "bytes": 2272
+    },
+    {
+      "repo_path": "camus/tests/test_integration.py",
+      "lf_sha256": "ee3e15a0a45b1f9f02f7952191f253aad2ff9103c780938ffddad34b72f6b8ca",
+      "bytes": 6803
+    },
+    {
+      "repo_path": "camus/tests/test_model.py",
+      "lf_sha256": "afaedb8f1beb160c39757034b95c30e6e7970f6f0c886e039614644d76388b90",
+      "bytes": 2019
+    },
+    {
+      "repo_path": "camus/tests/test_optimization.py",
+      "lf_sha256": "5f305dc8d151997a5f2699f72ab4abb67f4d8470d5c6c02a536aec92466d9173",
+      "bytes": 9492
+    },
+    {
+      "repo_path": "camus/tests/test_plan.py",
+      "lf_sha256": "1033be01b720493091e7e2f7da2adab98b48d05eb140f46c31c672b4a0420ea3",
+      "bytes": 1077
+    },
+    {
+      "repo_path": "camus/tests/test_preprocess.py",
+      "lf_sha256": "1e456e8c7a37d75049c739c44fc01d3341e49bad595b869c4f93d4cb1506022c",
+      "bytes": 4970
+    },
+    {
+      "repo_path": "camus/tests/test_result_postprocess.py",
+      "lf_sha256": "a0010e44caf57f10aa8cb04153743bca421e7f001823f4f51eb5f13fe91cef25",
+      "bytes": 2159
+    },
+    {
+      "repo_path": "camus/tunnel.py",
+      "lf_sha256": "228cc1ab8215421ac11dce706756f8203bdb32db4b83654d61b9d8ca39314f59",
+      "bytes": 1950
+    },
+    {
+      "repo_path": "camus/verify.py",
+      "lf_sha256": "1a58012d9dc31ba0a6d31ddb35e39c252960c1f49020a6a05ef16871434054a9",
+      "bytes": 7143
+    },
+    {
+      "repo_path": "camus/vivado/build.tcl",
+      "lf_sha256": "c3f7b895daf19fd1df0b95b56e652879945e5c884db9ce4cb8ce9be4d93a7a59",
+      "bytes": 9983
+    },
+    {
+      "repo_path": "camus/vivado/package.tcl",
+      "lf_sha256": "56912eaa440c0a63f227c9ed035a63c4be18f9fac143bf56e91ed6716fb90bdc",
+      "bytes": 2736
+    },
+    {
+      "repo_path": "camus/web.html",
+      "lf_sha256": "08e946c2453342ed55f84535cc2e7605062e913cc3769b533aedb0d80a1671a9",
+      "bytes": 21072
+    },
+    {
+      "repo_path": "camus/web.py",
+      "lf_sha256": "1ef695dd0ce759abe36106e622652756e6a80e83198026d69bfdbd9a45e1670d",
+      "bytes": 14621
+    },
+    {
+      "repo_path": "delivery/README.md",
+      "lf_sha256": "5d3633f71349962adad762b4ef043b2550cfe17f3a8af5953f634242f0098656",
+      "bytes": 497
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/README.md",
+      "lf_sha256": "3213fb278741329501f769ac3954e559cc47f13c119e971c598267b97f0e1906",
+      "bytes": 3793
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/assets.json",
+      "lf_sha256": "37a623ac5cb527cc840d442af0f90fc718dc327906b639f11267d4d3a0a19eb3",
+      "bytes": 596
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/deployment/bootstrap_perf10.py",
+      "lf_sha256": "43c0c33d543c36d68363be9e52906134832f04dd8b19f6c3f0f5d34e3596858e",
+      "bytes": 1084
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/deployment/launch.py",
+      "lf_sha256": "0da29d36610776d80f5e88942ae6329f48102e5fb89d4ce2472a3fcf40fc5a65",
+      "bytes": 804
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/deployment/manage.py",
+      "lf_sha256": "5fdaa61c5fe211c92d0ff69122ff22d850268c48f188029c59ad95cfcdf49f31",
+      "bytes": 6505
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/deployment/pld-perf10.service",
+      "lf_sha256": "3667cddc4975345d358818dcefbb8f091210cf9986f34eb4094210df5288ed1c",
+      "bytes": 541
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/deployment/runtime.py",
+      "lf_sha256": "bf2d644b88585bc7287cc594f234a2e88bf5a89838755b525e7a7fb92028c244",
+      "bytes": 1452
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/deployment/validate_small.py",
+      "lf_sha256": "8c97bcaef34512d920cafe86650fce7af2e7d26bd2793ccbc3a4c80edf017234",
+      "bytes": 829
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/source_identity.json",
+      "lf_sha256": "70106777e07df7dfa9edd31dd5a021aa771d92b6a870c83c30543324be4e7bbc",
+      "bytes": 57500
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/validation/candidate_service.log",
+      "lf_sha256": "06ff49da1e5a23cb352c5a2d59faefa55f80a142b37a0307fa68568cd5e20af5",
+      "bytes": 1861
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/validation/deployment_identity.json",
+      "lf_sha256": "d06ed156e42a9f12329448da13515ac909648fe11bb6fa6ad39462f87e29bab9",
+      "bytes": 1694
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/validation/http_verification.json",
+      "lf_sha256": "67a49645ced455cf45c8607ded90d537c3a8bcaa53d94c6898667eb8527a6f5c",
+      "bytes": 35393
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/validation/local_validation.json",
+      "lf_sha256": "f387e6eed3ab7779511700ae78a1c4d53a1a891ad150aa482e375cbe4cb0c768",
+      "bytes": 417
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/validation/rollback_golden.json",
+      "lf_sha256": "5b652af7c92b0822c4a3d4f92f1ec7f867386d295aa13fda4a86800883ad7fd7",
+      "bytes": 12299
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/validation/safe_shutdown.json",
+      "lf_sha256": "1be7865b9eae84b3ad078d6f0e47674a04e078f4df7e16feddb8bf069ea8d999",
+      "bytes": 267
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/validation/small_board.json",
+      "lf_sha256": "2ee966b420b33a3cd3cc97d7e491f43d9966b79d1dfabf4feef78c6db236f6a0",
+      "bytes": 2178
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/validation/summary.json",
+      "lf_sha256": "f7fe279507922295024338f8cce94d50934f053be3e8bfb7249b6d22eca5b3a1",
+      "bytes": 2281
+    },
+    {
+      "repo_path": "delivery/candidates/pld_perf10_20261020/validation/switch_state.json",
+      "lf_sha256": "8dc0d46cab4671832daafe48afec7f07aa32281b18c4ca2cf858bb221ea13a6e",
+      "bytes": 1548
+    },
+    {
+      "repo_path": "delivery/current.json",
+      "lf_sha256": "90efbe96511d156a1b7ef1947fa5a225e0cb8080c11d3688dc3d553434682671",
+      "bytes": 175
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/MANIFEST.json",
+      "lf_sha256": "7493a6b247fec3ae9cfc58f5af67bd090e76fe1edd266416b9b1cee8bdfdd63d",
+      "bytes": 255118
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/README.md",
+      "lf_sha256": "28224cd6fe1c9c2f7c2b5d0560a636f6644add81056b549b9f6eebca92db52e4",
+      "bytes": 1586
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/systemd/pld-camus.service",
+      "lf_sha256": "722388461f3dc84b9724b846f544eeacf1c8e189156a0349f72bbabe8737aec0",
+      "bytes": 948
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/systemd/pld-hub.service",
+      "lf_sha256": "568072da0aff4ed167662533595e5da494079cb7d3fa74c43387597e4371fc6b",
+      "bytes": 520
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/systemd/pld-web.service",
+      "lf_sha256": "2c68ee2e26167bb59605125f176133b6ced6b309de86c4cb350cddc7f50e23f0",
+      "bytes": 776
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/validation/board_http_interactive.json",
+      "lf_sha256": "5a0689db868cd8946d94b7bc802f205ac96ee586fbf0ac96c9d4f9db892e1cba",
+      "bytes": 243533
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/validation/clean_checkout.json",
+      "lf_sha256": "d50c1579acad1cac279072c146863d0edc69b756ca87ab71dbf12fe24cadccdf",
+      "bytes": 881
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/validation/cleanup_actions.json",
+      "lf_sha256": "ac79c9994751eb5d0cf082a477f712ed7ea30458e737949d34f125622124b92d",
+      "bytes": 33635
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/validation/deployment_identity.json",
+      "lf_sha256": "e21aff7e9cd09d2fc1c28a1756a9dca17535a6560661eb34064c2aa1b5572af2",
+      "bytes": 1716
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/validation/fresh_camus_build_manifest.json",
+      "lf_sha256": "b5b918d09355f2dee8f1218c0c95cee93bc7f7041ccae64274886db692b912a8",
+      "bytes": 3451
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/validation/fresh_skin_build_manifest.json",
+      "lf_sha256": "84885fa243ea461ea6ea2131db7620ec57fef5e3402fa27d862b4631890cda79",
+      "bytes": 2120
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/validation/reference_full.log",
+      "lf_sha256": "f41b3c020d300ab91d831eb734d637b6d072f199d0c50d869fab819a7df3856b",
+      "bytes": 840
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/validation/reference_small.log",
+      "lf_sha256": "6139f231cec1772276b6da5672cbc7ddc40aa7d2fdda280dfb5767532d92d275",
+      "bytes": 970
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/validation/summary.json",
+      "lf_sha256": "050355a610bb5ed108ff4a7768d96d4da914ffdf50a4efe2ccd1cf0ff61ca605",
+      "bytes": 7289
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/validation/timing_breakdown.json",
+      "lf_sha256": "5db6e87e8ad8415c70d003af1d8251f6db45e4118000920972919fa95850b6d5",
+      "bytes": 16076
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/validation/xsim_camus.log",
+      "lf_sha256": "de2b81c764f75df9a958d0f53ec47773da54138e9789ae3d3eea0198fb9d5437",
+      "bytes": 144
+    },
+    {
+      "repo_path": "delivery/pld_dual_20261017/validation/xsim_skin.log",
+      "lf_sha256": "d5d040143fe172d9b14e445f32eceb4ea6d65cd894ce35ee19239ca8f4dafb50",
+      "bytes": 4633
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/README.md",
+      "lf_sha256": "0cb1296a84c237ad3067f5d5f54dd9706e4aac697799e753f1c6687e48f252f1",
+      "bytes": 4154
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/RELEASE_STATUS.md",
+      "lf_sha256": "c52c0ba02f310f39fdf4fd3128cf901e32311bc82e1f0cf18c47dac707692e8d",
+      "bytes": 422
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/README.md",
+      "lf_sha256": "4b66ba9cafd0684dfaf11b9e76cc2142b27d20873a5ffc6b73c75b9222e64887",
+      "bytes": 9389
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/__init__.py",
+      "lf_sha256": "76902054941875eea7bdf9b2621fa4bada0ed233f4368801c1ccf718647e59d9",
+      "bytes": 133
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/__main__.py",
+      "lf_sha256": "d29fef34d8f2ce210189b119996b3f9ec8d1a5b3b50249e016503477dfe740d1",
+      "bytes": 5130
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/archive.py",
+      "lf_sha256": "5d9518e8b11fe44f72c8dc0bd7ec4abaff9e9c1dd85e65620d517372c46a21b2",
+      "bytes": 1683
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/assets.py",
+      "lf_sha256": "7f39f4de49b82c5e95bd3678280c3087fe981804abaa1d578400ada68f930a87",
+      "bytes": 4790
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/audit_http.py",
+      "lf_sha256": "c45ca81b13dc7a34a5b5d856d8f8694e311a4a48984f4f300e11a903d096ce4d",
+      "bytes": 3016
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/benchmark_replay.py",
+      "lf_sha256": "7f1dd13f5200da39234b7c1a1a171381aa3ff8f51e1416562b9e244679822cf7",
+      "bytes": 3040
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/deploy.py",
+      "lf_sha256": "3201a1a985cfb61522196352590aab194b1103dfacb088dcab6e93a02f5d71f1",
+      "bytes": 4286
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/engine.py",
+      "lf_sha256": "ecd2ca7ade4051f4956547634dbebe642df6c8516e2362670f1c07816b5548d1",
+      "bytes": 11803
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/full_pipeline.py",
+      "lf_sha256": "eb0720a527af94b66048839022a91fcc8cefca9a7a4b54fe625f99d7a4784c95",
+      "bytes": 7708
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/hdmi.py",
+      "lf_sha256": "d74bfb8e7a6a8eb0b46de1a0c5332a0732eab111e18a890acd2140f43147b2f0",
+      "bytes": 6581
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/identity.py",
+      "lf_sha256": "8aef277d0249ec2631efdeaf8c4ec398d2f2ebaad62af64ec7e9b25dfa1148f2",
+      "bytes": 2072
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/monitor.py",
+      "lf_sha256": "4db7911d8b79a02fdc8d36f07f1e5e46a08f403b80049068eae62df161502a06",
+      "bytes": 3082
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/mpr.py",
+      "lf_sha256": "cffb467d6c659a66a5cd69674163759b0ac94048258fe39234b86389c9485b33",
+      "bytes": 2993
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/native.py",
+      "lf_sha256": "61b149a534a9f0d965ea6e3352c4120f0540639a8edb9f5851a0c6e70835b81e",
+      "bytes": 9694
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/native/image.c",
+      "lf_sha256": "37cb57f6e836a6e6c7983f4929413a58b2791a52fb382602bee0f845a5282e3a",
+      "bytes": 18405
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/native/mesh/CMakeLists.txt",
+      "lf_sha256": "f281bfdf076f7623787cefe11ba75e310fb701c8ff5f2f693d02cf58f508ab82",
+      "bytes": 453
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/native/mesh/arm-board-toolchain.cmake",
+      "lf_sha256": "2e39828b8007ed70fb5e3fda5a1f35792c474f8c0b1e4acd4c5b34589df5c4ee",
+      "bytes": 1845
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/native/mesh/build_cross.sh",
+      "lf_sha256": "ebf11267d7fc77649e422fd0183c3e32f328d366e3117e1d4e93b86c59e8459a",
+      "bytes": 2755
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/native/mesh/build_vtk.sh",
+      "lf_sha256": "550f8ff0f94de790fb75cf05297d278e6654fab2b2d6135c9a0eb33f8527f0d4",
+      "bytes": 1229
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/native/mesh/mesh.cxx",
+      "lf_sha256": "015d4407b69fd1cdd4ba09839967f4ab8d26c9bdceb0fdbb3d3ac5b88700f428",
+      "bytes": 12291
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/native/mesh/snapshot_sysroot.py",
+      "lf_sha256": "fb522a971342be1eaefc99d27223fbf63609e9a4bbcb0e127a432c823c3e862b",
+      "bytes": 1520
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/pipeline.py",
+      "lf_sha256": "2ae35a5308110aecf9fafbadcae01bc216b1e565f374f15a19300d7f563aed69",
+      "bytes": 9135
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/png.py",
+      "lf_sha256": "b8d13567b60886a27f82178427d11d8e1bbc57e0eb072ce5d99458d9a1b32a98",
+      "bytes": 1092
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/qualify.py",
+      "lf_sha256": "c7e57f0e4c4d229291639bda32c64f69b6fb5a28018381f718f52650ab277560",
+      "bytes": 5777
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/qualify_surfaces.py",
+      "lf_sha256": "a0b5af58afacc51bc125efc521f057aa7c548147b31f596f9be735538dc0ca34",
+      "bytes": 4926
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/reconstruct.py",
+      "lf_sha256": "4f9ae424d97983695edfa1104fa99b817e98980888ff3e656fe8155e650e6235",
+      "bytes": 3786
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/storage.py",
+      "lf_sha256": "279fbc0988c5bc256c0149e47fa9107c33e9406acafde266b24f41e01768cf4e",
+      "bytes": 2204
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/surface.py",
+      "lf_sha256": "5bf2784868c478b2b0ac95ab86a549df6da777047d0f9124ff233fc004beacab",
+      "bytes": 3997
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/surface_hdmi.py",
+      "lf_sha256": "b6e083b841442b29c1ab9325d511103c15dbb65dcfd444dfaae281643ea5da37",
+      "bytes": 4068
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/surface_raster.c",
+      "lf_sha256": "4e3956e375b3ea75dbaf059bface92d4ca439d25d99c63a00b216853ddd350b6",
+      "bytes": 1395
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/touch_drag.py",
+      "lf_sha256": "f70979715917660289cab2303aaa7e81ce576faba2a21119aa08846aa8aca7a9",
+      "bytes": 2007
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/validate_http.py",
+      "lf_sha256": "217765cc0902eb7ddb9c10fc88e7e71a562d073ac57c122a26ca5fe0ca4c8d14",
+      "bytes": 6527
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/validate_overlap.py",
+      "lf_sha256": "bda08674542d831c23b31d67b56dcb28f6bce12bbc0db0b6fed6f0f0fcf4cfc9",
+      "bytes": 3556
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/validate_recovery.py",
+      "lf_sha256": "fde82240513e0ecca00500d696ed2e1b45f15149d3290f596f3448a0e50e5c75",
+      "bytes": 4418
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/volume.py",
+      "lf_sha256": "3eb5e1a41278989e25128ed6863940f6b98f58b4d6f3b1871cb95191d5306472",
+      "bytes": 3921
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/web.py",
+      "lf_sha256": "fa7bc0e171c1fd9634a3b7296cac7aaa6e50d54819db58c0ad44fed4acd34da1",
+      "bytes": 11733
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/web_assets/app.js",
+      "lf_sha256": "cf94436c0a135f780c5451f01700ff8e4569b004e31feb18dea346e8e49fc708",
+      "bytes": 16633
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/web_assets/index.html",
+      "lf_sha256": "07a3a805f9ce6b634830e6ed0a8e1a1b40dc713c7c9e65406126ac811f1945d3",
+      "bytes": 5127
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/web_assets/style.css",
+      "lf_sha256": "658c9c10c6231919e55aca123dec08cb4b319e48e7b5b65dd88a740d8392e79f",
+      "bytes": 4976
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/acdc/appliance/web_assets/surface_view.js",
+      "lf_sha256": "0c9e8c747a88d2ba7198246262f90f3c0a0338f45245174c8ae6487356ac8c77",
+      "bytes": 6454
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/display_web/pld_hdmi.py",
+      "lf_sha256": "d46bb71fec0b7192cfb11e937dc17546e66e58c02dc8444c763cf8824e501466",
+      "bytes": 11482
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/display_web/touch_display.py",
+      "lf_sha256": "0d30284712e4dd049db3485cd4e947718759f4d108e76f1a486471cb087e6432",
+      "bytes": 4623
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/v2_application.json",
+      "lf_sha256": "c7131026b1a1f2b6668e34ddc628af0d2c536827ebf8e7380359b27cd985186c",
+      "bytes": 43974
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/v2_assets/manifest.json",
+      "lf_sha256": "e486c6002d00abc29d05e7fdcfdc2e2d8f5ec6fa696351c0dfc31fbf922d599c",
+      "bytes": 541
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/acdc_release_source/v2_config.json",
+      "lf_sha256": "f8e28f92e5912b7d5fe797a9839e7c024ee00f6796a0090dcc8f72fcbfd2ee3e",
+      "bytes": 524
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/evidence/camus_100.json",
+      "lf_sha256": "4a20787cff2088d2fa1fe21af92c8028e5735b962ecf02d6af78c04704a7e925",
+      "bytes": 21143
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/evidence/hdmi_lifecycle_20261024.json",
+      "lf_sha256": "1a372dda83daf906110df6cbcdf7cfc192b83e5cead4680c0a7359b0d37e03ae",
+      "bytes": 3883
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/evidence/interaction_check.json",
+      "lf_sha256": "74fb4347311ebd25f04b1474b24dca87240cdb03589cb486d065b4c31d1f08e7",
+      "bytes": 526
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/evidence/skin_1000.json",
+      "lf_sha256": "2c4320bb3f3bd9cceea6f077d95d08196ec9d316b832ef0afddd29fa2b93658e",
+      "bytes": 204878
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/skin8_runtime/board_image.py",
+      "lf_sha256": "23ea2da9abbde8c133c5c190fb5ab8df42c0eee1a42fdf36d73834d17fba11ad",
+      "bytes": 5338
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/skin8_runtime/build_receipt.json",
+      "lf_sha256": "01633cffdb6dd89a4b0c78a4ffba97b02ba10af6a61f4543daa537bab76421d4",
+      "bytes": 4766
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/skin8_runtime/frame_driver.py",
+      "lf_sha256": "92f79fb6deedddb9ba4f51d827740bd30808588a8bb96a5d607c0799b74c8cf0",
+      "bytes": 4703
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/skin8_runtime/hdmi_policy.py",
+      "lf_sha256": "73ad36a5c2e09a9ed68866584082258046f90ab47aecd692a3bc30aa439dd371",
+      "bytes": 630
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/skin8_runtime/models/camus/manifest.json",
+      "lf_sha256": "618da0d75c148a22395f94c2af21d3a7f7a4ee3c3a1be8bd69a325ba4707871d",
+      "bytes": 23883
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/skin8_runtime/models/skin/manifest.json",
+      "lf_sha256": "dcac2d26ddb6b754306bbde264d02df9ca7df1c06eb1b2a3b424b9d368d7d498",
+      "bytes": 21208
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/skin8_runtime/package.json",
+      "lf_sha256": "9bccba8c0ba8e1ce1536711505872ed3e2bf8f5cfaf0d591ce4adf657eb4b2b3",
+      "bytes": 10765
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/skin8_runtime/simulation_receipt.json",
+      "lf_sha256": "f9ea2de3ffcc29bc2b154808053b241028dbfe0fc080be2fcf08eb702b4832f7",
+      "bytes": 5944
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/skin8_runtime/verify_board.py",
+      "lf_sha256": "21bce47f6bcd43f4ae565432468209a496aa764c646bb0097bb41590fbf3328b",
+      "bytes": 4694
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/skin8_runtime/web_entry.py",
+      "lf_sha256": "0efec016055ba3fb5a412acd9c96ff2a216dda2c3ff557a23e7b31f9384f8338",
+      "bytes": 8315
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/systemd/95-camus-dependencies.conf",
+      "lf_sha256": "0c82c8b6a5a9458f0e996d133cf9bf2d1f56cee294be64b57e1999f678db9e85",
+      "bytes": 240
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/systemd/pld-acdc-v2-engine.service",
+      "lf_sha256": "475194a4c6f7bbdec14eed2cf8801b5ddaa3396bde534ef04e628a851490e4ed",
+      "bytes": 1032
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/systemd/pld-acdc-v2-web.service",
+      "lf_sha256": "240e3d149eb60487bfd0745b188b0bd0a2656eb8993490f91b38fc59fe039952",
+      "bytes": 821
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/unified_entry/entry.py",
+      "lf_sha256": "dfd64bbae7d277b557808681fa3b88d3513517adf9b5192a6393f1729cc86bc2",
+      "bytes": 13792
+    },
+    {
+      "repo_path": "deployment/current_board_20261024/unified_entry/index.html",
+      "lf_sha256": "bddff98c45fafd6f5b72aa50ff0d5b0ae0d12631cdd2bcb1a33971eef6af0f81",
+      "bytes": 3257
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/ALIGNMENT.json",
+      "lf_sha256": "bb47a6a92cb86df5e08fed4ea6cd1ebfa1ec85d9294b56379b9b347c56d5a063",
+      "bytes": 2615
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/README.md",
+      "lf_sha256": "7bf6800676a43b3fde519318845111ab7acea0b5a48603d22d47a5254a1cb552",
+      "bytes": 6578
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/SOURCE_MAP.json",
+      "lf_sha256": "8c4b8a9abd99299e96285c658e9c63ea0fd347b1a6b45f15a6b541becc7c3c73",
+      "bytes": 96668
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/evaluation_frozen/camus/hdmi.py",
+      "lf_sha256": "9da3a28d3c687002232ceb6aa0a4cade316369ebf20d19ecea7647d5c710d84e",
+      "bytes": 2157
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/evaluation_frozen/camus/web.py",
+      "lf_sha256": "e64c10daf7e3ca3f91bae2c5788151a78e50b57e2bb1f763b02430cc53e58adb",
+      "bytes": 12009
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/evaluation_frozen/run_eval.py",
+      "lf_sha256": "850a61b7026f3782f404da8b24cba236b560f190f54cc993b192b063623efd0b",
+      "bytes": 67
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/installed_tools/install_interactive.py",
+      "lf_sha256": "c7b7c7299bc7213fdb33a234c4d8c9b120ac764cb18593d334b18d228f716d1d",
+      "bytes": 5551
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-acdc-v2-engine.service",
+      "lf_sha256": "ddb6b42dcb63ef87fc2fcbd03a128ff432fae0a1241a43e41c32d4e05c6ccb2d",
+      "bytes": 982
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-acdc-v2-engine.service.d/96-entry-hdmi-shutdown.conf",
+      "lf_sha256": "2b0e7cdbad95417126f1161524e23a8c4faa153ca095b457cec58eb46194c361",
+      "bytes": 70
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-acdc-v2-engine.service.d/98-latency-opt.conf",
+      "lf_sha256": "7f1b3c89f5a06f3a674bba34ff0ce59f659514db816664e4792ed5f0bb5ef28b",
+      "bytes": 724
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-acdc-v2-web.service",
+      "lf_sha256": "240e3d149eb60487bfd0745b188b0bd0a2656eb8993490f91b38fc59fe039952",
+      "bytes": 821
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-acdc-v2-web.service.d/98-latency-opt.conf",
+      "lf_sha256": "89496701e7341385b468e2d53a8f0115967de56098b26d7305e226b12156928e",
+      "bytes": 572
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-camus.service",
+      "lf_sha256": "82c3f3f38be914fb414070096c93b661444141895513c87210184af9dc4a7e02",
+      "bytes": 933
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-camus.service.d/90-hdmi-touch.conf",
+      "lf_sha256": "a148c8c1825015fce453c65d1345a3083f70b32dae9a797bf6b2928333b97a3d",
+      "bytes": 269
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-camus.service.d/90-skin8.conf",
+      "lf_sha256": "fde23ea82ea722b2208fb6e6a4bd23fd7551dd665ea65950c694068c889426bb",
+      "bytes": 169
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-camus.service.d/95-camus-dependencies.conf",
+      "lf_sha256": "39b738e5ee6f60c339cc007c0c12a282b61194ba21828a865d59938e63b80541",
+      "bytes": 242
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-camus.service.d/98-latency-opt.conf",
+      "lf_sha256": "eaf8e9bebe72c6058d7c93edbe24827295ee11c528ed62983ca1a54e78c69e02",
+      "bytes": 153
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-entry.service",
+      "lf_sha256": "6b80da42df439831ec27e8d2e4bc86f79203aeb7014cd46bcc453a264c187978",
+      "bytes": 432
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-entry.service.d/96-display-repair.conf",
+      "lf_sha256": "e27170eb98255cabd06f38a33e3a08918e16891a769cadc12bfa0ac2caadc63e",
+      "bytes": 262
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-entry.service.d/98-latency-opt.conf",
+      "lf_sha256": "8cc6e64ce396566138552735af669648d6ebceada9ac56b323691dea2ab1149a",
+      "bytes": 256
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-hdmi.service",
+      "lf_sha256": "9d13816e931f2db59d816288f814a4bd4fdd995759385fe9724b2dfbee48107b",
+      "bytes": 675
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-hub.service",
+      "lf_sha256": "568072da0aff4ed167662533595e5da494079cb7d3fa74c43387597e4371fc6b",
+      "bytes": 520
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-web.service",
+      "lf_sha256": "1180289e9bf0a30916eb2de39cfe245c62d241830fe521a44a9517ee1e0b0a7b",
+      "bytes": 759
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-web.service.d/90-hdmi-touch.conf",
+      "lf_sha256": "9d3ff0e847ef873dcf1ee22ca2c29d758d0f27aa7bd20897497503940f765917",
+      "bytes": 268
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-web.service.d/90-skin8.conf",
+      "lf_sha256": "dfdf5aa145c9766d18eb3c4c50dd85d5253c5b317bfcb8bcab9acabc836521e8",
+      "bytes": 168
+    },
+    {
+      "repo_path": "deployment/current_board_20261025/systemd/pld-web.service.d/98-latency-opt.conf",
+      "lf_sha256": "eaf8e9bebe72c6058d7c93edbe24827295ee11c528ed62983ca1a54e78c69e02",
+      "bytes": 153
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/README.md",
+      "lf_sha256": "2913b2853624e9ce7d856b9c44e3fa582f60aa9dfc5ae31661d67b83a900e1b4",
+      "bytes": 5556
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/RELEASE_STATUS.md",
+      "lf_sha256": "645830b676ca2b847a0e5f5d8288518558365e0bdccb9eb6ffde96aa334576c2",
+      "bytes": 567
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/README.md",
+      "lf_sha256": "4b66ba9cafd0684dfaf11b9e76cc2142b27d20873a5ffc6b73c75b9222e64887",
+      "bytes": 9389
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/__init__.py",
+      "lf_sha256": "76902054941875eea7bdf9b2621fa4bada0ed233f4368801c1ccf718647e59d9",
+      "bytes": 133
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/__main__.py",
+      "lf_sha256": "d29fef34d8f2ce210189b119996b3f9ec8d1a5b3b50249e016503477dfe740d1",
+      "bytes": 5130
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/archive.py",
+      "lf_sha256": "5d9518e8b11fe44f72c8dc0bd7ec4abaff9e9c1dd85e65620d517372c46a21b2",
+      "bytes": 1683
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/assets.py",
+      "lf_sha256": "7f39f4de49b82c5e95bd3678280c3087fe981804abaa1d578400ada68f930a87",
+      "bytes": 4790
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/audit_http.py",
+      "lf_sha256": "c45ca81b13dc7a34a5b5d856d8f8694e311a4a48984f4f300e11a903d096ce4d",
+      "bytes": 3016
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/benchmark_replay.py",
+      "lf_sha256": "7f1dd13f5200da39234b7c1a1a171381aa3ff8f51e1416562b9e244679822cf7",
+      "bytes": 3040
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/deploy.py",
+      "lf_sha256": "3201a1a985cfb61522196352590aab194b1103dfacb088dcab6e93a02f5d71f1",
+      "bytes": 4286
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/engine.py",
+      "lf_sha256": "ecd2ca7ade4051f4956547634dbebe642df6c8516e2362670f1c07816b5548d1",
+      "bytes": 11803
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/full_pipeline.py",
+      "lf_sha256": "eb0720a527af94b66048839022a91fcc8cefca9a7a4b54fe625f99d7a4784c95",
+      "bytes": 7708
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/hdmi.py",
+      "lf_sha256": "d74bfb8e7a6a8eb0b46de1a0c5332a0732eab111e18a890acd2140f43147b2f0",
+      "bytes": 6581
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/identity.py",
+      "lf_sha256": "8aef277d0249ec2631efdeaf8c4ec398d2f2ebaad62af64ec7e9b25dfa1148f2",
+      "bytes": 2072
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/monitor.py",
+      "lf_sha256": "4db7911d8b79a02fdc8d36f07f1e5e46a08f403b80049068eae62df161502a06",
+      "bytes": 3082
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/mpr.py",
+      "lf_sha256": "cffb467d6c659a66a5cd69674163759b0ac94048258fe39234b86389c9485b33",
+      "bytes": 2993
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/native.py",
+      "lf_sha256": "61b149a534a9f0d965ea6e3352c4120f0540639a8edb9f5851a0c6e70835b81e",
+      "bytes": 9694
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/native/image.c",
+      "lf_sha256": "37cb57f6e836a6e6c7983f4929413a58b2791a52fb382602bee0f845a5282e3a",
+      "bytes": 18405
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/native/mesh/CMakeLists.txt",
+      "lf_sha256": "f281bfdf076f7623787cefe11ba75e310fb701c8ff5f2f693d02cf58f508ab82",
+      "bytes": 453
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/native/mesh/arm-board-toolchain.cmake",
+      "lf_sha256": "2e39828b8007ed70fb5e3fda5a1f35792c474f8c0b1e4acd4c5b34589df5c4ee",
+      "bytes": 1845
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/native/mesh/build_cross.sh",
+      "lf_sha256": "ebf11267d7fc77649e422fd0183c3e32f328d366e3117e1d4e93b86c59e8459a",
+      "bytes": 2755
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/native/mesh/build_vtk.sh",
+      "lf_sha256": "550f8ff0f94de790fb75cf05297d278e6654fab2b2d6135c9a0eb33f8527f0d4",
+      "bytes": 1229
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/native/mesh/mesh.cxx",
+      "lf_sha256": "015d4407b69fd1cdd4ba09839967f4ab8d26c9bdceb0fdbb3d3ac5b88700f428",
+      "bytes": 12291
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/native/mesh/snapshot_sysroot.py",
+      "lf_sha256": "fb522a971342be1eaefc99d27223fbf63609e9a4bbcb0e127a432c823c3e862b",
+      "bytes": 1520
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/pipeline.py",
+      "lf_sha256": "2ae35a5308110aecf9fafbadcae01bc216b1e565f374f15a19300d7f563aed69",
+      "bytes": 9135
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/png.py",
+      "lf_sha256": "b8d13567b60886a27f82178427d11d8e1bbc57e0eb072ce5d99458d9a1b32a98",
+      "bytes": 1092
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/qualify.py",
+      "lf_sha256": "c7e57f0e4c4d229291639bda32c64f69b6fb5a28018381f718f52650ab277560",
+      "bytes": 5777
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/qualify_surfaces.py",
+      "lf_sha256": "a0b5af58afacc51bc125efc521f057aa7c548147b31f596f9be735538dc0ca34",
+      "bytes": 4926
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/reconstruct.py",
+      "lf_sha256": "4f9ae424d97983695edfa1104fa99b817e98980888ff3e656fe8155e650e6235",
+      "bytes": 3786
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/storage.py",
+      "lf_sha256": "279fbc0988c5bc256c0149e47fa9107c33e9406acafde266b24f41e01768cf4e",
+      "bytes": 2204
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/surface.py",
+      "lf_sha256": "5bf2784868c478b2b0ac95ab86a549df6da777047d0f9124ff233fc004beacab",
+      "bytes": 3997
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/surface_hdmi.py",
+      "lf_sha256": "b6e083b841442b29c1ab9325d511103c15dbb65dcfd444dfaae281643ea5da37",
+      "bytes": 4068
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/surface_raster.c",
+      "lf_sha256": "4e3956e375b3ea75dbaf059bface92d4ca439d25d99c63a00b216853ddd350b6",
+      "bytes": 1395
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/touch_drag.py",
+      "lf_sha256": "f70979715917660289cab2303aaa7e81ce576faba2a21119aa08846aa8aca7a9",
+      "bytes": 2007
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/validate_http.py",
+      "lf_sha256": "217765cc0902eb7ddb9c10fc88e7e71a562d073ac57c122a26ca5fe0ca4c8d14",
+      "bytes": 6527
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/validate_overlap.py",
+      "lf_sha256": "bda08674542d831c23b31d67b56dcb28f6bce12bbc0db0b6fed6f0f0fcf4cfc9",
+      "bytes": 3556
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/validate_recovery.py",
+      "lf_sha256": "fde82240513e0ecca00500d696ed2e1b45f15149d3290f596f3448a0e50e5c75",
+      "bytes": 4418
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/volume.py",
+      "lf_sha256": "3eb5e1a41278989e25128ed6863940f6b98f58b4d6f3b1871cb95191d5306472",
+      "bytes": 3921
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/web.py",
+      "lf_sha256": "fa7bc0e171c1fd9634a3b7296cac7aaa6e50d54819db58c0ad44fed4acd34da1",
+      "bytes": 11733
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/web_assets/app.js",
+      "lf_sha256": "cf94436c0a135f780c5451f01700ff8e4569b004e31feb18dea346e8e49fc708",
+      "bytes": 16633
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/web_assets/index.html",
+      "lf_sha256": "07a3a805f9ce6b634830e6ed0a8e1a1b40dc713c7c9e65406126ac811f1945d3",
+      "bytes": 5127
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/web_assets/style.css",
+      "lf_sha256": "658c9c10c6231919e55aca123dec08cb4b319e48e7b5b65dd88a740d8392e79f",
+      "bytes": 4976
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/acdc/appliance/web_assets/surface_view.js",
+      "lf_sha256": "0c9e8c747a88d2ba7198246262f90f3c0a0338f45245174c8ae6487356ac8c77",
+      "bytes": 6454
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/display_web/pld_hdmi.py",
+      "lf_sha256": "d46bb71fec0b7192cfb11e937dc17546e66e58c02dc8444c763cf8824e501466",
+      "bytes": 11482
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/display_web/touch_display.py",
+      "lf_sha256": "0d30284712e4dd049db3485cd4e947718759f4d108e76f1a486471cb087e6432",
+      "bytes": 4623
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/v2_application.json",
+      "lf_sha256": "c7131026b1a1f2b6668e34ddc628af0d2c536827ebf8e7380359b27cd985186c",
+      "bytes": 43974
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/v2_assets/manifest.json",
+      "lf_sha256": "e486c6002d00abc29d05e7fdcfdc2e2d8f5ec6fa696351c0dfc31fbf922d599c",
+      "bytes": 541
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/board_source/v2_config.json",
+      "lf_sha256": "f8e28f92e5912b7d5fe797a9839e7c024ee00f6796a0090dcc8f72fcbfd2ee3e",
+      "bytes": 524
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/integration/95-camus-dependencies.conf",
+      "lf_sha256": "0c82c8b6a5a9458f0e996d133cf9bf2d1f56cee294be64b57e1999f678db9e85",
+      "bytes": 240
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/integration/check_camus_resume.py",
+      "lf_sha256": "232241cfc53ac37987ae716aee85ad983410ef24211b07631cf7f7f5e20d0619",
+      "bytes": 3331
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/integration/check_interaction.py",
+      "lf_sha256": "775679969e39cacf5ef5730613def3e81c20077fe00ee1f7b1af6d81edfddd33",
+      "bytes": 826
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/integration/check_lifecycle.py",
+      "lf_sha256": "9c065568f5e79db0439fdd2c5e9f112c8fa290a93220f318124d7a84c220ba99",
+      "bytes": 4090
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/integration/hdmi.py",
+      "lf_sha256": "d74bfb8e7a6a8eb0b46de1a0c5332a0732eab111e18a890acd2140f43147b2f0",
+      "bytes": 6581
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/integration/hdmi_lifecycle_20261024.json",
+      "lf_sha256": "1a372dda83daf906110df6cbcdf7cfc192b83e5cead4680c0a7359b0d37e03ae",
+      "bytes": 3883
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/integration/interaction_check.json",
+      "lf_sha256": "74fb4347311ebd25f04b1474b24dca87240cdb03589cb486d065b4c31d1f08e7",
+      "bytes": 526
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/integration/surface_hdmi.py",
+      "lf_sha256": "b6e083b841442b29c1ab9325d511103c15dbb65dcfd444dfaae281643ea5da37",
+      "bytes": 4068
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/integration/surface_raster.c",
+      "lf_sha256": "4e3956e375b3ea75dbaf059bface92d4ca439d25d99c63a00b216853ddd350b6",
+      "bytes": 1395
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/integration/touch_drag.py",
+      "lf_sha256": "f70979715917660289cab2303aaa7e81ce576faba2a21119aa08846aa8aca7a9",
+      "bytes": 2007
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/systemd/pld-acdc-v2-engine.service",
+      "lf_sha256": "d3675c606e4f932da6ccab7037104bd684abaae0761b12e2005d9da56adbf51c",
+      "bytes": 1097
+    },
+    {
+      "repo_path": "deployment/hdmi_touch_20261024/systemd/pld-acdc-v2-web.service",
+      "lf_sha256": "240e3d149eb60487bfd0745b188b0bd0a2656eb8993490f91b38fc59fe039952",
+      "bytes": 821
+    },
+    {
+      "repo_path": "deployment/pynq_boot_order/99-pynq-boot-order.conf",
+      "lf_sha256": "cdb88adbb575bfbfeed0d031ca13887e7dc8f8f256c120fa1920dd4e1f3cbde3",
+      "bytes": 245
+    },
+    {
+      "repo_path": "deployment/repository_20261026/README.md",
+      "lf_sha256": "2f0a6e69d6b5ba4527a812c95d6b58b52dc9608094ea0c707209279de4c9bdca",
+      "bytes": 1937
+    },
+    {
+      "repo_path": "deployment/repository_20261026/SOURCE_MAP.json",
+      "lf_sha256": "58442e31f689d48e4b4108362f7cc2a7b95464621a146a4ebf1d1dc4db4fd24f",
+      "bytes": 46869
+    },
+    {
+      "repo_path": "deployment/repository_20261030/README.md",
+      "lf_sha256": "cfe07faa854b749b65e4e4cfe4cd9c0bf66871854b210cadd56b98bb00e9eeaf",
+      "bytes": 3390
+    },
+    {
+      "repo_path": "display_web/.gitattributes",
+      "lf_sha256": "1bd239692a7163b3dc3be4c826016036da6a0f59f8ff9e6bd51d00b20114300a",
+      "bytes": 161
+    },
+    {
+      "repo_path": "display_web/.gitignore",
+      "lf_sha256": "942917920867e6e321baa21103e5ec3d75fa563f98969d78490204ba9a2ea2f3",
+      "bytes": 329
+    },
+    {
+      "repo_path": "display_web/README.md",
+      "lf_sha256": "5b401acb77d3c7dcbd11d429671e4eb92d775a9c093409a82b2730c8ab93affd",
+      "bytes": 13343
+    },
+    {
+      "repo_path": "display_web/camus_display_identity.py",
+      "lf_sha256": "b2f70a54867df57a46c858031f974175c4ad43a1432a628cc20b7b21dd2c31bf",
+      "bytes": 3356
+    },
+    {
+      "repo_path": "display_web/contour.py",
+      "lf_sha256": "971af0297295d608182143830800ec2602b602d9e45ba9521df3b1ae6a7069cf",
+      "bytes": 6050
+    },
+    {
+      "repo_path": "display_web/demo_metrics.py",
+      "lf_sha256": "69b5bb96d19ea4832411f4e0f97c1f1f7e0207f14894bbf07b6ea94f045784f7",
+      "bytes": 9881
+    },
+    {
+      "repo_path": "display_web/demo_metrics_input.example.json",
+      "lf_sha256": "5122ed35e7a70269551d557bb52f182aba5581da7f6b746d7d713bd12532c6d1",
+      "bytes": 61
+    },
+    {
+      "repo_path": "display_web/display_completion.py",
+      "lf_sha256": "2dc308859600ba54672bad1cd55884cd9d3ffab845640a001fbccc281bd221fa",
+      "bytes": 2544
+    },
+    {
+      "repo_path": "display_web/display_lease.py",
+      "lf_sha256": "2a4aa51950a5bcae3427c100ba28c72140cf54a4cf52b02dfc69d37cae7b170f",
+      "bytes": 1765
+    },
+    {
+      "repo_path": "display_web/docs/DEPLOYMENT.md",
+      "lf_sha256": "cff36e6b55629c223933a32f974cc09caf3523525831e99b241fe2e48b878020",
+      "bytes": 10490
+    },
+    {
+      "repo_path": "display_web/docs/MODEL_HANDOFF.md",
+      "lf_sha256": "fd3a3de5f060014b764b63aabf7f1895840211908b33883bc9d32eabe390ce82",
+      "bytes": 1445
+    },
+    {
+      "repo_path": "display_web/docs/VALIDATION.md",
+      "lf_sha256": "c25dbb2b945a8533e7b6fb13fad3930e5d13e34524e74c0bf43d4eb095302e79",
+      "bytes": 12562
+    },
+    {
+      "repo_path": "display_web/entry/README.md",
+      "lf_sha256": "84b3f0066e86b61ca73c9f602e3db49e1cd36cc458dafc2699870ea26fc6d0bf",
+      "bytes": 9316
+    },
+    {
+      "repo_path": "display_web/entry/display_control.py",
+      "lf_sha256": "121b7e21d5eaf069912994aa42b2f0853e5808f76b58270d3c1db05c816188ee",
+      "bytes": 12386
+    },
+    {
+      "repo_path": "display_web/entry/entry.py",
+      "lf_sha256": "73dfb5169e3296c8a0a8ba425d0916663b0b6c217b9d4b52c7a353d928de53b4",
+      "bytes": 28512
+    },
+    {
+      "repo_path": "display_web/entry/index.html",
+      "lf_sha256": "4bcca6fdd543fc418fde0e8e4ede8bbfa7b8b1123afec9b45086d52ba3363e41",
+      "bytes": 10061
+    },
+    {
+      "repo_path": "display_web/entry/install.py",
+      "lf_sha256": "0a67a1f6536024005f6042ae49c5e625a189a8a9617eca6b29f2aa25b64a5069",
+      "bytes": 3795
+    },
+    {
+      "repo_path": "display_web/entry/metrics.html",
+      "lf_sha256": "19614506687641a84aba8be4cf8a7b0caf0a950e2132a68aafc09b9e4fbd6faf",
+      "bytes": 6324
+    },
+    {
+      "repo_path": "display_web/entry/recovery_demo.py",
+      "lf_sha256": "540785597e37080c760064fbaeae3aae218e2e92c73fd54f2888d7be491d6d73",
+      "bytes": 5797
+    },
+    {
+      "repo_path": "display_web/entry/test_boot.py",
+      "lf_sha256": "22dc49b4687bc713637df0f94728b3f6983ee4eb08716de213720ac050a48ae6",
+      "bytes": 8363
+    },
+    {
+      "repo_path": "display_web/entry/test_display_control.py",
+      "lf_sha256": "77853809e7a6a38a3f159e8a291106a985c2255793c6af26f7a8763788ad2cdc",
+      "bytes": 3409
+    },
+    {
+      "repo_path": "display_web/entry/test_entry.py",
+      "lf_sha256": "9ff56c4b5ede3dad03da1e4c8cfd812a2715796440f41ecd02fd5e7d618416cf",
+      "bytes": 12682
+    },
+    {
+      "repo_path": "display_web/entry/test_entry_display_refactor.py",
+      "lf_sha256": "7783aa986d3bd72d24200597dd1566396bb965d08c75c834de6211dd38883fcc",
+      "bytes": 4803
+    },
+    {
+      "repo_path": "display_web/entry/test_metrics.cjs",
+      "lf_sha256": "5409925ced9e98b826e6398e2d688cfcc8cd468673feb4e63041ad9872ffbde0",
+      "bytes": 2512
+    },
+    {
+      "repo_path": "display_web/entry/test_metrics_gateway.py",
+      "lf_sha256": "c0424f3a3fa6ef3fdbb3c9c1e0445d44c07fe5b190b58174c50b2919f9ea5e1a",
+      "bytes": 1654
+    },
+    {
+      "repo_path": "display_web/entry/test_recovery_demo.py",
+      "lf_sha256": "d7956718e4a10e01d0819ca5919f9820d0bd8270613bf8c6038c71300c7317b4",
+      "bytes": 5497
+    },
+    {
+      "repo_path": "display_web/entry/test_ui.cjs",
+      "lf_sha256": "f467c5ec5f1fe4f93baa9c799ca0d6103f3156b1ce99cc3db5ef654e5e555440",
+      "bytes": 4640
+    },
+    {
+      "repo_path": "display_web/hdmi_buttons.py",
+      "lf_sha256": "bcd11308daa08f51cbe97086bc23fab172f91e8913efc793e22842a828c898f9",
+      "bytes": 2908
+    },
+    {
+      "repo_path": "display_web/hdmi_worker.py",
+      "lf_sha256": "9f31ef316952a7470d75aec03741753156bf1e045e19d723194edaf3c475abc1",
+      "bytes": 2973
+    },
+    {
+      "repo_path": "display_web/hud_build_info.example.json",
+      "lf_sha256": "dfa3eabb004228de2d7c040a476df0dd6efa7d4d9bb5b71bc1c57aa9074316a3",
+      "bytes": 492
+    },
+    {
+      "repo_path": "display_web/infer_then_display.py",
+      "lf_sha256": "d81610823f104d37fc8638cbd962346a0ccd3c884a502ce127e608370e45f19b",
+      "bytes": 6321
+    },
+    {
+      "repo_path": "display_web/install_autostart.py",
+      "lf_sha256": "f35090b984ec38dc36daea3a7923fd9a9109d563ddc6e170a8c74c354169a9b2",
+      "bytes": 5937
+    },
+    {
+      "repo_path": "display_web/latency.py",
+      "lf_sha256": "22a20902cfd71e986eb46201b9ec4871d5f2b6823abdaf69b88c197c497e7f8b",
+      "bytes": 701
+    },
+    {
+      "repo_path": "display_web/overlay_metadata.py",
+      "lf_sha256": "7e356e2267fe4659b010096cd31f2298fa4d987b25022d2e45c8366772335f8b",
+      "bytes": 5738
+    },
+    {
+      "repo_path": "display_web/persistent_worker.py",
+      "lf_sha256": "c6c7320c27560c9fb5fccecdc9e76e1806f21ee1072236f46c9b1ce302702e83",
+      "bytes": 16671
+    },
+    {
+      "repo_path": "display_web/pld_hdmi.py",
+      "lf_sha256": "d46bb71fec0b7192cfb11e937dc17546e66e58c02dc8444c763cf8824e501466",
+      "bytes": 11482
+    },
+    {
+      "repo_path": "display_web/pld_result.py",
+      "lf_sha256": "9b57fa0b20f4509ad3fe7dd3f8ffffc0366fcb4f10fdcb1ca9334a58e25018d8",
+      "bytes": 11028
+    },
+    {
+      "repo_path": "display_web/quad_display.py",
+      "lf_sha256": "3eef4b8d09ee4111595e5b13de7614922ed12a5fea3efc3efa84a3d7734c9d06",
+      "bytes": 2535
+    },
+    {
+      "repo_path": "display_web/requirements.txt",
+      "lf_sha256": "d72e4090273c1695ad535d3af340ed4ce4c8903b340d9a3ec54a8c320e08381f",
+      "bytes": 24
+    },
+    {
+      "repo_path": "display_web/samples/README.md",
+      "lf_sha256": "6d33b7a629c37734f8f0d515081365e5861795d10f0225182cee24d7d6eb78ae",
+      "bytes": 511
+    },
+    {
+      "repo_path": "display_web/samples/frame_000001.bin",
+      "lf_sha256": "360e96160c77380963ca28e4edc151061f6ccae05aa0343cca804d97fc57477c",
+      "bytes": 65534
+    },
+    {
+      "repo_path": "display_web/samples/frame_000001.json",
+      "lf_sha256": "a809378d86ffacafa80a6be4206e15a7a0682cd1783f331041be35115be7e18c",
+      "bytes": 5424
+    },
+    {
+      "repo_path": "display_web/samples/synthetic_mask.png",
+      "lf_sha256": "7a3199bdd08c171dc92ec61acdca46c91c3fdf1904e2cafe9f86ea11c7cbfee3",
+      "bytes": 1446
+    },
+    {
+      "repo_path": "display_web/samples/synthetic_original.png",
+      "lf_sha256": "beac97f6180f982a48d77c72e3c8115332044cc182ef324ee004202a111012b9",
+      "bytes": 2108
+    },
+    {
+      "repo_path": "display_web/server.py",
+      "lf_sha256": "478f52c5ab0ce54a3e1f4f9662c662184973ef09fe7d1dca0e35e90f529d72df",
+      "bytes": 44563
+    },
+    {
+      "repo_path": "display_web/show_result.py",
+      "lf_sha256": "00246da054a574f9910c64325d95d53dbf1925a854386abbf6fb35427b6e0011",
+      "bytes": 3816
+    },
+    {
+      "repo_path": "display_web/start_board.sh",
+      "lf_sha256": "b5811b59f17488dc2ea959b6b68c31f1664b4c73b8e82bceb33cdf390e792204",
+      "bytes": 238
+    },
+    {
+      "repo_path": "display_web/start_windows.cmd",
+      "lf_sha256": "0c74ddc5a16a278e2d19199a0d01ce05a3ef2c1095790ec0dfda83df67b124ae",
+      "bytes": 233
+    },
+    {
+      "repo_path": "display_web/static/app.js",
+      "lf_sha256": "b612f634bc5948fd1833f88cfe5f071c144c9bba02d6d8d8033f5ea9d307ea26",
+      "bytes": 33868
+    },
+    {
+      "repo_path": "display_web/static/favicon.svg",
+      "lf_sha256": "19b69d1b2e86b42e32b6d3c213ff0b12cfea9989765ba2b604e09df22d27e417",
+      "bytes": 248
+    },
+    {
+      "repo_path": "display_web/static/index.html",
+      "lf_sha256": "d6fe861454ad1a44053116ef46fbb9b102497a5c36958ed69e6ddf8eb1e07375",
+      "bytes": 6358
+    },
+    {
+      "repo_path": "display_web/static/style.css",
+      "lf_sha256": "6c2443a7adb39747a8a169030cfb647a2771230c76508f539f8a39e67c80f066",
+      "bytes": 8095
+    },
+    {
+      "repo_path": "display_web/telemetry_hud.py",
+      "lf_sha256": "bce780b558c0d63f4a4f1a7ad27a3245a24a6d7db36bc268abba6d956b7a2dfb",
+      "bytes": 10703
+    },
+    {
+      "repo_path": "display_web/tests/benchmark_output.py",
+      "lf_sha256": "4d91ce5d83023d2bb88976839988fdd24cfddb176078cc1e89dc51e5aa9d801c",
+      "bytes": 6495
+    },
+    {
+      "repo_path": "display_web/tests/benchmark_png.py",
+      "lf_sha256": "226e3b65d9cd14f924ee3dd79617515668696ce85dd9aff3b375dbbc37bbbb0b",
+      "bytes": 1410
+    },
+    {
+      "repo_path": "display_web/tests/test_browser_access.cjs",
+      "lf_sha256": "0781846d33396a21bb113aec98234dd45fd777c7b21d5a1e1d27fc19435654ca",
+      "bytes": 2765
+    },
+    {
+      "repo_path": "display_web/tests/test_contour.py",
+      "lf_sha256": "101c7f2531708f0a2373e869d298d38d0f16b6350895fdae606b2ccacab7def9",
+      "bytes": 3820
+    },
+    {
+      "repo_path": "display_web/tests/test_display_lease.py",
+      "lf_sha256": "40c8e45bf7f73de669707f77d61d33108dc5e23d0acfffcffa6db4597fe1fba3",
+      "bytes": 1024
+    },
+    {
+      "repo_path": "display_web/tests/test_display_refactor.py",
+      "lf_sha256": "6acdeb156bdf80ed2c9387bfb20975eb1d6f46358d64851b9d0c5484d19b097a",
+      "bytes": 5264
+    },
+    {
+      "repo_path": "display_web/tests/test_fastboot.py",
+      "lf_sha256": "cbd2db12842171689c86c69cac85213fb6f2d139518d8f54befecf896e64d63b",
+      "bytes": 4690
+    },
+    {
+      "repo_path": "display_web/tests/test_local_preview.cjs",
+      "lf_sha256": "768769bf41f5b30c4b43fe1fbfc731e0af895bc10460a4b66a9bb49b3eea1f94",
+      "bytes": 2527
+    },
+    {
+      "repo_path": "display_web/tests/test_multi_animated_guides.cjs",
+      "lf_sha256": "617d018441eb96e878bcf64d40e65cc548e1d2206a2520884c702b83faf43073",
+      "bytes": 4678
+    },
+    {
+      "repo_path": "display_web/tests/test_overlay_metadata.py",
+      "lf_sha256": "cd4f55c55351783c67d21ed7b676bb3dca0d19af8f13d07f8cfc3b628e9212ef",
+      "bytes": 4681
+    },
+    {
+      "repo_path": "display_web/tests/test_persistent_worker.py",
+      "lf_sha256": "2671c538cf84dda7061c89884622d47c9a1d5535063fb2dc0e6d655194b84f5e",
+      "bytes": 23447
+    },
+    {
+      "repo_path": "display_web/tests/test_prepared_display.py",
+      "lf_sha256": "46e138572f1d8eb5d6d07be61d06aba68c2d5407dc5fe7c8145bcd97e7a8be25",
+      "bytes": 797
+    },
+    {
+      "repo_path": "display_web/tests/test_preview.cjs",
+      "lf_sha256": "c3c6668927ffca29708d7b5f35bc448847bcbb116272b5d4902f483be1c95221",
+      "bytes": 3574
+    },
+    {
+      "repo_path": "display_web/tests/test_preview.py",
+      "lf_sha256": "222c960ac05a2fc968673a1fbb6355eb6d6feaaed8a48fa44df5c74008e738d1",
+      "bytes": 6490
+    },
+    {
+      "repo_path": "display_web/tests/test_processing_only.py",
+      "lf_sha256": "44ced2994635db798a67e2cc2ae46985a5983a45a15ef746e6d690ba29fc8fd6",
+      "bytes": 5500
+    },
+    {
+      "repo_path": "display_web/tests/test_quad.cjs",
+      "lf_sha256": "aee38a535fbf3790f523c01703eab9dd901c4f1b9c3ac803aac41ec1d4b6bf46",
+      "bytes": 1802
+    },
+    {
+      "repo_path": "display_web/tests/test_refine.py",
+      "lf_sha256": "424e3c3786c043f8fdadee11e79d43f48674830ecb6817fef6bed57d7055aea0",
+      "bytes": 2047
+    },
+    {
+      "repo_path": "display_web/tests/test_reuse.py",
+      "lf_sha256": "c7fa955e0d18f0ae5395731c365f7badfa67912d3071d88d1de1cbce44cf6156",
+      "bytes": 9575
+    },
+    {
+      "repo_path": "display_web/tests/test_skin_animated_guide.cjs",
+      "lf_sha256": "f323af0cbf411ab38261c2df99ba0b8028a2509a780047acce0b474e1c92fb83",
+      "bytes": 3709
+    },
+    {
+      "repo_path": "display_web/tests/test_telemetry_hud.py",
+      "lf_sha256": "0f0cd017d02144b5460304ad5e2844ea892d5400b8f88013dd062b4e05e495bb",
+      "bytes": 8412
+    },
+    {
+      "repo_path": "display_web/tests/test_timing.cjs",
+      "lf_sha256": "805f192605570c71d26cf9431d1fc7462b6b10edd7aff6f87c36fc62d6ba1efd",
+      "bytes": 1140
+    },
+    {
+      "repo_path": "display_web/tests/test_upload_v2.py",
+      "lf_sha256": "f355991cc6f73dbb82c996d01a82a53002482bb8a4dd32eb6647379f42bb68d1",
+      "bytes": 2687
+    },
+    {
+      "repo_path": "display_web/tests/test_warm_hdmi.py",
+      "lf_sha256": "b418b90b1f001fd93b69ba16d7880efcd064f0b124862b39e8bc0b18bc43b20c",
+      "bytes": 7966
+    },
+    {
+      "repo_path": "display_web/tests/test_web.py",
+      "lf_sha256": "359750b8e63dc34a9420b19726918e1a9f3224128638e242799a8e1b4b64e9af",
+      "bytes": 19285
+    },
+    {
+      "repo_path": "display_web/touch_display.py",
+      "lf_sha256": "b994bbdb772b5f3a7b82526f212cc7649af28f1ec915e3551495518cc66d4cc6",
+      "bytes": 5476
+    },
+    {
+      "repo_path": "display_web/touch_drag.py",
+      "lf_sha256": "200b8cff258809feb082003ac8de71ca0293790e13c13c10baec8c7a89729119",
+      "bytes": 2174
+    },
+    {
+      "repo_path": "display_web/unified/INTERACTIVE.md",
+      "lf_sha256": "b90f11f031e4e8499b4627de6b0024655ee5a9e55b071b3cdd53bf4f60758bae",
+      "bytes": 3333
+    },
+    {
+      "repo_path": "display_web/unified/QUAD_VIEW.md",
+      "lf_sha256": "a9009b476c6fb8c7e56b206ebbef2a57da6f0ea5ae8130a06c4dd5f20c7baffe",
+      "bytes": 4055
+    },
+    {
+      "repo_path": "display_web/unified/README.md",
+      "lf_sha256": "0499ccb7227630453f9cb97517cdb797b8f7b3417cf1ecb9d4d8907e51ce101a",
+      "bytes": 9659
+    },
+    {
+      "repo_path": "display_web/unified/TEST_REPORT.md",
+      "lf_sha256": "422b788b9be2b8ea715988ef23be82a236f325e81e447fe084c2986cd8345fd2",
+      "bytes": 11880
+    },
+    {
+      "repo_path": "display_web/unified/accepted_backends.json",
+      "lf_sha256": "7aaa55fa1f0bd1eb2fcd9ba022c7ca0b3796acea6e6781c4561ad3e390ff9103",
+      "bytes": 4323
+    },
+    {
+      "repo_path": "display_web/unified/backend_launcher.py",
+      "lf_sha256": "e5c90bbed1e429d9df613a5fb3a0a6465bfef64e7ae95d065b65e2e642c55f95",
+      "bytes": 3175
+    },
+    {
+      "repo_path": "display_web/unified/camus_input_adapter.py",
+      "lf_sha256": "7169b0d4dfb40ea9a15b794ce5a7430a1b2981c00b154545c0fc8f68c0fccb0a",
+      "bytes": 4758
+    },
+    {
+      "repo_path": "display_web/unified/camus_quad.py",
+      "lf_sha256": "265e6c8b5d337f273c2504fa557b63ed46ebe1014a1448b3382e255ec1cb0909",
+      "bytes": 4416
+    },
+    {
+      "repo_path": "display_web/unified/diagnose.py",
+      "lf_sha256": "836a0588aebbeb9a0b743ead240e16bccff150642cc1e902b86ef0e94803b288",
+      "bytes": 1393
+    },
+    {
+      "repo_path": "display_web/unified/evaluation.html",
+      "lf_sha256": "3b15a7e5de11521ec9095244658121482acfa8fc2f895e53c46b8aaa9ee11f19",
+      "bytes": 8555
+    },
+    {
+      "repo_path": "display_web/unified/evaluation_bridge.py",
+      "lf_sha256": "c383f10d85e2a0baeff1f0d99ef10aa7c114b46392775bfdfd87db59895825fa",
+      "bytes": 10004
+    },
+    {
+      "repo_path": "display_web/unified/evaluation_config.example.json",
+      "lf_sha256": "f6038192afb94ede2514963f2cee5f6fdbccfb7d4da5ef814d34d8b964dd6bd7",
+      "bytes": 932
+    },
+    {
+      "repo_path": "display_web/unified/hub.py",
+      "lf_sha256": "4d135f29d7db1ba2c99f27175a506eb351737360db4df3b8c564ffceff353c2e",
+      "bytes": 20362
+    },
+    {
+      "repo_path": "display_web/unified/index.html",
+      "lf_sha256": "614b19d01df147dfd85fd8b69f28d01f3569f8f95cccd964dbd2b9afa6eff371",
+      "bytes": 6399
+    },
+    {
+      "repo_path": "display_web/unified/install.py",
+      "lf_sha256": "0ceda01711b20f093a62b7d99734fac1c7e1c7e2d4c592edd3462a1b728b8342",
+      "bytes": 10134
+    },
+    {
+      "repo_path": "display_web/unified/install_interactive.py",
+      "lf_sha256": "a2970313d4f6d2138d7acb44e918bf23a492dc1463149d9920ec0ffc2b05dd75",
+      "bytes": 5932
+    },
+    {
+      "repo_path": "display_web/unified/install_quad.py",
+      "lf_sha256": "a1845375675e7a57c25a414e7482065aefe0402d962f9a7fbdb7e5b27c09fe17",
+      "bytes": 5911
+    },
+    {
+      "repo_path": "display_web/unified/interactive.html",
+      "lf_sha256": "01092f8e466e9158f86ad6de963432cb4768c915dc3569b19cf4977daa6d6293",
+      "bytes": 3451
+    },
+    {
+      "repo_path": "display_web/unified/interactive.js",
+      "lf_sha256": "654a7aaafabfbc710abbf214c6cda32d473688328994d0b28714cab82e9231a1",
+      "bytes": 98735
+    },
+    {
+      "repo_path": "display_web/unified/interactive_accepted_versions.json",
+      "lf_sha256": "03e7b5ee002acc61d846c732b820dc86a8d0cc74f6e84e38ff590dd1afd16e49",
+      "bytes": 7198
+    },
+    {
+      "repo_path": "display_web/unified/interactive_bridge.py",
+      "lf_sha256": "b9fc16a3970bacb721481ff9fe2c57d14849481a723223878cde3e0459681e75",
+      "bytes": 24589
+    },
+    {
+      "repo_path": "display_web/unified/interactive_hdmi.py",
+      "lf_sha256": "c55050b00a8c62291c0a35a4924a7f53e2c3248ca5c519bfab51636e4aae413e",
+      "bytes": 9708
+    },
+    {
+      "repo_path": "display_web/unified/interactive_workspace.py",
+      "lf_sha256": "e1e82bafcb582cc22774dfe5f873d91bbb64db44007100808c73fbd48b35fe03",
+      "bytes": 5590
+    },
+    {
+      "repo_path": "display_web/unified/prompt_seg/__init__.py",
+      "lf_sha256": "89d33d33814dfe68dbd3eb95b97b5e5e2c767e1b1f4c13f4c7a82409ed6b658c",
+      "bytes": 65
+    },
+    {
+      "repo_path": "display_web/unified/prompt_seg/contracts.py",
+      "lf_sha256": "cadfbedfc1c5a1abf4788c24f0c4063ce5d6b7f865ca5bc55f41a2da99fc772d",
+      "bytes": 4893
+    },
+    {
+      "repo_path": "display_web/unified/prompt_seg/refinement.py",
+      "lf_sha256": "28d0f9e4552d84fa96e18f1f85cf32a1c95c3a2b14263cd3cec5b79c2c0f8425",
+      "bytes": 9297
+    },
+    {
+      "repo_path": "display_web/unified/prompt_seg/service.py",
+      "lf_sha256": "ba58151d3f15c28897e6d68ee7f003c16284cc243bca98e03403108235167438",
+      "bytes": 13686
+    },
+    {
+      "repo_path": "display_web/unified/quad_accepted_versions.json",
+      "lf_sha256": "98226826ae997d74f0741099bc866cd0142c3a9d100a51ef1783fbd773c65597",
+      "bytes": 2643
+    },
+    {
+      "repo_path": "display_web/unified/quad_camus.html",
+      "lf_sha256": "76a231d8e87a8c09ac7375a95fffca2bfe7653d9a0e5beadd602eeaa85bdb2ee",
+      "bytes": 22751
+    },
+    {
+      "repo_path": "display_web/unified/quad_camus_hdmi.py",
+      "lf_sha256": "dbb7c9ac79256011df19f000aac3c76564aca027a49e21bde7d8acd49f614d0b",
+      "bytes": 3993
+    },
+    {
+      "repo_path": "display_web/unified/quad_display.py",
+      "lf_sha256": "3eef4b8d09ee4111595e5b13de7614922ed12a5fea3efc3efa84a3d7734c9d06",
+      "bytes": 2535
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_camus_display_identity.py",
+      "lf_sha256": "efcc3fb7f73036ee1b9f32af8f83e61f64459afafa26231da4356b52b44de771",
+      "bytes": 4846
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_camus_input.py",
+      "lf_sha256": "7db6dd1f27efb0822faba692e240ab798c5cb0b1839ac68cd881186e6f85b0ed",
+      "bytes": 5416
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_display_composition.py",
+      "lf_sha256": "3d0ad070d5fb8a2c37fe3b3441bfc1f20c0d9587b1f7faa48099ec7e0ed9653f",
+      "bytes": 1418
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_evaluation_bridge.py",
+      "lf_sha256": "6b05c9cbb47c5ccd34d333e733f7b4901d9f868143110bd3262246ee9bb76f74",
+      "bytes": 1339
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_hub.py",
+      "lf_sha256": "bac4188a720deda1544a7280abd88baf91bb84d917600e4bdb5faedd5ece9b6c",
+      "bytes": 15072
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_interactive.cjs",
+      "lf_sha256": "b5782bb21e1cd649bf974f6ea433ad7f56eee6ac5206791af275d072bdf25cdd",
+      "bytes": 956
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_interactive.py",
+      "lf_sha256": "c5d0cf0a07580b52eae6e74e148cf1f66553cca329fb8bffe2b4954e5ec6feec",
+      "bytes": 9180
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_interactive_acceptance.py",
+      "lf_sha256": "132af93c299ff7f2639c31706b1a902476e2bf9e7ba33639db67385d053a9e13",
+      "bytes": 8141
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_interactive_install.py",
+      "lf_sha256": "eb83c5a95b0b02ba1bb83121d1d54c24132329449c66489d892ad9889837350d",
+      "bytes": 3004
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_interactive_state.cjs",
+      "lf_sha256": "89a2240f9dbfbc8af71effa539b00f6e44389684522aecd626e672ccd9ff21fd",
+      "bytes": 5562
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_interactive_workbench.py",
+      "lf_sha256": "88c2266e33abd5c89cb65b27d8ac04ec0dabe2ccf1063ed0b0abf4e103671c58",
+      "bytes": 15037
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_proxy_concurrency.py",
+      "lf_sha256": "95f7123c958d217623562861a57d263d4e89b53db92dac819527ef8971aab52a",
+      "bytes": 2664
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_quad.py",
+      "lf_sha256": "6807ffb134bb54fa78d7d7d610c87e3144dc197bf7870861e8853ac0a496faf2",
+      "bytes": 8088
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_quad_install.py",
+      "lf_sha256": "a72ed8052379d7c555a9c16a4eec4ed76d6153bd2bec0882b4db159cadd07c28",
+      "bytes": 4313
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_repository.py",
+      "lf_sha256": "491e9dd25f53b0356715fb3c2aad2c5845d5ea594918ac8d3a0d99d4030b5a21",
+      "bytes": 2554
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_skin_roi_touch.py",
+      "lf_sha256": "b27770e11428fe35076acb9e830a70502c3b3ad22a0ae9966aa95ae6a2bf6339",
+      "bytes": 7238
+    },
+    {
+      "repo_path": "display_web/unified/tests/test_ui.cjs",
+      "lf_sha256": "9f61a9b93c3ba19fed3a7e238491c117434121ee7af919ae4692aa73d1e0ba7f",
+      "bytes": 2734
+    },
+    {
+      "repo_path": "display_web/video_overlay.py",
+      "lf_sha256": "a497f4f536deec05b538a170d94b605ec2b2df02f29bf9bb2a2df2996ff34c31",
+      "bytes": 1405
+    },
+    {
+      "repo_path": "display_web/warm_hdmi.py",
+      "lf_sha256": "58947b5a4dfa38c4a958c507a19b8588bcf0d39ad507a4f0abf519debfac86bd",
+      "bytes": 18632
+    },
+    {
+      "repo_path": "docs/A_DATASETS.md",
+      "lf_sha256": "50cec152d23e8ba1bbc0eb60499348e93aa18566b17ee40fbcb8d8fc431bfcaf",
+      "bytes": 3656
+    },
+    {
+      "repo_path": "docs/A_RELEASE_BUNDLE.md",
+      "lf_sha256": "6619c6b6f46a1164b2e10e2b32e4b7f5b8edcfdc55ed54127855f7ca764fe166",
+      "bytes": 3501
+    },
+    {
+      "repo_path": "docs/A_WORKSPACE.md",
+      "lf_sha256": "98f0528385b492aecedb4c1ff69fe413536e61fd28ca9a6d94ccf045744773ea",
+      "bytes": 4544
+    },
+    {
+      "repo_path": "docs/C_HANDOFF.md",
+      "lf_sha256": "c1565c1f2af59b76fa05ec35ab8f935e431bc2b0ba420f96e3540da332c01d8e",
+      "bytes": 1016
+    },
+    {
+      "repo_path": "docs/DATA_AND_MODELS.md",
+      "lf_sha256": "5af3580cc7c8eb46d20b03f6ff61e99e0d2d873ab94dc037feed91b4e9035ba9",
+      "bytes": 2430
+    },
+    {
+      "repo_path": "docs/DEMO_METRICS.md",
+      "lf_sha256": "a30df28f951560ee8015dabf1fa07873dbdd122d8764c11fdc50e9ec1eb71708",
+      "bytes": 6037
+    },
+    {
+      "repo_path": "docs/DEPLOYMENT.md",
+      "lf_sha256": "c7fba2ce712fcefdb94dc00442d95ea026bcda1988aecab7a19c9d0f30accf94",
+      "bytes": 5084
+    },
+    {
+      "repo_path": "docs/FINAL_MODEL_STATUS.md",
+      "lf_sha256": "86b7f412fc4a9d09e106e067d2494f2bb167d9239e8a28fc63425649a3bb5a2a",
+      "bytes": 17917
+    },
+    {
+      "repo_path": "docs/IMPLEMENTATION.md",
+      "lf_sha256": "f84797a4b3acae61f5c7691035dba2f29eb1f693fdf2a7bc7ceef88643dd3749",
+      "bytes": 2665
+    },
+    {
+      "repo_path": "docs/P0_DEMO_HUD_RECOVERY.md",
+      "lf_sha256": "edda02536d88fa895b7ee0ff41d427aa61deb1b9e2d6a41560e59afd099d14d2",
+      "bytes": 7788
+    },
+    {
+      "repo_path": "docs/PLAN.md",
+      "lf_sha256": "f9494e89abba73b524e4fb2ddbd09f8342acf82f78948fb111ba00efe3ed0cf4",
+      "bytes": 13643
+    },
+    {
+      "repo_path": "docs/PROJECT_SCOPE.md",
+      "lf_sha256": "8e57582206e20a30766b316a32f40ba3f3c1700aa4bc75bed42a3443202584b3",
+      "bytes": 8178
+    },
+    {
+      "repo_path": "docs/README.md",
+      "lf_sha256": "68d8df1cf271ee279766e057b4ddc063e0edfe92b1e899ac4dd58cec142470a0",
+      "bytes": 1357
+    },
+    {
+      "repo_path": "docs/acdc/ACDC25D_B16_P3_v1.md",
+      "lf_sha256": "ba008cd2c530f6931bbcc744f85be571a2b885a9b2232526a221ac004d15715c",
+      "bytes": 15901
+    },
+    {
+      "repo_path": "docs/acdc/BOARD_EXCHANGE.md",
+      "lf_sha256": "9eee0b7cc8239b4c730b35c7f68d63cccf092d13109cd22efdb718cd585c40ad",
+      "bytes": 2892
+    },
+    {
+      "repo_path": "docs/acdc/MINIMAL_RUNTIME.json",
+      "lf_sha256": "5792fb6515ff387a3e506f78fdf6aef004ad0c7e4a4363197d8671a8049fa742",
+      "bytes": 3967
+    },
+    {
+      "repo_path": "docs/acdc/MODEL_CONTRACT.json",
+      "lf_sha256": "51a5ed7fc758663b1776b36606542e4abf7e3e6e3180f774a310da5bd9f0659a",
+      "bytes": 9607
+    },
+    {
+      "repo_path": "docs/acdc/PATIENT_SPLIT.json",
+      "lf_sha256": "00deb8e9fe45bd77ebd31d2411ac3682688e92739305212b09e48214330ec78f",
+      "bytes": 10933
+    },
+    {
+      "repo_path": "docs/acdc/PREPROCESSING_CHECKS.json",
+      "lf_sha256": "fc169e88bf021890fab1c4799629401ce72897a4207e674ffc97207bd7a2ab84",
+      "bytes": 6955
+    },
+    {
+      "repo_path": "docs/acdc/PREPROCESSING_CONTRACT.json",
+      "lf_sha256": "ac8707f093ac36b6f2d3056723c7abef59aa91f286f1c632e272a906a551d0a8",
+      "bytes": 14834
+    },
+    {
+      "repo_path": "docs/acdc/PRODUCTION_NUMERICS.md",
+      "lf_sha256": "81af225895c6af736ecd7861d96c5c603b11e36620531972de4682e2f20fd990",
+      "bytes": 15286
+    },
+    {
+      "repo_path": "docs/acdc/README.md",
+      "lf_sha256": "6ef4c6e3ffe48ad5d4933a56f8708e884c422aadd4a62eb533ba9996a29bbafd",
+      "bytes": 6622
+    },
+    {
+      "repo_path": "docs/acdc/RESEARCH_RELEASE.json",
+      "lf_sha256": "3b79d35c34b1e9ff8dbe70104709bd4cdbf342548c10d2b912e94e544d43fae0",
+      "bytes": 5396
+    },
+    {
+      "repo_path": "docs/acdc/RUN_MINIMAL.md",
+      "lf_sha256": "6a9609c5357c134b905d5f1812c340b3600e5cf89a861faf055c567b88016eb2",
+      "bytes": 2810
+    },
+    {
+      "repo_path": "docs/acdc/requirements-cpu.txt",
+      "lf_sha256": "244af5ea27c40727955c95d364ee840bbc9c828be43c6d89ccf4c971b2f8e32f",
+      "bytes": 63
+    },
+    {
+      "repo_path": "docs/design/ACCELERATOR_ABI.md",
+      "lf_sha256": "a244ecd4678b6c2a2c1aa1f27420a912ffbad28dcdcaaae1e09241729c29767e",
+      "bytes": 7261
+    },
+    {
+      "repo_path": "docs/design/ACCELERATOR_REGISTERS.md",
+      "lf_sha256": "a8d784c8586b4c28c2a3f852043ab89406cd716eb407693d609962334cdca1ca",
+      "bytes": 9519
+    },
+    {
+      "repo_path": "docs/design/MODEL_HDMI_OPTIMIZATION_PLAN_20261024.md",
+      "lf_sha256": "d6ab928fbda44e6242b32d6304b4c8e5f183b150670d8958de1708e5106600af",
+      "bytes": 30877
+    },
+    {
+      "repo_path": "docs/design/PS_INTEGRATION.md",
+      "lf_sha256": "e4834736dba625c193b7fb077a6fae78ac2023f68f628fd585f39199661b3ae1",
+      "bytes": 5658
+    },
+    {
+      "repo_path": "docs/design/TILE_ENGINES.md",
+      "lf_sha256": "87003ffa9fc5a509a7f0fbc298433a5410a73e78344879a772bf67211b56977d",
+      "bytes": 6755
+    },
+    {
+      "repo_path": "docs/handoffs/PLD_DEV_SOURCE_20261020.json",
+      "lf_sha256": "70106777e07df7dfa9edd31dd5a021aa771d92b6a870c83c30543324be4e7bbc",
+      "bytes": 57500
+    },
+    {
+      "repo_path": "docs/history/ROLE_A_FINAL_REVIEW.md",
+      "lf_sha256": "b05c6ee480327ede60d44f5f9976b6ed29af5e031931045148e1492e733ddc49",
+      "bytes": 15465
+    },
+    {
+      "repo_path": "docs/history/STAGE012_VALIDATION.md",
+      "lf_sha256": "f17066493364df1c336ad1b523a957fbf931643d0e34676f1a05add9e8c5f346",
+      "bytes": 6264
+    },
+    {
+      "repo_path": "docs/history/STAGE34_STATUS.md",
+      "lf_sha256": "8851f7f53c57b8931e47c887afb926f51ebb6f1ad75ab6cb5b5a6794660f9836",
+      "bytes": 8963
+    },
+    {
+      "repo_path": "docs/history/STAGE5_STATUS.md",
+      "lf_sha256": "5883cac20eb3f94c8ec3480afe2fcb865c3c01d7c109d7a8520de8826bacc757",
+      "bytes": 15437
+    },
+    {
+      "repo_path": "docs/history/handoff_camus_20261016/NEXT_STEPS.md",
+      "lf_sha256": "44772d28e0c3ccd3bd522627dfb5ffcb5bf7e952af1083e8edba5b1a55c03930",
+      "bytes": 7498
+    },
+    {
+      "repo_path": "docs/history/handoff_camus_20261016/README.md",
+      "lf_sha256": "7f9e943334602a45c727c50a78f40975ad9407d044e2c9a91b92172d2633e64c",
+      "bytes": 6582
+    },
+    {
+      "repo_path": "docs/history/handoff_camus_20261016/VERIFY.py",
+      "lf_sha256": "d31893fff380679a83452545cf3e04677718c793fce4027d5e7a4ea99ff541fb",
+      "bytes": 996
+    },
+    {
+      "repo_path": "docs/history/handoff_camus_20261016/evidence/STATUS.json",
+      "lf_sha256": "8d0b23cc7d639ebb8109fbc7df1fc26014c25136fca33a4717c4528a043456fa",
+      "bytes": 1050
+    },
+    {
+      "repo_path": "docs/history/handoff_camus_20261016/evidence/build_manifest.json",
+      "lf_sha256": "0c31f5bdf8c09e99ca7a0a4cfe61743bfcaf15bb88b0f08dd6b9695a7bbe7003",
+      "bytes": 3451
+    },
+    {
+      "repo_path": "docs/history/handoff_camus_20261016/evidence/microbench_transcribed.json",
+      "lf_sha256": "8c1cda42aaeb32b0c2ec9b47cf02e8271c677cfe841dfeb11bf62b9179204f5e",
+      "bytes": 628
+    },
+    {
+      "repo_path": "docs/history/handoff_camus_20261016/evidence/offline_tests.log",
+      "lf_sha256": "aadb4605c3b4ec220e0ea8795f251b97405c83bf6a01f62b793a3c6a30342e43",
+      "bytes": 250
+    },
+    {
+      "repo_path": "docs/history/handoff_camus_20261016/evidence/optimization_final20.json",
+      "lf_sha256": "7254cd4c6dd902c3d18ca3d935d6cbf1a6d114b5787355a76eb00542dda12b33",
+      "bytes": 54228
+    },
+    {
+      "repo_path": "docs/history/handoff_camus_20261016/evidence/ps_opt_deployment.json",
+      "lf_sha256": "783daaf7418cb898327b292fd2554c92963dbece228c5e1276013978a1dfb6d5",
+      "bytes": 472
+    },
+    {
+      "repo_path": "docs/history/handoff_camus_20261016/evidence/ps_opt_v2_candidate1_quick3.json",
+      "lf_sha256": "f9f7c4496f2849230b1090473bbb71bac9a3ba61eeb780d1a6bd8a90d94bf97f",
+      "bytes": 8830
+    },
+    {
+      "repo_path": "docs/history/handoff_camus_20261016/evidence/ps_opt_v2_preconv3.json",
+      "lf_sha256": "a0ad833c7010c612aca13915838188eb387f89ca96ee8555d757803f7b22019c",
+      "bytes": 9014
+    },
+    {
+      "repo_path": "docs/history/handoff_camus_20261016/evidence/ps_opt_v2_profile3b.json",
+      "lf_sha256": "9d6c08a51210855362c081f5c42342660317b945eb89827f370b7eee80d2147f",
+      "bytes": 8803
+    },
+    {
+      "repo_path": "docs/history/handoff_camus_20261016/evidence/ps_opt_v2_profile_last_report.json",
+      "lf_sha256": "4762383af72eb684896728fbdf93c59bd5985c2a48206b24d62673c3ac673376",
+      "bytes": 208884
+    },
+    {
+      "repo_path": "docs/history/handoff_camus_20261016/evidence/ps_opt_v2_rxcoherent3.json",
+      "lf_sha256": "b749ef24b77b15cc62bb68a0d1154dec718427dcee95326f5a81e2181d58a4ec",
+      "bytes": 8826
+    },
+    {
+      "repo_path": "docs/history/handoff_camus_20261016/evidence/ps_optimization_validation.json",
+      "lf_sha256": "f175da80217943fc600575fb64b9600deef478be3974d11e873b35dfd55b58d8",
+      "bytes": 8773
+    },
+    {
+      "repo_path": "docs/requirements/PYNQ.docx",
+      "lf_sha256": "98fe72f97cf6645d65b8c1dc2ce65e33631a1e35c7df11fd3a661f49f5dd4286",
+      "bytes": 17902
+    },
+    {
+      "repo_path": "docs/requirements/project.pdf",
+      "lf_sha256": "3f9c757e01bd46abeaf6e6761be35f7d2b6410fb28aae273253886e8e9a05571",
+      "bytes": 417931
+    },
+    {
+      "repo_path": "docs/requirements/work_split.docx",
+      "lf_sha256": "6f4c60021dacc11e12f3cab92ecee9038fb6d680b1878ef917269d5bb1a8a019",
+      "bytes": 22079
+    },
+    {
+      "repo_path": "docs/validation/BOOT_PREWARM_INTEGRATION_20261030.md",
+      "lf_sha256": "b14e61d261be5b607b07a96d4e4164b7cbf4772472d67f16469c2ff04cb369b6",
+      "bytes": 4028
+    },
+    {
+      "repo_path": "docs/validation/CLEANUP_20261017.md",
+      "lf_sha256": "cc8fc601721d6aec7aef0549649d6a1cfd3f5cea5f0c787b05edba7f4768942a",
+      "bytes": 11393
+    },
+    {
+      "repo_path": "docs/validation/C_WEB_PERFORMANCE.md",
+      "lf_sha256": "a2b91ccd1a53066edce852f82e6f989feaf0749ba45da3a59dd743932c99774a",
+      "bytes": 31949
+    },
+    {
+      "repo_path": "docs/validation/EVALUATION.md",
+      "lf_sha256": "7bc23906175609ede41c27d4ffe282d0d144d000e339124c0e679311559069ce",
+      "bytes": 9581
+    },
+    {
+      "repo_path": "docs/validation/INTERACTIVE_WORKBENCH_20261017.md",
+      "lf_sha256": "2e81ee701a7459347798c4da811fff44448d585d9c743124cafa34365a77dd22",
+      "bytes": 4813
+    },
+    {
+      "repo_path": "docs/validation/MODEL_HDMI_OPTIMIZATION_20261025.json",
+      "lf_sha256": "7e4c1c097edbe3695581e655c6219896df96ef3615d9f2f2d017a7bbbb362804",
+      "bytes": 19536
+    },
+    {
+      "repo_path": "docs/validation/P0_DEMO_20261030.md",
+      "lf_sha256": "ccd2a54fe56aa717ecb1cf0f3489cb05e6913bd634f5de448d7c8b915cbe4ed7",
+      "bytes": 6769
+    },
+    {
+      "repo_path": "docs/validation/PERFORMANCE_4FPS_5S.md",
+      "lf_sha256": "6bad07f3e45d6da7378939586b0b56e09dd166263c1b78a822237176b89a8dbd",
+      "bytes": 9655
+    },
+    {
+      "repo_path": "docs/validation/SKIN_HDMI_REFACTOR_20261029.md",
+      "lf_sha256": "458b892fa61bb9c9bdac4fd4d18dc83172d78c4f45c3b2cbbedb52d45ebf474f",
+      "bytes": 7305
+    },
+    {
+      "repo_path": "docs/validation/VIVADO_ENVIRONMENT.md",
+      "lf_sha256": "bb055b2d54b126a53a253516677a1855e824622d0056e41416abe67335e9f81e",
+      "bytes": 5559
+    },
+    {
+      "repo_path": "docs/validation/interactive_20261016.json",
+      "lf_sha256": "eced51d1c33ab14c7352e8cd11332e8e26a14649c9a4ececc45296d67341fff3",
+      "bytes": 54294
+    },
+    {
+      "repo_path": "experimental/skin8/README.md",
+      "lf_sha256": "d0229bc7c01dbbd2cb130d306283f280ccafc1a3bfdc447f95342a33ded01aba",
+      "bytes": 722
+    },
+    {
+      "repo_path": "experimental/skin8/evidence/board_20261023/build_receipt.json",
+      "lf_sha256": "01633cffdb6dd89a4b0c78a4ffba97b02ba10af6a61f4543daa537bab76421d4",
+      "bytes": 4766
+    },
+    {
+      "repo_path": "experimental/skin8/evidence/board_20261023/camus_100.json",
+      "lf_sha256": "4a20787cff2088d2fa1fe21af92c8028e5735b962ecf02d6af78c04704a7e925",
+      "bytes": 21143
+    },
+    {
+      "repo_path": "experimental/skin8/evidence/board_20261023/final_web_status.json",
+      "lf_sha256": "eb941cd92ed0b7aa0bb629f314a981eedddab5bfc07e9085539a89a6f5ea5be5",
+      "bytes": 1065
+    },
+    {
+      "repo_path": "experimental/skin8/evidence/board_20261023/simulation_receipt.json",
+      "lf_sha256": "f9ea2de3ffcc29bc2b154808053b241028dbfe0fc080be2fcf08eb702b4832f7",
+      "bytes": 5944
+    },
+    {
+      "repo_path": "experimental/skin8/evidence/board_20261023/skin_1000.json",
+      "lf_sha256": "2c4320bb3f3bd9cceea6f077d95d08196ec9d316b832ef0afddd29fa2b93658e",
+      "bytes": 204878
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/board_top.sv",
+      "lf_sha256": "03609a2bea0d58a8dcad79f98ac6bc505486ec4c8fb462b771333a75f8d85d57",
+      "bytes": 7383
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/conv_pair_tile.sv",
+      "lf_sha256": "a4aaf15705eeb000ac881def48a5e22cb8920eebfc0555f22a645ba10363fc53",
+      "bytes": 5284
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/ddr_read64.sv",
+      "lf_sha256": "e9973a3663ec12ca8322d084872d6ed54858fa2d370242755dd1a7ae818b103f",
+      "bytes": 2657
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/ddr_write64.sv",
+      "lf_sha256": "1eca9e1111ae519cbb781016f63853f7c80a935c14753370965efaf1a2799b3e",
+      "bytes": 2627
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/dot128.sv",
+      "lf_sha256": "6c93e437605ab8a41cd6d9d26d3e2cd5005e7440d8892a3d0376a2b0dd8dfa6e",
+      "bytes": 3611
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/feature_banks.sv",
+      "lf_sha256": "8bc718d72189054a38e7aef9dbf5eb4e366cb0556e05cf1a9896af5942d92a77",
+      "bytes": 1587
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/frame_engine.sv",
+      "lf_sha256": "9bac54444b8597665b8a54b72e082d5d30fbeecece55cb7b7604402f01153323",
+      "bytes": 3804
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/frame_registers.sv",
+      "lf_sha256": "a237a6c10985b4da1b6ded94e7b9e4b2f08383829df56a756d9934429c22eb34",
+      "bytes": 3010
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/graph_control.sv",
+      "lf_sha256": "3c03a5b59a6d7bd7221b950627f70749fe0e86e757b8fd4a71d0166a9332ee9f",
+      "bytes": 4611
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/map8.sv",
+      "lf_sha256": "4bc528531e530b4151650aa618a0c6e4c703410664ec326f72653823dbe8ad16",
+      "bytes": 1084
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/nearest2_row.sv",
+      "lf_sha256": "2cead2f1ebbcef5e08e757393a6c940d4848d75bd8cf13cb36ce3aa771d0aec3",
+      "bytes": 2413
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/pair_to_words.sv",
+      "lf_sha256": "8cdc283e1fa998e931145e845d4eb49151a451f8bd5f6c4d1f69f1d35e14d517",
+      "bytes": 951
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/pool2_rows.sv",
+      "lf_sha256": "bba4ae0e2307097fd0aa6b9ab0805e5d26619710d7a46368fb5b8b66e21ede24",
+      "bytes": 1964
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/quant_pair.sv",
+      "lf_sha256": "b9726a37ec2f9102a1e5604256511e0a465de96fdb9ecce67ef663bb641fa8e6",
+      "bytes": 2037
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/requant24.sv",
+      "lf_sha256": "315f9d5e11e3efbe49fb07c26c06e8b1fa5ba83cc164fa0f7f57ee8004c7d281",
+      "bytes": 2151
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/row_transform.sv",
+      "lf_sha256": "4fd28e75bc9b5872094bf419aae45fa6d0fefa13c800eddf6b545a06fe69896d",
+      "bytes": 3047
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/stripe_engine.sv",
+      "lf_sha256": "3b2247372408434cb86d4dc004f121b07fc2e009d8b1ed0bbeb46ff23b9403ae",
+      "bytes": 9290
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/stripe_load.sv",
+      "lf_sha256": "0a1f96fa916425f31fa53b0af816fa370f16c05703a0c6edfc21bdc7abfe550a",
+      "bytes": 5965
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/tensor_load.sv",
+      "lf_sha256": "71c20bee4dbcafb2d016615c569ff4452fc7cf25bd538734c54c2d96eaec66a3",
+      "bytes": 7114
+    },
+    {
+      "repo_path": "experimental/skin8/rtl/tile_int8.sv",
+      "lf_sha256": "ecf52e6cfaeced23d50454b7b767d90ccb928703604c5e7e2184d5ee93ea3789",
+      "bytes": 2058
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_board_top.sv",
+      "lf_sha256": "517e5d8367ddfb1ade5fd2a193abf1ca918a9e0d5650c51738963c234f1a2a42",
+      "bytes": 8849
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_conv_pair_tile.sv",
+      "lf_sha256": "8bb71e891d981890b37532fc1be0a3aa44f232f0bb5347f8d0e3c8b66949dab0",
+      "bytes": 4768
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_ddr_read64.sv",
+      "lf_sha256": "423de8cc63656c65be7682f60ff71d4ed4b937b1892eef8f226e6ec0a1aa4256",
+      "bytes": 3063
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_ddr_write64.sv",
+      "lf_sha256": "59db67b269c800538071095dd4220ad15bf25de5856f9127e1cf37ebbf9b1d99",
+      "bytes": 3022
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_dot128.sv",
+      "lf_sha256": "299a8d95457d8e82f11a88a8e4b802f0615f997d9268ca831e6cb37e55a82155",
+      "bytes": 4108
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_feature_banks.sv",
+      "lf_sha256": "178603acd0bbcc0943e7324239396b22f441e9329db71ad9fe6d72c01e01b287",
+      "bytes": 2945
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_frame_engine.sv",
+      "lf_sha256": "4e6f63e34443362f9068b6efd8b89f1be0e4dd0358ac0740e2dd73b78c077efd",
+      "bytes": 4438
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_frame_registers.sv",
+      "lf_sha256": "db92e282c942d98032ebd414e7d8b2d6ff31fb68e11f31237831db6348d19f46",
+      "bytes": 2960
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_graph_control.sv",
+      "lf_sha256": "595958a2ac96b3aa5ea5012871008945d6292ae93c38faf28882744d60469543",
+      "bytes": 3425
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_graph_engine.sv",
+      "lf_sha256": "a35d6337f7ff5d8e20d5971a211d344b1eff5349e5ef61e2c9eedf4ca2b0cd75",
+      "bytes": 5821
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_map8.sv",
+      "lf_sha256": "cebd056a1d39201f3408b0e13c3fb9a4d4b51887ae7c8ee40f19e92f92ada99a",
+      "bytes": 2007
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_model_tiles.sv",
+      "lf_sha256": "809bcfd6b42e0b13a5deddf5c2630e9fd04c09defe3ebc9195411a485aad918d",
+      "bytes": 4216
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_nearest2_row.sv",
+      "lf_sha256": "8f7acf7615a7d351f3a26b20c357b4c2f33be952e2d3f1b40981f11ee1706ce9",
+      "bytes": 1968
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_pair_to_words.sv",
+      "lf_sha256": "5852d3647da10c01888a96e51ade5dee705c01da198c20ce3d16412b8b82b2ff",
+      "bytes": 1478
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_pool2_rows.sv",
+      "lf_sha256": "23bdf8d91f8934e120592441a6d52ddaf761d3bf833930c8ea173beb3e7773af",
+      "bytes": 2154
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_requant24.sv",
+      "lf_sha256": "68451885fba2033a1636450f93382920127406309d40525d5f8ad7d97494c080",
+      "bytes": 2382
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_row_transform.sv",
+      "lf_sha256": "2dfc16cf6191efbf67423368e9a40a11e027ac6791fbb9decef64450a0536974",
+      "bytes": 2906
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_stripe_engine.sv",
+      "lf_sha256": "7df97810cf62f81419a23fab7e18bcf1b57532af28f1b896c3704ab69dbe1781",
+      "bytes": 5306
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_stripe_load.sv",
+      "lf_sha256": "eed666793e87daf1e258f393edac3cda162a6c9e69c12a3cf6e77660c4a0c2d7",
+      "bytes": 3905
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_tensor_load.sv",
+      "lf_sha256": "66edbb6c01a5e589cb9d1210d61ce2b45ae5f101c6888d484feddc0d93ceda2e",
+      "bytes": 7449
+    },
+    {
+      "repo_path": "experimental/skin8/sim/tb_transformed_engine.sv",
+      "lf_sha256": "d2a3ec4cde52750f250d34926d35b8d4e1aa708bc6d7d960aead635cbc38064e",
+      "bytes": 5824
+    },
+    {
+      "repo_path": "experimental/skin8/tools/board_image.py",
+      "lf_sha256": "6272ce8931fe40c451fb7bdf5c75de22059b9cf937df75485ff0f19b39099a80",
+      "bytes": 7048
+    },
+    {
+      "repo_path": "experimental/skin8/tools/budget.py",
+      "lf_sha256": "bf0c51574094002831aaa4e84489cb8bf752ead6265abb27550b5f929c97fe8d",
+      "bytes": 2835
+    },
+    {
+      "repo_path": "experimental/skin8/tools/build_board.tcl",
+      "lf_sha256": "56ceac8938fdca3f5caf1cadf97978e265eb7fda3fa05813c9003aa0a554e214",
+      "bytes": 4146
+    },
+    {
+      "repo_path": "experimental/skin8/tools/compile_models.py",
+      "lf_sha256": "cf35e9d739368aa96a9900825b991e144dca3832ea13f1652c1608fb9c153e0b",
+      "bytes": 6578
+    },
+    {
+      "repo_path": "experimental/skin8/tools/descriptors.py",
+      "lf_sha256": "a999dd3c744eca15c99ebfb1589b718496003df9d2a309a07485e0fdf5d70dbf",
+      "bytes": 4924
+    },
+    {
+      "repo_path": "experimental/skin8/tools/dot_ooc.tcl",
+      "lf_sha256": "2e821fa45f41bdb990de9525f82c973aa471738af347dba9de42cfabfac3200f",
+      "bytes": 1487
+    },
+    {
+      "repo_path": "experimental/skin8/tools/frame_driver.py",
+      "lf_sha256": "46bf983d694436fd43df5b392c10c5c989fda985502901d7e4cea297268913b9",
+      "bytes": 5006
+    },
+    {
+      "repo_path": "experimental/skin8/tools/full_reference.py",
+      "lf_sha256": "9dccdc5f67296eb98f0818e0570dd526796f1163058a0bd2b52fcb21900fa8ed",
+      "bytes": 4372
+    },
+    {
+      "repo_path": "experimental/skin8/tools/graph_vectors.py",
+      "lf_sha256": "8be8073722ddd643186c22b1db2ab51028f0af03e903df7242ed540591a33e84",
+      "bytes": 3943
+    },
+    {
+      "repo_path": "experimental/skin8/tools/hdmi_policy.py",
+      "lf_sha256": "73ad36a5c2e09a9ed68866584082258046f90ab47aecd692a3bc30aa439dd371",
+      "bytes": 630
+    },
+    {
+      "repo_path": "experimental/skin8/tools/model_vectors.py",
+      "lf_sha256": "678cad88c373f50efe109408a4241be1bddedf0345e8b5df3811f70a48b3fb55",
+      "bytes": 6375
+    },
+    {
+      "repo_path": "experimental/skin8/tools/pack_frame.py",
+      "lf_sha256": "1fb72a120d286d3e29249fcf969407860a316e711cd2abdc26763fbdbdcd1a2f",
+      "bytes": 2668
+    },
+    {
+      "repo_path": "experimental/skin8/tools/package_board.py",
+      "lf_sha256": "b4e714ffcf5f65b297d62dc44d1fe2bbc5023e26f8580a762aa32386ff19d424",
+      "bytes": 3025
+    },
+    {
+      "repo_path": "experimental/skin8/tools/run_board_build.py",
+      "lf_sha256": "db79841b7b9fba7acb2b9b8e337b9e14d9e71a5ad0ad79873265fc6ebdc7def3",
+      "bytes": 2929
+    },
+    {
+      "repo_path": "experimental/skin8/tools/run_board_sim.py",
+      "lf_sha256": "081c5281b5bb69483a3ffd99fae67ebc0cba22326a82a4b1917bdf76e15f3eb6",
+      "bytes": 4635
+    },
+    {
+      "repo_path": "experimental/skin8/tools/run_control_sim.py",
+      "lf_sha256": "6c520063674cbf7209373f63a7436ed14cf867e9fc7623902c3ced9627c3ae33",
+      "bytes": 197
+    },
+    {
+      "repo_path": "experimental/skin8/tools/run_frame_sim.py",
+      "lf_sha256": "c940fc822210d5c77f295db5c975b0b90e0a2ab2a435beca24f7649298692bec",
+      "bytes": 196
+    },
+    {
+      "repo_path": "experimental/skin8/tools/run_ooc.py",
+      "lf_sha256": "531e76924c6789b36203d8f7cca202e652223df892706b41951141d1fddb0701",
+      "bytes": 2852
+    },
+    {
+      "repo_path": "experimental/skin8/tools/run_register_sim.py",
+      "lf_sha256": "0d98c78664175e7b23025013dceb68b88a378f8c364842b84935d10bb5ed7ebf",
+      "bytes": 199
+    },
+    {
+      "repo_path": "experimental/skin8/tools/run_sim.py",
+      "lf_sha256": "5ba947d298e56a45e9ede005f1c5acec9f7ec0195362f09a3d40059d16676f0e",
+      "bytes": 4592
+    },
+    {
+      "repo_path": "experimental/skin8/tools/schedule.py",
+      "lf_sha256": "5cfa43515aaf1372653324010e54670dbcf1698b1029abad3924917e240b208a",
+      "bytes": 3870
+    },
+    {
+      "repo_path": "experimental/skin8/tools/test_frame_driver.py",
+      "lf_sha256": "177e971f8bf327eefbb68ee82d2fa985e6cb972fb6522d13a6e32eab2ebe97b2",
+      "bytes": 3795
+    },
+    {
+      "repo_path": "experimental/skin8/tools/test_hdmi_policy.py",
+      "lf_sha256": "04fee7a0e32544925925edc5b06f0c9e387f04dfafcff61b2c83e79b115b0f90",
+      "bytes": 1419
+    },
+    {
+      "repo_path": "experimental/skin8/tools/test_prepared_artifacts.py",
+      "lf_sha256": "f86536ef5a1a9cd48e7bcb663d05c4bd5f95cb0112193a46ee0f8d2888cd8c82",
+      "bytes": 7457
+    },
+    {
+      "repo_path": "experimental/skin8/tools/test_web_lifecycle.py",
+      "lf_sha256": "80c8447927f2372cd1f16874d9db5a6c6e8956180ec8e4886f4ab3625e6e465a",
+      "bytes": 2865
+    },
+    {
+      "repo_path": "experimental/skin8/tools/transformed_vectors.py",
+      "lf_sha256": "62de51a0cdb6d2137ae28b8af7ae3369cd1c33618d9918225f3d9a9cdfbc40a9",
+      "bytes": 5162
+    },
+    {
+      "repo_path": "experimental/skin8/tools/transition_vectors.py",
+      "lf_sha256": "60b47619cd111b235fbb7d66bba7fcf56c1be6ea06e98dc82135ef35ab3a87ce",
+      "bytes": 3400
+    },
+    {
+      "repo_path": "experimental/skin8/tools/verify_board.py",
+      "lf_sha256": "0777728dfd2f840e37cfdf6e12e73c26126a9d824ad3c24c9183d0dc0145568e",
+      "bytes": 4745
+    },
+    {
+      "repo_path": "experimental/skin8/tools/web_entry.py",
+      "lf_sha256": "f93f2aa1580d33d87ebb344ce9d1ff5dfa6ae5243ea611f510abe915a66decce",
+      "bytes": 12372
+    },
+    {
+      "repo_path": "experimental/skin8/tools/web_lifecycle.py",
+      "lf_sha256": "15118b97fd9a461a1375413e8e189535a4a192a18ff2dc018c29aace0ded8ae7",
+      "bytes": 4648
+    },
+    {
+      "repo_path": "perf_eval/README.md",
+      "lf_sha256": "5464259f6b3a551d1587d3d677a08f0a57e9a4928bde233019c7c16d06acfb15",
+      "bytes": 10786
+    },
+    {
+      "repo_path": "perf_eval/__init__.py",
+      "lf_sha256": "d437401a71a3a8b4a0573500f749c9577a6857f37529e64147db6b28db827840",
+      "bytes": 100
+    },
+    {
+      "repo_path": "perf_eval/__main__.py",
+      "lf_sha256": "981ce15c97df5124d3fb49885b4986c7ba4a73900500fe45f1624bdb977358f0",
+      "bytes": 4236
+    },
+    {
+      "repo_path": "perf_eval/benchmark.py",
+      "lf_sha256": "d54dc3a3da863199b66a793d5d7fd68f7330def8dfdb6aa8b00e3ca0d9a63e3b",
+      "bytes": 8644
+    },
+    {
+      "repo_path": "perf_eval/core.py",
+      "lf_sha256": "ac9e38dd21d7438bc2e265c1715173b89a4a40a4183c90a154d2fa7cf1b32307",
+      "bytes": 4761
+    },
+    {
+      "repo_path": "perf_eval/demo.py",
+      "lf_sha256": "055d45c035df7ba74a21694b6fed461f03ec415d05bd612b442008b36d0131c2",
+      "bytes": 8410
+    },
+    {
+      "repo_path": "perf_eval/engines.py",
+      "lf_sha256": "ee37e4c618000a812125c98b39834a96d11d7ecf7fcf3ed692cff79a0a65793d",
+      "bytes": 8082
+    },
+    {
+      "repo_path": "perf_eval/evidence.py",
+      "lf_sha256": "a4accc0fa1c780dda30a631bf30c61504605421c00e117f6010abf00fc973d11",
+      "bytes": 6704
+    },
+    {
+      "repo_path": "perf_eval/metrics.py",
+      "lf_sha256": "bdb72ceefa32c6b17c37dbbe0df830912fb69152b3b7b2f37534e89a5fe60863",
+      "bytes": 2497
+    },
+    {
+      "repo_path": "perf_eval/report.py",
+      "lf_sha256": "73ddb048ee1bd1474f1cb0a0de2467925eee45949c0f6682d29f14196f4ec0ed",
+      "bytes": 10313
+    },
+    {
+      "repo_path": "perf_eval/tests/test_benchmark.py",
+      "lf_sha256": "37dbcc54ba86ef898532ef89a5cc14c295b9dd2566e839f2a1928e5fc16510d1",
+      "bytes": 3320
+    },
+    {
+      "repo_path": "perf_eval/tests/test_core.py",
+      "lf_sha256": "e07d141427b9012bfd1b7544d643dad23fd9142c65fabc18943160ed6f8e1c37",
+      "bytes": 1554
+    },
+    {
+      "repo_path": "perf_eval/tests/test_demo.py",
+      "lf_sha256": "f78f1629beef4d97e407cb746b639acbaa7c7db1a8e6354a5304988d6d8af15b",
+      "bytes": 8905
+    },
+    {
+      "repo_path": "perf_eval/tests/test_evidence.py",
+      "lf_sha256": "eac3d0f315132a2f6096936f445d15d6698ef6df1ca49194614a70ff671a487e",
+      "bytes": 5785
+    },
+    {
+      "repo_path": "perf_eval/tests/test_hub_lease.py",
+      "lf_sha256": "bfed95a4ff9a1d09733645fab8baf94f65cf39497cd3379e120a96df43cac381",
+      "bytes": 1469
+    },
+    {
+      "repo_path": "perf_eval/tests/test_metrics.py",
+      "lf_sha256": "84905fd42a0b6545e425ba766db30a9af45f60170c37b4f2ec8eca738f669bd1",
+      "bytes": 1143
+    },
+    {
+      "repo_path": "pld-medical/deliverables/GITHUB_ARTIFACTS.json",
+      "lf_sha256": "0d5e25cdc086cfff7ea8a3cefd85c46248bcb646f4aec56457e10cdd72d57717",
+      "bytes": 17398
+    },
+    {
+      "repo_path": "pld-medical/deliverables/role_a_complete_interactive_20261016.zip.sha256",
+      "lf_sha256": "8f51703ffa3eac51593b39be882dc2a79467a7201cdf6e2a80cc8c623d2abd8a",
+      "bytes": 107
+    },
+    {
+      "repo_path": "pld-medical/deliverables/role_a_complete_interactive_20261016_README.md",
+      "lf_sha256": "2e3074b4318079f50305a6b23ba36bacff20071ed0b1df09101873af9afe50b1",
+      "bytes": 5116
+    },
+    {
+      "repo_path": "pld-medical/docs/interactive/README.md",
+      "lf_sha256": "df69b0f0e106e9983454b817a2fe8ab8a6e996e20052e5ab320abc10ec42735b",
+      "bytes": 6641
+    },
+    {
+      "repo_path": "pld-medical/docs/interactive/camus_api.md",
+      "lf_sha256": "f52884b1e1b125d7ab7aac6fe8653aee4ff047513d526a2cfbf645a096396b75",
+      "bytes": 2598
+    },
+    {
+      "repo_path": "pld-medical/docs/interactive/camus_api_examples.json",
+      "lf_sha256": "07233635038f2db0cacb37126cda653013611f8a727fce9dd0b946595f4a6e9b",
+      "bytes": 5043
+    },
+    {
+      "repo_path": "pld-medical/docs/interactive/protocol.md",
+      "lf_sha256": "591e44a4cd461f2e29a770245c2629c3207bb0c875105efb328fa2aa72606ce2",
+      "bytes": 4665
+    },
+    {
+      "repo_path": "pld-medical/docs/interactive/skin_api.md",
+      "lf_sha256": "25a9dd332cf25476025dddd2747fdc9e155e5bf759f199a40ef085d69dddb02e",
+      "bytes": 1634
+    },
+    {
+      "repo_path": "pld-medical/docs/interactive/skin_api_examples.json",
+      "lf_sha256": "481e19c2331e61a75013798ef6eac17573f56b768d17ef79d121d7c8a78f8c93",
+      "bytes": 3795
+    },
+    {
+      "repo_path": "reference/__init__.py",
+      "lf_sha256": "0b791a0e6a99a330be00a9dda9980f54324910ec6ba8327a49e73ca1e99d43c1",
+      "bytes": 63
+    },
+    {
+      "repo_path": "reference/baseline_manifest.json",
+      "lf_sha256": "9b1abd923564dc2a9d5dcb0477f6f943b38cf3bf519f66d22583be62fb421cb4",
+      "bytes": 13572
+    },
+    {
+      "repo_path": "reference/dataset_contracts.json",
+      "lf_sha256": "52bd784c886eea5fb2c7e240758d1195ff6b78dd355e3a13bbfe156e94703d3a",
+      "bytes": 202580
+    },
+    {
+      "repo_path": "reference/datasets.py",
+      "lf_sha256": "ad102f9e26fcdfb084c5a530bdda60cb0f84a293a6fbbfe5c7673a5bc951b2e7",
+      "bytes": 2780
+    },
+    {
+      "repo_path": "reference/evaluation.py",
+      "lf_sha256": "af1b4381abf1b55ce3a2222950244b9f5d096922afe6346e879a58b6bad9b047",
+      "bytes": 1558
+    },
+    {
+      "repo_path": "reference/final_manifest.json",
+      "lf_sha256": "157e3649c7cd2798feb418dd37630dc807cb329a3a13afdb8adb9f28fa00098f",
+      "bytes": 13572
+    },
+    {
+      "repo_path": "reference/fp32.py",
+      "lf_sha256": "ff37f407dd2010a4701c3002ca7fc2f7f7168fcb3822470e488d92ed21afd989",
+      "bytes": 1296
+    },
+    {
+      "repo_path": "reference/native_resize.py",
+      "lf_sha256": "e5c5b9a7597a3f688c2e8e09d23713f8776cf60b4b3e3d39cc7506ff9655ffad",
+      "bytes": 3609
+    },
+    {
+      "repo_path": "reference/parallel_resize.py",
+      "lf_sha256": "d0d135b7e07824812fd13390861b5ac79e1c3441c60268ca796f839730328697",
+      "bytes": 1490
+    },
+    {
+      "repo_path": "reference/pillow_resize.py",
+      "lf_sha256": "bc54a87343ec5aa893db04bfafa670dd7dd40d5fb6d407db178c07cc708c77ca",
+      "bytes": 2842
+    },
+    {
+      "repo_path": "reference/preprocess.py",
+      "lf_sha256": "45ab2b338fdd4c2582d4f721d4a1284233606227070d9be476d132e412e7caa3",
+      "bytes": 3388
+    },
+    {
+      "repo_path": "reference/tiling.py",
+      "lf_sha256": "08b51d8e49f4e90a7ce242fedbada86b1759485fe5aaa548a59c871684cbf477",
+      "bytes": 5226
+    },
+    {
+      "repo_path": "reference/tinyunet.py",
+      "lf_sha256": "8dcc7ad421c477a6cc3eebd2ea488bc9abef7c766692ca0e20728bf00843907f",
+      "bytes": 12173
+    },
+    {
+      "repo_path": "requirements-evaluation.txt",
+      "lf_sha256": "f120d66428c276720262f766ef20c0a2f2733b695408a6073d1a8866cfd463cd",
+      "bytes": 264
+    },
+    {
+      "repo_path": "requirements-reference.txt",
+      "lf_sha256": "befe9c2876f9994e2fdeca7758b3b195ce0551034cc5853b5fd223b27600aa27",
+      "bytes": 182
+    },
+    {
+      "repo_path": "rtl/axi_lite_endpoint.sv",
+      "lf_sha256": "a0bfa6c20a22a0fbae2ff91697fad09de798fcb0a3c3cefa007fde5fc447d947",
+      "bytes": 2145
+    },
+    {
+      "repo_path": "rtl/axis_byte_pack.sv",
+      "lf_sha256": "d1037ef0be2a5e87cffd5763b2b3702faef0621e9b541d5e6c2c61c8240ff7a9",
+      "bytes": 1148
+    },
+    {
+      "repo_path": "rtl/axis_byte_unpack.sv",
+      "lf_sha256": "f94545b14a06ead14bce966209caf0bdaf6734f86575e9e7a7bfdb6189514525",
+      "bytes": 1545
+    },
+    {
+      "repo_path": "rtl/axis_incr.sv",
+      "lf_sha256": "3a22e6eb0e40b4e4886607982d289d1d2e8f536588d803d650c063761d3972c7",
+      "bytes": 1939
+    },
+    {
+      "repo_path": "rtl/axis_reg_slice.sv",
+      "lf_sha256": "62d36b67605b55c2abef9eb2b5c83f5e5de0b9fb17e5862fd1dcce1463b2323a",
+      "bytes": 1176
+    },
+    {
+      "repo_path": "rtl/axis_tensor_accel.sv",
+      "lf_sha256": "50234e00cb771c59829b77e85f60354365bc8abafb0eac753cd1c6085f16c237",
+      "bytes": 21906
+    },
+    {
+      "repo_path": "rtl/conv_mac_array.sv",
+      "lf_sha256": "4f5a6a671ac18756d04246aec67be13755c529008b5c7930d88b9761692358db",
+      "bytes": 3289
+    },
+    {
+      "repo_path": "rtl/conv_tile_engine.sv",
+      "lf_sha256": "7d99b861ac5c0e3697621c97608c939113a1da03a2425881d4b484515f25943d",
+      "bytes": 14125
+    },
+    {
+      "repo_path": "rtl/requant_q24.sv",
+      "lf_sha256": "e705a3fd05916dca03dd8006f65f567485586cd7e1f0d61f7426849571060576",
+      "bytes": 2975
+    },
+    {
+      "repo_path": "rtl/tensor_tile_engine.sv",
+      "lf_sha256": "156d791813e8d52ba156c73f07f842f1e2b519a62302708a83b1c2277f5eea84",
+      "bytes": 8822
+    },
+    {
+      "repo_path": "scripts/RESTORE_A_Models_and_Datasets.cmd",
+      "lf_sha256": "b5ea7a58a95f665080dac48149599348913cfb252295b94b0db4b45a91568b59",
+      "bytes": 221
+    },
+    {
+      "repo_path": "scripts/RESTORE_A_Models_and_Datasets.py",
+      "lf_sha256": "bfeaf3c75c689df5a6de922e82bb762e0f94bef90d9b811b8a82f4ccc5b9d8dc",
+      "bytes": 5456
+    },
+    {
+      "repo_path": "scripts/audit_board_run.py",
+      "lf_sha256": "703ebbc59a9dd78e1ab875e9c28f6a914c571a78374ddb46f50434b3f73b64f1",
+      "bytes": 9336
+    },
+    {
+      "repo_path": "scripts/benchmark_cache_sync.py",
+      "lf_sha256": "0f362cce1b52766a0908f953c6a806e94a1be621d4b764c06725a6131748712f",
+      "bytes": 2162
+    },
+    {
+      "repo_path": "scripts/benchmark_native_copy.py",
+      "lf_sha256": "dd377fc72a1738fbcb597c2e095372759375ef2e01101b342d4fa27a70b93d67",
+      "bytes": 2529
+    },
+    {
+      "repo_path": "scripts/board_ssh.py",
+      "lf_sha256": "d682ddadc7ca00c582823fc463bd8fe0787b638f37ea15f714e37a7e6b6aa2b5",
+      "bytes": 2844
+    },
+    {
+      "repo_path": "scripts/build.sh",
+      "lf_sha256": "1e7f60389dc1b5ba8268ab2bf49d707cdf4a495edf735bbbbdfa5fa7a53498b0",
+      "bytes": 1408
+    },
+    {
+      "repo_path": "scripts/build_native_control.py",
+      "lf_sha256": "3ddd9c34c8d2a6fb8674f8f6315b83b8fcb06b7a0cbbc535e24b669dec411774",
+      "bytes": 2238
+    },
+    {
+      "repo_path": "scripts/build_native_copy.py",
+      "lf_sha256": "290d7996713a07ab66ff7b81d77e6523e64c5139e979fc891be2d069dc003e51",
+      "bytes": 1801
+    },
+    {
+      "repo_path": "scripts/build_native_resize.py",
+      "lf_sha256": "8606d4fa911939d404f2d399c79f1b73fb82e990a68567c210a1d6b415ac1ab2",
+      "bytes": 1966
+    },
+    {
+      "repo_path": "scripts/check_build.py",
+      "lf_sha256": "47a4dc42f8853e309efff00fb5e12d093b8af795822dcd9a5ae1a46b1c7bb946",
+      "bytes": 1442
+    },
+    {
+      "repo_path": "scripts/check_native_resize.py",
+      "lf_sha256": "0f57f3608e668890260da7cb9f0bafd59c88ee08eb2a6b806b293582c1ab4935",
+      "bytes": 3131
+    },
+    {
+      "repo_path": "scripts/deploy_pld_web_candidate.py",
+      "lf_sha256": "a59786988edd0bdbc2f61e70c7a763ebf0ca914750a2e6d028d291273c5716be",
+      "bytes": 31391
+    },
+    {
+      "repo_path": "scripts/extract_xsa.py",
+      "lf_sha256": "b486f59685ca20098a103088bb895724d7d4953e183122796a28d3765dd5ef3e",
+      "bytes": 1008
+    },
+    {
+      "repo_path": "scripts/fetch_final_dataset.py",
+      "lf_sha256": "d3bccd2a6a7e655c7aa9c1030ca65df70defbf6048d5a81a21946826384f08ec",
+      "bytes": 4242
+    },
+    {
+      "repo_path": "scripts/freeze_model_manifest.py",
+      "lf_sha256": "fc2fa0c2135a0815871450457cfb684e456b2f0b6c467add45365da24edd4cae",
+      "bytes": 1642
+    },
+    {
+      "repo_path": "scripts/gen_accel_vectors.py",
+      "lf_sha256": "e8ac50e615d071d8db908cb8cb9f982e826f55c794ecc618b7604d80fca68347",
+      "bytes": 13344
+    },
+    {
+      "repo_path": "scripts/gen_mac_vectors.py",
+      "lf_sha256": "10f1c43b5ca406f1e198a4bfa14f94e3834d41db5ec67aeb26a67c64623a9c28",
+      "bytes": 1677
+    },
+    {
+      "repo_path": "scripts/gen_ps7_config.py",
+      "lf_sha256": "57b0524e22b9cd063a79cf1ff24054feb262af8147050d81a7eb0f7bab0e6fc2",
+      "bytes": 1282
+    },
+    {
+      "repo_path": "scripts/gen_requant_vectors.py",
+      "lf_sha256": "66ca4dca75c8dcfc88afd12e8c5eae9861ee940864b51f4a45c47abe8dba069d",
+      "bytes": 1795
+    },
+    {
+      "repo_path": "scripts/gen_tensor_vectors.py",
+      "lf_sha256": "3959ba13919b68873267cd83ac62c7b7d4cecb4f0ee4f50a042587a0eca18156",
+      "bytes": 4581
+    },
+    {
+      "repo_path": "scripts/gen_tile_vectors.py",
+      "lf_sha256": "5c521a60694fff196be70b830eceefd944df5cbc871703c99b7e999214fd5434",
+      "bytes": 11906
+    },
+    {
+      "repo_path": "scripts/history/README.md",
+      "lf_sha256": "33c9844350c833edc10cb7003cdda9ca32aa105b85767b4d68acbf8daeb9587a",
+      "bytes": 423
+    },
+    {
+      "repo_path": "scripts/history/install_hdmi_touch_20261023.py",
+      "lf_sha256": "00b6dcfa554676529c256bef766a068abf348396814c9e86c0b436c272a623bd",
+      "bytes": 4309
+    },
+    {
+      "repo_path": "scripts/install_pynq_boot_order.py",
+      "lf_sha256": "d5d2806dd2534bf1e33318f686ab684fc52ef99d12831907032258dfa8b9181f",
+      "bytes": 2351
+    },
+    {
+      "repo_path": "scripts/package_cnn_board.py",
+      "lf_sha256": "80700cc80a20e0c70ef90ef8ae396f77a2f6317276587f523558e83f711e3913",
+      "bytes": 3768
+    },
+    {
+      "repo_path": "scripts/package_dual_model_web.py",
+      "lf_sha256": "de5fb73ba090123aa3426aed60e8882c9d631c38b243c7017a028883a654a1d3",
+      "bytes": 3039
+    },
+    {
+      "repo_path": "scripts/package_evaluation.py",
+      "lf_sha256": "752a741e73f6e844749980bb7ad0143e4e492e72dce6890e44b94ddebef075f3",
+      "bytes": 2452
+    },
+    {
+      "repo_path": "scripts/package_interactive.py",
+      "lf_sha256": "4d58322db84e47c2f0bf7ce7d7b86c34a145a6ad8066cb82053ad61cf5b127da",
+      "bytes": 1996
+    },
+    {
+      "repo_path": "scripts/package_p0_demo.py",
+      "lf_sha256": "c93ac0c1a3dd31335d37bb4568fdc810ebc1be98c116464c5eb207d0179f7b07",
+      "bytes": 3409
+    },
+    {
+      "repo_path": "scripts/package_perf_eval.py",
+      "lf_sha256": "e7b2a47d7533255653aa19b2219e5fe017714e4bc81c96fc78470b38a4216a86",
+      "bytes": 4489
+    },
+    {
+      "repo_path": "scripts/package_quad_view.py",
+      "lf_sha256": "d70bdd2bf547f5e912dfbacdec0c33a0b611e150fd6706f9934a70ba33fded3b",
+      "bytes": 2714
+    },
+    {
+      "repo_path": "scripts/prepare_cnn_input.py",
+      "lf_sha256": "7f2a8c97f5c3335b811acd05b378ad91cb61059c898c36ca5d1416977d86cc94",
+      "bytes": 1765
+    },
+    {
+      "repo_path": "scripts/prepare_demo_metrics.py",
+      "lf_sha256": "3c409ad80310d226aa662beb947333ee6b6744616817d18075dab3feacadf949",
+      "bytes": 595
+    },
+    {
+      "repo_path": "scripts/prepare_evaluation.py",
+      "lf_sha256": "23cdae8aedf58cccdd34e81baa4522a4020d62d63a32f4c6d672bd788692ecf9",
+      "bytes": 9286
+    },
+    {
+      "repo_path": "scripts/prepare_model_inputs.py",
+      "lf_sha256": "b897490dff73fc7960cd6c6c77d70e1af06d926fcfd9324695c60317bba18cac",
+      "bytes": 3005
+    },
+    {
+      "repo_path": "scripts/release_assets.py",
+      "lf_sha256": "8778524867f5fb1689f0ef637cb09f501bc2d0f8740402eeffe3f1b6c18ed2f5",
+      "bytes": 3570
+    },
+    {
+      "repo_path": "scripts/render_cnn_result.py",
+      "lf_sha256": "b25a88ceb7a4dc61dac99e851f1fbabb59aad8a17134d83eb628ad09566fa322",
+      "bytes": 2738
+    },
+    {
+      "repo_path": "scripts/render_evaluation_report.py",
+      "lf_sha256": "bc9b8f7d8a6516a2149849b5dcfd2660763a4275d1355a5d69f36722c84726ac",
+      "bytes": 7611
+    },
+    {
+      "repo_path": "scripts/run_sim.sh",
+      "lf_sha256": "3343dcef33715c7f0a08937a249a8c75dca4e7ec2fe6384cf5bb948a855f1db6",
+      "bytes": 3106
+    },
+    {
+      "repo_path": "scripts/tests/test_restore_a_bundle.py",
+      "lf_sha256": "b94fac9fbc748ef1adf27429bb5c431a277c1a45fd04719bafd12ebaa3d4a313",
+      "bytes": 4997
+    },
+    {
+      "repo_path": "scripts/verify_a_handoff.py",
+      "lf_sha256": "ff59c9cd85976678e2c971eaf4412dc80cf7b4407a252e86e68ff35e5a0e178a",
+      "bytes": 4048
+    },
+    {
+      "repo_path": "scripts/verify_current_board_sources.py",
+      "lf_sha256": "90317563550b3e213762fc1f15f696f07a6a18a342203f46261e1ad1ac725f90",
+      "bytes": 1772
+    },
+    {
+      "repo_path": "scripts/verify_delivery.py",
+      "lf_sha256": "b25e65b8dede03938c66e94ef570beb03172b0cf1d1b009c387f52bd5ac19f2b",
+      "bytes": 613
+    },
+    {
+      "repo_path": "scripts/verify_full_reference.py",
+      "lf_sha256": "ee9db9afc9710784c289c49de51ba4c5dc501a68585cbb18c5269bde5cf39b7b",
+      "bytes": 2601
+    },
+    {
+      "repo_path": "scripts/verify_interactive_board.py",
+      "lf_sha256": "c50a34963dfeebe5e0665ee86b99f6d7057c2afa8e239bdc00bc9a5bc135ca9f",
+      "bytes": 7291
+    },
+    {
+      "repo_path": "scripts/verify_native_control.py",
+      "lf_sha256": "107d0c17a8816c5176d1449f965d4f8b7a3ad42b84abebdbff53bdaac4694d8d",
+      "bytes": 8231
+    },
+    {
+      "repo_path": "scripts/verify_native_copy.py",
+      "lf_sha256": "606eb13b1d2c5f1ae45516f53767b8cdf8f95b6541a9b0e2d53473c1638d0272",
+      "bytes": 2248
+    },
+    {
+      "repo_path": "scripts/verify_parallel_resize.py",
+      "lf_sha256": "6cea821356e4addd47a2a968e439b0cc1b1c3df40278fd847c1041f93a5b55d7",
+      "bytes": 4604
+    },
+    {
+      "repo_path": "scripts/verify_release_board.py",
+      "lf_sha256": "432fdaacb65a21d1378a95f6be1c596edfa7e42ce5871b514085825d86af08d3",
+      "bytes": 8141
+    },
+    {
+      "repo_path": "scripts/write_build_manifest.py",
+      "lf_sha256": "29b167e110a3cac47dfd8ef76b6f5f06ee16fd1fb1a6e81dae4875e742a8c995",
+      "bytes": 2338
+    },
+    {
+      "repo_path": "sim/tb_axi_lite_endpoint.sv",
+      "lf_sha256": "d66f90457cb93b5c55940827ed87a99a00a3dd026170101c7d6521a7833e98c3",
+      "bytes": 3771
+    },
+    {
+      "repo_path": "sim/tb_axis_bytes.sv",
+      "lf_sha256": "7950f8c1a9e9c8f7a21fe221bddd04ed7f6d29bbad24740de2ecd8218817bfa5",
+      "bytes": 4216
+    },
+    {
+      "repo_path": "sim/tb_axis_incr.sv",
+      "lf_sha256": "69ce0f2eb91f10a7f408d9a183c52ebefd5ba66c96ff20ed74cdfb73ee30bdff",
+      "bytes": 7900
+    },
+    {
+      "repo_path": "sim/tb_axis_reg_slice.sv",
+      "lf_sha256": "38f508ec7207f512587421781a6879d3c63a01cbf8e5839c7bc09a8f662e2b36",
+      "bytes": 3278
+    },
+    {
+      "repo_path": "sim/tb_axis_tensor_accel.sv",
+      "lf_sha256": "6658ad3acb6aff82ba7b390bcb04e5ed240c56c1074b844b990d55c4773bd37c",
+      "bytes": 6708
+    },
+    {
+      "repo_path": "sim/tb_conv_mac_array.sv",
+      "lf_sha256": "1c9868f0702476562f9755728ffc7d45d1ce92a50ad747f54c650f30ab50afbf",
+      "bytes": 3884
+    },
+    {
+      "repo_path": "sim/tb_conv_tile_engine.sv",
+      "lf_sha256": "c5fd1596955dba462d080c0bee5e86ba5fc5a5e61d52d5c226957b1beef5c6ec",
+      "bytes": 4308
+    },
+    {
+      "repo_path": "sim/tb_requant_q24.sv",
+      "lf_sha256": "328c813c5f4e6c81226955a519785d307da69aa9e27f32af2af31d8f8e57594f",
+      "bytes": 3433
+    },
+    {
+      "repo_path": "sim/tb_tensor_tile_engine.sv",
+      "lf_sha256": "e17bb6042522f63edc546ca3e19e9f06693b0e400d9087b1c1623148f202ae52",
+      "bytes": 4041
+    },
+    {
+      "repo_path": "sim/test_cache_sync.py",
+      "lf_sha256": "3bf37d5dc20ea4ffdf68306e87ea499a5626ad10a1942b66d943cdbca6fcfa78",
+      "bytes": 1365
+    },
+    {
+      "repo_path": "sim/test_clock_contract.py",
+      "lf_sha256": "e6953d5cfb4df0392f858ab52570f82b716aabae298a92a0f227dea0d2a36494",
+      "bytes": 1072
+    },
+    {
+      "repo_path": "sim/test_dataset_contracts.py",
+      "lf_sha256": "0294021456a35fe875899b0c3bcaa5dc09398f6314cf82a49fdeeeab3cc6a3d9",
+      "bytes": 2389
+    },
+    {
+      "repo_path": "sim/test_decode_rgb.py",
+      "lf_sha256": "6dc4cc54c3cb15ae320677ed63f9a6765c598bc8872ea0c7d276c8e38279e39f",
+      "bytes": 1236
+    },
+    {
+      "repo_path": "sim/test_deploy_pld_web_candidate.py",
+      "lf_sha256": "3cd646cbc10de6002ce179a43b4b60f2bbc02333a66ee242c1f0d24d102f5cae",
+      "bytes": 24781
+    },
+    {
+      "repo_path": "sim/test_deploy_release.py",
+      "lf_sha256": "85b80762ef76b04ca21ce0d8d5cf0ff754c5485e19966525af7174faf483f2d6",
+      "bytes": 3423
+    },
+    {
+      "repo_path": "sim/test_evaluation.py",
+      "lf_sha256": "9ea5230646073b87698fd28d22ab5db4dff7af7d1a949e80f6a4343ee8878110",
+      "bytes": 2782
+    },
+    {
+      "repo_path": "sim/test_infer_timing.py",
+      "lf_sha256": "4c79bac3c19a6f12808a0928a0f0d78c2f7fdedc7ecd69bf10720f462ab11a31",
+      "bytes": 16099
+    },
+    {
+      "repo_path": "sim/test_loopback_cleanup.py",
+      "lf_sha256": "50662c8966a0102f614e13d214fa16206bfe5dfeb145b94c044004cb780a057b",
+      "bytes": 1684
+    },
+    {
+      "repo_path": "sim/test_model_versioning.py",
+      "lf_sha256": "24eb32c89d2a9be089f288b571dd25f8a0ef25e094c0608a036a664de87822cd",
+      "bytes": 2427
+    },
+    {
+      "repo_path": "sim/test_native_control.py",
+      "lf_sha256": "e999f906ba7cb0c32d3e9cde6b80597c811f3c5206f6e1146eeb412c6b2f203c",
+      "bytes": 3649
+    },
+    {
+      "repo_path": "sim/test_parallel_resize.py",
+      "lf_sha256": "ada791d64ee7dcc9b84cee0c8b7724ce809e14b5026f3cacc487b2078fdb98c7",
+      "bytes": 1260
+    },
+    {
+      "repo_path": "sim/test_pl_graph.py",
+      "lf_sha256": "af5f631a61344fa6bc5bfbe6541bd39efd4df39de955da6faa0edd09601fe5cb",
+      "bytes": 8304
+    },
+    {
+      "repo_path": "sim/test_release_assets.py",
+      "lf_sha256": "bf4195767127a812e03923bd8b0368015dce5e5e431abcc85749d210db92934d",
+      "bytes": 2634
+    },
+    {
+      "repo_path": "sim/test_simple_dma.py",
+      "lf_sha256": "9d675aea7a26902103c11332bbe4e0f294360928af794ecf4e16e104ce0d0228",
+      "bytes": 6955
+    },
+    {
+      "repo_path": "sim/test_tensor_loading.py",
+      "lf_sha256": "5e490261cf1e62f73057931c6b16a9fe3a11f73a5ad4bd026cccbfd13d6e696c",
+      "bytes": 2436
+    },
+    {
+      "repo_path": "sim/test_tinyunet_reference.py",
+      "lf_sha256": "054fa474fa7dc78b1727aaa2a45957b5f3c575ee064970b9a7bfdfc74cabdb3f",
+      "bytes": 3966
+    },
+    {
+      "repo_path": "tools/make_acdc_contract_fixtures.py",
+      "lf_sha256": "20e37b43835d81a80d261d6d1d60e0b5d1d9be8e039e07ade7b0fb186498725e",
+      "bytes": 6385
+    },
+    {
+      "repo_path": "tools/run_acdc_minimal.py",
+      "lf_sha256": "00dfee1a068cdb215f9908638ea7da115a732fd19c3b03d32dccdcc0b9004c21",
+      "bytes": 2556
+    },
+    {
+      "repo_path": "tools/test_acdc_contract_fixtures.py",
+      "lf_sha256": "a48281896090b0eeca1afbc9e98e0ca12516ccb87788f3b0cabc77e7019d6a59",
+      "bytes": 3814
+    },
+    {
+      "repo_path": "vivado/build_dma_bd.tcl",
+      "lf_sha256": "40e60b233f09345fd12c0f44703d44354de2d3c7bfc66476acc0133f8fa2c717",
+      "bytes": 9937
+    },
+    {
+      "repo_path": "vivado/check_accel.tcl",
+      "lf_sha256": "83e057d8c59784eb95a7895665522f1adaa5a367e4e840fd99a7ce2f510ecf97",
+      "bytes": 809
+    },
+    {
+      "repo_path": "vivado/check_numeric.tcl",
+      "lf_sha256": "5b77e7a44dfa25e22d6da21a102a3e2c04a84b6b084001de983452f256af85f3",
+      "bytes": 772
+    },
+    {
+      "repo_path": "vivado/check_tile.tcl",
+      "lf_sha256": "ee903844f71769721ab037fdfeebd9674deb749a62056cb4134d2b83f7ab3495",
+      "bytes": 1361
+    },
+    {
+      "repo_path": "vivado/package_axis_incr.tcl",
+      "lf_sha256": "72a5cf3c7cf55191a97e0bcf23bb7b9a195198286b3ab8cf06642b0422537775",
+      "bytes": 1945
+    },
+    {
+      "repo_path": "vivado/package_axis_tensor_accel.tcl",
+      "lf_sha256": "26988d60bc0eceeb569bd383847de2e04b66f814f441c5975e6a5b8508658ced",
+      "bytes": 2622
+    },
+    {
+      "repo_path": "vivado/ps7_config.tcl",
+      "lf_sha256": "963e86a02b9dd16a1de3be6233b5ba6f7380f742e5f7d865316b9a09d3575a83",
+      "bytes": 33224
+    },
+    {
+      "repo_path": "vivado/seed/LICENSE",
+      "lf_sha256": "e54778ff9edf9bb5c73db1ac4b3172a070540ab727fa0c3978412f8d00ffbda5",
+      "bytes": 1513
+    },
+    {
+      "repo_path": "vivado/seed/README.md",
+      "lf_sha256": "c566b96ba4cfc615a7eae202e9e58f4821ae9d8fde6f746a656ab073cc77f5d0",
+      "bytes": 296
+    },
+    {
+      "repo_path": "vivado/seed/dma_tutorial.tcl",
+      "lf_sha256": "16d8766cde24fa294a28c2d3d51ff15317e94a46208bc28d9bd3c03af0a8cc73",
+      "bytes": 46284
+    },
+    {
+      "repo_path": "vivado/smoke_synth.tcl",
+      "lf_sha256": "f21b7c6f92c14f6249110d09be7bd9219c80ff7d2ebfdf522c4d3c683d789b1c",
+      "bytes": 1116
+    },
+    {
+      "repo_path": "wechat_miniprogram/.gitignore",
+      "lf_sha256": "86f081091008d98bec0de79aba45d624d133965b372f49c5d1a32b0dce6e34ce",
+      "bytes": 238
+    },
+    {
+      "repo_path": "wechat_miniprogram/README.md",
+      "lf_sha256": "8119658649c64a4fa362c1ccc4a5de3be2ad8e2afd94990250be25cbbbed663c",
+      "bytes": 6105
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/board_client.py",
+      "lf_sha256": "ec27be2bbb88c8fbb84656e6cd7e8926aff6cb668029a92e6b1faf36308f05cb",
+      "bytes": 20241
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/bridge.py",
+      "lf_sha256": "d22daaf32d18f7234aa97f33bb4be173fb465a8616d795ca0b2ad168f62d02f4",
+      "bytes": 42744
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/bridge_autostart.vbs",
+      "lf_sha256": "e2ab7a6c318a38e2d299c702c9fc61e7fcd8c24bc3047a3d9ae13057bc5ea2a8",
+      "bytes": 396
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/config.example.json",
+      "lf_sha256": "5ccb73aca82630e0c80fbca2da89eccf86b3c71e4fe986d3c5b58f9efee6c057",
+      "bytes": 527
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/preprocess.py",
+      "lf_sha256": "38dc5fd51e6aa6224dc5fd57e370fdd24885798e38c4581ce920186e9bdb8694",
+      "bytes": 2937
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/run_bridge.cmd",
+      "lf_sha256": "0a845edcd531dd3d98bc3819c81f032a96cdff6176c9388a206656771969abef",
+      "bytes": 317
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/start_bridge.cmd",
+      "lf_sha256": "e57e2a41f14cc9e3a44d949b77e1f8413900666a6c9d9169a458c2f545624318",
+      "bytes": 427
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/start_detached.cmd",
+      "lf_sha256": "e1691f29369d1e8986ae08d0726f6df9a3bdb1741f10943f965d969cc1271f49",
+      "bytes": 488
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tests/__init__.py",
+      "lf_sha256": "475e6a61a1cd90ddcc3b3c924cfe005e0d81d802cb27a1466da12f20cd74a619",
+      "bytes": 17
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tests/mocks.py",
+      "lf_sha256": "4392bd89a50c721db67c71c86f239d17f488ac7a6c43b2a93eced21cc94b6018",
+      "bytes": 28859
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tests/test_board_client.py",
+      "lf_sha256": "49a6b6294ba0defd1ca07edda2557f1a086032563e535d399d513273887ff0b1",
+      "bytes": 6840
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tests/test_bridge_flows.py",
+      "lf_sha256": "b06bf24a2a0a7c1398cf901815f362c9908dc321a395573d768a12c62087dfdf",
+      "bytes": 11386
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tests/test_mobile_preview_roi.py",
+      "lf_sha256": "f9a9fe79ca80df4d916d905abac348e759642312387558c390e592f2f177d549",
+      "bytes": 8295
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tests/test_nifti.py",
+      "lf_sha256": "c675edb8e259381b56a4b0b6e5a1cf22ea6e974ccd11382343702b81e4be589d",
+      "bytes": 2676
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tests/test_regressions.py",
+      "lf_sha256": "a75f1b2633db21ee78cf7153febec91b876a0ebb76c2cd9eb56e4f99270f9c95",
+      "bytes": 11611
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tests/test_wechat_api.py",
+      "lf_sha256": "4f9ede785bae24c4a6b2f8a851ca3d9c381fd9fa943ac97ff2947dac32516d14",
+      "bytes": 3244
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tools/board_probe.py",
+      "lf_sha256": "88771530dbceb61637317a698557fc7e414ab4d225c070d96f847d350988ade0",
+      "bytes": 12491
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tools/nifti.py",
+      "lf_sha256": "ef663868070780983c9e154f8a7a2d0237c0f7a84a0e974c0edf1612474360af",
+      "bytes": 3820
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/tools/upload_demo_data.py",
+      "lf_sha256": "7f0af233a1eb6d9cbfd8b42af8a0e7020dbb3f0094c673940bb2473e5153214e",
+      "bytes": 3729
+    },
+    {
+      "repo_path": "wechat_miniprogram/bridge/wechat_api.py",
+      "lf_sha256": "1285aef6fcaa6824cd7646623c4e076d842be4e9f6e219bff881932c5150bf66",
+      "bytes": 15141
+    },
+    {
+      "repo_path": "wechat_miniprogram/docs/DEPLOY.md",
+      "lf_sha256": "4a62fcc39481829d921ec140ae8990debffa9cb2ca16e27b06807f0307db257c",
+      "bytes": 12053
+    },
+    {
+      "repo_path": "wechat_miniprogram/docs/RELEASE.md",
+      "lf_sha256": "cb817533c5ba90b76dbd510eb2f775d3b5ada9a1cea85ab3bed1537abd0b9bf5",
+      "bytes": 2174
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/app.js",
+      "lf_sha256": "844e29d2c6b2a879d01a862793ace0b6250e8ab5aaa7690032f17dd4f1be6d8f",
+      "bytes": 1487
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/app.json",
+      "lf_sha256": "6568750fe6a0179142cbca9fb8e3c459a9d9ca2e5e972df1d4dac2c64109eeb2",
+      "bytes": 806
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/app.wxss",
+      "lf_sha256": "d4a998437cb2767ddca3842eb57db6a34c6fb0373e7dce318dfffa59f9d13f15",
+      "bytes": 1817
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/components/privacy-guard/privacy-guard.js",
+      "lf_sha256": "48f330b61529cb6cfbd3857844eaf02d4afc29bed3b86a19a07b39a14f6171a8",
+      "bytes": 629
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/components/privacy-guard/privacy-guard.json",
+      "lf_sha256": "035503c1a56d8b4b9227ce8bb9145fbd1ef8ec7dce59e55f9d5d55fb5eb7d566",
+      "bytes": 49
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/components/privacy-guard/privacy-guard.wxml",
+      "lf_sha256": "219c6727ccec6913d521814ef657ff51fe0b2f5e29ae2d662d4daac806e26552",
+      "bytes": 838
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/components/privacy-guard/privacy-guard.wxss",
+      "lf_sha256": "e155c918716ad7ef7ffbadbd8ac2c8334baa7320b4cd1a103121aecff2ade17d",
+      "bytes": 615
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/acdc/acdc.js",
+      "lf_sha256": "3b44a4ac86f87d46c3536c4302ec1bd1f7652b2310729d03286a09d4acc53d38",
+      "bytes": 3225
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/acdc/acdc.json",
+      "lf_sha256": "2da62164779059e8265891c30664106363b22b4eea872e155cd13536f7ea6b52",
+      "bytes": 135
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/acdc/acdc.wxml",
+      "lf_sha256": "d008b305938be151e7de8b1f601937bc15ede5f61962480fd28513c6f95ba5e8",
+      "bytes": 1961
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/acdc/acdc.wxss",
+      "lf_sha256": "f46edbd498649f0a099fc0cb8f07f46281dfb26312fea4018d24f0ea17a146d7",
+      "bytes": 366
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/camus/camus.js",
+      "lf_sha256": "eccdde159509fbe7f3e82cea3e9d8c347691c30033eb16a3d7d76db3258d2918",
+      "bytes": 2995
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/camus/camus.json",
+      "lf_sha256": "13a5b5fcb525cc2b775df3ef0a109ce2daff870ec7fc86424fa8ec9bd5a66e7d",
+      "bytes": 138
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/camus/camus.wxml",
+      "lf_sha256": "5964ac84dcbed90d91f51f9abf32ac212c8864a0cc239343e20e7a8690d7f8a7",
+      "bytes": 2511
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/camus/camus.wxss",
+      "lf_sha256": "a155999f2df85247150dff145b2796fe22c0bc51c71144a0efebf814cb2f3519",
+      "bytes": 606
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/home/home.js",
+      "lf_sha256": "ee377dd6d5a167ec3dc70b5b1bf5a8a89d246b802fb7f50b018b7cdd1594bac7",
+      "bytes": 4841
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/home/home.json",
+      "lf_sha256": "35369c849e8129a0ed4684564b16c2934806a867fe884b2a1729e21ee4ad282f",
+      "bytes": 136
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/home/home.wxml",
+      "lf_sha256": "d7ed066a179c5562643d9b3e56f45fb20c98cec4ab182758e1c602b06c6554e8",
+      "bytes": 2299
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/home/home.wxss",
+      "lf_sha256": "f99fe87c0d117082af4ee5249766a2e9d5a4bf6b30d4188a6d733a42f948c475",
+      "bytes": 204
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/skin/skin.js",
+      "lf_sha256": "f7998b59c39f1a5212e68091973d128adc33ffd4a2bad00bafa62de86a5e2acb",
+      "bytes": 3527
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/skin/skin.json",
+      "lf_sha256": "90b5195afee65546a327e1adff2024bf8e1222d025ddb17ddeed3b6d8b7e599a",
+      "bytes": 135
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/skin/skin.wxml",
+      "lf_sha256": "4467ac3b118505a546ed45eeefd8dee660757c4a9ca245a67003199bbd71532d",
+      "bytes": 1729
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/skin/skin.wxss",
+      "lf_sha256": "cc68515b73f8fa57f30e11f260e26632f4110e17988425c7de916c31a88458f6",
+      "bytes": 398
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/task/task.js",
+      "lf_sha256": "2bc0ff03981732f1a16315276f30fe4416205af6285a3f5be4e1b3a8ceb68b05",
+      "bytes": 5158
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/task/task.json",
+      "lf_sha256": "099dc6f9df79e2239d61ad76beb683ea2154b3d29c4a3c1d1be29b70a019eb5b",
+      "bytes": 132
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/task/task.wxml",
+      "lf_sha256": "940e359263c4dc7ec722312bc3554f5ce9c47f1de3a7c3dca873eaa21b73cc23",
+      "bytes": 4688
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/task/task.wxss",
+      "lf_sha256": "1e20d35afe3810b2d027edbfccb5c9e993252a8bf0dd7851fcccb016c00d6368",
+      "bytes": 587
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/tasks/tasks.js",
+      "lf_sha256": "35b4f0c0ca1963ecbea6d94cb33c9163b2532db5794e25d812b2acac0794d121",
+      "bytes": 2298
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/tasks/tasks.json",
+      "lf_sha256": "7b7ddebed1166769c42b198d8af8ef1fccd85c02b2c4423ebe027a6f30031b87",
+      "bytes": 132
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/tasks/tasks.wxml",
+      "lf_sha256": "8fa8dbf7467a621923108fd0488bda4792649806c0ea5d0d29a15754fc1b1aa0",
+      "bytes": 781
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/pages/tasks/tasks.wxss",
+      "lf_sha256": "4d693dcab7651da0605f31ffb2a9b84b768b77c273d74c098c97de92d436e166",
+      "bytes": 89
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/sitemap.json",
+      "lf_sha256": "9b6f9ce8a1cd47042022491f1a8cd55862a73466f3615a52014b4d350859fbd1",
+      "bytes": 195
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/utils/album.js",
+      "lf_sha256": "b769e5dd06c96c2c88c03dba3b522a4fa980b3d50572613d5819e72b060f1bdf",
+      "bytes": 3306
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/utils/api.js",
+      "lf_sha256": "44e99f22cfdd1e393a132a9d92ddf63f55b6a06f29efad07e3e7c368672e1cb3",
+      "bytes": 4948
+    },
+    {
+      "repo_path": "wechat_miniprogram/miniprogram/utils/roi.js",
+      "lf_sha256": "ed463f2df96de79d008316efae89b53aa1403264b03f8d4699b0fc3665f95b61",
+      "bytes": 529
+    },
+    {
+      "repo_path": "wechat_miniprogram/project.config.json",
+      "lf_sha256": "10d4af46ac1a28c2f458ea97e57899cff00cc537199dc57388fd386e65fd9003",
+      "bytes": 1750
+    },
+    {
+      "repo_path": "wechat_miniprogram/tools/check_miniprogram.py",
+      "lf_sha256": "bae88ed6a54ba0ddc60a3af75ec4adb4a45ae7d3b43985eb5ffd8e7e617dcdf3",
+      "bytes": 4954
+    },
+    {
+      "repo_path": "wechat_miniprogram/tools/test_api_js.cjs",
+      "lf_sha256": "2437275c97d6e2ce51049f267f548b10eef4b811e192fdf18aac08c69b7fb6a2",
+      "bytes": 1791
+    },
+    {
+      "repo_path": "wechat_miniprogram/tools/test_mobile_features.cjs",
+      "lf_sha256": "1c8dab8d4913832ce0637cb104218cb3b5fba91e0af2dd1ea1d4d112d3aa5c18",
+      "bytes": 4627
+    },
+    {
+      "repo_path": "wechat_miniprogram/tools/test_regressions.cjs",
+      "lf_sha256": "39b256d8bcbcde85e4b9b44815ddc890dbe7dd55b79c0c62de3cd4c7f6de849a",
+      "bytes": 4915
+    }
+  ],
+  "independent_miniprogram_revision": "553634c",
+  "imported_autostart_revision": "3dab7dcf14028edad416f82c81ca90b20d96c65b"
+}

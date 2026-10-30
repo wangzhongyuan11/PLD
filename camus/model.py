@@ -333,13 +333,13 @@ def _load_concat(row: dict[str, Any]) -> CamusConcat:
     )
 
 
-def load_model(root: Path | str = DEFAULT_MODEL_ROOT) -> CamusModel:
+def load_model(root: Path | str = DEFAULT_MODEL_ROOT, *, verify=True) -> CamusModel:
     model_root = Path(root).resolve()
     if not model_root.is_dir():
         raise ModelError(f"model root does not exist: {model_root}")
-    _load_manifest(model_root)
+    if verify: _load_manifest(model_root)
     spec_path = model_root / "model_spec.json"
-    if sha256_file(spec_path) != MODEL_SPEC_SHA256:
+    if verify and sha256_file(spec_path) != MODEL_SPEC_SHA256:
         raise ModelError("model_spec.json identity mismatch")
     try:
         spec = json.loads(spec_path.read_text(encoding="utf-8"))
@@ -347,7 +347,7 @@ def load_model(root: Path | str = DEFAULT_MODEL_ROOT) -> CamusModel:
         raise ModelError(f"invalid model_spec.json: {error}") from error
     if spec.get("schema") != "camus-int8-export-v1":
         raise ModelError("unsupported model spec schema")
-    _validate_spec_graph(spec)
+    if verify: _validate_spec_graph(spec)
     rows = spec.get("layers")
     if not isinstance(rows, list) or len(rows) != 15:
         raise ModelError("model spec must contain exactly 15 layers")
@@ -356,7 +356,7 @@ def load_model(root: Path | str = DEFAULT_MODEL_ROOT) -> CamusModel:
         raise ModelError("layer order differs from frozen CAMUS topology")
     if tuple(layer.index for layer in layers) != tuple(range(15)):
         raise ModelError("layer indices are not ordered")
-    _validate_packed(spec, layers, model_root)
+    if verify: _validate_packed(spec, layers, model_root)
     concat_rows = spec.get("concat")
     if not isinstance(concat_rows, list) or len(concat_rows) != 3:
         raise ModelError("expected three CAMUS concat nodes")

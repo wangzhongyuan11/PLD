@@ -1,0 +1,3 @@
+.task-row { padding: 24rpx 28rpx; }
+
+.task-title { font-size: 30rpx; font-weight: 600; }

@@ -53,6 +53,16 @@ class TelemetryTests(unittest.TestCase):
         self.assertIn('no new PL', info['mode'])
         self.assertIsNone(self.skin('mask')['network_seconds'])
 
+    def test_skin8_result_shows_execution_core_and_preserves_bit_identity(self):
+        self.skin()
+        frame=json.loads((self.root/'inference/frame_000001.json').read_text())
+        frame['execution_backend']='skin8_125'
+        self.write('inference/frame_000001.json',frame)
+        info=load_telemetry(self.root,'skin')
+        self.assertEqual(info['core'],'skin8_125')
+        self.assertEqual(info['runtime_sha256'],'b'*64)
+        self.assertIsNone(info['comparison']['record'])
+
     def test_failed_jobs_and_nonfinite_timing_are_not_measurements(self):
         self.skin()
         self.write('job.json', dict(job=dict(state='error', mode='infer')))
