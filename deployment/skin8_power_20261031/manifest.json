@@ -1,0 +1,54 @@
+{
+  "schema": "skin8-board-power-display-delta-v1",
+  "release_root": "/home/xilinx/jupyter_notebooks/pld/releases/pld_dual_20261017",
+  "scope": "delta against deployed performance panels; no inference, RTL, model, FPS or lifecycle changes",
+  "report": "experimental/skin8/evidence/power_20261031/receipt.json",
+  "power_display": "1.845 W（动态 1.695 W；静态 0.150 W）",
+  "files": {
+    "web/static/app.js": {
+      "deployed_before_sha256": "499948d493e6dbefacbfe2ae30eb90213dfc2e2bdbd9d6ebc4483ffbecf1c366",
+      "deployed_after_sha256": "8038d4d091b6207992f123272edcc5dd480b61395b3d1c4b4cd2492f323b68c2",
+      "before_lf_sha256": "499948d493e6dbefacbfe2ae30eb90213dfc2e2bdbd9d6ebc4483ffbecf1c366",
+      "after_lf_sha256": "8038d4d091b6207992f123272edcc5dd480b61395b3d1c4b4cd2492f323b68c2"
+    },
+    "hub/quad_camus.html": {
+      "deployed_before_sha256": "45e35f87e991a066098267717f75c3d5639726a891d2a6367fb550d1376d4cbd",
+      "deployed_after_sha256": "c5553395ab1a57b6c74f79ed9217bc511de548b87af22d9638d32f31b6a03396",
+      "before_lf_sha256": "45e35f87e991a066098267717f75c3d5639726a891d2a6367fb550d1376d4cbd",
+      "after_lf_sha256": "c5553395ab1a57b6c74f79ed9217bc511de548b87af22d9638d32f31b6a03396"
+    },
+    "hub/interactive.js": {
+      "deployed_before_sha256": "905624e74c706932effb53d4b73f126de27fc854e6df2d69bc31f69b67aafb35",
+      "deployed_after_sha256": "7e726862cea630579907459f9e3ac7eee02adf1ead2e419c6afc4ffb8d2063ff",
+      "before_lf_sha256": "905624e74c706932effb53d4b73f126de27fc854e6df2d69bc31f69b67aafb35",
+      "after_lf_sha256": "7e726862cea630579907459f9e3ac7eee02adf1ead2e419c6afc4ffb8d2063ff"
+    },
+    "web/hdmi_worker.py": {
+      "deployed_before_sha256": "acd37bf7dc9dd2b8ee5ea1d8edb96e953b175e3dbb6ec2c3c2cdf43d0b3784d3",
+      "deployed_after_sha256": "58978049f33df079a62a163548f62fa9da22da274ba09eb5611c7b7117c547c7",
+      "before_lf_sha256": "acd37bf7dc9dd2b8ee5ea1d8edb96e953b175e3dbb6ec2c3c2cdf43d0b3784d3",
+      "after_lf_sha256": "58978049f33df079a62a163548f62fa9da22da274ba09eb5611c7b7117c547c7"
+    },
+    "hub/quad_camus_hdmi.py": {
+      "deployed_before_sha256": "4ccbc4e92858f23f8326722c515ae69440e5d3589cd11c9cf45a1f1f8d10cceb",
+      "deployed_after_sha256": "312220936effe77ed65ad2327e56fea3cc66b69e99bf9dbc09e22f186a539c7f",
+      "before_lf_sha256": "4ccbc4e92858f23f8326722c515ae69440e5d3589cd11c9cf45a1f1f8d10cceb",
+      "after_lf_sha256": "312220936effe77ed65ad2327e56fea3cc66b69e99bf9dbc09e22f186a539c7f"
+    },
+    "hub/interactive_hdmi.py": {
+      "deployed_before_sha256": "3161fc18fde85c7767c48a48476913931f94678cd8d327d273ae22d5e17c8dc1",
+      "deployed_after_sha256": "a47d312ca6563a742501cf7e614196de6abb2938e30c79abd09993ff6e7df4d1",
+      "before_lf_sha256": "5d9abe450d6ad5c03a24058db52dd6785695df3121a54e03349415c7695f46b9",
+      "after_lf_sha256": "bcd8f75dee4bf146df9865e1ac3670aed7489a897ffe392735499f01e8c5127c"
+    }
+  },
+  "patch_sha256": "7fb171a73c49fa05201009a9b6db9419fed788b11ea7543e7f3e2ae4a19d10d1",
+  "verification": {
+    "web_http": "PASS",
+    "web_rows": "PASS",
+    "hdmi_software_render": "PASS",
+    "original_bitstream_unchanged": true,
+    "acdc_identity_unchanged": true
+  },
+  "hash_policy": "The unified diff uses LF-normalized UTF-8 sources. Validate patch results with the lf_sha256 fields; deployed byte hashes retain original/mixed line endings."
+}

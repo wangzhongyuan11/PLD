@@ -1,0 +1,74 @@
+{
+  "schema": "skin8-source-bound-power-estimate-v1",
+  "design": "skin8_system_wrapper",
+  "frequency_mhz": 125,
+  "activity": "vectorless/default, no SAIF",
+  "scope": "same-source reimplementation; not the original routed checkpoint and not a board power measurement",
+  "deployed_bit_sha256": "a1965b58930adbc5ef991ac5ca07a80fcb09e2c57e22e910013ebe0ed6cd5cd3",
+  "source_audit": {
+    "schema": "skin8-power-source-bound-reimplementation-v1",
+    "sources": {
+      "experimental/skin8/rtl/board_top.sv": "adf711528d591f1652b7f2b43cea9ae5f08f8fe719d78a47867b221917d4b370",
+      "experimental/skin8/rtl/conv_pair_tile.sv": "a4aaf15705eeb000ac881def48a5e22cb8920eebfc0555f22a645ba10363fc53",
+      "experimental/skin8/rtl/ddr_read64.sv": "e9973a3663ec12ca8322d084872d6ed54858fa2d370242755dd1a7ae818b103f",
+      "experimental/skin8/rtl/ddr_write64.sv": "1eca9e1111ae519cbb781016f63853f7c80a935c14753370965efaf1a2799b3e",
+      "experimental/skin8/rtl/dot128.sv": "6c93e437605ab8a41cd6d9d26d3e2cd5005e7440d8892a3d0376a2b0dd8dfa6e",
+      "experimental/skin8/rtl/feature_banks.sv": "8bc718d72189054a38e7aef9dbf5eb4e366cb0556e05cf1a9896af5942d92a77",
+      "experimental/skin8/rtl/frame_engine.sv": "9bac54444b8597665b8a54b72e082d5d30fbeecece55cb7b7604402f01153323",
+      "experimental/skin8/rtl/frame_registers.sv": "a237a6c10985b4da1b6ded94e7b9e4b2f08383829df56a756d9934429c22eb34",
+      "experimental/skin8/rtl/graph_control.sv": "3c03a5b59a6d7bd7221b950627f70749fe0e86e757b8fd4a71d0166a9332ee9f",
+      "experimental/skin8/rtl/map8.sv": "4bc528531e530b4151650aa618a0c6e4c703410664ec326f72653823dbe8ad16",
+      "experimental/skin8/rtl/nearest2_row.sv": "2cead2f1ebbcef5e08e757393a6c940d4848d75bd8cf13cb36ce3aa771d0aec3",
+      "experimental/skin8/rtl/pair_to_words.sv": "8cdc283e1fa998e931145e845d4eb49151a451f8bd5f6c4d1f69f1d35e14d517",
+      "experimental/skin8/rtl/pool2_rows.sv": "bba4ae0e2307097fd0aa6b9ab0805e5d26619710d7a46368fb5b8b66e21ede24",
+      "experimental/skin8/rtl/quant_pair.sv": "b9726a37ec2f9102a1e5604256511e0a465de96fdb9ecce67ef663bb641fa8e6",
+      "experimental/skin8/rtl/requant24.sv": "315f9d5e11e3efbe49fb07c26c06e8b1fa5ba83cc164fa0f7f57ee8004c7d281",
+      "experimental/skin8/rtl/row_transform.sv": "4fd28e75bc9b5872094bf419aae45fa6d0fefa13c800eddf6b545a06fe69896d",
+      "experimental/skin8/rtl/stripe_engine.sv": "15a659ffc820f34032ad42dc999d033b8f30345f72927983ac79688a756deb14",
+      "experimental/skin8/rtl/stripe_load.sv": "0a1f96fa916425f31fa53b0af816fa370f16c05703a0c6edfc21bdc7abfe550a",
+      "experimental/skin8/rtl/tensor_load.sv": "ad65ac1c4e9a966293d978e123e829e85b4d792701dbfc61685fbf5ffe5f4bed",
+      "experimental/skin8/rtl/tile_int8.sv": "ecf52e6cfaeced23d50454b7b767d90ccb928703604c5e7e2184d5ee93ea3789",
+      "experimental/skin8/tools/build_board.tcl": "56ceac8938fdca3f5caf1cadf97978e265eb7fda3fa05813c9003aa0a554e214",
+      "experimental/skin8/tools/run_board_build.py": "db79841b7b9fba7acb2b9b8e337b9e14d9e71a5ad0ad79873265fc6ebdc7def3",
+      "vivado/ps7_config.tcl": "963e86a02b9dd16a1de3be6233b5ba6f7380f742e5f7d865316b9a09d3575a83"
+    },
+    "deployed_bit_sha256": "a1965b58930adbc5ef991ac5ca07a80fcb09e2c57e22e910013ebe0ed6cd5cd3",
+    "frequency_mhz": 125,
+    "activity": "vectorless/default, no SAIF",
+    "scope": "same-source reimplementation; original deployed bitstream unchanged",
+    "expected_original_resources": {
+      "dsp48e1": 144,
+      "bram36_equivalent": 44
+    },
+    "resume_script_sha256": "124195202185a37eb8e75e9de23354f33ddccaf6f0ae2f0132935a1bbb1b89c8"
+  },
+  "total_on_chip_watts": 1.845,
+  "dynamic_watts": 1.695,
+  "device_static_watts": 0.15,
+  "display": "1.845 W（动态 1.695 W；静态 0.150 W）",
+  "timing": {
+    "wns_ns": 0.008,
+    "whs_ns": 0.022,
+    "wpws_ns": 2.75
+  },
+  "resources": {
+    "dsp48e1": 144,
+    "bram36_equivalent": 44
+  },
+  "report_sha256": "f7efa298354dadb5a81256cd068f5bce53483fb7f89b2dae48ab0c9990238742",
+  "checkpoint_sha256": "c98030687b1fc2fe38461f8a9ed6ec83a9e3bd4cea89d7f93523236f3cbb09ac",
+  "tool": "Vivado 2026.1 Build 6511674",
+  "vivado_exit_code": 0,
+  "confidence": "Medium",
+  "routing": {
+    "routable_nets": 18249,
+    "fully_routed_nets": 18249,
+    "routing_errors": 0
+  },
+  "reports": {
+    "power_postroute_vectorless.rpt": "f7efa298354dadb5a81256cd068f5bce53483fb7f89b2dae48ab0c9990238742",
+    "clocks.rpt": "7f9e696cd7d1e0372e0bc2805b0837747e90fb8344e1605492f1aecd4adcaa01",
+    "timing.rpt": "e8d79c4e2ddb811a8bf8e65af4399eae1d773c9ad9f56ec9f60496c1085c6f11",
+    "route_status.rpt": "bca3349aff2090417e623dcb5b2160f8a03e43e476bdc1660e33c38251c7aec3"
+  }
+}

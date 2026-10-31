@@ -31,3 +31,6 @@ delivery/c_v3/validation/*.json -text -whitespace
 # Preserve the collected Linux service configuration, including its recorded EOF.
 deployment/current_board_20261025/systemd/** text eol=lf
 deployment/current_board_20261025/systemd/pld-camus.service.d/95-camus-dependencies.conf whitespace=-blank-at-eof
+# These tool reports and serialized patch are bound by SHA256; retain their bytes.
+experimental/skin8/evidence/power_20261031/*.rpt -text -whitespace
+deployment/skin8_power_20261031/display.patch -text -whitespace
