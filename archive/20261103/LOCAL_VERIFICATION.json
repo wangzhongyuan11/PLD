@@ -1,0 +1,20 @@
+{
+  "status": "pass",
+  "all_paths_covered": 80297,
+  "unique_objects_verified": 49592,
+  "pack_count": 10,
+  "restore_smoke": {
+    "status": "restored",
+    "selected_paths": 4,
+    "unique_objects_checked": 3
+  },
+  "restored_paths": [
+    "pld-medical/software/role_a_acdc/model.py",
+    "pld-medical/deliverables/innovation_workshop_20261031/PLD_创新与优化落地方案_Argon联合研讨_20261031.docx",
+    ".gitattributes",
+    "out/incoming_pld_dev_20261020/perf10_deploy/PLD_refactor_stage8/.gitattributes"
+  ],
+  "git_history_clone_head": "51f85407a079c30a6e545e7f6500081862dff006",
+  "git_bundle_sha256": "b4ef2f857421112b534392c553fafcae6d6cf97282fd7cdd7ce77581e0e6ddeb",
+  "data_execution": "No model inference, training or sealed-test scoring. Content bytes verified without decoding medical images."
+}

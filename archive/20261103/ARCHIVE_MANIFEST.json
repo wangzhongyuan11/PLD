@@ -1,5 +1,5 @@
 {
-  "status": "local_content_verified",
+  "status": "local_content_and_remote_asset_checks_passed",
   "source_files": 80297,
   "source_bytes": 17765404558,
   "unique_objects": 49592,
@@ -95,5 +95,9 @@
       "sha256": "4bd159fdc46844e275a4058ca9406dbb240a194b5b02d21efa54e26b88043305"
     }
   ],
-  "release_tag": "pld-closeout-20261103"
+  "release_tag": "pld-closeout-20261103",
+  "verification": {
+    "local": "LOCAL_VERIFICATION.json",
+    "remote": "REMOTE_ASSETS_VERIFIED.json"
+  }
 }

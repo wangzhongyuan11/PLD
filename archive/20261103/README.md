@@ -44,4 +44,4 @@ git clone PLD_Local_History_20261103.bundle PLD_history
 
 ## 完整性
 
-[附件清单](ARCHIVE_MANIFEST.json)、[SHA256校验表](SHA256SUMS_20261103.txt)和[源码身份](SOURCE_SNAPSHOT.json)对应本次归档。发布前逐个读取全部对象进行SHA256校验，并以恢复脚本实际重建小型模型源码和研究Word文件；远端附件还须核对服务端SHA256与大小。机器清理的最终执行结果由本机留下的独立收尾凭证记录，不将“已上传”自动写成“已删除”。
+[附件清单](ARCHIVE_MANIFEST.json)、[SHA256校验表](SHA256SUMS_20261103.txt)和[源码身份](SOURCE_SNAPSHOT.json)对应本次归档。发布前逐个读取全部对象进行SHA256校验，并以恢复脚本实际重建小型模型源码和研究Word文件；15项远端附件的服务端SHA256与大小已全部核对，目录包和恢复工具已回读并实际还原源码与Word。证据见[本地恢复检查](LOCAL_VERIFICATION.json)与[远端附件检查](REMOTE_ASSETS_VERIFIED.json)。机器清理的最终执行结果由本机留下的独立收尾凭证记录，不将“已上传”自动写成“已删除”。
