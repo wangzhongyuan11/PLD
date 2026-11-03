@@ -1,5 +1,9 @@
 # PLD：PYNQ-Z2 双模型分割系统
 
+## 竞赛结束归档（2026-11-03）
+
+竞赛已经结束。[统一归档入口](archive/20261103/README.md)汇总本地A源码、训练与实验记录、模型数据、答辩材料、研究报告和Git历史的恢复方式。完整附件保存在[结束归档Release](https://github.com/wangzhongyuan11/PLD/releases/tag/pld-closeout-20261103)。原正式交付、候选版本及板端验收口径保持各自身份；仓库归档不自动更新板端服务。
+
 唯一正式交付为 **pld_dual_20261017**，入口清单见 [delivery/current.json](delivery/current.json)、[交付与复现说明](delivery/pld_dual_20261017/README.md)。包含 ISIC 皮肤镜、CAMUS 心脏超声、统一网页和交互分割工作台。旧阶段仅作为历史证据，不是并列交付。
 
 系统用于工程教学和算法演示。数据来自公开开发数据；开发集结果不称独立测试结果，不用于临床诊断。

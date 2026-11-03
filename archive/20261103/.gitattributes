@@ -1,0 +1,2 @@
+# Keep historical A source bytes identical to SOURCE_SNAPSHOT.json.
+a_source/** -text

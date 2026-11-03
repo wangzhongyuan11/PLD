@@ -1,0 +1,1858 @@
+{
+  "files": [
+    {
+      "original": "pld-medical/.tmp_auto07_build.py",
+      "archived": "archive/20261103/a_source/.tmp_auto07_build.py",
+      "bytes": 6291,
+      "sha256": "19cf1d2d7b8a5692536e99b99e61659e0e5c29c8a15826c4dd2e05851e998511"
+    },
+    {
+      "original": "pld-medical/.tmp_auto07_eval_prep.py",
+      "archived": "archive/20261103/a_source/.tmp_auto07_eval_prep.py",
+      "bytes": 9169,
+      "sha256": "aad2ea4310a74b868c385b2530165eeeb89ae4dbf5c4f790f47d29eb53eb1bc4"
+    },
+    {
+      "original": "pld-medical/.tmp_auto09_build.py",
+      "archived": "archive/20261103/a_source/.tmp_auto09_build.py",
+      "bytes": 7668,
+      "sha256": "8289e11acb28469a0da4065445ac94af93060e0c805ad631d70c77d9556150cd"
+    },
+    {
+      "original": "pld-medical/.tmp_auto09_gaps.py",
+      "archived": "archive/20261103/a_source/.tmp_auto09_gaps.py",
+      "bytes": 15219,
+      "sha256": "a313630c1a8d7c0891602b2543f65f5da0703412d68111597141aacccaa3e736"
+    },
+    {
+      "original": "pld-medical/AGENTS.md",
+      "archived": "archive/20261103/a_source/AGENTS.md",
+      "bytes": 6221,
+      "sha256": "2373b99727b153e0ccba98fd08b53cff564ff6774174568ea705e4bf7960709e"
+    },
+    {
+      "original": "pld-medical/README.md",
+      "archived": "archive/20261103/a_source/README.md",
+      "bytes": 4124,
+      "sha256": "151f11a3122cd456215c8e469cb6181eb958f3c9870359943ebe16dfc9d17208"
+    },
+    {
+      "original": "pld-medical/docs/00_工作状态与恢复入口.md",
+      "archived": "archive/20261103/a_source/docs/00_工作状态与恢复入口.md",
+      "bytes": 8033,
+      "sha256": "0064c628ff9b732c8a8d6b2e7855d24c63a5a81442b9cd0d32cff6cfd6969387"
+    },
+    {
+      "original": "pld-medical/docs/01_初审方案.md",
+      "archived": "archive/20261103/a_source/docs/01_初审方案.md",
+      "bytes": 5074,
+      "sha256": "e8e624484b4025f5a7d944d2d516a8ccffc18b27bba905e3eed2ffd34f934d5a"
+    },
+    {
+      "original": "pld-medical/docs/02_需求与验收.md",
+      "archived": "archive/20261103/a_source/docs/02_需求与验收.md",
+      "bytes": 1895,
+      "sha256": "5b6313328b4696950ff692479861d7f6f61aa5688e5c4ba4ad22202c581f4182"
+    },
+    {
+      "original": "pld-medical/docs/03_时间表与分工.md",
+      "archived": "archive/20261103/a_source/docs/03_时间表与分工.md",
+      "bytes": 2707,
+      "sha256": "b846c33c2161ec8264be272b6d1d5fd83b042f03804e900df86228eb6f22a33b"
+    },
+    {
+      "original": "pld-medical/docs/04_学习路线.md",
+      "archived": "archive/20261103/a_source/docs/04_学习路线.md",
+      "bytes": 8872,
+      "sha256": "9ad8d067312d7b68fe68331666af4324acfbda18ccf6d7e7ff6f8b3bab9050c5"
+    },
+    {
+      "original": "pld-medical/docs/05_技术架构.md",
+      "archived": "archive/20261103/a_source/docs/05_技术架构.md",
+      "bytes": 3142,
+      "sha256": "a3b7b3947be17e1b17e74bcd05e5604618dab382c968865abdfdecb115708517"
+    },
+    {
+      "original": "pld-medical/docs/06_数据与实验规范.md",
+      "archived": "archive/20261103/a_source/docs/06_数据与实验规范.md",
+      "bytes": 2309,
+      "sha256": "19720d05f7ea77c684909ddaa762298e3d5732d3f3384e59be8801f0592f002d"
+    },
+    {
+      "original": "pld-medical/docs/07_决策与待办.md",
+      "archived": "archive/20261103/a_source/docs/07_决策与待办.md",
+      "bytes": 1950,
+      "sha256": "8070b3fa5506dbfed4a30c40c2069d27fa746bd25819942f21f98f5bc10a52c2"
+    },
+    {
+      "original": "pld-medical/docs/08_学习笔记.md",
+      "archived": "archive/20261103/a_source/docs/08_学习笔记.md",
+      "bytes": 88568,
+      "sha256": "3f84a0607d8f69ef79585709ec0200451916a5564836add9e70e2dd233f9adc0"
+    },
+    {
+      "original": "pld-medical/docs/09_A组开源资源核查与实施路线.md",
+      "archived": "archive/20261103/a_source/docs/09_A组开源资源核查与实施路线.md",
+      "bytes": 6521,
+      "sha256": "f1c3f7a3b71b0d2d9a035c5d95d5a954f37bf878fadd357b4e406a9fc53e5bc8"
+    },
+    {
+      "original": "pld-medical/docs/A02_2026-09-23_断点与下载清单.md",
+      "archived": "archive/20261103/a_source/docs/A02_2026-09-23_断点与下载清单.md",
+      "bytes": 7275,
+      "sha256": "558bf890c841faddce772c6da8c48d25e9657005d6833d99e47ff9708933ff58"
+    },
+    {
+      "original": "pld-medical/docs/A02_当前断点.md",
+      "archived": "archive/20261103/a_source/docs/A02_当前断点.md",
+      "bytes": 2428,
+      "sha256": "bafb2a030e285401c863924aeb9a2912730cbc288d9f3ade3b8acb756692314f"
+    },
+    {
+      "original": "pld-medical/docs/A03_总体精度优先训练协议.md",
+      "archived": "archive/20261103/a_source/docs/A03_总体精度优先训练协议.md",
+      "bytes": 4576,
+      "sha256": "645a98af7fe2db493d971c5f4694f6968096dfd80dec2c3f727a3603714531ad"
+    },
+    {
+      "original": "pld-medical/docs/A06_八通道损失权重试验结果.md",
+      "archived": "archive/20261103/a_source/docs/A06_八通道损失权重试验结果.md",
+      "bytes": 3437,
+      "sha256": "06bfb1bb864b344b9ad417a32e48f7733d08005c1c011ea752332672b8f41428"
+    },
+    {
+      "original": "pld-medical/docs/A22_板端红色正常皮肤误报排查.md",
+      "archived": "archive/20261103/a_source/docs/A22_板端红色正常皮肤误报排查.md",
+      "bytes": 7601,
+      "sha256": "2bf21311be25ee5652d4a25bd285209ca4ccec726c913ebb76ed18b77e2c4261"
+    },
+    {
+      "original": "pld-medical/docs/A23_板端脚本审查与复现导出.md",
+      "archived": "archive/20261103/a_source/docs/A23_板端脚本审查与复现导出.md",
+      "bytes": 4405,
+      "sha256": "375e672e90d19f4765555f4d202f06f9898c9a65d2739fa22eb55ae287f3f1c1"
+    },
+    {
+      "original": "pld-medical/docs/A24_中央红色边缘案例核验.md",
+      "archived": "archive/20261103/a_source/docs/A24_中央红色边缘案例核验.md",
+      "bytes": 4169,
+      "sha256": "3122be8355de7d6a6ef3c7500d1ec795115a8afc0308ae19308c8d9e1e252c31"
+    },
+    {
+      "original": "pld-medical/docs/A25_B交付包兼容性核验.md",
+      "archived": "archive/20261103/a_source/docs/A25_B交付包兼容性核验.md",
+      "bytes": 2713,
+      "sha256": "78ed364f5175c1f0b9d4ecbfeaf27c0565d6cf86bf0e7a5178cd973f64e4e137"
+    },
+    {
+      "original": "pld-medical/docs/A26_边界修正试验记录.md",
+      "archived": "archive/20261103/a_source/docs/A26_边界修正试验记录.md",
+      "bytes": 4301,
+      "sha256": "31c03efa79257bd81a2a6e7d8c8e2b5419f6bd0a392b4be6a05a34453fe2969e"
+    },
+    {
+      "original": "pld-medical/docs/A27_相机直出与难背景试验记录.md",
+      "archived": "archive/20261103/a_source/docs/A27_相机直出与难背景试验记录.md",
+      "bytes": 4729,
+      "sha256": "cab35ec73e1cb56d8138d473950099c99a2fef45bb71e15e3b4b7beeb6851f23"
+    },
+    {
+      "original": "pld-medical/docs/A28_输入增强试验记录.md",
+      "archived": "archive/20261103/a_source/docs/A28_输入增强试验记录.md",
+      "bytes": 1826,
+      "sha256": "7f6a9e8970cda6d940c8e51e877354512a90bbcd7a50f4123c2be1df059e92ea"
+    },
+    {
+      "original": "pld-medical/docs/A29_现有B运行包的结构约束.md",
+      "archived": "archive/20261103/a_source/docs/A29_现有B运行包的结构约束.md",
+      "bytes": 1920,
+      "sha256": "d004f61925086ebddc51adb0656ff8bb118269cd6590fa5cdfbbb83cc5ae06fa"
+    },
+    {
+      "original": "pld-medical/docs/A30_末层量化网格试验记录.md",
+      "archived": "archive/20261103/a_source/docs/A30_末层量化网格试验记录.md",
+      "bytes": 2276,
+      "sha256": "d7b26be40e052d3acf568c17ad10e07d3e90d30d2fae6b1d59885715ec28d700"
+    },
+    {
+      "original": "pld-medical/docs/A31_固定背景误报诊断.md",
+      "archived": "archive/20261103/a_source/docs/A31_固定背景误报诊断.md",
+      "bytes": 1837,
+      "sha256": "716607ddfcf1cc06463a2ad08968d5a149626b1dcfd7d7df7a13e79113061063"
+    },
+    {
+      "original": "pld-medical/docs/A36_未来四阶段工作目标_待批准.md",
+      "archived": "archive/20261103/a_source/docs/A36_未来四阶段工作目标_待批准.md",
+      "bytes": 5624,
+      "sha256": "f25627184f92e0a7f65153d565455b7b884705ebd8444c1e4d5fc085fbed6280"
+    },
+    {
+      "original": "pld-medical/docs/A38_分割模型最后训练收尾.md",
+      "archived": "archive/20261103/a_source/docs/A38_分割模型最后训练收尾.md",
+      "bytes": 6383,
+      "sha256": "6c2bfad20ccc53d040b5dc1be4a9babcb5fa4e215e80f96fe6f3d6c6282055ae"
+    },
+    {
+      "original": "pld-medical/docs/A39_CAMUS心脏超声训练.md",
+      "archived": "archive/20261103/a_source/docs/A39_CAMUS心脏超声训练.md",
+      "bytes": 6521,
+      "sha256": "f167813259fb6bf66d5bffbe3e4f575cc3af91c71e4a4a2a83ddac57b1b2fd70"
+    },
+    {
+      "original": "pld-medical/docs/archive/08_学习笔记_整理前_2026-09-19.md",
+      "archived": "archive/20261103/a_source/docs/archive/08_学习笔记_整理前_2026-09-19.md",
+      "bytes": 126172,
+      "sha256": "c963823e0176d1a57c0478362c3ee152e4ff465d897ab57616b49faeef5666ad"
+    },
+    {
+      "original": "pld-medical/docs/archive/08_进度整理前_2026-09-21.md",
+      "archived": "archive/20261103/a_source/docs/archive/08_进度整理前_2026-09-21.md",
+      "bytes": 4598,
+      "sha256": "237e76238bf1a966264ef3db98a5ac785cbb7a1a8be14600da2907007d2cc788"
+    },
+    {
+      "original": "pld-medical/docs/archive/A02_20261010_A35训练过程.md",
+      "archived": "archive/20261103/a_source/docs/archive/A02_20261010_A35训练过程.md",
+      "bytes": 5113,
+      "sha256": "442955d15c3601155320584a8f105179153104f7279349c41cc3981d459ad135"
+    },
+    {
+      "original": "pld-medical/docs/archive/A02_20261010停止前助手追加原件.md",
+      "archived": "archive/20261103/a_source/docs/archive/A02_20261010停止前助手追加原件.md",
+      "bytes": 4857,
+      "sha256": "22d289f1327260ec8cc1c3d70919cf218d2934eba53ab329dfb60739f6ee144d"
+    },
+    {
+      "original": "pld-medical/docs/archive/A02_20261011_A36训练进行中快照.md",
+      "archived": "archive/20261103/a_source/docs/archive/A02_20261011_A36训练进行中快照.md",
+      "bytes": 5304,
+      "sha256": "e991cf8f23e367bbc5dcb7eaf5d033853daba60e7a2e99ff9de04a80b236d3b6"
+    },
+    {
+      "original": "pld-medical/docs/archive/A02_20261011_A38停止断点原件.md",
+      "archived": "archive/20261103/a_source/docs/archive/A02_20261011_A38停止断点原件.md",
+      "bytes": 8174,
+      "sha256": "5144a18f70513317a5bcd6a6063a5a52f7e7bd5911f509706553fb0be860fe47"
+    },
+    {
+      "original": "pld-medical/docs/archive/A02_20261012_A38最终收尾原件.md",
+      "archived": "archive/20261103/a_source/docs/archive/A02_20261012_A38最终收尾原件.md",
+      "bytes": 11432,
+      "sha256": "ffeb35db279aea69d9cba7a27f208cd1b096c61bb45c4d3b39759e205463e4ed"
+    },
+    {
+      "original": "pld-medical/docs/archive/A02_20261012_A38训练进行中快照.md",
+      "archived": "archive/20261103/a_source/docs/archive/A02_20261012_A38训练进行中快照.md",
+      "bytes": 9134,
+      "sha256": "1d86323acb54fac2ac3ddbcd4302e005bff879eefb04a6adf4faa02169b9166c"
+    },
+    {
+      "original": "pld-medical/docs/archive/A02_A34准备_助手格式错误原件.md",
+      "archived": "archive/20261103/a_source/docs/archive/A02_A34准备_助手格式错误原件.md",
+      "bytes": 2904,
+      "sha256": "0eb04d297013ddab92b57a43e95dd88adf0089b7181b3b7a602952c8973be1f5"
+    },
+    {
+      "original": "pld-medical/docs/archive/A02_截至20260925详细历史.md",
+      "archived": "archive/20261103/a_source/docs/archive/A02_截至20260925详细历史.md",
+      "bytes": 14076,
+      "sha256": "8388d4a26d707f0ff80cfc3b20b92f36844be5d3b88a818141d09ce458406796"
+    },
+    {
+      "original": "pld-medical/docs/archive/A02_截至20261010_A34准备前.md",
+      "archived": "archive/20261103/a_source/docs/archive/A02_截至20261010_A34准备前.md",
+      "bytes": 49322,
+      "sha256": "26547e20ee87f5a6561126c5b25e00e92ce942195031565f67cca7fb8fc82837"
+    },
+    {
+      "original": "pld-medical/docs/b_textbook/build_pdf.py",
+      "archived": "archive/20261103/a_source/docs/b_textbook/build_pdf.py",
+      "bytes": 12938,
+      "sha256": "d1e14ff315064797ee69948853445c3c39b8a10e7f37e2075a98df09f8de10b9"
+    },
+    {
+      "original": "pld-medical/docs/b_textbook/B组教材_正文.md",
+      "archived": "archive/20261103/a_source/docs/b_textbook/B组教材_正文.md",
+      "bytes": 70073,
+      "sha256": "56bcfba51e580a9b690995dfa569728f467b3c119c3b0dacda0416ad3cdb09cc"
+    },
+    {
+      "original": "pld-medical/docs/b_textbook/qa_pdf.py",
+      "archived": "archive/20261103/a_source/docs/b_textbook/qa_pdf.py",
+      "bytes": 1533,
+      "sha256": "0f2f9f59c932acb2c16fb5bd015148f1c99f4daaa4df200129b925e75e99ce5a"
+    },
+    {
+      "original": "pld-medical/docs/b_textbook/README.md",
+      "archived": "archive/20261103/a_source/docs/b_textbook/README.md",
+      "bytes": 1647,
+      "sha256": "2122ae6ebd0cfaaa0abb69a134f63e45f35ea58f710d7faad8515a5642aa692c"
+    },
+    {
+      "original": "pld-medical/docs/b_textbook/verify_examples.py",
+      "archived": "archive/20261103/a_source/docs/b_textbook/verify_examples.py",
+      "bytes": 2288,
+      "sha256": "0c9630a3206138b5d5ac0d0118dc5d558048510d6483364f71dde813035627af"
+    },
+    {
+      "original": "pld-medical/docs/history/collaboration_20261018_before/00_AGENTS.md",
+      "archived": "archive/20261103/a_source/docs/history/collaboration_20261018_before/00_AGENTS.md",
+      "bytes": 21687,
+      "sha256": "31ac6df256b0591c7f224ad1cc05d80835a210aa2d94a11c5c8517dd699de639"
+    },
+    {
+      "original": "pld-medical/docs/history/collaboration_20261018_before/01_AGENTS.md",
+      "archived": "archive/20261103/a_source/docs/history/collaboration_20261018_before/01_AGENTS.md",
+      "bytes": 9085,
+      "sha256": "30b9e432a461ed0f7f2fe2993d4417056240ab54f8850bc14ba36abab5495773"
+    },
+    {
+      "original": "pld-medical/docs/history/collaboration_20261018_before/02_A02_当前断点.md",
+      "archived": "archive/20261103/a_source/docs/history/collaboration_20261018_before/02_A02_当前断点.md",
+      "bytes": 29908,
+      "sha256": "40b06b86be0a563351e434e756e0bb7c0decad107b21c6febeed29f16568bd69"
+    },
+    {
+      "original": "pld-medical/docs/history/collaboration_20261018_before/03_A00_DeepSeek派工模板.md",
+      "archived": "archive/20261103/a_source/docs/history/collaboration_20261018_before/03_A00_DeepSeek派工模板.md",
+      "bytes": 2398,
+      "sha256": "c9a6903548d2ca4fe7ca2d34bf1f4d3cddbf8729e325258add1d6ab32ea27c8f"
+    },
+    {
+      "original": "pld-medical/docs/history/collaboration_20261018_before/04_A01_助手职责与高级工程师审查.md",
+      "archived": "archive/20261103/a_source/docs/history/collaboration_20261018_before/04_A01_助手职责与高级工程师审查.md",
+      "bytes": 5719,
+      "sha256": "f837ed44d2f4029cadca2ff4ae1888fb05defcd1ca851811fdb53fd0032754d3"
+    },
+    {
+      "original": "pld-medical/docs/history/collaboration_20261018_before/05_A03_额度保护与断点恢复.md",
+      "archived": "archive/20261103/a_source/docs/history/collaboration_20261018_before/05_A03_额度保护与断点恢复.md",
+      "bytes": 3916,
+      "sha256": "f0cfc2831e235f36bf937102b2e36acd73f8bf1b48050f3527344df21c8d8e1e"
+    },
+    {
+      "original": "pld-medical/docs/history/collaboration_20261018_before/06_A04_复杂任务接管与低消耗监控.md",
+      "archived": "archive/20261103/a_source/docs/history/collaboration_20261018_before/06_A04_复杂任务接管与低消耗监控.md",
+      "bytes": 6886,
+      "sha256": "ded65bbd1354ee680af573b4705d4713b5a3686ef88ba02bc9888a7ce1b6fbe7"
+    },
+    {
+      "original": "pld-medical/docs/history/collaboration_20261018_before/07_ACDC_三方向2.5D与三维重建规划_20261017.md",
+      "archived": "archive/20261103/a_source/docs/history/collaboration_20261018_before/07_ACDC_三方向2.5D与三维重建规划_20261017.md",
+      "bytes": 15668,
+      "sha256": "be4df9bd7b1c67dd9d9bfc09fe33300b5ec6766534a528b427c9ba17d5b8fe3e"
+    },
+    {
+      "original": "pld-medical/docs/history/collaboration_20261018_before/MANIFEST.json",
+      "archived": "archive/20261103/a_source/docs/history/collaboration_20261018_before/MANIFEST.json",
+      "bytes": 4517,
+      "sha256": "2fd36c3a849281ef3056087f7bfd5a7de4c32bf7cacdd51ebb244bc87e410656"
+    },
+    {
+      "original": "pld-medical/docs/interactive/camus_api.md",
+      "archived": "archive/20261103/a_source/docs/interactive/camus_api.md",
+      "bytes": 2631,
+      "sha256": "bda4cd3a64e0d163b347cb659d71db67f8a591493058292e58580525a7fd5e38"
+    },
+    {
+      "original": "pld-medical/docs/interactive/camus_api_examples.json",
+      "archived": "archive/20261103/a_source/docs/interactive/camus_api_examples.json",
+      "bytes": 5043,
+      "sha256": "07233635038f2db0cacb37126cda653013611f8a727fce9dd0b946595f4a6e9b"
+    },
+    {
+      "original": "pld-medical/docs/interactive/protocol.md",
+      "archived": "archive/20261103/a_source/docs/interactive/protocol.md",
+      "bytes": 4665,
+      "sha256": "591e44a4cd461f2e29a770245c2629c3207bb0c875105efb328fa2aa72606ce2"
+    },
+    {
+      "original": "pld-medical/docs/interactive/README.md",
+      "archived": "archive/20261103/a_source/docs/interactive/README.md",
+      "bytes": 6237,
+      "sha256": "df73d0493f216ba2936918397049ab2619b638dde0195a4d4a58b5189ac621b7"
+    },
+    {
+      "original": "pld-medical/docs/interactive/skin_api.md",
+      "archived": "archive/20261103/a_source/docs/interactive/skin_api.md",
+      "bytes": 1659,
+      "sha256": "6fe7ab69afc8b57f7d958d963959a108e914b232410839807c1fda3c36f9cfb9"
+    },
+    {
+      "original": "pld-medical/docs/interactive/skin_api_examples.json",
+      "archived": "archive/20261103/a_source/docs/interactive/skin_api_examples.json",
+      "bytes": 3795,
+      "sha256": "481e19c2331e61a75013798ef6eac17573f56b768d17ef79d121d7c8a78f8c93"
+    },
+    {
+      "original": "pld-medical/docs/plans/ACDC25D_B16_P3_v1_板端预适配规格_20261017.md",
+      "archived": "archive/20261103/a_source/docs/plans/ACDC25D_B16_P3_v1_板端预适配规格_20261017.md",
+      "bytes": 15496,
+      "sha256": "801be24a96bed6e5dc1628b7ef4b031eaf987eebb3d6ef592b57f8191457dafd"
+    },
+    {
+      "original": "pld-medical/docs/plans/ACDC_三方向2.5D与三维重建规划_20261017.md",
+      "archived": "archive/20261103/a_source/docs/plans/ACDC_三方向2.5D与三维重建规划_20261017.md",
+      "bytes": 16065,
+      "sha256": "00b35fe0d8b656b56df0df9bf757e3e757f9102d2333cb0fd49c27877f65d326"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A00_DeepSeek派工模板.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A00_DeepSeek派工模板.md",
+      "bytes": 2052,
+      "sha256": "56aa07f6e54f31756a71f2da27db87aa80d3dcdff9b6e17c26c0299e5c3dd919"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A01_deepseek_基础实现.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A01_deepseek_基础实现.md",
+      "bytes": 3197,
+      "sha256": "6ff47f0300335dfdb6fc37c13efd92fa7e6ca3aedab3b146a990f0eb0702880f"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A01_助手职责与高级工程师审查.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A01_助手职责与高级工程师审查.md",
+      "bytes": 8816,
+      "sha256": "241010723376a784eeaf6e962346792d18e55e368d8f05d101a2d3e662610113"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A02_后训练优化版与上下文摘要.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A02_后训练优化版与上下文摘要.md",
+      "bytes": 4483,
+      "sha256": "6e0b48c34ae686d805e753360dacef45856fe8d97036cee2a598fda93bd893b0"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A02_小病灶后训练_DeepSeek基础代码.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A02_小病灶后训练_DeepSeek基础代码.md",
+      "bytes": 3112,
+      "sha256": "d5aebde6b785068961bb8bcd2760eb02b3e6ee88c911f1d9c2087570b1343ed1"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A03_额度保护与断点恢复.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A03_额度保护与断点恢复.md",
+      "bytes": 2868,
+      "sha256": "af91fac6cd0eea88e6fa8813ae804810f89e75bf9fd7db869b5f3906ba3f8ee5"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A04_复杂任务接管与低消耗监控.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A04_复杂任务接管与低消耗监控.md",
+      "bytes": 530,
+      "sha256": "a46f7aa13ed56b6f9cecc85d340d2feea89458b1e9dd141fda25ba601dbf2e78"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A05_20260925_v3续训派工.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A05_20260925_v3续训派工.md",
+      "bytes": 2539,
+      "sha256": "f4644ac7264e71ac31b6598346a1d2a4308aa79f41519e076a906f44881c2b55"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A05_v5续训_DeepSeek执行.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A05_v5续训_DeepSeek执行.md",
+      "bytes": 2414,
+      "sha256": "17f30535780e921d4cdea30ec911ae98cfe5ea502705899416c5e09a7ce73bb9"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A05_修复训练可恢复版_DeepSeek任务.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A05_修复训练可恢复版_DeepSeek任务.md",
+      "bytes": 1807,
+      "sha256": "45ff4ae67ca8d91b8f454a3c806491ae5330bc580c3a5323abfd44586d3bc366"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A06_20260925_八通道损失权重试验.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A06_20260925_八通道损失权重试验.md",
+      "bytes": 3058,
+      "sha256": "5995216434604b1e62cc88117a0502fa4435cd1498e82adfb2de860aa9f2d1fa"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A06_总体精度训练器_DeepSeek派工.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A06_总体精度训练器_DeepSeek派工.md",
+      "bytes": 4288,
+      "sha256": "fa67617df75a738a4b313d4239ea4e75ad20db6f108788b1a00716da8cc9fb14"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A07_2018官方验证集补充数据审计.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A07_2018官方验证集补充数据审计.md",
+      "bytes": 2707,
+      "sha256": "0f65677328579e6587839a7a71fe4b58bbf59377843a450cade40d3f28dc1c0c"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A07_多来源量化校准_DeepSeek派工.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A07_多来源量化校准_DeepSeek派工.md",
+      "bytes": 1737,
+      "sha256": "e9b407c004253c95ca930859a8785556ef152f8f6dba914c63d4e5faec9ac2b9"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A08_八通道候选INT8复核.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A08_八通道候选INT8复核.md",
+      "bytes": 2644,
+      "sha256": "53b75deb7ddff679b39ea00a0f4f7b92f904162c0d796bd5a5a03cfa4c85ba78"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A09_20260925_八通道增强与学习率试验.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A09_20260925_八通道增强与学习率试验.md",
+      "bytes": 4836,
+      "sha256": "e8a5e4a196c504544ddb8544015fc12db904965259b57777cbf56e0b4576b287"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A10_20260925_v5候选INT8复核.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A10_20260925_v5候选INT8复核.md",
+      "bytes": 2579,
+      "sha256": "8cbaf5b1eb76db7a9ee8498bfe0e51bb78cf79e801cd086bf9010950d60cb488"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A11_20260925_v4量化掩膜后处理试验.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A11_20260925_v4量化掩膜后处理试验.md",
+      "bytes": 3495,
+      "sha256": "add666c40b916420597dd37ccd41ae939abf19a276fdbd3a28dee4c32bc0f645"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A16_N1_20260926_novice掩膜质量试点准备.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A16_N1_20260926_novice掩膜质量试点准备.md",
+      "bytes": 3033,
+      "sha256": "1f725c33c684ea8496329eca18a54c02b613872df0b1bc23189645438da95df6"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A16_N2_20260926_novice原图视觉试点.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A16_N2_20260926_novice原图视觉试点.md",
+      "bytes": 3439,
+      "sha256": "92780db27e9e2f31a9735b96ab8aebcf237934d982a22e4f8fa1bd2e8f78ddbb"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A17_20260926_soup保留多分量后处理.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A17_20260926_soup保留多分量后处理.md",
+      "bytes": 3303,
+      "sha256": "fcea27e669edb6f84ce864dae6ea4fbb897793b664ae9fc8a7d76af1fea22c56"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A18_20260926_soup量化阈值扩展.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A18_20260926_soup量化阈值扩展.md",
+      "bytes": 3235,
+      "sha256": "8a54b787b26355a71aaeae353bc6f650d4ad51eda2cfd38b6e39fa08aa0f5850"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A25_B交付包核验_DeepSeek任务.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A25_B交付包核验_DeepSeek任务.md",
+      "bytes": 4308,
+      "sha256": "ce74b9f2bc75c2af8b1b3e00e351e352c5c2f0db349dad961d5afcf8c70c9d2a"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A26_执行前审查修订.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A26_执行前审查修订.md",
+      "bytes": 3624,
+      "sha256": "15573d2bc715f14e8ce477b6b3688a885f0e9b5697be02fb5f33bf041dd98013"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A26_边界修正小规模试验_DeepSeek任务.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A26_边界修正小规模试验_DeepSeek任务.md",
+      "bytes": 5326,
+      "sha256": "7b35f11fe49338d336169330a9cfd3ab2a864da5c9bdf37e969143988a22f1aa"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A27_Codex修复后收尾准备.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A27_Codex修复后收尾准备.md",
+      "bytes": 2412,
+      "sha256": "29c48d449e4cba930ce891a014ae671f70ee784f24d2c42ea93612adeb9a022a"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A27_control_执行任务.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A27_control_执行任务.md",
+      "bytes": 2038,
+      "sha256": "e8c51b6b20cabaa7b879ed5d974acd0374d7cc1521b376309dcb7f448f0e7b00"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A27_control_第二次启动.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A27_control_第二次启动.md",
+      "bytes": 2919,
+      "sha256": "daa7bb7b4a06adcf7419cf99205da83b3c7816cd7aef59d736a575a636a28be1"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A27_edge_执行任务.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A27_edge_执行任务.md",
+      "bytes": 2262,
+      "sha256": "b3d63b9732edf6b08b853eccf418e1a75ff47cbf4e1a06ad8a20259c123a9c89"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A27_准备阶段审查修订.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A27_准备阶段审查修订.md",
+      "bytes": 4840,
+      "sha256": "7499cabd3454d79c6b5c5141b30bec19b92f2110c0ca39b61956b17dbb0e14fb"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A27_边界与难背景监督_准备任务.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A27_边界与难背景监督_准备任务.md",
+      "bytes": 6359,
+      "sha256": "8150ec2311d27f03b62426b22d835a03a67b71722d674fe0423f368d5b60c19b"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A28_入口审查修订.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A28_入口审查修订.md",
+      "bytes": 1864,
+      "sha256": "fce6ebabd26ac3f5a22bb66800216b0e816b483679a2facf3ce8d0591c1295b4"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A28_准备审查修订.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A28_准备审查修订.md",
+      "bytes": 3170,
+      "sha256": "2475f42cab25145867b2daeaba7fa889212b8926ed83d4fdf6b75361169b2cd5"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A28_相机输入增强_准备任务.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A28_相机输入增强_准备任务.md",
+      "bytes": 3920,
+      "sha256": "c128a3262048bad200038108d7277ce219f32bbf4350ada93531ee6f21cd705d"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A28_训练入口准备.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A28_训练入口准备.md",
+      "bytes": 3402,
+      "sha256": "b5f94158abded5fd52ffdee1457cfb175b07652015acfbbf0e864d162fe88380"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A28_非黑代理的光度一致性.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A28_非黑代理的光度一致性.md",
+      "bytes": 1555,
+      "sha256": "031fc0f41f2e3676456c335ecc07aa06e465dd657b98a4c471f11b346cefbf20"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A30_完整评估执行任务.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A30_完整评估执行任务.md",
+      "bytes": 2343,
+      "sha256": "9845b63474b543a47822ae634427e134e1f83ba68e7eba1eb7d2567dc01e3508"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A30_末层输出网格_准备任务.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A30_末层输出网格_准备任务.md",
+      "bytes": 3678,
+      "sha256": "eec57363015b97662564bd21f4ca855ea488a787e2a125552566893d31e67230"
+    },
+    {
+      "original": "pld-medical/docs/prompts/A31_背景误报诊断准备.md",
+      "archived": "archive/20261103/a_source/docs/prompts/A31_背景误报诊断准备.md",
+      "bytes": 2581,
+      "sha256": "d52fe8ce72af7c1b72fe39fa2f61ab919d0436d69c25625d5ff47be97324d7b9"
+    },
+    {
+      "original": "pld-medical/docs/prompts/DEEPSEEK_1017_依据与成本_20261018.md",
+      "archived": "archive/20261103/a_source/docs/prompts/DEEPSEEK_1017_依据与成本_20261018.md",
+      "bytes": 2765,
+      "sha256": "b03da3cb83da9fadd85e1d7c7faa20e1e7ace0d0645b1c73b296a806b8565dd7"
+    },
+    {
+      "original": "pld-medical/experiments/2026-09-05_框架验证.md",
+      "archived": "archive/20261103/a_source/experiments/2026-09-05_框架验证.md",
+      "bytes": 1380,
+      "sha256": "ced5d83f8752488a5b2830b358158c26d32f19dab2e55bcaf3e577bb1445537a"
+    },
+    {
+      "original": "pld-medical/experiments/TEMPLATE.md",
+      "archived": "archive/20261103/a_source/experiments/TEMPLATE.md",
+      "bytes": 455,
+      "sha256": "74b25ecf642d1dc86854259598098a968c3e60dca50b2ffb8b1a03b5f5bbd5e0"
+    },
+    {
+      "original": "pld-medical/hardware/rtl/learning_frame_threshold.v",
+      "archived": "archive/20261103/a_source/hardware/rtl/learning_frame_threshold.v",
+      "bytes": 3205,
+      "sha256": "c4bc8f13b7082b24c6fcc77d87c9cd258d6dc82dc67c3cc9351c9b9158cacef2"
+    },
+    {
+      "original": "pld-medical/hardware/rtl/learning_frame_threshold_config.v",
+      "archived": "archive/20261103/a_source/hardware/rtl/learning_frame_threshold_config.v",
+      "bytes": 3166,
+      "sha256": "329dd124b71bfa8c386880b26a4e0c893b68ebbbcbcd29e4e462b8b795d64d55"
+    },
+    {
+      "original": "pld-medical/hardware/rtl/learning_image_coordinates.v",
+      "archived": "archive/20261103/a_source/hardware/rtl/learning_image_coordinates.v",
+      "bytes": 1480,
+      "sha256": "435649244b7da511f2e0c2dc428ff0be2e88e3b3248118e050930d505a7fb575"
+    },
+    {
+      "original": "pld-medical/hardware/rtl/learning_line_buffer.v",
+      "archived": "archive/20261103/a_source/hardware/rtl/learning_line_buffer.v",
+      "bytes": 2640,
+      "sha256": "dffd019d30e62f3317e11ff62705eb0fab0cf6ce036902776d5c718535bf3e83"
+    },
+    {
+      "original": "pld-medical/hardware/rtl/learning_pipe2.v",
+      "archived": "archive/20261103/a_source/hardware/rtl/learning_pipe2.v",
+      "bytes": 366,
+      "sha256": "003cae8ad2e5a970d52b3c65dff2d16a19f35dd1afefeda6eb1ef6ed82c7bab8"
+    },
+    {
+      "original": "pld-medical/hardware/rtl/learning_pipe2_en_valid.v",
+      "archived": "archive/20261103/a_source/hardware/rtl/learning_pipe2_en_valid.v",
+      "bytes": 470,
+      "sha256": "239f8b5c40231e8ee33ce87edb2e02f6d7c38b65371c18d36291d123dea19653"
+    },
+    {
+      "original": "pld-medical/hardware/rtl/learning_pipe2_valid.v",
+      "archived": "archive/20261103/a_source/hardware/rtl/learning_pipe2_valid.v",
+      "bytes": 455,
+      "sha256": "9319b6ca8f1bd6ff73f6cf352d80b5b54e5ef53a175deb8d4eeeb8af63167eee"
+    },
+    {
+      "original": "pld-medical/hardware/rtl/learning_ready_valid_buffer.v",
+      "archived": "archive/20261103/a_source/hardware/rtl/learning_ready_valid_buffer.v",
+      "bytes": 840,
+      "sha256": "68e5542d66c2b5f738fb0847ec8a737bce4268df287160abd8e4b6a91b52c3c3"
+    },
+    {
+      "original": "pld-medical/hardware/rtl/learning_reg8.v",
+      "archived": "archive/20261103/a_source/hardware/rtl/learning_reg8.v",
+      "bytes": 263,
+      "sha256": "bb808ef7663cf6e3e63ec77c71f112c7ccfc2c033d4d2e8743942cac4e23f182"
+    },
+    {
+      "original": "pld-medical/hardware/rtl/learning_threshold_count.v",
+      "archived": "archive/20261103/a_source/hardware/rtl/learning_threshold_count.v",
+      "bytes": 2087,
+      "sha256": "2b3d3bbf6c1cffa277ebde9e4b93087f3fbbb579fd97c5fd82ac396732496d22"
+    },
+    {
+      "original": "pld-medical/hardware/rtl/rgb_to_gray.v",
+      "archived": "archive/20261103/a_source/hardware/rtl/rgb_to_gray.v",
+      "bytes": 909,
+      "sha256": "509eaf1893a82eec40b83268e2ce3345ee02c7959c0380d1f985f299de4f0cc8"
+    },
+    {
+      "original": "pld-medical/hardware/sim/README.md",
+      "archived": "archive/20261103/a_source/hardware/sim/README.md",
+      "bytes": 664,
+      "sha256": "e722e4cfef3552a8451a85daac46a6cabc583b8b39c65258e02206cee74b2815"
+    },
+    {
+      "original": "pld-medical/hardware/sim/run_learning_frame_parameters.ps1",
+      "archived": "archive/20261103/a_source/hardware/sim/run_learning_frame_parameters.ps1",
+      "bytes": 1419,
+      "sha256": "704cf01f786203ec2247324c0ad02190e397efed393073db2befc23e32151e2b"
+    },
+    {
+      "original": "pld-medical/hardware/sim/tb_learning_frame_parameters.sv",
+      "archived": "archive/20261103/a_source/hardware/sim/tb_learning_frame_parameters.sv",
+      "bytes": 2939,
+      "sha256": "840cb62e533495c0920ea86897d0256ae90e4c616025779616dd62239337e908"
+    },
+    {
+      "original": "pld-medical/hardware/sim/tb_learning_frame_threshold.sv",
+      "archived": "archive/20261103/a_source/hardware/sim/tb_learning_frame_threshold.sv",
+      "bytes": 4495,
+      "sha256": "f826ccb20a819608e601ea5a8a37eaca29bd9869a5cd39a89e093ec15aee54c0"
+    },
+    {
+      "original": "pld-medical/hardware/sim/tb_learning_frame_threshold_config.sv",
+      "archived": "archive/20261103/a_source/hardware/sim/tb_learning_frame_threshold_config.sv",
+      "bytes": 3982,
+      "sha256": "7ddf68c090d4cd03d1ed3cdaaa5838115d80268ebba043c42eb65f83e4d43cd3"
+    },
+    {
+      "original": "pld-medical/hardware/sim/tb_learning_image_coordinates.sv",
+      "archived": "archive/20261103/a_source/hardware/sim/tb_learning_image_coordinates.sv",
+      "bytes": 4424,
+      "sha256": "85ed72d996105a9d8a0677066f7602fa3954d3387ae6cd09a622fbeaf1653d41"
+    },
+    {
+      "original": "pld-medical/hardware/sim/tb_learning_image_file.sv",
+      "archived": "archive/20261103/a_source/hardware/sim/tb_learning_image_file.sv",
+      "bytes": 3147,
+      "sha256": "5eba3ca97b21c3ce49ec38dd41856fdfe95dd352bb706ab7aa8b4db06531ab89"
+    },
+    {
+      "original": "pld-medical/hardware/sim/tb_learning_line_buffer.sv",
+      "archived": "archive/20261103/a_source/hardware/sim/tb_learning_line_buffer.sv",
+      "bytes": 4480,
+      "sha256": "331f2d821578d92ce384753a1667d40735e3e8653fdd5c37508c40ce1989d110"
+    },
+    {
+      "original": "pld-medical/hardware/sim/tb_learning_pipe2.sv",
+      "archived": "archive/20261103/a_source/hardware/sim/tb_learning_pipe2.sv",
+      "bytes": 1295,
+      "sha256": "8960e142398a021b987fdccfb0e985df645ac3b76ebc2ebf5277958009adaa4d"
+    },
+    {
+      "original": "pld-medical/hardware/sim/tb_learning_pipe2_en_valid.sv",
+      "archived": "archive/20261103/a_source/hardware/sim/tb_learning_pipe2_en_valid.sv",
+      "bytes": 1558,
+      "sha256": "f5569d600398f27dfe64431fafc43606446dba60a2ed1e37a9a2a930fae519d6"
+    },
+    {
+      "original": "pld-medical/hardware/sim/tb_learning_pipe2_valid.sv",
+      "archived": "archive/20261103/a_source/hardware/sim/tb_learning_pipe2_valid.sv",
+      "bytes": 1649,
+      "sha256": "35f5a0922c920287c3890653003c2b174554dfa2f59a089c3b8468ff6ecb8c1a"
+    },
+    {
+      "original": "pld-medical/hardware/sim/tb_learning_ready_valid_buffer.sv",
+      "archived": "archive/20261103/a_source/hardware/sim/tb_learning_ready_valid_buffer.sv",
+      "bytes": 3556,
+      "sha256": "3d6bb413479642015f0ee2c60076b69b73a1d873226123b31d39c5ad83de895d"
+    },
+    {
+      "original": "pld-medical/hardware/sim/tb_learning_reg8.sv",
+      "archived": "archive/20261103/a_source/hardware/sim/tb_learning_reg8.sv",
+      "bytes": 1403,
+      "sha256": "a88e0ad541821287a044ffb9bf902fc0af69361c03b48d73eb9776be7476e4da"
+    },
+    {
+      "original": "pld-medical/hardware/sim/tb_learning_threshold_count.sv",
+      "archived": "archive/20261103/a_source/hardware/sim/tb_learning_threshold_count.sv",
+      "bytes": 5588,
+      "sha256": "ddaf522b5aaffa8071141f2aadea30e7878b63ac4b2143412fbc461606aebd97"
+    },
+    {
+      "original": "pld-medical/hardware/sim/tb_rgb_to_gray.sv",
+      "archived": "archive/20261103/a_source/hardware/sim/tb_rgb_to_gray.sv",
+      "bytes": 1380,
+      "sha256": "b9efa789f525e2ae7da76ac5da956dc5f03b44b7985924e89ab1568c9c3f214b"
+    },
+    {
+      "original": "pld-medical/host/README.md",
+      "archived": "archive/20261103/a_source/host/README.md",
+      "bytes": 592,
+      "sha256": "dd756b7e384d2ecee3df3365f338a54809c778bea7577a8bb46866846354402c"
+    },
+    {
+      "original": "pld-medical/host/interactive/start_camus.cmd",
+      "archived": "archive/20261103/a_source/host/interactive/start_camus.cmd",
+      "bytes": 136,
+      "sha256": "d3be02c4168a2b8c298c62f0d6222ae33793e30609828ddc7946774bc7a25ea7"
+    },
+    {
+      "original": "pld-medical/host/interactive/start_skin.cmd",
+      "archived": "archive/20261103/a_source/host/interactive/start_skin.cmd",
+      "bytes": 135,
+      "sha256": "6684a11a80b3456c5db737f8fa4eb041a4b7e9cfa65c7ede84890ab193aa0069"
+    },
+    {
+      "original": "pld-medical/software/baseline.py",
+      "archived": "archive/20261103/a_source/software/baseline.py",
+      "bytes": 8708,
+      "sha256": "2543823536f958dab902c2eee653dee18578b34cae30b4267e497f30b2add50f"
+    },
+    {
+      "original": "pld-medical/software/learning_01_counts.py",
+      "archived": "archive/20261103/a_source/software/learning_01_counts.py",
+      "bytes": 2529,
+      "sha256": "895f11cdd64358177bfa1b43786d0a5fb0ae96cb24e5285e1b104991bfa1826f"
+    },
+    {
+      "original": "pld-medical/software/learning_02_function.py",
+      "archived": "archive/20261103/a_source/software/learning_02_function.py",
+      "bytes": 2434,
+      "sha256": "f4abe20e550ed85972362b829caea5f5ff5ee97d90b234cb1f6d0a6565a05478"
+    },
+    {
+      "original": "pld-medical/software/learning_03_import.py",
+      "archived": "archive/20261103/a_source/software/learning_03_import.py",
+      "bytes": 85,
+      "sha256": "a241530873a7eac950a52f45e547c43efae89f83e4ee77f1a915226f3ee127a3"
+    },
+    {
+      "original": "pld-medical/software/learning_04_read_image.py",
+      "archived": "archive/20261103/a_source/software/learning_04_read_image.py",
+      "bytes": 2010,
+      "sha256": "857ad61ba987ff9f77b7cecfd86e5008111b269712c4cc7bec6dc40426cbdb37"
+    },
+    {
+      "original": "pld-medical/software/learning_05_compare_rtl.py",
+      "archived": "archive/20261103/a_source/software/learning_05_compare_rtl.py",
+      "bytes": 5120,
+      "sha256": "06505ec47b9c73b2bab1ebfb238d16d731dc96170ebb3381b1d941b873f2dc36"
+    },
+    {
+      "original": "pld-medical/software/prepare_image.py",
+      "archived": "archive/20261103/a_source/software/prepare_image.py",
+      "bytes": 2668,
+      "sha256": "470691f20babaae7c485b2c39a764eae0bbd992d862887f384a0443708390388"
+    },
+    {
+      "original": "pld-medical/software/README.md",
+      "archived": "archive/20261103/a_source/software/README.md",
+      "bytes": 1645,
+      "sha256": "832f59e5769c0067fd5b51998fbc026d7384b7336ca1bcc07fea27de85dabd2a"
+    },
+    {
+      "original": "pld-medical/software/requirements-optional.txt",
+      "archived": "archive/20261103/a_source/software/requirements-optional.txt",
+      "bytes": 88,
+      "sha256": "fb68d5bd143e39a5d360fa142b43c1efcd52203d5057b641d0e1db150af8c7d9"
+    },
+    {
+      "original": "pld-medical/software/interactive_segmentation/camus_api.py",
+      "archived": "archive/20261103/a_source/software/interactive_segmentation/camus_api.py",
+      "bytes": 458,
+      "sha256": "27154aaf966db35a36c5b8f411f30850791e2e9618f7a6f965c98eb1f1136a1a"
+    },
+    {
+      "original": "pld-medical/software/interactive_segmentation/contracts.py",
+      "archived": "archive/20261103/a_source/software/interactive_segmentation/contracts.py",
+      "bytes": 4893,
+      "sha256": "cadfbedfc1c5a1abf4788c24f0c4063ce5d6b7f865ca5bc55f41a2da99fc772d"
+    },
+    {
+      "original": "pld-medical/software/interactive_segmentation/images.py",
+      "archived": "archive/20261103/a_source/software/interactive_segmentation/images.py",
+      "bytes": 3058,
+      "sha256": "69aa008a9b59428e743e19d99ee2013318cb5b021945a4738ed681fbce6a4850"
+    },
+    {
+      "original": "pld-medical/software/interactive_segmentation/models.py",
+      "archived": "archive/20261103/a_source/software/interactive_segmentation/models.py",
+      "bytes": 7767,
+      "sha256": "8a9f96e6d380c92b93be76f92a56e30160c61cbeaf638c85de77deb4b58b2dc5"
+    },
+    {
+      "original": "pld-medical/software/interactive_segmentation/refinement.py",
+      "archived": "archive/20261103/a_source/software/interactive_segmentation/refinement.py",
+      "bytes": 6123,
+      "sha256": "e4ff51a2b6294719e6b3f589e0337cf62b60433eda061fc4df15badf4c57c68f"
+    },
+    {
+      "original": "pld-medical/software/interactive_segmentation/server.py",
+      "archived": "archive/20261103/a_source/software/interactive_segmentation/server.py",
+      "bytes": 6611,
+      "sha256": "314b20f12f7006966236424d8234fd5dec8664007f59d6cb9a896d19e3d4edf9"
+    },
+    {
+      "original": "pld-medical/software/interactive_segmentation/service.py",
+      "archived": "archive/20261103/a_source/software/interactive_segmentation/service.py",
+      "bytes": 5627,
+      "sha256": "3134f1f45f15df7cbaf08cfa3da9715d24a8941cdf5e06bb48d278918ec8b71f"
+    },
+    {
+      "original": "pld-medical/software/interactive_segmentation/skin_api.py",
+      "archived": "archive/20261103/a_source/software/interactive_segmentation/skin_api.py",
+      "bytes": 459,
+      "sha256": "442eb908f5aa34a8cf922a971c3986dd850fe25915ee65436fcc751d2dce064a"
+    },
+    {
+      "original": "pld-medical/software/interactive_segmentation/__init__.py",
+      "archived": "archive/20261103/a_source/software/interactive_segmentation/__init__.py",
+      "bytes": 89,
+      "sha256": "49d43a5977d41d99db7b2d934ef9d01d368a3d69b80ec164719cd50633643354"
+    },
+    {
+      "original": "pld-medical/software/interactive_segmentation/tests/test_interfaces.py",
+      "archived": "archive/20261103/a_source/software/interactive_segmentation/tests/test_interfaces.py",
+      "bytes": 10019,
+      "sha256": "c87efb718c3dd36b32033cab5a600ce41a35ea3f3d6c334e75735e57c7c77da4"
+    },
+    {
+      "original": "pld-medical/software/role_a/a12_review.py",
+      "archived": "archive/20261103/a_source/software/role_a/a12_review.py",
+      "bytes": 11685,
+      "sha256": "b03f128704d281a2285495a016e2a468074e1fe6304648aa88ab16607df818ad"
+    },
+    {
+      "original": "pld-medical/software/role_a/a14_soup.py",
+      "archived": "archive/20261103/a_source/software/role_a/a14_soup.py",
+      "bytes": 9415,
+      "sha256": "3a612b623c3e3b0d89dcb3328c442bfb348e80a4e96113dca7d3f7d3c6288e64"
+    },
+    {
+      "original": "pld-medical/software/role_a/a15_pilot_d0.py",
+      "archived": "archive/20261103/a_source/software/role_a/a15_pilot_d0.py",
+      "bytes": 15267,
+      "sha256": "9440f1be677b9d0132836e309a65939c64b2f49f701cbe81400376116b91e022"
+    },
+    {
+      "original": "pld-medical/software/role_a/a15_postprocess.py",
+      "archived": "archive/20261103/a_source/software/role_a/a15_postprocess.py",
+      "bytes": 11086,
+      "sha256": "f216cf815e711c6a46057641865ae1d04bc19c52f5677c03f78f1941a3695c4b"
+    },
+    {
+      "original": "pld-medical/software/role_a/a16_ima_audit.py",
+      "archived": "archive/20261103/a_source/software/role_a/a16_ima_audit.py",
+      "bytes": 6444,
+      "sha256": "6851b29cb93db99f8178a0d1f78b764e50dc0dc0d6fe34054920d0b5ed0b5a62"
+    },
+    {
+      "original": "pld-medical/software/role_a/a16_ima_patient_lesion.py",
+      "archived": "archive/20261103/a_source/software/role_a/a16_ima_patient_lesion.py",
+      "bytes": 5765,
+      "sha256": "ff8059dcf802ab6a5d2dde1d554e157118fe1422c5db3ba8a31357e332e59a3e"
+    },
+    {
+      "original": "pld-medical/software/role_a/a16_n2_api_metadata.ps1",
+      "archived": "archive/20261103/a_source/software/role_a/a16_n2_api_metadata.ps1",
+      "bytes": 1806,
+      "sha256": "736e73e3c73d0394679f22a45135919c913a948814fd9c110560ba03f9619b61"
+    },
+    {
+      "original": "pld-medical/software/role_a/a16_n2_api_metadata.py",
+      "archived": "archive/20261103/a_source/software/role_a/a16_n2_api_metadata.py",
+      "bytes": 2994,
+      "sha256": "44fc0e5383442a8c41e5b497bc3a58d9eeebb9a9392663c67c3408e41d82e586"
+    },
+    {
+      "original": "pld-medical/software/role_a/a16_n2_pipeline.py",
+      "archived": "archive/20261103/a_source/software/role_a/a16_n2_pipeline.py",
+      "bytes": 13596,
+      "sha256": "cd48d2843e844b5c2939288e71ea4f5644ce8e9be471724ef888d19e2fa76724"
+    },
+    {
+      "original": "pld-medical/software/role_a/a16_n2_post.py",
+      "archived": "archive/20261103/a_source/software/role_a/a16_n2_post.py",
+      "bytes": 9737,
+      "sha256": "dc572116b38898065701370c15ee1f66d983811a95214cc2c003e4c845f9375a"
+    },
+    {
+      "original": "pld-medical/software/role_a/a16_novice_audit.py",
+      "archived": "archive/20261103/a_source/software/role_a/a16_novice_audit.py",
+      "bytes": 7445,
+      "sha256": "6fbda9d48843c79e085f27a7152899b8959d840c8275cf917058c10a01ccbe8e"
+    },
+    {
+      "original": "pld-medical/software/role_a/a16_novice_lesion_fix.py",
+      "archived": "archive/20261103/a_source/software/role_a/a16_novice_lesion_fix.py",
+      "bytes": 4166,
+      "sha256": "b227e10a3f4894ebd9738b19c3acf53a0c65dc80c64632c053c100d0c171aa2b"
+    },
+    {
+      "original": "pld-medical/software/role_a/a16_novice_mask_audit.py",
+      "archived": "archive/20261103/a_source/software/role_a/a16_novice_mask_audit.py",
+      "bytes": 7697,
+      "sha256": "cbae61f0fdaa3249427598602fc05b175f0bfa9466c9aa2d4443974f92ddb7ce"
+    },
+    {
+      "original": "pld-medical/software/role_a/a16_novice_pilot_select.py",
+      "archived": "archive/20261103/a_source/software/role_a/a16_novice_pilot_select.py",
+      "bytes": 3672,
+      "sha256": "3e99d97e3903620669ba858eda03279b66da6282dc9f71d257ee216700b9e388"
+    },
+    {
+      "original": "pld-medical/software/role_a/a16_novice_pilot_select_v2.py",
+      "archived": "archive/20261103/a_source/software/role_a/a16_novice_pilot_select_v2.py",
+      "bytes": 5316,
+      "sha256": "4d3fa62096e715e20c8d627428e352ca222956145b699ccad2a4d8d7ad3f7cca"
+    },
+    {
+      "original": "pld-medical/software/role_a/a17_component_ratio.py",
+      "archived": "archive/20261103/a_source/software/role_a/a17_component_ratio.py",
+      "bytes": 4940,
+      "sha256": "a6e69d6af305ab118be066ef342404024c81756769e9e282655d616f397c2c50"
+    },
+    {
+      "original": "pld-medical/software/role_a/a17_stage3.py",
+      "archived": "archive/20261103/a_source/software/role_a/a17_stage3.py",
+      "bytes": 11702,
+      "sha256": "8fa826a09e4296db34d5dbdcf0fc61de35f63f544bdf4e74553cc92b879a14c1"
+    },
+    {
+      "original": "pld-medical/software/role_a/a18_threshold_sweep.py",
+      "archived": "archive/20261103/a_source/software/role_a/a18_threshold_sweep.py",
+      "bytes": 8686,
+      "sha256": "3f064ef629dd38f8dedc4e19d8fecfa244f95a6e4d3f8e03d32e98d9c6a48d10"
+    },
+    {
+      "original": "pld-medical/software/role_a/a19_int8_precheck.py",
+      "archived": "archive/20261103/a_source/software/role_a/a19_int8_precheck.py",
+      "bytes": 7820,
+      "sha256": "d9d8c537283db55d82c51f8210ecdd033a7e473bde6546bd30341c1fc147af4f"
+    },
+    {
+      "original": "pld-medical/software/role_a/a20_interp.py",
+      "archived": "archive/20261103/a_source/software/role_a/a20_interp.py",
+      "bytes": 14314,
+      "sha256": "ca6b2097c1fa6215b2904f115ae294477ff2540166185836c5bc06e0333b6411"
+    },
+    {
+      "original": "pld-medical/software/role_a/a20_stage2_aggregate.py",
+      "archived": "archive/20261103/a_source/software/role_a/a20_stage2_aggregate.py",
+      "bytes": 5459,
+      "sha256": "8a2e360ec009cb9b718d6eda3b3ec7e22ab949c1239ad7d0011dc6ed1852ccad"
+    },
+    {
+      "original": "pld-medical/software/role_a/a20_stage2_precheck.py",
+      "archived": "archive/20261103/a_source/software/role_a/a20_stage2_precheck.py",
+      "bytes": 3600,
+      "sha256": "67c85083cf27fe96e0bac3d1d26168c1ae4070de882be65dc15ff5b2e2802e62"
+    },
+    {
+      "original": "pld-medical/software/role_a/a21_build_package.py",
+      "archived": "archive/20261103/a_source/software/role_a/a21_build_package.py",
+      "bytes": 12063,
+      "sha256": "076d049003d7eb8794511a6129febeddf0227925bd6bfa610763517bb0382bba"
+    },
+    {
+      "original": "pld-medical/software/role_a/a21_consistency_638.py",
+      "archived": "archive/20261103/a_source/software/role_a/a21_consistency_638.py",
+      "bytes": 6898,
+      "sha256": "195f1a2bcd95a5f24dc66d3f2ca820e9abe2b805a35d68d586903ea701b2850e"
+    },
+    {
+      "original": "pld-medical/software/role_a/adaptive_inference.py",
+      "archived": "archive/20261103/a_source/software/role_a/adaptive_inference.py",
+      "bytes": 1345,
+      "sha256": "5b4ba8bd07c244c07fd897e4f74530b115e8b1a195e2b8fd0d21e85c23f891af"
+    },
+    {
+      "original": "pld-medical/software/role_a/audit_close_pairs.py",
+      "archived": "archive/20261103/a_source/software/role_a/audit_close_pairs.py",
+      "bytes": 2927,
+      "sha256": "447580114885c4338802142a7bc0ee6f486054d621bb898c4fb1a802a6cd20c6"
+    },
+    {
+      "original": "pld-medical/software/role_a/audit_image_overlap.py",
+      "archived": "archive/20261103/a_source/software/role_a/audit_image_overlap.py",
+      "bytes": 3536,
+      "sha256": "ec36c21bde9949923e3cf83b7673e96ff5c786951d97a962582e2bb41a565664"
+    },
+    {
+      "original": "pld-medical/software/role_a/audit_test2018_overlap.py",
+      "archived": "archive/20261103/a_source/software/role_a/audit_test2018_overlap.py",
+      "bytes": 2035,
+      "sha256": "4b5b51f311b67b2250fff69c69249a2a7242af57b6df90f5bddbd488a546517f"
+    },
+    {
+      "original": "pld-medical/software/role_a/audit_test2018_similarity.py",
+      "archived": "archive/20261103/a_source/software/role_a/audit_test2018_similarity.py",
+      "bytes": 1738,
+      "sha256": "4c87499163a5af5031f137b17f80a41e83740b5a02b4013207625195113e32a1"
+    },
+    {
+      "original": "pld-medical/software/role_a/audit_validation2018.py",
+      "archived": "archive/20261103/a_source/software/role_a/audit_validation2018.py",
+      "bytes": 7445,
+      "sha256": "d2b181ace2123a7952e924f6dc838c5eaf88b6485d20264c97d4f76bd0b7d2d7"
+    },
+    {
+      "original": "pld-medical/software/role_a/calibrated_control.py",
+      "archived": "archive/20261103/a_source/software/role_a/calibrated_control.py",
+      "bytes": 1434,
+      "sha256": "cd1e4338e17f4fe856e64ae15ee1dba3bc2bb4551e30bab5c23914b246fc9d69"
+    },
+    {
+      "original": "pld-medical/software/role_a/data.py",
+      "archived": "archive/20261103/a_source/software/role_a/data.py",
+      "bytes": 26108,
+      "sha256": "e5ec11c7eeae32fa225801ad5cd268783a4ebbd34b8a981f2ea247d47344b2c5"
+    },
+    {
+      "original": "pld-medical/software/role_a/development_threshold_grid2016.py",
+      "archived": "archive/20261103/a_source/software/role_a/development_threshold_grid2016.py",
+      "bytes": 2174,
+      "sha256": "c22eeb9ff4dc93efe3a5bdc1314aa5be340100cddb7c094cd0d67b371da733a1"
+    },
+    {
+      "original": "pld-medical/software/role_a/download_full2017.py",
+      "archived": "archive/20261103/a_source/software/role_a/download_full2017.py",
+      "bytes": 1724,
+      "sha256": "eb282db3b63b1f5e5588ab95f4a42d30339586603afea96b7259bc5e43d61178"
+    },
+    {
+      "original": "pld-medical/software/role_a/download_test2017.py",
+      "archived": "archive/20261103/a_source/software/role_a/download_test2017.py",
+      "bytes": 1810,
+      "sha256": "b265a2306097ea80e187d8ed652fce999c6e51fed5efd11a8d02680feddc7305"
+    },
+    {
+      "original": "pld-medical/software/role_a/download_test2018.py",
+      "archived": "archive/20261103/a_source/software/role_a/download_test2018.py",
+      "bytes": 8065,
+      "sha256": "2cba5bf4f2518cd59bb5bbe46d201e88252a4846a66ade68d0298fa4f46b4912"
+    },
+    {
+      "original": "pld-medical/software/role_a/download_validation2018.py",
+      "archived": "archive/20261103/a_source/software/role_a/download_validation2018.py",
+      "bytes": 11820,
+      "sha256": "86723b0fc86ba0293cb58c7ef73b217aea796c06a18f7949ab25d979218408a0"
+    },
+    {
+      "original": "pld-medical/software/role_a/evaluate_calibrated_test.py",
+      "archived": "archive/20261103/a_source/software/role_a/evaluate_calibrated_test.py",
+      "bytes": 2808,
+      "sha256": "ce68666ac98277c7a1fc83dc1814ba2f9aa796a98e9060763297d5f9f15bf704"
+    },
+    {
+      "original": "pld-medical/software/role_a/evaluate_final_test2017.py",
+      "archived": "archive/20261103/a_source/software/role_a/evaluate_final_test2017.py",
+      "bytes": 6854,
+      "sha256": "fbddcfa79660ccdfb40641e341324b1ddde3ad16eee1ec8c6e5da5863b1d2ad6"
+    },
+    {
+      "original": "pld-medical/software/role_a/evaluate_quant_overall.py",
+      "archived": "archive/20261103/a_source/software/role_a/evaluate_quant_overall.py",
+      "bytes": 5562,
+      "sha256": "9343956e8f501026ceb18729e39ca37d42f42cd877e5b9e1e402ba93618d2215"
+    },
+    {
+      "original": "pld-medical/software/role_a/evaluate_selected.py",
+      "archived": "archive/20261103/a_source/software/role_a/evaluate_selected.py",
+      "bytes": 4301,
+      "sha256": "0651ae1d470413c94e7b06ad25bb328cfd54f41f51558cd34a83d04ab633ea14"
+    },
+    {
+      "original": "pld-medical/software/role_a/explore_repair_thresholds.py",
+      "archived": "archive/20261103/a_source/software/role_a/explore_repair_thresholds.py",
+      "bytes": 3312,
+      "sha256": "d70d81540b7601cf126b571b49fab77eecafd6c93bbdde52acc78235852ed427"
+    },
+    {
+      "original": "pld-medical/software/role_a/external2017.py",
+      "archived": "archive/20261103/a_source/software/role_a/external2017.py",
+      "bytes": 14726,
+      "sha256": "d6b48cc1ebf90ba2a5a8011dd03d877f9e50dd51604f0be1c08a565c174c9960"
+    },
+    {
+      "original": "pld-medical/software/role_a/extract_official.py",
+      "archived": "archive/20261103/a_source/software/role_a/extract_official.py",
+      "bytes": 4211,
+      "sha256": "d89991c9e4fadc0b3a1407549395170a13c711cd9e6b1ba9fb82ea3822ad8080"
+    },
+    {
+      "original": "pld-medical/software/role_a/final_guard.py",
+      "archived": "archive/20261103/a_source/software/role_a/final_guard.py",
+      "bytes": 3784,
+      "sha256": "1a6341ab0f5099b856e413e2c0e323235829ae08c1fc25d14b293ffc276635bf"
+    },
+    {
+      "original": "pld-medical/software/role_a/final_holdout_fixed.py",
+      "archived": "archive/20261103/a_source/software/role_a/final_holdout_fixed.py",
+      "bytes": 10322,
+      "sha256": "67b0ee779b8523af74f1aa2dc79ca781f82dbe0e61a2498bc279a07c92087768"
+    },
+    {
+      "original": "pld-medical/software/role_a/final_qat_driver.py",
+      "archived": "archive/20261103/a_source/software/role_a/final_qat_driver.py",
+      "bytes": 26683,
+      "sha256": "cb62f8ec9ad41ef2474de69186bbaf91564770f8ac59d629ce32250921452a3e"
+    },
+    {
+      "original": "pld-medical/software/role_a/freeze_test2018_exclusions.py",
+      "archived": "archive/20261103/a_source/software/role_a/freeze_test2018_exclusions.py",
+      "bytes": 2003,
+      "sha256": "60b8a75d774e743761d18a64150de7c992df4f4d554b3099b3e048dc20a03d43"
+    },
+    {
+      "original": "pld-medical/software/role_a/make_calibration_split.py",
+      "archived": "archive/20261103/a_source/software/role_a/make_calibration_split.py",
+      "bytes": 1801,
+      "sha256": "fd9b187e1c93add6cb7e5ff35fa4648cbb29b624951beb91f98bd7b92b6cdd47"
+    },
+    {
+      "original": "pld-medical/software/role_a/metrics.py",
+      "archived": "archive/20261103/a_source/software/role_a/metrics.py",
+      "bytes": 11527,
+      "sha256": "b7c090bc2694433209e2dec602018a72d5791a1a18804f2c74f405a74da00fcd"
+    },
+    {
+      "original": "pld-medical/software/role_a/model.py",
+      "archived": "archive/20261103/a_source/software/role_a/model.py",
+      "bytes": 12326,
+      "sha256": "a8c008194d6eb1893f53ca251cf3a777314aa0e16fb1e6447b1daf89ae8b9eeb"
+    },
+    {
+      "original": "pld-medical/software/role_a/overall_reassessment_v5.py",
+      "archived": "archive/20261103/a_source/software/role_a/overall_reassessment_v5.py",
+      "bytes": 4810,
+      "sha256": "b31bfc169480222cd85bb28d8a90011c90d13378b38236449c9869f1dc97bfbe"
+    },
+    {
+      "original": "pld-medical/software/role_a/postprocess_int8.py",
+      "archived": "archive/20261103/a_source/software/role_a/postprocess_int8.py",
+      "bytes": 21822,
+      "sha256": "383c6a097510eed5ca391db0f3d0c90aab64f96dbf8d8a08b1dfab2155f16362"
+    },
+    {
+      "original": "pld-medical/software/role_a/prepare_augmented_v4.py",
+      "archived": "archive/20261103/a_source/software/role_a/prepare_augmented_v4.py",
+      "bytes": 4048,
+      "sha256": "c8e6f82307e19afd8398eedd4ca5f2f23a68ee949c6e9b99ff80c497c57426d4"
+    },
+    {
+      "original": "pld-medical/software/role_a/qat.py",
+      "archived": "archive/20261103/a_source/software/role_a/qat.py",
+      "bytes": 11884,
+      "sha256": "4db294ff878da3161ad88352d9601f14a4fcf7d8a54402a5e84229e61db7af0a"
+    },
+    {
+      "original": "pld-medical/software/role_a/quant.py",
+      "archived": "archive/20261103/a_source/software/role_a/quant.py",
+      "bytes": 29625,
+      "sha256": "0a1c699859a36242d994daeb596eb686991a92ec5b89633490f47cfa239b2f39"
+    },
+    {
+      "original": "pld-medical/software/role_a/quant_math.py",
+      "archived": "archive/20261103/a_source/software/role_a/quant_math.py",
+      "bytes": 4988,
+      "sha256": "cd56a0f6e1f07647a0c68e7b079db9cea4cbe6830a9d71921827480887338158"
+    },
+    {
+      "original": "pld-medical/software/role_a/README.md",
+      "archived": "archive/20261103/a_source/software/role_a/README.md",
+      "bytes": 18572,
+      "sha256": "7de8234b6f4fc1f63eb904d43224fbfd79bb856712761ab388ed2ae578f3c5b7"
+    },
+    {
+      "original": "pld-medical/software/role_a/refine_augmented_v4.py",
+      "archived": "archive/20261103/a_source/software/role_a/refine_augmented_v4.py",
+      "bytes": 35221,
+      "sha256": "577500b9ef89aa2751c1e9cce2a8995094c0d7aa7839215057c1d3316991c4a7"
+    },
+    {
+      "original": "pld-medical/software/role_a/refine_conservative.py",
+      "archived": "archive/20261103/a_source/software/role_a/refine_conservative.py",
+      "bytes": 9913,
+      "sha256": "804574f9eed3a9385f07a24c9e599925091ec2e2c80c4912e1b7e48e4785f5ce"
+    },
+    {
+      "original": "pld-medical/software/role_a/refine_from_baseline_v3.py",
+      "archived": "archive/20261103/a_source/software/role_a/refine_from_baseline_v3.py",
+      "bytes": 31899,
+      "sha256": "1e4dc858815e67117cbe57cfeb265e4d7420775995c43f10e2d69cc75077373e"
+    },
+    {
+      "original": "pld-medical/software/role_a/refine_full2017.py",
+      "archived": "archive/20261103/a_source/software/role_a/refine_full2017.py",
+      "bytes": 9764,
+      "sha256": "3d3b13ae2164af9542b516ca8ec7fe638b535143d5051454a6038a8fca1d8a70"
+    },
+    {
+      "original": "pld-medical/software/role_a/refine_preserve_large.py",
+      "archived": "archive/20261103/a_source/software/role_a/refine_preserve_large.py",
+      "bytes": 10554,
+      "sha256": "e68e3175c38169a9ca619e615994c0ca99ba6382a072ca8f6f643aa3071bbfc4"
+    },
+    {
+      "original": "pld-medical/software/role_a/refine_preserve_large_v2.py",
+      "archived": "archive/20261103/a_source/software/role_a/refine_preserve_large_v2.py",
+      "bytes": 32166,
+      "sha256": "566397cc59ff31f79b179473f8d6ce7209b4d3163e4414bad62e90355d2dd8dc"
+    },
+    {
+      "original": "pld-medical/software/role_a/refine_retention_v5.py",
+      "archived": "archive/20261103/a_source/software/role_a/refine_retention_v5.py",
+      "bytes": 37058,
+      "sha256": "153d9eb529342550fd65098d6c40b9e5c1d8967e4c51e82dd7489048a26b7c90"
+    },
+    {
+      "original": "pld-medical/software/role_a/refine_small.py",
+      "archived": "archive/20261103/a_source/software/role_a/refine_small.py",
+      "bytes": 15351,
+      "sha256": "56d2ffbab7e81a4fb2e7c20b714d4d481c7b3dc9827b1482ab941e189fd73214"
+    },
+    {
+      "original": "pld-medical/software/role_a/render_overlap_pairs.py",
+      "archived": "archive/20261103/a_source/software/role_a/render_overlap_pairs.py",
+      "bytes": 2089,
+      "sha256": "37913b6a003e8522d71b18fcc4ef51b4a013133f4d75c7ad967b5657bc1a1823"
+    },
+    {
+      "original": "pld-medical/software/role_a/render_test2018_overlap_pairs.py",
+      "archived": "archive/20261103/a_source/software/role_a/render_test2018_overlap_pairs.py",
+      "bytes": 1878,
+      "sha256": "3a94fd9b64bd67dab83d776913bbb9b2b72e987eee9d877b559c5cf64a239875"
+    },
+    {
+      "original": "pld-medical/software/role_a/search_adaptive_thresholds.py",
+      "archived": "archive/20261103/a_source/software/role_a/search_adaptive_thresholds.py",
+      "bytes": 6255,
+      "sha256": "c0533c06d1dafdcb435eb03fd982637dadb2dc537ff509efc28af0268f43d9c3"
+    },
+    {
+      "original": "pld-medical/software/role_a/search_adaptive_thresholds_v4.py",
+      "archived": "archive/20261103/a_source/software/role_a/search_adaptive_thresholds_v4.py",
+      "bytes": 5428,
+      "sha256": "ee0d6a1673c6a8fc89bc83ff4be3663b5ed1055031b36b5219782fefe21fab9b"
+    },
+    {
+      "original": "pld-medical/software/role_a/supplement2017.py",
+      "archived": "archive/20261103/a_source/software/role_a/supplement2017.py",
+      "bytes": 4192,
+      "sha256": "1e5d6dfcb8f737403d5035f6037856dd36968c783513098d66ce2ce1bb9d816e"
+    },
+    {
+      "original": "pld-medical/software/role_a/survey_full2017.py",
+      "archived": "archive/20261103/a_source/software/role_a/survey_full2017.py",
+      "bytes": 26565,
+      "sha256": "4b37447d17015e25554a3f2ae0d9006b944867f7c4b6ce67c2313e739a18d451"
+    },
+    {
+      "original": "pld-medical/software/role_a/survey_test2017.py",
+      "archived": "archive/20261103/a_source/software/role_a/survey_test2017.py",
+      "bytes": 4357,
+      "sha256": "5eb0763a49cca9fc5fc98abfe8cff1ef46edc0f209af932ec40abdc5bcb3c589"
+    },
+    {
+      "original": "pld-medical/software/role_a/train.py",
+      "archived": "archive/20261103/a_source/software/role_a/train.py",
+      "bytes": 30829,
+      "sha256": "b03634a4570081bce0ec5174f6138cf088b91a9d5b1fbd5fc18f03e8f744a742"
+    },
+    {
+      "original": "pld-medical/software/role_a/train_overall_v1.py",
+      "archived": "archive/20261103/a_source/software/role_a/train_overall_v1.py",
+      "bytes": 97412,
+      "sha256": "72dbda2a64499ae8db2eadb3f9b9665727a65d3e27798294a8b6a0629c008f4c"
+    },
+    {
+      "original": "pld-medical/software/role_a/train_overall_v2.py",
+      "archived": "archive/20261103/a_source/software/role_a/train_overall_v2.py",
+      "bytes": 32370,
+      "sha256": "57ded2f8f8d6f889aabd65e3244e826448b7a3e311f0c6439a84beb911f5e56f"
+    },
+    {
+      "original": "pld-medical/software/role_a/verify_export.py",
+      "archived": "archive/20261103/a_source/software/role_a/verify_export.py",
+      "bytes": 3842,
+      "sha256": "c0c29dc06a7d6311873068a3662ad17cffcb3cd423fbba904de01582d6825045"
+    },
+    {
+      "original": "pld-medical/software/role_a/verify_reference.py",
+      "archived": "archive/20261103/a_source/software/role_a/verify_reference.py",
+      "bytes": 10811,
+      "sha256": "ff47e2781885b4830e119df55e663bce98b5b9496c12e92251be886ec177a99c"
+    },
+    {
+      "original": "pld-medical/software/role_a/final_docs/B_C_接口说明.md",
+      "archived": "archive/20261103/a_source/software/role_a/final_docs/B_C_接口说明.md",
+      "bytes": 9601,
+      "sha256": "d7b8123cd811099117983970383b72414d69ee0ce00b64f741144d1cebab5de8"
+    },
+    {
+      "original": "pld-medical/software/role_a/final_docs/check_interface_example.py",
+      "archived": "archive/20261103/a_source/software/role_a/final_docs/check_interface_example.py",
+      "bytes": 1503,
+      "sha256": "f5c9811b54bbb7f3d2c2109ebdc1c0951c3692a0545ac983ccbffe07f36e58ce"
+    },
+    {
+      "original": "pld-medical/software/role_a/final_docs/DATA_PROVENANCE.md",
+      "archived": "archive/20261103/a_source/software/role_a/final_docs/DATA_PROVENANCE.md",
+      "bytes": 8165,
+      "sha256": "1d9534598919e1b40734eb5ccf03512d9c58fee7ca594868ca27ae3ed047d3b2"
+    },
+    {
+      "original": "pld-medical/software/role_a/final_docs/make_transfer_zip.py",
+      "archived": "archive/20261103/a_source/software/role_a/final_docs/make_transfer_zip.py",
+      "bytes": 5451,
+      "sha256": "17daab53f2efc0ac173d858e83d382c33695bc669ad786a18dd6f207e679a9aa"
+    },
+    {
+      "original": "pld-medical/software/role_a/final_docs/README.md",
+      "archived": "archive/20261103/a_source/software/role_a/final_docs/README.md",
+      "bytes": 3758,
+      "sha256": "00121077c73e662725eb0f53764b442efe00435e3d0950135d1aa183121ca34c"
+    },
+    {
+      "original": "pld-medical/software/role_a/final_docs/REPORT.md",
+      "archived": "archive/20261103/a_source/software/role_a/final_docs/REPORT.md",
+      "bytes": 8323,
+      "sha256": "cc153af950cddbcf228ca029b92a4947776f4957ee842167f61db92e62047057"
+    },
+    {
+      "original": "pld-medical/software/role_a/final_docs/verify_package.py",
+      "archived": "archive/20261103/a_source/software/role_a/final_docs/verify_package.py",
+      "bytes": 2055,
+      "sha256": "787de04f7c0a73558508f67b29b9fef5e2bc86c2d592ecc34f605ca0a1da4d3a"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_a17_component_ratio.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_a17_component_ratio.py",
+      "bytes": 10896,
+      "sha256": "28422a2758e148891af7dcfe7988b4d259b0c70bb39393057ad5702516ad36a3"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_a17_stage3_aggregate.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_a17_stage3_aggregate.py",
+      "bytes": 3366,
+      "sha256": "85bd4565965c8735c964de13d5d3a8a696c213379e82616717120c97bce0cc08"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_a18_threshold_sweep.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_a18_threshold_sweep.py",
+      "bytes": 3427,
+      "sha256": "1f448873d0199d9f93906bd6ac132b4afd9d64c9a48eaa051bd7023d54be0b32"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_a20_interp.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_a20_interp.py",
+      "bytes": 17682,
+      "sha256": "66c170b583b8fee76a95cea327a0b4b81c143f531750311c407aa470a3b7de3b"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_adaptive_inference.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_adaptive_inference.py",
+      "bytes": 1628,
+      "sha256": "c310e5968877298ec842da41b3ce79ad29ab346dd6ed79162ba0ed154ba48c40"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_data.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_data.py",
+      "bytes": 15789,
+      "sha256": "fa11012d11536604e45ae300157574ef5d5cbda74ed39ba30b78169d8ba8405c"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_external2017.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_external2017.py",
+      "bytes": 3656,
+      "sha256": "55583f733d037a633770cda27b40c5d254490218f970870f14c11862fb01797e"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_final_guard.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_final_guard.py",
+      "bytes": 4675,
+      "sha256": "fb14bc70242329ee32bdc8d2a85d1319debcf1c68c5dbc620d5b57006f31238d"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_final_qat_driver.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_final_qat_driver.py",
+      "bytes": 9758,
+      "sha256": "946cdd0f2ea18fef6bf8500df42b9a875f54f8d1af5fea268e0eb88988c54ba2"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_metrics.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_metrics.py",
+      "bytes": 11865,
+      "sha256": "85438f99077ff1d69cefd878e043aa4ff2ad43bed9acebe5cad5197fbe480f88"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_model.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_model.py",
+      "bytes": 7476,
+      "sha256": "75dad223696784c8886969bdeb37ced5163a9d28609268b32d3802205fdc4fdc"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_postprocess_int8.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_postprocess_int8.py",
+      "bytes": 19625,
+      "sha256": "eba6f4538d95c7c3abe32785283b73b06a301abbbf84b3e279f33d4f9a7d45eb"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_qat.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_qat.py",
+      "bytes": 8335,
+      "sha256": "b3578e622b537b6f2b58d5f749776a4c97a86e480b95e2537d3ab63aa210e68b"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_qat_integration.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_qat_integration.py",
+      "bytes": 8715,
+      "sha256": "4028a5656adbbbb4f7bdeb43b5b7bcadf774a073a65793a028dfda5685bacf64"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_quant.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_quant.py",
+      "bytes": 15321,
+      "sha256": "130a8444f3d1a0c27e3480fea3b5e881350a6b6c6cc4b87c8afb280af9256dfb"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_reference.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_reference.py",
+      "bytes": 6003,
+      "sha256": "dcb983f2bdfd4db6680834e591f080fc8ca5567bcd29cfc8e1a5c053ca3b5ca5"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_refine_preserve_large_v2.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_refine_preserve_large_v2.py",
+      "bytes": 12344,
+      "sha256": "3d3a828d3ce9adcfc5853bd336eeca060e0b96d367d83220cb7dd816f4985b48"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_refine_small.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_refine_small.py",
+      "bytes": 3768,
+      "sha256": "db5a97554bb4c7ccc42adc87a1b2c3900dea9d0f358535c3b6b1164d82a9ce32"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_survey_full2017.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_survey_full2017.py",
+      "bytes": 27123,
+      "sha256": "850a848b1d3e96383065e69db8aeea6de1878eec6c566699fa3ea4dc423c9020"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_train_overall_v1.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_train_overall_v1.py",
+      "bytes": 53380,
+      "sha256": "97d36d7a267fb17690df12d4547c66960c481933fd5752d8e5129a2b33f77d54"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_train_overall_v2.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_train_overall_v2.py",
+      "bytes": 38538,
+      "sha256": "97e44047ac1b65091644123e839833574420ac50cb9730dc0cf8a0aa1c835150"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/test_train_pipeline.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/test_train_pipeline.py",
+      "bytes": 13462,
+      "sha256": "b1f8deb768e51853279436e3738c92f554a9bf69b39cb659b442c70da860ea6a"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/_support.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/_support.py",
+      "bytes": 3595,
+      "sha256": "6ed3cf2bd632965d11edc4f6ca1973630b132d0163f45a42e5efc8d371e69123"
+    },
+    {
+      "original": "pld-medical/software/role_a/tests/__init__.py",
+      "archived": "archive/20261103/a_source/software/role_a/tests/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/board_adapter.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/board_adapter.py",
+      "bytes": 8276,
+      "sha256": "5f7da4e03bbc19b2d5b701f9171cb61f7551c66a782c1938bbdf71ffbc36f2d5"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/board_jobs.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/board_jobs.py",
+      "bytes": 6881,
+      "sha256": "6488bc68e1916f65e35453d7f344104bb4bf52d4d29099b805f2f90d609aaeea"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/common.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/common.py",
+      "bytes": 1135,
+      "sha256": "6dfc51e7b638c5960ccf92f6218bc7810e77c688e79028bb98257653a64c08dc"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/contract.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/contract.py",
+      "bytes": 8807,
+      "sha256": "0096f13b40754be7b72f1b18563829ff5e3c2ad9e4c5576ddf83eba7d6cc57e1"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/fetch.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/fetch.py",
+      "bytes": 5215,
+      "sha256": "c6186903fe31ae13529275333b46df5ea5e93570d6c363db1b02a93308c4c8cb"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/geometry.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/geometry.py",
+      "bytes": 6389,
+      "sha256": "4040571ba642cbfffeab98f3d659e08263be2ef422978ee51e7b62dacbad2e33"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/inference.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/inference.py",
+      "bytes": 1510,
+      "sha256": "3f1b757d69283a8b58d41d3c1efcece2d83bc9c1549e4f940bb060decb2d9985"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/int8_gemm.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/int8_gemm.py",
+      "bytes": 1366,
+      "sha256": "4fcebbcc5c4bf5ae61f2e18f1a30194e7daa97e1ad53a063122778b394955eae"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/model.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/model.py",
+      "bytes": 1880,
+      "sha256": "aa1ebfe4e634cab00cc04f042ced0630c481079a175a01bee48ce8108ab09886"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/pipeline.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/pipeline.py",
+      "bytes": 13699,
+      "sha256": "ef557d0c8f296f8b4a1284e0bd7e7956facad27c6dc612712da3588784a9d9af"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/prepare.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/prepare.py",
+      "bytes": 5174,
+      "sha256": "dae67eefffbf038a00c30114dcedda27593c52ff16256d97edc5534a73b33fdb"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/qat.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/qat.py",
+      "bytes": 7646,
+      "sha256": "55215ec982e0394d90a71937efe03064c8482cb1b82c2e9c3626c899cc762e08"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/quantize.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/quantize.py",
+      "bytes": 14181,
+      "sha256": "73281dccce8f981afb7bf0e6850d5be4b243340728e586c78f271db514c27652"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/test_core.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/test_core.py",
+      "bytes": 5838,
+      "sha256": "dab9767bb9d894523caf48ce712e11163d20415f179cb8a2c56cd72e461fe1f8"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/test_pipeline.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/test_pipeline.py",
+      "bytes": 4828,
+      "sha256": "d4ec9d228cb2ba96230365734a03e739b220a332e42cd1b9a2e004142b0a8cdb"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/test_quant.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/test_quant.py",
+      "bytes": 2280,
+      "sha256": "20aa448acf8f220d3fe545d97cdd645add24b8befd76df03fa17414c43112cef"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/train.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/train.py",
+      "bytes": 12538,
+      "sha256": "43488520caeb83cc347244889cfee9b90f6815a6285c2a366896723b8a5945cb"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/viewer.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/viewer.py",
+      "bytes": 1699,
+      "sha256": "2fd6c089bef3d4642998fb84ccb4e8996102feda6863eec31071d3795baac4ff"
+    },
+    {
+      "original": "pld-medical/software/role_a_acdc/__init__.py",
+      "archived": "archive/20261103/a_source/software/role_a_acdc/__init__.py",
+      "bytes": 80,
+      "sha256": "0846e68a04e1260d507dc53cff9c0becf3524e1807f4d2f48a82aa31825f5a54"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus/data.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus/data.py",
+      "bytes": 27699,
+      "sha256": "bed07e5337c70addba1c38ca74d81b909b1e7a2ea19be25caac2de4450a7cd42"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus/evaluate.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus/evaluate.py",
+      "bytes": 18212,
+      "sha256": "9e11ecfca91195676c884f34077300c362e7c5ee35348e76e2519d7ef36b1b7c"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus/geometry.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus/geometry.py",
+      "bytes": 14440,
+      "sha256": "38bd4736e2c38cc7517009e5962990911f608bd46ca8ddc3bda21d6fe518fd19"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus/metrics.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus/metrics.py",
+      "bytes": 9940,
+      "sha256": "e00f16349e7e61a7438ab69f0163ae38fe1f2ff68231a95a776d6249831f7e17"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus/model.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus/model.py",
+      "bytes": 10970,
+      "sha256": "d82dd2172b92bb52d00b8d1c84f0dcf49c6f65e126876307b5a3358c16e99bc0"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus/official_volume.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus/official_volume.py",
+      "bytes": 12990,
+      "sha256": "5683df059b2541a0f18d115d0a54e5c186efef32e289ff7ff8dd4c737a217edf"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus/prepare.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus/prepare.py",
+      "bytes": 9051,
+      "sha256": "2031bb596069242b30070656515c16b2a42ede90452172298d86581d63bb7a85"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus/README.md",
+      "archived": "archive/20261103/a_source/software/role_a_camus/README.md",
+      "bytes": 4106,
+      "sha256": "7838cecf61f603fcb686e1ac8e9d5cb96997deb63cc4e9bec443821f54057ecf"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus/train.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus/train.py",
+      "bytes": 40622,
+      "sha256": "8e0555535eb60ab5d0cfda700518e54723d7286cd3a74e89914b82a8a2f4414b"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus/visualize.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus/visualize.py",
+      "bytes": 4349,
+      "sha256": "650f0f441e904c3533201c8d4d4d2b12a778fe561edccb793d5ad89f7a334091"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus/__init__.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus/__init__.py",
+      "bytes": 1074,
+      "sha256": "c4b7576ff0e3e314a4ccfbc19a17b978efb3d4268eec6f2bbae5c82d79b136f0"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus/tests/test_camus_cpu.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus/tests/test_camus_cpu.py",
+      "bytes": 32409,
+      "sha256": "0046bad5ccf65bbdea41ae90d37f6be5c50f90ec986cd463df7258ee7afc69bd"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus_int8/graph.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus_int8/graph.py",
+      "bytes": 4060,
+      "sha256": "ff64eab9d028552e6e66e6a0b7eb49714052c38887451cd1939301a53f626fb8"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus_int8/integer.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus_int8/integer.py",
+      "bytes": 15787,
+      "sha256": "584e30d00749f3ac36ac2c0de7ae3ee0f5266708ed96c70948e17f1be915936d"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus_int8/pipeline.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus_int8/pipeline.py",
+      "bytes": 37149,
+      "sha256": "f8f6163f67a686f17de09d9dcfbf0ea86990612e4e60836154c6b2f44a8c9c4b"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus_int8/__init__.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus_int8/__init__.py",
+      "bytes": 687,
+      "sha256": "4f119c16e9958fe18afa64edee8c1bb90a7661b09cd752740c0b1221b28bb152"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus_int8/tests/test_int8_cpu.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus_int8/tests/test_int8_cpu.py",
+      "bytes": 14417,
+      "sha256": "2c5bd0404e08a4fbe074f2b3cf4112f764bedd03cac638c14fef5967c659f0fc"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus_int8/tests/test_int8_export.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus_int8/tests/test_int8_export.py",
+      "bytes": 13324,
+      "sha256": "49a5ae82b7b843c040fcb57f06c2b4d14fb7d654175186ba8af6649e3054c114"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus_opt/boundary_loss.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus_opt/boundary_loss.py",
+      "bytes": 9311,
+      "sha256": "6971c7e13b051401c1a37522418f94007cdb19718280fb0f0dd2098759866c67"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus_opt/evaluate_postprocess.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus_opt/evaluate_postprocess.py",
+      "bytes": 34192,
+      "sha256": "8a1f9cf2165ce0914f24f145ef3407f1b47351ae7ca930e39e879d96fdf52e04"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus_opt/postprocess.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus_opt/postprocess.py",
+      "bytes": 7373,
+      "sha256": "a6f06fae69521773e223064ce1267b18c76e6822bdb0ae202a0339a6ec55c9db"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus_opt/train.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus_opt/train.py",
+      "bytes": 21852,
+      "sha256": "dbe7804513a038784faea1ce43f92477a20e3e604e2c66c5088144615205f381"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus_opt/__init__.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus_opt/__init__.py",
+      "bytes": 838,
+      "sha256": "9440781c66634635fdd21dc47c3e9f474c55b233fe1749715a881e8d4a397408"
+    },
+    {
+      "original": "pld-medical/software/role_a_camus_opt/tests/test_opt_cpu.py",
+      "archived": "archive/20261103/a_source/software/role_a_camus_opt/tests/test_opt_cpu.py",
+      "bytes": 14583,
+      "sha256": "31533981f6d11dfbc2de2d4dc42c86702a69dbee60bb840fa46fbd71d96414e7"
+    },
+    {
+      "original": "pld-medical/tests/test_baseline.py",
+      "archived": "archive/20261103/a_source/tests/test_baseline.py",
+      "bytes": 1995,
+      "sha256": "9b4da9512c922b4e090301fcc160777d0950e6d0dc0583874ac3fbe1f36a1495"
+    }
+  ]
+}
