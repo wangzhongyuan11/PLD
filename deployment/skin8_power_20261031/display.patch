@@ -1,0 +1,113 @@
+--- a/web/static/app.js
++++ b/web/static/app.js
+@@ -455,6 +455,7 @@
+     ['FF','9,495 / 106,400（8.92%）'],
+     ['BRAM36','44 / 140（31.43%）'],
+     ['DSP48E1','144 / 220（65.45%）'],
++    ['功耗估计','1.845 W（动态 1.695 W；静态 0.150 W）'],
+     ['开发集 Dice：FP32 → INT8','84.405% → 84.205%（−0.200 个百分点）']
+   ];
+   const dl=document.createElement('dl');for(const [k,v] of rows){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=k;dd.textContent=v;dl.append(dt,dd);}
+--- a/hub/quad_camus.html
++++ b/hub/quad_camus.html
+@@ -82,7 +82,7 @@
+  close.onclick=()=>dialog.close();button.onclick=()=>{if(!dialog.open)dialog.showModal();};
+  let latest={};const number=(v,d=3)=>Number.isFinite(v)?v.toFixed(d):'未记录';
+  function update(data){latest=data;const s=data.core,valid=Number.isFinite(s)&&s>0,resources=config.acdc?['21,143 / 53,200（39.74%）','28,274 / 106,400（26.57%）','106.5 / 140（76.07%）','210 / 220（95.45%）']:['7,029 / 53,200（13.21%）','9,495 / 106,400（8.92%）','44 / 140（31.43%）','144 / 220（65.45%）'];
+- const rows=[['阈值',data.threshold??(config.roi?0.45:'按类别最大概率')],['分割结果',data.result??'未生成'],[config.acdc?'FPGA 平均单切片核心延迟':'FPGA 本次核心延迟',valid?number(s*1000)+' ms':data.cached?'复用已有推理':'未记录'],['FPGA 核心 FPS',valid?number(1/s,2)+(config.acdc?' 切片/s':' 帧/s'):data.cached?'本次未执行 FPGA':'未记录'],[config.roi?'运行至结果就绪':'浏览器上传至完整结果就绪',number(data.client)+' s'],['服务端请求至完整结果',number(data.server)+' s'],['CPU FP32 网络中位延迟 / 核心 FPS',config.cpu[0].toFixed(2)+' ms / '+(1000/config.cpu[0]).toFixed(2)+(config.acdc?' 切片/s':' 帧/s')],['CPU 原生 INT8中位延迟 / 核心 FPS',config.cpu[1].toFixed(2)+' ms / '+(1000/config.cpu[1]).toFixed(2)+(config.acdc?' 切片/s':' 帧/s')],['LUT',resources[0]],['FF',resources[1]],['BRAM36',resources[2]],['DSP48E1',resources[3]],['开发集 Dice：FP32 → INT8',config.dice]];
++ const rows=[['阈值',data.threshold??(config.roi?0.45:'按类别最大概率')],['分割结果',data.result??'未生成'],[config.acdc?'FPGA 平均单切片核心延迟':'FPGA 本次核心延迟',valid?number(s*1000)+' ms':data.cached?'复用已有推理':'未记录'],['FPGA 核心 FPS',valid?number(1/s,2)+(config.acdc?' 切片/s':' 帧/s'):data.cached?'本次未执行 FPGA':'未记录'],[config.roi?'运行至结果就绪':'浏览器上传至完整结果就绪',number(data.client)+' s'],['服务端请求至完整结果',number(data.server)+' s'],['CPU FP32 网络中位延迟 / 核心 FPS',config.cpu[0].toFixed(2)+' ms / '+(1000/config.cpu[0]).toFixed(2)+(config.acdc?' 切片/s':' 帧/s')],['CPU 原生 INT8中位延迟 / 核心 FPS',config.cpu[1].toFixed(2)+' ms / '+(1000/config.cpu[1]).toFixed(2)+(config.acdc?' 切片/s':' 帧/s')],['LUT',resources[0]],['FF',resources[1]],['BRAM36',resources[2]],['DSP48E1',resources[3]],['功耗估计','1.845 W（动态 1.695 W；静态 0.150 W）'],['开发集 Dice：FP32 → INT8',config.dice]];
+  values.replaceChildren();for(const [key,value] of rows){const a=document.createElement('dt'),b=document.createElement('dd');a.textContent=key;b.textContent=value;Object.assign(b.style,{margin:'0',fontWeight:'600',overflowWrap:'anywhere'});values.append(a,b);}
+  }
+  update({});return {update};
+--- a/hub/interactive.js
++++ b/hub/interactive.js
+@@ -112,7 +112,7 @@
+  close.onclick=()=>dialog.close();button.onclick=()=>{if(!dialog.open)dialog.showModal();};
+  let latest={};const number=(v,d=3)=>Number.isFinite(v)?v.toFixed(d):'未记录';
+  function update(data){latest=data;const s=data.core,valid=Number.isFinite(s)&&s>0,resources=config.acdc?['21,143 / 53,200（39.74%）','28,274 / 106,400（26.57%）','106.5 / 140（76.07%）','210 / 220（95.45%）']:['7,029 / 53,200（13.21%）','9,495 / 106,400（8.92%）','44 / 140（31.43%）','144 / 220（65.45%）'];
+- const rows=[['阈值',data.threshold??(config.roi?0.45:'按类别最大概率')],['分割结果',data.result??'未生成'],[config.acdc?'FPGA 平均单切片核心延迟':'FPGA 本次核心延迟',valid?number(s*1000)+' ms':data.cached?'复用已有推理':'未记录'],['FPGA 核心 FPS',valid?number(1/s,2)+(config.acdc?' 切片/s':' 帧/s'):data.cached?'本次未执行 FPGA':'未记录'],[config.roi?'运行至结果就绪':'浏览器上传至完整结果就绪',number(data.client)+' s'],['服务端请求至完整结果',number(data.server)+' s'],['CPU FP32 网络中位延迟 / 核心 FPS',config.cpu[0].toFixed(2)+' ms / '+(1000/config.cpu[0]).toFixed(2)+(config.acdc?' 切片/s':' 帧/s')],['CPU 原生 INT8中位延迟 / 核心 FPS',config.cpu[1].toFixed(2)+' ms / '+(1000/config.cpu[1]).toFixed(2)+(config.acdc?' 切片/s':' 帧/s')],['LUT',resources[0]],['FF',resources[1]],['BRAM36',resources[2]],['DSP48E1',resources[3]],['开发集 Dice：FP32 → INT8',config.dice]];
++ const rows=[['阈值',data.threshold??(config.roi?0.45:'按类别最大概率')],['分割结果',data.result??'未生成'],[config.acdc?'FPGA 平均单切片核心延迟':'FPGA 本次核心延迟',valid?number(s*1000)+' ms':data.cached?'复用已有推理':'未记录'],['FPGA 核心 FPS',valid?number(1/s,2)+(config.acdc?' 切片/s':' 帧/s'):data.cached?'本次未执行 FPGA':'未记录'],[config.roi?'运行至结果就绪':'浏览器上传至完整结果就绪',number(data.client)+' s'],['服务端请求至完整结果',number(data.server)+' s'],['CPU FP32 网络中位延迟 / 核心 FPS',config.cpu[0].toFixed(2)+' ms / '+(1000/config.cpu[0]).toFixed(2)+(config.acdc?' 切片/s':' 帧/s')],['CPU 原生 INT8中位延迟 / 核心 FPS',config.cpu[1].toFixed(2)+' ms / '+(1000/config.cpu[1]).toFixed(2)+(config.acdc?' 切片/s':' 帧/s')],['LUT',resources[0]],['FF',resources[1]],['BRAM36',resources[2]],['DSP48E1',resources[3]],['功耗估计','1.845 W（动态 1.695 W；静态 0.150 W）'],['开发集 Dice：FP32 → INT8',config.dice]];
+  values.replaceChildren();for(const [key,value] of rows){const a=document.createElement('dt'),b=document.createElement('dd');a.textContent=key;b.textContent=value;Object.assign(b.style,{margin:'0',fontWeight:'600',overflowWrap:'anywhere'});values.append(a,b);}
+  }
+  update({});return {update};
+--- a/web/hdmi_worker.py
++++ b/web/hdmi_worker.py
+@@ -2,7 +2,7 @@
+ import math as _perf_math
+ from pathlib import Path as _PerfPath
+ import numpy as _perf_np
+-from PIL import Image as _PerfImage, ImageDraw as _PerfDraw
++from PIL import Image as _PerfImage, ImageDraw as _PerfDraw, ImageFont as _PerfFont
+ 
+ def _perf_seconds(folder,model):
+     try:
+@@ -28,7 +28,14 @@
+             text='%s | CORE %.2f %s | %.1f ms'%(model,1/value,'slice/s' if model=='ACDC' else 'FPS',value*1000)
+         else:text=model+' | CORE -- FPS | -- ms'
+         if cache[0]!=text:
+-            tile=_PerfImage.new('RGB',(270,18),(10,31,43));d=_PerfDraw.Draw(tile);d.text((5,3),text,fill=(120,240,220));cache[:]=[text,_perf_np.asarray(tile)]
++            cjk=_PerfFont.truetype('/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf',12)
++            latin=_PerfFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',12)
++            parts=[('功耗估计',cjk),(' 1.845 W',latin),('（动态',cjk),(' 1.695 W',latin),('；静态',cjk),(' 0.150 W',latin),('）',cjk)]
++            width=max(270,_perf_math.ceil(sum(font.getlength(value) for value,font in parts))+10)
++            tile=_PerfImage.new('RGB',(width,34),(10,31,43));d=_PerfDraw.Draw(tile);d.text((5,3),text,fill=(120,240,220));x=5
++            for value,font in parts:
++                d.text((x,17),value,font=font,fill=(255,218,140));x+=font.getlength(value)
++            cache[:]=[text,_perf_np.asarray(tile)]
+         frame=_perf_np.array(image,copy=True);h,w=frame.shape[:2];tile=cache[1];tw=min(tile.shape[1],w);th=min(tile.shape[0],max(0,h-y))
+         if th:frame[y:y+th,w-tw:w]=tile[:th,:tw]
+         return original(frame)
+--- a/hub/quad_camus_hdmi.py
++++ b/hub/quad_camus_hdmi.py
+@@ -2,7 +2,7 @@
+ import math as _perf_math
+ from pathlib import Path as _PerfPath
+ import numpy as _perf_np
+-from PIL import Image as _PerfImage, ImageDraw as _PerfDraw
++from PIL import Image as _PerfImage, ImageDraw as _PerfDraw, ImageFont as _PerfFont
+ 
+ def _perf_seconds(folder,model):
+     try:
+@@ -28,7 +28,14 @@
+             text='%s | CORE %.2f %s | %.1f ms'%(model,1/value,'slice/s' if model=='ACDC' else 'FPS',value*1000)
+         else:text=model+' | CORE -- FPS | -- ms'
+         if cache[0]!=text:
+-            tile=_PerfImage.new('RGB',(270,18),(10,31,43));d=_PerfDraw.Draw(tile);d.text((5,3),text,fill=(120,240,220));cache[:]=[text,_perf_np.asarray(tile)]
++            cjk=_PerfFont.truetype('/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf',12)
++            latin=_PerfFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',12)
++            parts=[('功耗估计',cjk),(' 1.845 W',latin),('（动态',cjk),(' 1.695 W',latin),('；静态',cjk),(' 0.150 W',latin),('）',cjk)]
++            width=max(270,_perf_math.ceil(sum(font.getlength(value) for value,font in parts))+10)
++            tile=_PerfImage.new('RGB',(width,34),(10,31,43));d=_PerfDraw.Draw(tile);d.text((5,3),text,fill=(120,240,220));x=5
++            for value,font in parts:
++                d.text((x,17),value,font=font,fill=(255,218,140));x+=font.getlength(value)
++            cache[:]=[text,_perf_np.asarray(tile)]
+         frame=_perf_np.array(image,copy=True);h,w=frame.shape[:2];tile=cache[1];tw=min(tile.shape[1],w);th=min(tile.shape[0],max(0,h-y))
+         if th:frame[y:y+th,w-tw:w]=tile[:th,:tw]
+         return original(frame)
+--- a/hub/interactive_hdmi.py
++++ b/hub/interactive_hdmi.py
+@@ -2,7 +2,7 @@
+ import math as _perf_math
+ from pathlib import Path as _PerfPath
+ import numpy as _perf_np
+-from PIL import Image as _PerfImage, ImageDraw as _PerfDraw
++from PIL import Image as _PerfImage, ImageDraw as _PerfDraw, ImageFont as _PerfFont
+ 
+ def _perf_seconds(folder,model):
+     try:
+@@ -28,7 +28,14 @@
+             text='%s | CORE %.2f %s | %.1f ms'%(model,1/value,'slice/s' if model=='ACDC' else 'FPS',value*1000)
+         else:text=model+' | CORE -- FPS | -- ms'
+         if cache[0]!=text:
+-            tile=_PerfImage.new('RGB',(270,18),(10,31,43));d=_PerfDraw.Draw(tile);d.text((5,3),text,fill=(120,240,220));cache[:]=[text,_perf_np.asarray(tile)]
++            cjk=_PerfFont.truetype('/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf',12)
++            latin=_PerfFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',12)
++            parts=[('功耗估计',cjk),(' 1.845 W',latin),('（动态',cjk),(' 1.695 W',latin),('；静态',cjk),(' 0.150 W',latin),('）',cjk)]
++            width=max(270,_perf_math.ceil(sum(font.getlength(value) for value,font in parts))+10)
++            tile=_PerfImage.new('RGB',(width,34),(10,31,43));d=_PerfDraw.Draw(tile);d.text((5,3),text,fill=(120,240,220));x=5
++            for value,font in parts:
++                d.text((x,17),value,font=font,fill=(255,218,140));x+=font.getlength(value)
++            cache[:]=[text,_perf_np.asarray(tile)]
+         frame=_perf_np.array(image,copy=True);h,w=frame.shape[:2];tile=cache[1];tw=min(tile.shape[1],w);th=min(tile.shape[0],max(0,h-y))
+         if th:frame[y:y+th,w-tw:w]=tile[:th,:tw]
+         return original(frame)
