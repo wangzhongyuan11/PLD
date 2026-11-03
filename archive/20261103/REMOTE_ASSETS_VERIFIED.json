@@ -1,0 +1,136 @@
+{
+  "status": "pass",
+  "release_id": 432409090,
+  "tag": "pld-closeout-20261103",
+  "url": "https://github.com/wangzhongyuan11/PLD/releases/tag/pld-closeout-20261103",
+  "assets": [
+    {
+      "name": "PLD_Workspace_Objects_20261103_01.zip",
+      "bytes": 715360509,
+      "sha256": "64aae2da5204b5c65a889c1f70c9137274260e10ed5154112331adbabca0c16c",
+      "url": "https://github.com/wangzhongyuan11/PLD/releases/download/untagged-d0c105c1813e2078ef2c/PLD_Workspace_Objects_20261103_01.zip",
+      "asset_id": 704798714
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_02.zip",
+      "bytes": 932335947,
+      "sha256": "3e7e0e8f12b42c3736236cf545e955daaa9668bc6f423cbf0cdd183462a20be9",
+      "url": "https://github.com/wangzhongyuan11/PLD/releases/download/untagged-d0c105c1813e2078ef2c/PLD_Workspace_Objects_20261103_02.zip",
+      "asset_id": 704798713
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_03.zip",
+      "bytes": 1286989209,
+      "sha256": "e518ea3667ba3ccf4126d46e3bfdf5f69bf792edc230a6128422a296828f67c9",
+      "url": "https://github.com/wangzhongyuan11/PLD/releases/download/untagged-d0c105c1813e2078ef2c/PLD_Workspace_Objects_20261103_03.zip",
+      "asset_id": 704806287
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_04.zip",
+      "bytes": 1391763915,
+      "sha256": "5d6f96ca3c6a19281582d26c1c9a2ea193491b89281766cc6866e1457ec041be",
+      "url": "https://github.com/wangzhongyuan11/PLD/releases/download/untagged-d0c105c1813e2078ef2c/PLD_Workspace_Objects_20261103_04.zip",
+      "asset_id": 704810067
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_05.zip",
+      "bytes": 1494416988,
+      "sha256": "739c50beb8d9e2de02e314bd60f1b4379862bc6d99279cb756a62b3e2d9f0758",
+      "url": "https://github.com/wangzhongyuan11/PLD/releases/download/untagged-d0c105c1813e2078ef2c/PLD_Workspace_Objects_20261103_05.zip",
+      "asset_id": 704816893
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_06.zip",
+      "bytes": 1486590886,
+      "sha256": "bc884fe9935328d87340ea1c49f16ddff106b97f73db4c994b6ffe41d8ad60fb",
+      "url": "https://github.com/wangzhongyuan11/PLD/releases/download/untagged-d0c105c1813e2078ef2c/PLD_Workspace_Objects_20261103_06.zip",
+      "asset_id": 704841094
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_07.zip",
+      "bytes": 1357180877,
+      "sha256": "8cdb1eed6a6fba751d93a9b10f5f48c1214f11bdad0d5d0644ffc5cd7bfb2991",
+      "url": "https://github.com/wangzhongyuan11/PLD/releases/download/untagged-d0c105c1813e2078ef2c/PLD_Workspace_Objects_20261103_07.zip",
+      "asset_id": 704834930
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_08.zip",
+      "bytes": 1461324623,
+      "sha256": "d53b326913bb274460b03e603a9b849c8df11d2c5a19a61acce6e82f452071f9",
+      "url": "https://github.com/wangzhongyuan11/PLD/releases/download/untagged-d0c105c1813e2078ef2c/PLD_Workspace_Objects_20261103_08.zip",
+      "asset_id": 704852111
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_09.zip",
+      "bytes": 1366559475,
+      "sha256": "3cfa34559473d648018d91a7b3aab91dafdf0d327d5687ea6f9214129a5b5fef",
+      "url": "https://github.com/wangzhongyuan11/PLD/releases/download/untagged-d0c105c1813e2078ef2c/PLD_Workspace_Objects_20261103_09.zip",
+      "asset_id": 704852663
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_10.zip",
+      "bytes": 637440342,
+      "sha256": "b26730d6e3545498569cb4b4d8a663498ce92de5625e5cf663ac739df1e5f4e9",
+      "url": "https://github.com/wangzhongyuan11/PLD/releases/download/untagged-d0c105c1813e2078ef2c/PLD_Workspace_Objects_20261103_10.zip",
+      "asset_id": 704863263
+    },
+    {
+      "name": "PLD_Workspace_Catalog_20261103.zip",
+      "bytes": 7036124,
+      "sha256": "169856680dc8b1db821524595e01ff6de87aa64e9fb91369b895190d444332ab",
+      "url": "https://github.com/wangzhongyuan11/PLD/releases/download/untagged-d0c105c1813e2078ef2c/PLD_Workspace_Catalog_20261103.zip",
+      "asset_id": 704864963
+    },
+    {
+      "name": "PLD_Local_History_20261103.bundle",
+      "bytes": 15991083,
+      "sha256": "b4ef2f857421112b534392c553fafcae6d6cf97282fd7cdd7ce77581e0e6ddeb",
+      "url": "https://github.com/wangzhongyuan11/PLD/releases/download/untagged-d0c105c1813e2078ef2c/PLD_Local_History_20261103.bundle",
+      "asset_id": 704865198
+    },
+    {
+      "name": "PLD_Documents_and_Presentations_20261103.zip",
+      "bytes": 206392497,
+      "sha256": "19f4272fee0f22af47d9e5749f24b61473931453e52e270bc45440b5afce95ee",
+      "url": "https://github.com/wangzhongyuan11/PLD/releases/download/untagged-d0c105c1813e2078ef2c/PLD_Documents_and_Presentations_20261103.zip",
+      "asset_id": 704865514
+    },
+    {
+      "name": "RESTORE_PLD.py",
+      "bytes": 3586,
+      "sha256": "4bd159fdc46844e275a4058ca9406dbb240a194b5b02d21efa54e26b88043305",
+      "url": "https://github.com/wangzhongyuan11/PLD/releases/download/untagged-d0c105c1813e2078ef2c/RESTORE_PLD.py",
+      "asset_id": 704867082
+    },
+    {
+      "name": "SHA256SUMS_20261103.txt",
+      "bytes": 1447,
+      "sha256": "901fd872dce0e0eeb1b9b9159cd46be20724510dc801778edd0f698044dffd44",
+      "url": "https://github.com/wangzhongyuan11/PLD/releases/download/untagged-d0c105c1813e2078ef2c/SHA256SUMS_20261103.txt",
+      "asset_id": 704867153
+    }
+  ],
+  "total_bytes": 12359387508,
+  "readback_verified": [
+    {
+      "name": "PLD_Workspace_Catalog_20261103.zip",
+      "sha256": "169856680dc8b1db821524595e01ff6de87aa64e9fb91369b895190d444332ab",
+      "bytes": 7036124
+    },
+    {
+      "name": "RESTORE_PLD.py",
+      "sha256": "4bd159fdc46844e275a4058ca9406dbb240a194b5b02d21efa54e26b88043305",
+      "bytes": 3586
+    },
+    {
+      "name": "SHA256SUMS_20261103.txt",
+      "sha256": "901fd872dce0e0eeb1b9b9159cd46be20724510dc801778edd0f698044dffd44",
+      "bytes": 1447
+    }
+  ],
+  "remote_catalog_restore_smoke": {
+    "status": "restored",
+    "selected_paths": 2,
+    "unique_objects_checked": 2
+  }
+}

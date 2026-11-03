@@ -1,0 +1,32 @@
+{
+  "local_head": "51f85407a079c30a6e545e7f6500081862dff006",
+  "remote_main_at_inventory": "d3f8845434583817932171d661f8517537b66710",
+  "refs": [
+    "20d12d325df111052bd0d78c480b8345d7fe4172 refs/heads/codex/a-release-bundle-20261017",
+    "01e3acfadb4147de14f611382e2e7a682bdebfdc refs/heads/codex/acdc-minimal-runtime-20261019",
+    "caef053a104933bfe6f9b752c9d7cdf788bef955 refs/heads/codex/acdc-numerics-20261018",
+    "5b934dfbdff887400eeccdfbf5fa82283cccd725 refs/heads/codex/acdc-research-delivery-20261019",
+    "538ec0747cf55753828109a43d7174fe9c3d633a refs/heads/codex/acdc-triplanar-20261018",
+    "b244c7970faa0c0269ddb666614010ac03af784f refs/heads/codex/associate-local-work-20261017",
+    "31facf0b74cc1589fba8f540b80a480f0da42b87 refs/heads/codex/boot-prewarm-integration-20261029",
+    "51f85407a079c30a6e545e7f6500081862dff006 refs/heads/codex/collaboration-dual-lead-20261018",
+    "1c187a20dc32f4d5ae9073ab431b01fe2c7e8c50 refs/heads/codex/interactive-workbench-20261017",
+    "cd3c9ba1fa317932b6d1792ad4491f95828497ac refs/heads/codex/p0-demo-hud-recovery-20261030",
+    "067f77e2c51ef74ffa667195c1233e259888a5d9 refs/heads/codex/pld-dev-source-20261020",
+    "534c835ac9bde0fdf6b8b8ce5c540561b1d0e698 refs/heads/codex/skin-hdmi-refactor-20261029",
+    "c9cad2ded0426865dff0811de2239b5614f0151d refs/heads/main",
+    "5b934dfbdff887400eeccdfbf5fa82283cccd725 refs/tags/acdc-triplanar-b16-p3-v1-20261019",
+    "01e3acfadb4147de14f611382e2e7a682bdebfdc refs/tags/acdc-triplanar-b16-p3-v1-demo-20261019",
+    "8fc6420e9740db2414ed384feaacb175521de489 refs/tags/current-board-hdmi-20261024",
+    "408c76e46e7d8eeece585e93c2be6f2c0e0e2d6f refs/tags/pld-dev-source-20261020",
+    "0719913f0d1fef41a3af683c25c42520596205aa refs/tags/pld-dual-20261017",
+    "067f77e2c51ef74ffa667195c1233e259888a5d9 refs/tags/pld-perf10-candidate-20261020",
+    "d3f8845434583817932171d661f8517537b66710 refs/remotes/origin/main",
+    "51f85407a079c30a6e545e7f6500081862dff006 HEAD"
+  ],
+  "bundle": "PLD_Local_History_20261103.bundle",
+  "bytes": 15991083,
+  "sha256": "b4ef2f857421112b534392c553fafcae6d6cf97282fd7cdd7ce77581e0e6ddeb",
+  "verify_stdout": "The bundle contains these 21 refs:\n20d12d325df111052bd0d78c480b8345d7fe4172 refs/heads/codex/a-release-bundle-20261017\n01e3acfadb4147de14f611382e2e7a682bdebfdc refs/heads/codex/acdc-minimal-runtime-20261019\ncaef053a104933bfe6f9b752c9d7cdf788bef955 refs/heads/codex/acdc-numerics-20261018\n5b934dfbdff887400eeccdfbf5fa82283cccd725 refs/heads/codex/acdc-research-delivery-20261019\n538ec0747cf55753828109a43d7174fe9c3d633a refs/heads/codex/acdc-triplanar-20261018\nb244c7970faa0c0269ddb666614010ac03af784f refs/heads/codex/associate-local-work-20261017\n31facf0b74cc1589fba8f540b80a480f0da42b87 refs/heads/codex/boot-prewarm-integration-20261029\n51f85407a079c30a6e545e7f6500081862dff006 refs/heads/codex/collaboration-dual-lead-20261018\n1c187a20dc32f4d5ae9073ab431b01fe2c7e8c50 refs/heads/codex/interactive-workbench-20261017\ncd3c9ba1fa317932b6d1792ad4491f95828497ac refs/heads/codex/p0-demo-hud-recovery-20261030\n067f77e2c51ef74ffa667195c1233e259888a5d9 refs/heads/codex/pld-dev-source-20261020\n534c835ac9bde0fdf6b8b8ce5c540561b1d0e698 refs/heads/codex/skin-hdmi-refactor-20261029\nc9cad2ded0426865dff0811de2239b5614f0151d refs/heads/main\n5b934dfbdff887400eeccdfbf5fa82283cccd725 refs/tags/acdc-triplanar-b16-p3-v1-20261019\n01e3acfadb4147de14f611382e2e7a682bdebfdc refs/tags/acdc-triplanar-b16-p3-v1-demo-20261019\n8fc6420e9740db2414ed384feaacb175521de489 refs/tags/current-board-hdmi-20261024\n408c76e46e7d8eeece585e93c2be6f2c0e0e2d6f refs/tags/pld-dev-source-20261020\n0719913f0d1fef41a3af683c25c42520596205aa refs/tags/pld-dual-20261017\n067f77e2c51ef74ffa667195c1233e259888a5d9 refs/tags/pld-perf10-candidate-20261020\nd3f8845434583817932171d661f8517537b66710 refs/remotes/origin/main\n51f85407a079c30a6e545e7f6500081862dff006 HEAD\nThe bundle records a complete history.\nThe bundle uses this hash algorithm: sha1\n",
+  "note": "Explicit local branch and tag references plus fetched origin/main. No mirror or all-ref publication; original local checkout unchanged."
+}

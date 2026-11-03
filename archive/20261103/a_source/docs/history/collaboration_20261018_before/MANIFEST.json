@@ -1,0 +1,80 @@
+{
+  "created_utc": "2026-10-17T17:54:37.947434+00:00",
+  "original_documents": [
+    {
+      "source": "AGENTS.md",
+      "backup": "00_AGENTS.md",
+      "sha256": "31ac6df256b0591c7f224ad1cc05d80835a210aa2d94a11c5c8517dd699de639",
+      "bytes": 21687,
+      "characters": 12725
+    },
+    {
+      "source": "pld-medical/AGENTS.md",
+      "backup": "01_AGENTS.md",
+      "sha256": "30b9e432a461ed0f7f2fe2993d4417056240ab54f8850bc14ba36abab5495773",
+      "bytes": 9085,
+      "characters": 3575
+    },
+    {
+      "source": "pld-medical/docs/A02_当前断点.md",
+      "backup": "02_A02_当前断点.md",
+      "sha256": "40b06b86be0a563351e434e756e0bb7c0decad107b21c6febeed29f16568bd69",
+      "bytes": 29908,
+      "characters": 16625
+    },
+    {
+      "source": "pld-medical/docs/prompts/A00_DeepSeek派工模板.md",
+      "backup": "03_A00_DeepSeek派工模板.md",
+      "sha256": "c9a6903548d2ca4fe7ca2d34bf1f4d3cddbf8729e325258add1d6ab32ea27c8f",
+      "bytes": 2398,
+      "characters": 918
+    },
+    {
+      "source": "pld-medical/docs/prompts/A01_助手职责与高级工程师审查.md",
+      "backup": "04_A01_助手职责与高级工程师审查.md",
+      "sha256": "f837ed44d2f4029cadca2ff4ae1888fb05defcd1ca851811fdb53fd0032754d3",
+      "bytes": 5719,
+      "characters": 2185
+    },
+    {
+      "source": "pld-medical/docs/prompts/A03_额度保护与断点恢复.md",
+      "backup": "05_A03_额度保护与断点恢复.md",
+      "sha256": "f0cfc2831e235f36bf937102b2e36acd73f8bf1b48050f3527344df21c8d8e1e",
+      "bytes": 3916,
+      "characters": 1452
+    },
+    {
+      "source": "pld-medical/docs/prompts/A04_复杂任务接管与低消耗监控.md",
+      "backup": "06_A04_复杂任务接管与低消耗监控.md",
+      "sha256": "ded65bbd1354ee680af573b4705d4713b5a3686ef88ba02bc9888a7ce1b6fbe7",
+      "bytes": 6886,
+      "characters": 2612
+    },
+    {
+      "source": "pld-medical/docs/plans/ACDC_三方向2.5D与三维重建规划_20261017.md",
+      "backup": "07_ACDC_三方向2.5D与三维重建规划_20261017.md",
+      "sha256": "be4df9bd7b1c67dd9d9bfc09fe33300b5ec6766534a528b427c9ba17d5b8fe3e",
+      "bytes": 15668,
+      "characters": 7538
+    }
+  ],
+  "protected_sha256": {
+    "delivery/current.json": "90efbe96511d156a1b7ef1947fa5a225e0cb8080c11d3688dc3d553434682671",
+    "pld-medical/software/role_a_acdc/common.py": "6dfc51e7b638c5960ccf92f6218bc7810e77c688e79028bb98257653a64c08dc",
+    "pld-medical/software/role_a_acdc/model.py": "aa1ebfe4e634cab00cc04f042ced0630c481079a175a01bee48ce8108ab09886",
+    "pld-medical/software/role_a_acdc/geometry.py": "4040571ba642cbfffeab98f3d659e08263be2ef422978ee51e7b62dacbad2e33",
+    "pld-medical/software/role_a_acdc/train.py": "43488520caeb83cc347244889cfee9b90f6815a6285c2a366896723b8a5945cb",
+    "pld-medical/runs/acdc_extension/20261017/CURRENT_CHECKPOINT.json": "0ba2ba76662901a133a4c390cf0a5ab752ed4437504a941c600766ed1e9d13d4",
+    "pld-medical/runs/acdc_extension/20261017/QUEUE_STATUS.json": "e9e936789b14113a7e48da460fb4884ce329f349a52baa80c4ecc8e0b3640338",
+    "pld-medical/runs/acdc_extension/20261017/STOP_REQUEST": "69b54ea400d0be537bb36131482cb7113918d1a23cab78448e934c9dad5a10b2",
+    "pld-medical/runs/acdc_extension/20261017/QUOTA_LEASE.json": "955da7b259954cd13530fdc5e9262c2a7a610119704401f1c88ae67fb1981864",
+    "pld-medical/runs/acdc_extension/20261017/owner/ACCEPTANCE_GATES.json": "b6b99e577b003de1a6f365e8841e278260da9d64ed053c0063daf5f4f4223393",
+    "pld-medical/datasets/acdc/SPLIT.json": "2798365d7c7747f92b67ca62ab1ac4a995f123ca8a9fa4d7c271d306fdc80697",
+    "pld-medical/runs/acdc_extension/20261017/training/baseline2d/last.pt": "922dfab6c298663921f7f34486b70206758aa4b6e3b4799f996382dee0b15e77",
+    "pld-medical/runs/acdc_extension/20261017/training/baseline2d/best.pt": "efbc2be109cd7c6c58146a6ec5104025efcfcd0610a4c07d144b7e4f21f68c38",
+    "pld-medical/runs/acdc_extension/20261017/training/axial/last.pt": "ae44b39ac62605e933f5cdf20167c803553c1bc83636ec132741b6527d9409a6",
+    "pld-medical/runs/acdc_extension/20261017/training/axial/best.pt": "61235133d11a6e64f8c00dcc8c3d75bdd12e5c6629cadfa10c46455134871d04",
+    "pld-medical/runs/acdc_extension/20261017/training/coronal/last.pt": "851edfcf2f727575078e78800a5a5225e4de51e805c482ab5ff5207375e112e7",
+    "pld-medical/runs/acdc_extension/20261017/training/coronal/best.pt": "309c2cc710c0a4b28ca04d2deac8b1379644fe2a3249150bfebf07255fc1afac"
+  }
+}

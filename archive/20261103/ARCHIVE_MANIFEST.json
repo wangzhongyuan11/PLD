@@ -1,0 +1,103 @@
+{
+  "status": "local_content_and_remote_asset_checks_passed",
+  "source_files": 80297,
+  "source_bytes": 17765404558,
+  "unique_objects": 49592,
+  "assets": [
+    {
+      "name": "PLD_Workspace_Objects_20261103_01.zip",
+      "bytes": 715360509,
+      "sha256": "64aae2da5204b5c65a889c1f70c9137274260e10ed5154112331adbabca0c16c",
+      "objects": 9045,
+      "uncompressed_bytes": 1312377747
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_02.zip",
+      "bytes": 932335947,
+      "sha256": "3e7e0e8f12b42c3736236cf545e955daaa9668bc6f423cbf0cdd183462a20be9",
+      "objects": 3165,
+      "uncompressed_bytes": 1337321073
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_03.zip",
+      "bytes": 1286989209,
+      "sha256": "e518ea3667ba3ccf4126d46e3bfdf5f69bf792edc230a6128422a296828f67c9",
+      "objects": 1144,
+      "uncompressed_bytes": 1499273638
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_04.zip",
+      "bytes": 1391763915,
+      "sha256": "5d6f96ca3c6a19281582d26c1c9a2ea193491b89281766cc6866e1457ec041be",
+      "objects": 4646,
+      "uncompressed_bytes": 1499386504
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_05.zip",
+      "bytes": 1494416988,
+      "sha256": "739c50beb8d9e2de02e314bd60f1b4379862bc6d99279cb756a62b3e2d9f0758",
+      "objects": 275,
+      "uncompressed_bytes": 1494453453
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_06.zip",
+      "bytes": 1486590886,
+      "sha256": "bc884fe9935328d87340ea1c49f16ddff106b97f73db4c994b6ffe41d8ad60fb",
+      "objects": 1204,
+      "uncompressed_bytes": 1498850801
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_07.zip",
+      "bytes": 1357180877,
+      "sha256": "8cdb1eed6a6fba751d93a9b10f5f48c1214f11bdad0d5d0644ffc5cd7bfb2991",
+      "objects": 6833,
+      "uncompressed_bytes": 1499983384
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_08.zip",
+      "bytes": 1461324623,
+      "sha256": "d53b326913bb274460b03e603a9b849c8df11d2c5a19a61acce6e82f452071f9",
+      "objects": 4874,
+      "uncompressed_bytes": 1499122474
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_09.zip",
+      "bytes": 1366559475,
+      "sha256": "3cfa34559473d648018d91a7b3aab91dafdf0d327d5687ea6f9214129a5b5fef",
+      "objects": 8730,
+      "uncompressed_bytes": 1499736830
+    },
+    {
+      "name": "PLD_Workspace_Objects_20261103_10.zip",
+      "bytes": 637440342,
+      "sha256": "b26730d6e3545498569cb4b4d8a663498ce92de5625e5cf663ac739df1e5f4e9",
+      "objects": 9676,
+      "uncompressed_bytes": 948370982
+    },
+    {
+      "name": "PLD_Workspace_Catalog_20261103.zip",
+      "bytes": 7036124,
+      "sha256": "169856680dc8b1db821524595e01ff6de87aa64e9fb91369b895190d444332ab"
+    },
+    {
+      "name": "PLD_Local_History_20261103.bundle",
+      "bytes": 15991083,
+      "sha256": "b4ef2f857421112b534392c553fafcae6d6cf97282fd7cdd7ce77581e0e6ddeb"
+    },
+    {
+      "name": "PLD_Documents_and_Presentations_20261103.zip",
+      "bytes": 206392497,
+      "sha256": "19f4272fee0f22af47d9e5749f24b61473931453e52e270bc45440b5afce95ee"
+    },
+    {
+      "name": "RESTORE_PLD.py",
+      "bytes": 3586,
+      "sha256": "4bd159fdc46844e275a4058ca9406dbb240a194b5b02d21efa54e26b88043305"
+    }
+  ],
+  "release_tag": "pld-closeout-20261103",
+  "verification": {
+    "local": "LOCAL_VERIFICATION.json",
+    "remote": "REMOTE_ASSETS_VERIFIED.json"
+  }
+}
